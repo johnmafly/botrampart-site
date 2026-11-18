@@ -17,7 +17,7 @@ The current spec is [spec/openapi.yaml](/spec/openapi.yaml); the [API reference]
 
 ## 2026-11-18 {#d2026-11-18}
 
-- **User guide.** This guide at `/docs/`: thirteen sections with diagrams, an API reference generated from the spec, every page as Markdown, `/llms.txt` and `/llms-full.txt`.
+- **User guide.** This guide at `/docs/`: thirteen sections with diagrams, an API reference generated from the spec, every page as Markdown, `/llms.txt` and `/llms-full.txt` ([#14](https://github.com/johnmafly/botrampart-site/pull/14)).
 - **No unpublished install commands.** The site carries an install command only for a package or image its registry has; a test checks every command against the registry ([#11](https://github.com/johnmafly/botrampart-site/pull/11), [#12](https://github.com/johnmafly/botrampart-site/pull/12)).
 - **Present tense.** Every page, the spec and the served scripts describe BotRampart as it ships; a copy test fails the build on status hedges ([#10](https://github.com/johnmafly/botrampart-site/pull/10)).
 - **Cloud Free decision** recorded ([#9](https://github.com/johnmafly/botrampart-site/pull/9)).
