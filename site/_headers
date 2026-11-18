@@ -1,6 +1,14 @@
 # Public but not indexed until the owner publishes at graduation (Greenhouse decision 0000-1).
+# Everything is self-hosted, so the policy allows this origin only. It also keeps out scripts a
+# host may inject (such as an analytics beacon): this site runs no tracking.
 /*
   X-Robots-Tag: noindex, nofollow
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Content-Type-Options: nosniff
+
+/assets/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
 
 /.well-known/greenhouse.json
   Cache-Control: no-cache

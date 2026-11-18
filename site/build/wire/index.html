@@ -1,16 +1,16 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- @head | Integration guide | BotRampart docs -->
+    <!-- @head | Build: wire it in (Node integration guide) | Options, route prices, sign-in, browser challenges, the policy file, logs and failure behaviour. Every exchange defined in the OpenAPI spec. -->
   </head>
   <body>
     <!-- @header -->
     <main id="main">
       <div class="page-head">
         <div class="wrap">
-          <p class="eyebrow">Docs · Integration guide</p>
-          <h1>Wiring BotRampart into a Node app.</h1>
-          <p class="lede">Everything an application touches: options, route costs, sign-in, challenge handling in the browser, the policy file, logs and failure behaviour. Every HTTP exchange here is defined in the <a href="/spec/openapi.yaml">OpenAPI spec</a>, and each sample names the operation it exercises.</p>
+          <p class="label">Build · 02 · integration guide</p>
+          <h1>Wire it in. Price your routes.</h1>
+          <p class="lede">Everything your app touches: options, route prices, sign-in, challenges in the browser, the policy file, logs and what happens when things fail. Every HTTP exchange is in the <a href="/spec/openapi.yaml">OpenAPI spec</a>, and each sample names its operation.</p>
         </div>
       </div>
       <div class="wrap doc-grid">
@@ -171,7 +171,7 @@ rules:
               </tbody>
             </table>
           </div>
-          <p>Actions: <code>allow</code>, <code>log</code>, <code>challenge(pow | human | next_tier)</code>, <code>pow(multiplier)</code>, <code>throttle</code>, <code>block</code>, <code>degrade</code> (tell your app to serve a cheaper response) and <code>add_risk(n)</code>. A rule can run as <code>log</code> for a week before it enforces. Publishing creates an immutable version that SDKs pick up at the next sync; rollback is publishing the previous one. Always simulate first (<a href="/docs/getting-started/#observe">example</a>).</p>
+          <p>Actions: <code>allow</code>, <code>log</code>, <code>challenge(pow | human | next_tier)</code>, <code>pow(multiplier)</code>, <code>throttle</code>, <code>block</code>, <code>degrade</code> (tell your app to serve a cheaper response) and <code>add_risk(n)</code>. A rule can run as <code>log</code> for a week before it enforces. Publishing creates an immutable version that SDKs pick up at the next sync; rollback is publishing the previous one. Always simulate first (<a href="/build/#observe">example</a>).</p>
 
           <h2 id="logs">Logs and headers</h2>
           <p>The cookie is a bearer credential and must never reach a log. The SDK instead adds two response headers your edge can log and strip: <code>BR-Sid</code>, the first 12 hex characters of a hash of the session ID, and <code>BR-Decision</code>. A path that shows up in your access logs without <code>BR-Decision</code> is a route the SDK does not cover, which is how <code>br doctor</code> finds gaps.</p>
@@ -199,7 +199,7 @@ proxy_hide_header BR-Decision;</code></pre>
           <ul>
             <li>Run CI and staging in <code>observe</code> mode, and assert on <code>req.br.decision</code> in your own tests.</li>
             <li>Replay a draft policy against production traffic with <code>simulatePolicy</code> before every publish.</li>
-            <li>Look up any decision a tester saw by its reference with <code>getDecision</code> (<a href="/docs/how-it-works/#explain">example</a>).</li>
+            <li>Look up any decision a tester saw by its reference with <code>getDecision</code> (<a href="/meter/#explain">example</a>).</li>
           </ul>
           <!-- @sources -->
         </article>

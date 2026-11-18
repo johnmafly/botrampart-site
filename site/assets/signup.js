@@ -20,7 +20,7 @@ function show(i) {
   if (i === 2) renderInstall();
   if (i === 3) runFirstHour();
   steps[i].querySelector("h2").focus({ preventScroll: true });
-  window.scrollTo({ top: document.querySelector(".flow").offsetTop - 80, behavior: "smooth" });
+  window.scrollTo({ top: document.querySelector(".flow").offsetTop - 80, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
 }
 
 form.addEventListener("click", (e) => {
@@ -160,8 +160,10 @@ async function runFirstHour() {
   out("bars").innerHTML = "";
   for (const [k, v] of Object.entries(r.spend).sort((x, y) => y[1] - x[1])) {
     const row = document.createElement("div");
-    row.className = "bar";
-    row.innerHTML = `<span>${k}</span><i class="${k === "general" ? "ok" : ""}" style="width:${Math.max(1, (v / total) * 100)}%"></i><span>${Math.round((v / total) * 100)}%</span>`;
+    row.className = "spend-row";
+    row.innerHTML = `<span>${k}</span><i class="${k === "general" ? "ok" : ""}"></i><span>${Math.round((v / total) * 100)}%</span>`;
+    // Width set through the CSSOM, which the site's CSP allows (style attributes in markup it does not).
+    row.querySelector("i").style.width = `${Math.max(1, (v / total) * 100)}%`;
     out("bars").append(row);
   }
   const chat = out("chat");

@@ -33,7 +33,7 @@ claims:
   # Quote matched fetched text exactly (after whitespace collapse).
   - id: "recaptcha-solved"
     claim: "Researchers solved 100% of reCAPTCHA v2 image challenges with published models."
-    where: ["/", "/docs/how-it-works/"]
+    where: ["/", "/meter/"]
     source_url: "https://arxiv.org/abs/2409.08831"
     quote: "Our main result is that we can solve 100% of the captchas, while previous work only solved 68-71%."
     checked: "2026-11-18"
@@ -44,7 +44,7 @@ claims:
   # (after whitespace collapse).
   - id: "solver-prices"
     claim: "Solver services sell reCAPTCHA v2 solves for about $1 to $3 per 1,000."
-    where: ["/", "/docs/how-it-works/"]
+    where: ["/", "/meter/"]
     source_url: "https://2captcha.com/pricing"
     quote: "$1 — $2.99"
     checked: "2026-11-18"
@@ -55,7 +55,7 @@ claims:
   # whitespace collapse).
   - id: "anubis-ormandy"
     claim: "Using Anubis's 11,508 GitHub stars as a stand-in for its deployments, Tavis Ormandy estimated one free-tier cloud VM could mine a week of tokens for every Anubis deployment in about six minutes."
-    where: ["/docs/comparison/"]
+    where: ["/field/"]
     source_url: "https://lock.cmpxchg8b.com/anubis.html"
     quote: "(11508 websites * 2^16 sha256 operations) / 2^21, that’s about 6 minutes to mine enough tokens for every single Anubis deployment in the world"
     checked: "2026-11-18"
@@ -65,7 +65,7 @@ claims:
   # (after whitespace collapse).
   - id: "anubis-throughput"
     claim: "With one challenge per session and no rate limit, increasing latency does not decrease throughput."
-    where: ["/docs/how-it-works/"]
+    where: ["/", "/meter/"]
     source_url: "https://hackerdude.tech/vault/Anubis/"
     quote: "would need to wait around half a second to connect to a site, after that it can continue hammering the server with the same throughput as it would otherwise INCREASING LATENCY DOES NOT DECREASE THROUGHPUT"
     checked: "2026-11-18"
@@ -74,7 +74,7 @@ claims:
   # facts checked 7 November 2026. Quote matched fetched text exactly (after whitespace collapse).
   - id: "proxy-prices"
     claim: "Published residential proxy prices run from about $1 to $7.35 per GB at the smallest amount each provider sells (about $0.78 to $5.51 per GB at the largest)."
-    where: ["/docs/how-it-works/"]
+    where: ["/meter/"]
     source_url: "https://zenproxy.io/learn/residential-proxy-prices"
     quote: "published residential prices run from $0.99 to $7.35 per GB at the smallest amount each one sells, and from $0.78 to $5.51 per GB at their largest listed amounts up to 1 TB"
     checked: "2026-11-18"
@@ -83,7 +83,7 @@ claims:
   # window'. Quote matched fetched text exactly (after whitespace collapse).
   - id: "ipinfo-rotation"
     claim: "Across 170M residential proxy IPs, 60% were seen only once in 90 days."
-    where: ["/docs/how-it-works/"]
+    where: ["/meter/"]
     source_url: "https://hackernoon.com/the-residential-proxy-problem-shared-infrastructure-and-rapid-rotation"
     quote: "60% of residential proxy IPs are only observed once in a 90-day window (32% for IPv4, 87% for IPv6)."
     checked: "2026-11-18"
@@ -92,7 +92,7 @@ claims:
   # fetched text exactly (after whitespace collapse).
   - id: "dd-entry-price"
     claim: "DataDome's entry plan lists at $3,830 a month."
-    where: ["/", "/docs/comparison/", "/pricing/"]
+    where: ["/", "/field/", "/own/"]
     source_url: "https://pricingsaas.com/companies/datadome"
     quote: "DataDome pricing starts at $3,830/mo on Essentials."
     checked: "2026-11-18"
@@ -100,7 +100,7 @@ claims:
   # Quote matched fetched text exactly (after whitespace collapse).
   - id: "cf-business-price"
     claim: "Cloudflare's Business plan costs $200 a month billed annually ($250 monthly)."
-    where: ["/docs/comparison/"]
+    where: ["/field/"]
     source_url: "https://www.cloudflare.com/plans/"
     quote: "Business For small businesses operating online. $200 /mo billed annually, or $250/mo billed monthly"
     checked: "2026-11-18"
@@ -108,7 +108,7 @@ claims:
   # Quote matched fetched text exactly (after whitespace collapse).
   - id: "cf-passage"
     claim: "Cloudflare's clearance lasts 30 minutes by default and its docs recommend 15 to 45 minutes."
-    where: ["/docs/how-it-works/"]
+    where: ["/meter/"]
     source_url: "https://developers.cloudflare.com/cloudflare-challenges/challenge-types/challenge-pages/challenge-passage/"
     quote: "By default, the cf_clearance cookie has a lifetime of 30 minutes. Cloudflare recommends a setting between 15 and 45 minutes."
     checked: "2026-11-18"
@@ -118,7 +118,7 @@ claims:
   # whitespace collapse).
   - id: "anubis-week"
     claim: "Anubis's clearance cookie lasts about a week."
-    where: ["/docs/comparison/"]
+    where: ["/field/"]
     source_url: "https://github.com/TecharoHQ/anubis/blob/main/docs/docs/design/how-anubis-works.mdx"
     quote: "exp: The token's expiry week after the token was issued"
     checked: "2026-11-18"
@@ -128,7 +128,7 @@ claims:
   # text exactly (after whitespace collapse).
   - id: "webkit-7day"
     claim: "Safari's tracking prevention deletes script-written cookies and storage after 7 days without user interaction with the site."
-    where: ["/docs/how-it-works/"]
+    where: ["/meter/"]
     source_url: "https://webkit.org/tracking-prevention/"
     quote: "ITP deletes all cookies created in JavaScript and all other script-writeable storage after 7 days of no user interaction with the website."
     checked: "2026-11-18"
@@ -137,7 +137,7 @@ claims:
   # collapse).
   - id: "gd-launch"
     claim: "Google launched the Gemini Decisions API (Gemini Decision 1) on 11 November 2026."
-    where: ["/docs/how-it-works/"]
+    where: ["/meter/"]
     source_url: "https://blog.google/innovation-and-ai/technology/developers-tools/gemini-decisions-api/"
     quote: "Today, we’re introducing the Gemini Decisions API, a new endpoint for fast, closed-set decisions powered by our new Gemini Decision 1 model (gemini-decision-1)"
     checked: "2026-11-18"
@@ -148,7 +148,7 @@ claims:
   # exactly (after whitespace collapse).
   - id: "gd-guide-code"
     claim: "Google's guidance for the Decisions API: compare numbers, dates and durations in code and pass a named bucket."
-    where: ["/docs/how-it-works/"]
+    where: ["/meter/"]
     source_url: "https://ai.google.dev/gemini-api/docs/decisions-api"
     quote: "Compare numbers, dates, and durations in code, then pass the result or a named bucket in the input."
     checked: "2026-11-18"
@@ -157,7 +157,7 @@ claims:
   # gd-guide-code. Quote matched fetched text exactly (after whitespace collapse).
   - id: "gd-guide-untrusted"
     claim: "Google's guidance says to treat input as untrusted."
-    where: ["/docs/how-it-works/"]
+    where: ["/meter/"]
     source_url: "https://ai.google.dev/gemini-api/docs/decisions-api"
     quote: "Treat input as untrusted. User-supplied text can argue for its own classification."
     checked: "2026-11-18"
@@ -167,7 +167,7 @@ claims:
   # original URL's. Quote matched fetched text exactly (after whitespace collapse).
   - id: "gd-price"
     claim: "Gemini Decision 1 bills $0.10 per million input tokens with no output charge."
-    where: ["/docs/how-it-works/", "/pricing/"]
+    where: ["/meter/", "/own/"]
     source_url: "https://blog.google/innovation-and-ai/technology/developers-tools/gemini-decisions-api/"
     quote: "at $0.10 per 1M input tokens with zero output tokens billed"
     checked: "2026-11-18"
@@ -176,7 +176,7 @@ claims:
   # the expected point value'. Quote matched fetched text exactly (after whitespace collapse).
   - id: "gh-graphql"
     claim: "GitHub's GraphQL API gives each user 5,000 points an hour and prices queries by calculated cost."
-    where: ["/docs/how-it-works/"]
+    where: ["/meter/"]
     source_url: "https://docs.github.com/en/graphql/overview/rate-limits-and-query-limits-for-the-graphql-api"
     quote: "For users: 5,000 points per hour per user."
     checked: "2026-11-18"
@@ -184,7 +184,7 @@ claims:
   # Quote matched fetched text exactly (after whitespace collapse).
   - id: "shopify-cost"
     claim: "Shopify rate-limits its GraphQL Admin API by calculated query cost."
-    where: ["/docs/how-it-works/"]
+    where: ["/meter/"]
     source_url: "https://shopify.dev/docs/apps/build/apis/graphql-admin/rate-limits"
     quote: "Calls to the GraphQL Admin API are limited based on calculated query cost, which means you should consider the cost of requests over time rather than the number of requests."
     checked: "2026-11-18"
@@ -193,7 +193,7 @@ claims:
   # Limiting.' Quote matched fetched text exactly (after whitespace collapse).
   - id: "cf-rl-complexity"
     claim: "Cloudflare's complexity-based rate limiting reads a score the origin returns in a response header."
-    where: ["/docs/how-it-works/"]
+    where: ["/meter/"]
     source_url: "https://developers.cloudflare.com/waf/rate-limiting-rules/parameters/"
     quote: "Name of HTTP header in the response, set by the origin server, with the score for the current request. Applies to complexity-based rate limiting."
     checked: "2026-11-18"
@@ -203,7 +203,7 @@ claims:
   # Quote matched fetched text exactly (after whitespace collapse).
   - id: "wcag-338"
     claim: "WCAG 2.2 success criterion 3.3.8 forbids a cognitive function test in any authentication step unless that step offers an alternative method, a mechanism to assist, or the test is object recognition or identifying the user's own content."
-    where: ["/docs/how-it-works/"]
+    where: ["/meter/"]
     source_url: "https://www.w3.org/WAI/WCAG22/Understanding/accessible-authentication-minimum"
     quote: "A cognitive function test (such as remembering a password or solving a puzzle) is not required for any step in an authentication process unless that step provides at least one of the following:"
     checked: "2026-11-18"
@@ -212,7 +212,7 @@ claims:
   # matched fetched text exactly (after whitespace collapse).
   - id: "loginject"
     claim: "Injected log entries steered LLM log analysis up to 88.2% of the time in a 2026 study."
-    where: ["/docs/how-it-works/"]
+    where: ["/meter/"]
     source_url: "https://www.usenix.org/system/files/usenixsecurity26-karanjai.pdf"
     quote: "Our findings reveal an up to 88.2% attack success rate (83.4% average across models)"
     checked: "2026-11-18"
@@ -220,7 +220,7 @@ claims:
   # Published June 25, 2024. Quote matched fetched text exactly (after whitespace collapse).
   - id: "polyfill"
     claim: "In 2024 the Polyfill.io CDN served malware to more than 100,000 sites after a change of owner."
-    where: ["/docs/architecture/", "/docs/getting-started/"]
+    where: ["/build/", "/build/inside/"]
     source_url: "https://sansec.io/research/polyfill-supply-chain-attack"
     quote: "The new Chinese owner of the popular Polyfill JS project injects malware into more than 100 thousand sites."
     checked: "2026-11-18"
@@ -229,7 +229,7 @@ claims:
   # million'. Quote matched fetched text exactly (after whitespace collapse).
   - id: "cf-workers-price"
     claim: "Cloudflare Workers Paid is $5 a month with 10 million requests included."
-    where: ["/docs/architecture/", "/docs/getting-started/", "/pricing/"]
+    where: ["/build/", "/build/inside/", "/own/"]
     source_url: "https://developers.cloudflare.com/workers/platform/pricing/"
     quote: "minimum charge of $5 USD per month for an account"
     checked: "2026-11-18"
@@ -238,7 +238,7 @@ claims:
   # fetched text exactly (after whitespace collapse).
   - id: "r2-price"
     claim: "Cloudflare R2 storage costs $0.015 per GB-month with free egress."
-    where: ["/docs/architecture/", "/pricing/"]
+    where: ["/build/inside/", "/own/"]
     source_url: "https://developers.cloudflare.com/r2/pricing/"
     quote: "There are no charges for egress bandwidth for any storage class."
     checked: "2026-11-18"
@@ -247,7 +247,7 @@ claims:
   # subset' vs 'Stock Node.js'. Quote matched fetched text exactly (after whitespace collapse).
   - id: "oo-exists"
     claim: "OpenOrange, from Rivet, is Apache-2.0 and runs Cloudflare Workers projects on Node.js in other clouds."
-    where: ["/docs/architecture/"]
+    where: ["/build/inside/"]
     source_url: "https://github.com/rivet-dev/open-orange"
     quote: "Run Cloudflare Workers anywhere: AWS, Google Cloud, Azure, or your own servers."
     checked: "2026-11-18"
@@ -255,7 +255,7 @@ claims:
   # Quote matched fetched text exactly (after whitespace collapse).
   - id: "cf-reach"
     claim: "Cloudflare is used by a large majority of sites that use a reverse proxy service (86.6%)."
-    where: ["/docs/comparison/"]
+    where: ["/field/"]
     source_url: "https://w3techs.com/technologies/overview/proxy"
     quote: "Cloudflare is used by 29.9% of all the websites, that is a reverse proxy service market share of 86.6%."
     checked: "2026-11-18"
@@ -264,7 +264,7 @@ claims:
   # matched fetched text exactly (after whitespace collapse).
   - id: "cf-turnstile-free"
     claim: "Turnstile's free plan offers unlimited challenges."
-    where: ["/", "/docs/comparison/"]
+    where: ["/", "/field/"]
     source_url: "https://developers.cloudflare.com/turnstile/plans/"
     quote: "Unlimited challenges (traffic or verification requests) Yes Yes"
     checked: "2026-11-18"
@@ -274,7 +274,7 @@ claims:
   # collapse).
   - id: "cf-ai-default"
     claim: "Cloudflare blocks AI crawlers by default for new domains since 1 July 2025."
-    where: ["/docs/comparison/"]
+    where: ["/field/"]
     source_url: "https://www.cloudflare.com/press/press-releases/2025/cloudflare-just-changed-how-ai-crawlers-scrape-the-internet-at-large/"
     quote: "This significant shift means that every new domain starts with the default of control"
     checked: "2026-11-18"
@@ -283,7 +283,7 @@ claims:
   # Bot Management add-on)'. Quote matched fetched text exactly (after whitespace collapse).
   - id: "cf-bot-mgmt-enterprise"
     claim: "Cloudflare's Bot Management with per-request bot scores is an Enterprise product; Bot Fight Mode is on the Free plan."
-    where: ["/docs/comparison/"]
+    where: ["/field/"]
     source_url: "https://developers.cloudflare.com/bots/"
     quote: "If you need granular control — per-request bot scores, custom rules, per-endpoint handling, and detailed analytics — use Bot Management for Enterprise."
     checked: "2026-11-18"
@@ -292,7 +292,7 @@ claims:
   # challenged or blocked.' Quote matched fetched text exactly (after whitespace collapse).
   - id: "cf-fp"
     claim: "Cloudflare's docs acknowledge false positives from Bot Fight Mode, which cannot be skipped with WAF custom rules."
-    where: ["/docs/comparison/"]
+    where: ["/field/"]
     source_url: "https://developers.cloudflare.com/bots/troubleshooting/false-positives/"
     quote: "You cannot bypass or skip Bot Fight Mode using the Skip action in WAF custom rules or using Page Rules."
     checked: "2026-11-18"
@@ -301,7 +301,7 @@ claims:
   # logo from Turnstile widgets.'
   - id: "cf-offlabel"
     claim: "Cloudflare reserves Turnstile Offlabel (no Cloudflare branding) for Enterprise customers."
-    where: ["/docs/comparison/", "/pricing/"]
+    where: ["/field/", "/own/"]
     source_url: "https://developers.cloudflare.com/turnstile/additional-configuration/offlabel/"
     quote: "Offlabel is available exclusively to Enterprise customers with the Enterprise Turnstile add-on or Standalone Enterprise Turnstile customers."
     checked: "2026-11-18"
@@ -311,7 +311,7 @@ claims:
   # normalisation only.
   - id: "dd-founded"
     claim: "DataDome was founded in 2015 in Paris."
-    where: ["/docs/comparison/"]
+    where: ["/field/"]
     source_url: "https://web.archive.org/web/20261115175707/https://datadome.co/company/"
     quote: "2015 Founded in Paris with a mission to protect the web from bot-driven fraud through real-time AI detection"
     checked: "2026-11-18"
@@ -319,7 +319,7 @@ claims:
   # Live page returned 403 to curl (two User-Agents); quote from the Wayback snapshot of 2026-11-14.
   - id: "dd-2ms"
     claim: "DataDome says it makes detection decisions in under 2 milliseconds."
-    where: ["/docs/comparison/"]
+    where: ["/field/"]
     source_url: "https://web.archive.org/web/20261114211057/https://datadome.co/products/bot-protection/"
     quote: "DataDome Bot Protect operates at the edge across 35+ global PoPs, delivering precise bot detection in under 2 milliseconds so your app speed never suffers."
     checked: "2026-11-18"
@@ -331,7 +331,7 @@ claims:
   # 2026 launch is not supported. Index text, whitespace normalised.
   - id: "dd-agent-trust"
     claim: "DataDome published 'Agent Trust at DataDome: The AI Control Plane for Managing Your Agentic Traffic' on its product changelog on May 5, 2026."
-    where: ["/docs/comparison/"]
+    where: ["/field/"]
     source_url: "https://web.archive.org/web/20261116034724/https://datadome.co/changelog/"
     quote: "Agent trust management Agent Trust at DataDome: The AI Control Plane for Managing Your Agentic Traffic May 5, 2026"
     checked: "2026-11-18"
@@ -340,7 +340,7 @@ claims:
   # separate table cells; whitespace normalised. Quote matched after whitespace normalisation only.
   - id: "dd-retention"
     claim: "DataDome retains data for up to 30 days, depending on the subscribed plan."
-    where: ["/docs/comparison/"]
+    where: ["/field/"]
     source_url: "https://docs.datadome.co/docs/data-privacy"
     quote: "Data Retention and Collection Up to 30 days, depending on the subscribed plan."
     checked: "2026-11-18"
@@ -349,7 +349,7 @@ claims:
   # Forrester Wave: Bot and Agent Trust Management Software, Q2 2026'.
   - id: "forrester-leaders"
     claim: "Forrester named DataDome, HUMAN and Kasada Leaders in its 2026 Wave."
-    where: ["/docs/comparison/"]
+    where: ["/field/"]
     source_url: "https://prosopo.io/blog/forrester-wave-bot-management-2026/"
     quote: "Leaders: DataDome, HUMAN, Kasada"
     checked: "2026-11-18"
@@ -359,7 +359,7 @@ claims:
   # JavaScript insertion and device fingerprinting'.
   - id: "net-talos"
     claim: "Netacea's Talos engine is server-side and agentless, with no JavaScript and no device fingerprinting."
-    where: ["/docs/comparison/"]
+    where: ["/field/"]
     source_url: "https://vmblog.com/news/netacea-launches-talos-its-intent-based-detection-engine-to-defend-against-ai-powered-bots/"
     quote: "Agentless architecture: No JavaScript, no device fingerprinting. Detection happens server-side, even when traditional signals are missing or obfuscated."
     checked: "2026-11-18"
@@ -367,7 +367,7 @@ claims:
   # Vendor claim.
   - id: "net-platform"
     claim: "Netacea integrates with the customer's CDN, WAF or load balancer."
-    where: ["/docs/comparison/"]
+    where: ["/field/"]
     source_url: "https://netacea.com/platform/"
     quote: "Natively plugs into technologies you already use, including all major CDNs, WAFs and load balancers."
     checked: "2026-11-18"
@@ -375,7 +375,7 @@ claims:
   # Article dated '10th December, 2024'.
   - id: "net-mercia"
     claim: "Netacea raised a further GBP 4 million from Mercia in December 2024."
-    where: ["/docs/comparison/"]
+    where: ["/field/"]
     source_url: "https://www.mercia.co.uk/netacea-raises-a-further-4m-to-step-up-battle-against-the-bots/"
     quote: "has raised a further £4m from Mercia Asset Management"
     checked: "2026-11-18"
@@ -386,7 +386,7 @@ claims:
   # whitespace normalised. Quote matched after whitespace normalisation only.
   - id: "net-aws"
     claim: "Netacea's AWS Marketplace listing prices a single contract dimension, Bot Protect API, at $0.001 per unit; buyers contact the vendor to size the unit quantity."
-    where: ["/docs/comparison/"]
+    where: ["/field/"]
     source_url: "https://aws.amazon.com/marketplace/pp/prodview-m5evvjhsgddok"
     quote: "Cost/12 months Bot Protection Bot Protect API $0.001"
     checked: "2026-11-18"
@@ -394,7 +394,7 @@ claims:
   # intellifend.com redirects to intellifend.ai; source_url updated to the final URL.
   - id: "if-singapore"
     claim: "IntelliFend is a Singapore company with teams across Hong Kong, Taiwan and Vietnam."
-    where: ["/docs/comparison/"]
+    where: ["/field/"]
     source_url: "https://intellifend.ai/"
     quote: "Singapore HQ with teams across Hong Kong, Taiwan, Vietnam"
     checked: "2026-11-18"
@@ -402,7 +402,7 @@ claims:
   # Release dated 19 August 2024 (issuer Innovenx).
   - id: "if-launch"
     claim: "IntelliFend launched on AWS Marketplace in August 2024."
-    where: ["/docs/comparison/"]
+    where: ["/field/"]
     source_url: "https://www.media-outreach.com/news/singapore/2024/08/19/319916/innovenx-unveils-revolutionary-bot-management-solution-intellifend-with-minimal-false-positives-on-aws-marketplace/"
     quote: "proudly announces the launch of its advanced bot management product, IntelliFend, on the AWS Marketplace"
     checked: "2026-11-18"
@@ -411,7 +411,7 @@ claims:
   # Quote matched after whitespace normalisation only.
   - id: "if-price"
     claim: "IntelliFend lists $749 a month for 20 million requests on AWS Marketplace."
-    where: ["/docs/comparison/", "/pricing/"]
+    where: ["/field/", "/own/"]
     source_url: "https://aws.amazon.com/marketplace/pp/prodview-cwjogytst2fsw"
     quote: "Lite 20M Up to 20M requests per month $749.00"
     checked: "2026-11-18"
@@ -422,7 +422,7 @@ claims:
   # stated verbatim; the docs say 'detection platform' / 'IntelliFend server'.
   - id: "if-deploy"
     claim: "IntelliFend deploys as a CDN worker (Interceptor mode), a lightweight proxy next to the origin that forwards requests to IntelliFend's detection platform, or NGINX config that pushes access logs to the IntelliFend server for analysis."
-    where: ["/docs/comparison/"]
+    where: ["/field/"]
     source_url: "https://docs.intellifend.com/"
     quote: "We built a lightweight proxy that can be deployed next to your origin to forward request URLs and headers to the IntelliFend intelligent detection platform."
     checked: "2026-11-18"
@@ -431,7 +431,7 @@ claims:
   # short-lived and single-use.'
   - id: "if-pow"
     claim: "IntelliFend's RequestShield SDK obtains single-use proof-of-work tokens."
-    where: ["/docs/comparison/"]
+    where: ["/field/"]
     source_url: "https://cdn.jsdelivr.net/npm/@intellifend/requestshieldjs@2.0.0/README.md"
     quote: "The RequestShield Browser SDK obtains single-use proof-of-work tokens"
     checked: "2026-11-18"
@@ -441,7 +441,7 @@ claims:
   # describes Anubis as 'proof-of-work bot protection' if that wording is needed.
   - id: "anubis-readme"
     claim: "Anubis is an MIT-licensed web AI firewall that weighs each connection with one or more challenges to protect upstream resources from scraper bots."
-    where: ["/docs/comparison/"]
+    where: ["/field/"]
     source_url: "https://github.com/TecharoHQ/anubis"
     quote: "Anubis is a Web AI Firewall Utility that weighs the soul of your connection using one or more challenges in order to protect upstream resources from scraper bots."
     checked: "2026-11-18"
@@ -450,7 +450,7 @@ claims:
   # spdx_id MIT, 826 forks.
   - id: "anubis-stars"
     claim: "Anubis had more than 24,000 GitHub stars in November 2026."
-    where: ["/docs/comparison/"]
+    where: ["/field/"]
     source_url: "https://api.github.com/repos/TecharoHQ/anubis"
     quote: "\"stargazers_count\": 24235,"
     checked: "2026-11-18"
@@ -461,7 +461,7 @@ claims:
   # docs/docs/admin/botstopper.mdx): title 'Commercial support and an unbranded version'.
   - id: "botstopper-price"
     claim: "Techaro lists BotStopper, a commercial unbranded version of Anubis, at US$50 a month; the page marks it as not yet released."
-    where: ["/docs/comparison/", "/pricing/"]
+    where: ["/field/", "/own/"]
     source_url: "https://techaro.lol/pricing.md"
     quote: "Pricing for Techaro's products: Anubis is free and open source. BotStopper is US$50 per month."
     checked: "2026-11-18"
@@ -469,7 +469,7 @@ claims:
   # Published Sat 16 Aug 2025; Codeberg posted on Mastodon the day before.
   - id: "anubis-codeberg"
     claim: "Codeberg reported AI crawlers solving Anubis challenges in August 2025."
-    where: ["/docs/comparison/"]
+    where: ["/field/"]
     source_url: "https://www.theregister.com/software/2025/08/16/codeberg-beset-by-ai-bots-that-now-bypass-anubis-defense/1023101"
     quote: "It seems like the AI crawlers learned how to solve the Anubis challenges,"
     checked: "2026-11-18"
@@ -479,7 +479,7 @@ claims:
   # product link).
   - id: "crowdsec"
     claim: "CrowdSec's Security Engine analyses logs locally, and more than 300,000 active Security Engines share attack signals."
-    where: ["/docs/comparison/"]
+    where: ["/field/"]
     source_url: "https://www.crowdsec.net/security-engine"
     quote: "the analysis is done locally and logs never leave your infrastructure"
     checked: "2026-11-18"
@@ -488,7 +488,7 @@ claims:
   # Professional '€ 99 /month', Sentinel Enterprise '€ 799 /month' (monthly billing).
   - id: "altcha-sentinel"
     claim: "ALTCHA's self-hosted Sentinel costs EUR 99 to EUR 799 a month, and ALTCHA Cloud does not count blocked requests (bots or invalid requests) toward monthly usage."
-    where: ["/docs/comparison/", "/pricing/"]
+    where: ["/field/", "/own/"]
     source_url: "https://altcha.org/pricing/"
     quote: "Blocked requests, including requests identified as bots or invalid requests, are not counted toward your monthly usage."
     checked: "2026-11-18"
@@ -499,7 +499,7 @@ claims:
   # challenge.'
   - id: "aws-bot-control"
     claim: "AWS WAF Targeted Bot Control costs $10 per million requests, and challenges are billed whether or not the user attempts them."
-    where: ["/pricing/"]
+    where: ["/own/"]
     source_url: "https://aws.amazon.com/waf/pricing/"
     quote: "Bot Control request charges = $10.00/million * (35 million requests - 1 million free requests) = $340.00"
     checked: "2026-11-18"
@@ -508,7 +508,7 @@ claims:
   # substance the same.
   - id: "fp-attack"
     claim: "Fingerprint does not bill for API calls made while a website is under attack (part of its surge protection)."
-    where: ["/pricing/"]
+    where: ["/own/"]
     source_url: "https://fingerprint.com/pricing/"
     quote: "If your website is under attack, Fingerprint will not bill you for the API calls that are made during that period."
     checked: "2026-11-18"
@@ -517,7 +517,7 @@ claims:
   # organization. Quote matched after whitespace normalisation only.
   - id: "recaptcha-bill"
     claim: "reCAPTCHA charges $1 per 1,000 assessments above 100,000 a month."
-    where: ["/pricing/"]
+    where: ["/own/"]
     source_url: "https://docs.cloud.google.com/recaptcha/docs/billing-information"
     quote: "Over 100,000 assessments per month: $0.001 per assessment ($1.00 per 1,000 assessments)."
     checked: "2026-11-18"
@@ -526,7 +526,7 @@ claims:
   # Quote matched after whitespace normalisation only.
   - id: "hcaptcha-pro"
     claim: "hCaptcha Pro costs $99 to $139 a month."
-    where: ["/pricing/"]
+    where: ["/own/"]
     source_url: "https://www.hcaptcha.com/pricing"
     quote: "Pro $139 Per month, Billed monthly"
     checked: "2026-11-18"
@@ -535,7 +535,7 @@ claims:
   # serves other purposes (it names reCAPTCHA).
   - id: "cnil-antibot"
     claim: "CNIL says anti-robot (CAPTCHA) systems whose sole purpose is securing the site or its authentication need no consent."
-    where: ["/docs/integration/"]
+    where: ["/build/wire/"]
     source_url: "https://www.cnil.fr/fr/cookies-et-autres-traceurs/regles/cookies/FAQ"
     quote: "Lorsque ces solutions ont pour seule finalité la sécurisation du site ou d’un mécanisme d’authentification au bénéfice des utilisateurs, le consentement des utilisateurs n’est pas nécessaire."
     checked: "2026-11-18"
@@ -545,7 +545,7 @@ claims:
   # so 'single-use' was softened. Quote matched after whitespace normalisation only.
   - id: "ts-single-use"
     claim: "Turnstile tokens are valid for 300 seconds and intended for single use; reuse detection is eventually consistent."
-    where: ["/docs/architecture/"]
+    where: ["/build/inside/"]
     source_url: "https://developers.cloudflare.com/turnstile/get-started/server-side-validation/"
     quote: "Each token is valid for 300 seconds (5 minutes) after generation. Tokens are intended for single use."
     checked: "2026-11-18"
@@ -556,7 +556,7 @@ claims:
   # after whitespace normalisation only.
   - id: "dd-protapi"
     claim: "DataDome's integration sends request metadata to its Protection API, which returns allow or challenge; if the X-DataDomeResponse header is missing, the module fails open and treats the request as allowed."
-    where: ["/docs/architecture/", "/docs/comparison/"]
+    where: ["/build/inside/", "/field/"]
     source_url: "https://docs.datadome.co/reference/validate-request"
     quote: "Fail-open Header missing Ignore it Treat the request as allowed (200) to avoid blocking legitimate traffic due to system errors."
     checked: "2026-11-18"
@@ -566,7 +566,7 @@ claims:
   # normalisation only.
   - id: "botid-undeclared"
     claim: "Vercel BotID requires protected routes to be declared in the client configuration; checkBotId() fails on routes not added there."
-    where: ["/docs/architecture/"]
+    where: ["/build/inside/"]
     source_url: "https://vercel.com/docs/botid/get-started"
     quote: "Not adding the protected route to <BotIdClient /> will result in checkBotId() failing."
     checked: "2026-11-18"
@@ -576,7 +576,7 @@ claims:
   # the Risk API timeout, which passes the request on timeout (fail-open).
   - id: "human-timeout"
     claim: "HUMAN's Akamai EdgeWorker enforcer decrypts the HUMAN Sensor's risk cookie with a cookie secret, and waits up to PX_S2S_TIMEOUT (default 1000 ms) for the Risk API before timing out and passing the request."
-    where: ["/docs/architecture/"]
+    where: ["/build/inside/"]
     source_url: "https://docs.humansecurity.com/applications/akamai-edgeworker/v4/configuration"
     quote: "The total time in milliseconds that the Enforcer will wait for the Risk API request to return before timing out and passing the request."
     checked: "2026-11-18"
@@ -585,7 +585,7 @@ claims:
   # not a shipped SDK; leaves out rule evaluation and framework overhead.
   - id: "exp-verify"
     claim: "In our benchmark of the reference code (Node 25, Apple M4 Pro), verifying the signed session cookie and charging the budget took 1.79 microseconds at the median and 2.58 at the 99th percentile."
-    where: ["/docs/architecture/"]
+    where: ["/", "/build/inside/"]
     source_url: "https://github.com/johnmafly/botrampart-site/blob/main/experiments/verify-bench.json"
     quote: "\"verify_p99_us\": 2.58,"
     checked: "2026-11-18"
