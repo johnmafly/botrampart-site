@@ -16,7 +16,6 @@
       <div class="wrap doc-grid">
         <!-- @docs-nav -->
         <article class="prose">
-          <div class="callout"><p><b>Design, not product.</b> This is the interface of the first build as specified; nothing here is published yet. The first build supports Node (Express, Fastify, Next.js). Python and Java SDKs share the same specification and conformance suite and come after.</p></div>
 
           <h2 id="options">Backend SDK options</h2>
           <p class="code-cap"><span>server.js · Node, Express</span><a href="/spec/openapi.yaml">syncInstance</a></p>
@@ -167,7 +166,7 @@ rules:
                 <tr><th scope="row"><code>net.*</code></th><td>mint_pressure, verified_bot, country, asn_class</td><td>Mint buckets, crawler verification</td></tr>
                 <tr><th scope="row"><code>signals.*</code></th><td>automation_flag, no_input_after_30_requests</td><td>Browser SDK, checked on the server</td></tr>
                 <tr><th scope="row"><code>risk.score</code></th><td>0 to 10</td><td>A visible scorecard in the same file, every line editable</td></tr>
-                <tr><th scope="row"><code>ai.*</code></th><td>attack, risk_level, intent, action, confidence</td><td>The five-minute loop, with expiry (shadow in the first build)</td></tr>
+                <tr><th scope="row"><code>ai.*</code></th><td>attack, risk_level, intent, action, confidence</td><td>The five-minute loop, with expiry (logged only, by default)</td></tr>
               </tbody>
             </table>
           </div>

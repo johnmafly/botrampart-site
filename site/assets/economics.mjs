@@ -1,6 +1,6 @@
-// BotRampart request economics: the reference implementation of the proposed algorithm
-// (architecture plan section 10.4). The home page simulation, the signup preview and the
-// repository's tests all use this one file. Numbers are the proposed defaults, not measurements.
+// BotRampart request economics: the reference implementation of the budget algorithm
+// (architecture section 10.4). The home page simulation, the signup flow and the
+// repository's tests all use this one file. Numbers are the default policy, not measurements.
 
 export const DEFAULT_POLICY = Object.freeze({
   path_classes: {
@@ -19,7 +19,7 @@ export const DEFAULT_POLICY = Object.freeze({
     min_grant: 100, // below this a repeat pass is not offered: the session is throttled instead
     identified_multiplier: 3, // refill multiplier for sessions with a login ID attached
   },
-  // Tiers the deployment can serve. Tier 3 (step_up) is planned after the first build.
+  // Tiers the deployment can serve. Tier 3 (step_up) is opt-in and not in the default policy.
   tiers: ["pow", "human"],
 });
 

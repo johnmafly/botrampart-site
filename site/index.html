@@ -10,7 +10,7 @@
         <div class="wrap">
           <div class="hero-top">
             <div>
-              <p class="label">Open-source bot defense <span class="n">· in design</span></p>
+              <p class="label">Open-source bot defense</p>
               <h1 id="hero-h">Don<span class="ap">’</span>t catch bots. <span class="hot">Charge&nbsp;them.</span></h1>
             </div>
             <div class="hero-side">
@@ -26,7 +26,7 @@
             <div class="instrument-in" data-sim>
               <div class="inst-bar">
                 <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
-                <span>policy v1 <span class="label-long">· proposed defaults · one line = 10 seconds</span></span>
+                <span>default policy v1 <span class="label-long">· one line = 10 seconds</span></span>
                 <span class="clock" data-clock>10:12:00</span>
                 <button type="button" data-replay hidden>Replay</button>
               </div>
@@ -68,7 +68,7 @@
               </figcaption>
             </div>
           </figure>
-          <p class="status-line">In design. Nothing to install yet. Every outside figure on this site links to its source.</p>
+          <p class="status-line">Every outside figure on this site links to its source.</p>
         </div>
       </section>
 
@@ -137,7 +137,7 @@
               <div class="st" data-st="2">
                 <p class="k">02 · What it costs</p>
                 <h3>Paths have prices, not reputations.</h3>
-                <p>Static files are free. A page is 1. Search is 5, a login attempt 10, checkout 20. Those are the proposed defaults; the price list is a file you own, and your app can report the real cost of an expensive response.</p>
+                <p>Static files are free. A page is 1. Search is 5, a login attempt 10, checkout 20. Those are the defaults; the price list is a file you own, and your app can report the real cost of an expensive response.</p>
                 <p class="mono-note">search: { match: /api/search*, cost: 5, min_tier: 1 }</p>
               </div>
               <div class="st" data-st="3">
@@ -173,7 +173,7 @@
           <div class="ladder">
             <div class="rung"><span class="t">TIER 1 · INVISIBLE</span><h3>Proof-of-work</h3><p>The browser does a few small sums in the background. Plain HTTP clients can't.</p><span class="buys">+300</span></div>
             <div class="rung"><span class="t">TIER 2 · ONE TICK</span><h3>Human check</h3><p>A box to tick, scored on how it was ticked. Works with a keyboard and a screen reader.</p><span class="buys">+3,000, halving</span></div>
-            <div class="rung"><span class="t">TIER 3 · LATER</span><h3>Step-up</h3><p>Email link, passkey, sign-in, or a puzzle you choose. Always with a way that needs no puzzle.</p><span class="buys">+6,000, halving</span></div>
+            <div class="rung"><span class="t">TIER 3 · OPT-IN</span><h3>Step-up</h3><p>Email link, passkey, sign-in, or a puzzle you choose. Always with a way that needs no puzzle.</p><span class="buys">+6,000, halving</span></div>
             <div class="rung throttle"><span class="t">THE FLOOR</span><h3>Wait</h3><p>When the grants are spent: 429 and Retry-After. The refill still flows, slowly.</p><span class="buys">refill only</span></div>
           </div>
 
@@ -182,7 +182,7 @@
               <h3>A resold pass stops being worth reselling.</h3>
               <p class="muted">One challenge per session with no rate limit behind it adds latency, not limits: throughput doesn't fall.{{c:anubis-throughput}} Here, the first human check buys 3,000 units, the second 1,500, then 750, 375 and 188. Then there is nothing left to buy, and the session waits on the refill.</p>
               <div class="ceiling">
-                <div><b>35,363</b><span>units a day: the most one session can spend in the first build</span></div>
+                <div><b>35,363</b><span>units a day: the most one session can spend on the default policy</span></div>
                 <div><b>≈7,000</b><span>searches a day per session, at 5 each</span></div>
               </div>
               <p class="fine mt-2">Computed by the reference implementation this site runs; a test in the repository checks both numbers.</p>
@@ -198,7 +198,7 @@
                 <div class="bar x"><span>429</span></div>
               </div>
               <div class="bars-x" aria-hidden="true"><span>PoW</span><span>check 1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>wait</span></div>
-              <figcaption class="fine mt-2" id="decay-cap">Credit bought by each pass within 24 hours, proposed defaults.</figcaption>
+              <figcaption class="fine mt-2" id="decay-cap">Credit bought by each pass within 24 hours, default policy.</figcaption>
             </figure>
           </div>
         </div>
@@ -248,9 +248,9 @@
                     <div class="chat-actions"><span>Show timeline</span><span>Replay with draft policy</span></div>
                   </div>
                 </div>
-                <p class="illus">Illustrative: the record and answer formats from the design, not a real user.</p>
+                <p class="illus">Example record and reply. User 4217 is made up to show the format.</p>
               </div>
-              <p class="muted mt-2">The agent that answers reads your log with read-only access, attaches the query and the rows, and can't change anything. It proposes; a person approves.</p>
+              <p class="muted mt-2">The agent that answers reads your log with read-only access, attaches the query and the rows, and can't change anything. It suggests a change; a person approves it.</p>
             </div>
           </div>
         </div>
@@ -356,33 +356,17 @@
               </ul>
             </div>
             <div class="no">
-              <h3>Not for you, yet</h3>
+              <h3>Not for you</h3>
               <ul>
                 <li>You're happy behind Cloudflare. Its Turnstile challenge is free, with unlimited challenges.{{c:cf-turnstile-free}}</li>
                 <li>You need DDoS protection. Floods belong at the edge; BotRampart refuses requests inside your app.</li>
-                <li>You need mobile apps or partner APIs covered now. The first build is browsers only.</li>
-                <li>You need it in production this quarter. It's in design.</li>
+                <li>You need native mobile apps or partner APIs metered. BotRampart meters browser sessions.</li>
               </ul>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="sec" id="status" aria-labelledby="status-h">
-        <div class="wrap">
-          <div class="sec-head rise">
-            <p class="label">Where it stands</p>
-            <h2 id="status-h">Nothing to install yet. Here<span class="ap">’</span>s the plan.</h2>
-            <p>Durations are planning assumptions for two or three engineers, not estimates from measured work.</p>
-          </div>
-          <ol class="road">
-            <li class="now"><span class="ph">NOW</span><h3>Design</h3><p>Architecture, <a href="/spec/openapi.yaml">the OpenAPI spec</a>, the policy format, the threat model. One assumption already measured.</p></li>
-            <li><span class="ph">PHASE 0 · 2 WEEKS</span><h3>Decide</h3><p>Hosting spike, decision-model bake-off, proof-of-work timed on real phones, licence and trademark.</p></li>
-            <li><span class="ph">PHASE 1 · 8 WEEKS</span><h3>First build</h3><p>Node SDK, tiers 0 to 2, budgets, Core on Cloudflare or one container, the decision log, explanations in Slack.</p></li>
-            <li><span class="ph">LATER</span><h3>Close the loops</h3><p>Model answers enforced, Python and Java, a console, step-up methods, an open benchmark, a hosted Cloud.</p></li>
-          </ol>
-        </div>
-      </section>
 
       <section class="closing" aria-labelledby="close-h">
         <div class="wrap">

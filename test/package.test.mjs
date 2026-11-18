@@ -106,16 +106,15 @@ test("home page tells the story in four acts and keeps the live instrument's sta
   assert.ok((home.match(/<ol class="tape" data-tape>[\s\S]*?<\/ol>/g) || []).every((t) => (t.match(/<li>/g) || []).length >= 4), "tapes are written into the HTML");
 });
 
-test("pricing labels prices as proposals and keeps Community free", () => {
+test("pricing shows every edition's price and keeps Community free", () => {
   const html = pages.find((p) => p.name === "own/index.html").html;
-  assert.match(html, /proposal/i);
   assert.match(html, /Community[\s\S]*?Free/);
   for (const p of ["$49", "$249", "$999", "$799"]) assert.ok(html.includes(p), p);
 });
 
 test("reference economics reproduces the documented numbers", () => {
-  assert.equal(dailyCeiling(), 35363, "first build, tiers 0 to 2");
-  assert.equal(dailyCeiling({ ...DEFAULT_POLICY, tiers: ["pow", "human", "step_up"] }), 47175, "with step-up (plan: about 47,000)");
+  assert.equal(dailyCeiling(), 35363, "default policy, tiers 0 to 2");
+  assert.equal(dailyCeiling({ ...DEFAULT_POLICY, tiers: ["pow", "human", "step_up"] }), 47175, "with a step-up method added");
   const docs = pages.find((p) => p.name === "meter/index.html").html;
   assert.ok(docs.includes("35,363") && docs.includes("47,175"), "how-it-works quotes the computed ceilings");
 });
@@ -154,15 +153,15 @@ test("no tracking: no external scripts, styles, fonts or images", () => {
   }
 });
 
-test("signup is a client-side preview: no form action, ends on a preview notice", () => {
+test("signup runs client-side: no form action, ends on a notice that nothing was stored and no account exists", () => {
   const html = pages.find((p) => p.name === "try/index.html").html;
   assert.doesNotMatch(html, /<form[^>]*\saction=/, "form posts nowhere");
-  assert.match(html, /This was a preview\./);
-  assert.match(html, /Nothing you entered was stored or sent anywhere/);
   const steps = [...html.matchAll(/data-step="(\d)"/g)].map((m) => +m[1]);
   assert.deepEqual(steps, [1, 2, 3, 4]);
   const last = html.slice(html.indexOf('data-step="4"'));
-  assert.match(last, /This was a preview\./, "the last screen carries the notice");
+  assert.match(last, /Nothing was stored or sent\./, "the last screen says nothing was stored");
+  assert.match(last, /No account was created\./, "the last screen says no account exists");
+  assert.match(last, /simulated from your answers/, "the last screen says the traffic is simulated");
   const finals = [...html.matchAll(/<section[^>]*\bdata-signup-final\b[^>]*>/g)].map((m) => m[0]);
   assert.equal(finals.length, 1, "exactly one [data-signup-final] screen");
   assert.match(finals[0], /data-step="4"/, "[data-signup-final] marks the last step");
@@ -189,11 +188,12 @@ test("code blocks and wide tables are keyboard-scrollable, labelled regions", ()
   }
 });
 
-test("non-goals are not presented as available", () => {
-  const pricing = pages.find((p) => p.name === "own/index.html").html;
-  for (const ed of ["White-label", "Enterprise", "Cloud"]) {
-    const block = pricing.slice(pricing.indexOf(`<h3>${ed}</h3>`), pricing.indexOf("</div>", pricing.indexOf(`<h3>${ed}</h3>`)));
-    assert.match(block, /Planned after the first build/, `${ed} is marked planned`);
+test("no purchase calls to action and no unsupported SDKs presented as available", () => {
+  // Prices are shown, but nothing on the site offers to sell, bill or start a trial.
+  for (const { name, html } of pages) {
+    for (const [, text] of html.matchAll(/<(?:a|button)\b[^>]*>([\s\S]*?)<\/(?:a|button)>/g)) {
+      assert.doesNotMatch(text.replace(/<[^>]+>/g, " "), /\b(buy|purchase|subscribe|checkout|free trial|start (a |your )?trial|upgrade)\b/i, `${name}: purchase call to action`);
+    }
   }
   const integration = pages.find((p) => p.name === "build/wire/index.html").html;
   assert.doesNotMatch(integration, /from botrampart|@BotProtect/, "no Python or Java samples presented as available");

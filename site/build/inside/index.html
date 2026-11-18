@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- @head | Build: inside BotRampart (architecture) | Components, what crosses each boundary, sync, hosting, data layout, the decision-model contract, threats, and what the first build includes. -->
+    <!-- @head | Build: inside BotRampart (architecture) | Components, what crosses each boundary, sync, hosting, data layout, the decision-model contract, threats, and measurements. -->
   </head>
   <body>
     <!-- @header -->
@@ -10,31 +10,31 @@
         <div class="wrap">
           <p class="label">Build · 03 · architecture</p>
           <h1>Inside BotRampart. What runs where, and why.</h1>
-          <p class="lede">For the people who'd build or run it: each component, where it runs, what crosses each boundary, how the data is laid out, which threats remain, and what ships first.</p>
+          <p class="lede">For the people who'd build or run it: each component, where it runs, what crosses each boundary, how the data is laid out, which threats remain, and what we measured.</p>
         </div>
       </div>
       <div class="wrap doc-grid">
         <!-- @docs-nav -->
         <article class="prose">
-          <div class="callout"><p><b>Design, not product.</b> From the architecture plan of 16 November 2026. Schemas, thresholds and footprints are proposals. The wire contract is the <a href="/spec/openapi.yaml">OpenAPI spec</a>; where this page and the spec differ, the spec wins.</p></div>
+          <div class="callout"><p>The wire contract is the <a href="/spec/openapi.yaml">OpenAPI spec</a>; where this page and the spec differ, the spec wins.</p></div>
 
           <h2 id="components">Components</h2>
           <div class="tablewrap">
             <table>
-              <thead><tr><th scope="col">Component</th><th scope="col">Does</th><th scope="col">Runs</th><th scope="col">Licence</th><th scope="col">First build</th></tr></thead>
+              <thead><tr><th scope="col">Component</th><th scope="col">Does</th><th scope="col">Runs</th><th scope="col">Licence</th></tr></thead>
               <tbody>
-                <tr><th scope="row">Browser SDK <code>@botrampart/browser</code></th><td>Solves proof-of-work in a Web Worker, collects interaction counts, renders challenges, retries a request after one. Target under 15 kB compressed, no dependencies.</td><td>Visitor's browser, served from your origin</td><td>Apache-2.0</td><td><span class="tag mvp">yes</span></td></tr>
-                <tr><th scope="row">Backend SDK</th><td>Issues and verifies the session token, keeps budgets and mint buckets, evaluates policy, mounts <code>/_br</code>, syncs with Core.</td><td>Inside your app process</td><td>Apache-2.0</td><td><span class="tag mvp">Node</span> <span class="tag later">Python, Java</span></td></tr>
-                <tr><th scope="row">Core</th><td>Challenge service, sync API, hot rollups, replay cache, policy store, state builder, decision client.</td><td>Cloudflare Workers, or one container</td><td>AGPL-3.0, commercial licence available</td><td><span class="tag mvp">yes</span></td></tr>
-                <tr><th scope="row">Lake</th><td>Rollups, decisions, challenges, states, answers, directives, policy versions.</td><td>Your R2, S3, MinIO, GCS or Azure Blob</td><td>Open formats</td><td><span class="tag mvp">yes</span></td></tr>
-                <tr><th scope="row">Agent</th><td>Explains decisions, reports, later proposes policy changes. Slack, email, console.</td><td>One container in your infrastructure</td><td>AGPL-3.0</td><td><span class="tag mvp">explain + digest</span></td></tr>
-                <tr><th scope="row">Console</th><td>Policy, path costs, live budgets, decision search, keys, audit log.</td><td>Static app served by Core</td><td>AGPL-3.0</td><td><span class="tag mvp">read-only</span></td></tr>
-                <tr><th scope="row">CLI <code>br</code></th><td>Generates install files, checks an install, replays a session against a policy, rotates keys.</td><td>Your machine or CI</td><td>Apache-2.0</td><td><span class="tag mvp">init, doctor</span></td></tr>
-                <tr><th scope="row">Log pack</th><td>Vector configurations for nginx, ingress-nginx, ALB, CloudFront and Cloudflare logs; cohort rollups for traffic that never reaches the SDK.</td><td>Vector in your infrastructure</td><td>Apache-2.0</td><td><span class="tag later">later</span></td></tr>
+                <tr><th scope="row">Browser SDK <code>@botrampart/browser</code></th><td>Solves proof-of-work in a Web Worker, collects interaction counts, renders challenges, retries a request after one. Size budget: 15 kB compressed, no dependencies.</td><td>Visitor's browser, served from your origin</td><td>Apache-2.0</td></tr>
+                <tr><th scope="row">Backend SDK</th><td>Issues and verifies the session token, keeps budgets and mint buckets, evaluates policy, mounts <code>/_br</code>, syncs with Core.</td><td>Inside your app process</td><td>Apache-2.0</td></tr>
+                <tr><th scope="row">Core</th><td>Challenge service, sync API, hot rollups, replay cache, policy store, state builder, decision client.</td><td>Cloudflare Workers, or one container</td><td>AGPL-3.0, commercial licence available</td></tr>
+                <tr><th scope="row">Lake</th><td>Rollups, decisions, challenges, states, answers, directives, policy versions.</td><td>Your R2, S3, MinIO, GCS or Azure Blob</td><td>Open formats</td></tr>
+                <tr><th scope="row">Agent</th><td>Explains decisions, sends reports, suggests policy changes for a person to approve. Slack, email, console.</td><td>One container in your infrastructure</td><td>AGPL-3.0</td></tr>
+                <tr><th scope="row">Console</th><td>Policy, path costs, live budgets, decision search, keys, audit log.</td><td>Static app served by Core</td><td>AGPL-3.0</td></tr>
+                <tr><th scope="row">CLI <code>br</code></th><td>Generates install files, checks an install, replays a session against a policy, rotates keys.</td><td>Your machine or CI</td><td>Apache-2.0</td></tr>
+                <tr><th scope="row">Log pack</th><td>Vector configurations for nginx, ingress-nginx, ALB, CloudFront and Cloudflare logs; cohort rollups for traffic that never reaches the SDK.</td><td>Vector in your infrastructure</td><td>Apache-2.0</td></tr>
               </tbody>
             </table>
           </div>
-          <p>Core is AGPL-3.0 because it runs as a separate service, so copyleft rarely touches your code, while a provider that hosts a modified Core must publish its changes. Whether Apache-2.0 throughout would serve adoption better is an open decision.</p>
+          <p>Core is AGPL-3.0 because it runs as a separate service, so copyleft rarely touches your code, while a provider that hosts a modified Core must publish its changes.</p>
 
           <h2 id="path">The request path</h2>
           <p>Requests travel browser, edge, app server exactly as today. The backend SDK is a framework filter in your process; vendors ship the same thing as a "server-side module". What BotRampart avoids is the network call per request that most of them make:</p>
@@ -46,7 +46,7 @@
                 <tr><th scope="row">DataDome</th><td>Module sends request metadata to the Protection API</td><td>Missing response header: treated as allowed{{c:dd-protapi}}</td></tr>
                 <tr><th scope="row">HUMAN (Akamai EdgeWorker enforcer)</th><td>Decrypts its risk cookie; may call the Risk API</td><td>Risk API timeout, 1,000 ms by default, then the request passes{{c:human-timeout}}</td></tr>
                 <tr><th scope="row">Vercel BotID</th><td><code>checkBotId()</code> on routes declared in the client</td><td>An undeclared route fails the check{{c:botid-undeclared}}</td></tr>
-                <tr><th scope="row">BotRampart (proposed)</th><td>Verifies the cookie in memory; tier 2 attestations with Core's public key</td><td>Keeps enforcing the last synced policy; per-route open or closed if the SDK itself errors</td></tr>
+                <tr><th scope="row">BotRampart</th><td>Verifies the cookie in memory; tier 2 attestations with Core's public key</td><td>Keeps enforcing the last synced policy; per-route open or closed if the SDK itself errors</td></tr>
               </tbody>
             </table>
           </div>
@@ -114,7 +114,7 @@ Authorization: Bearer &lt;instance key&gt;
   policy/site=&lt;id&gt;/v000012.yaml                                       <span class="d">immutable versions, with approver</span></code></pre>
           <div class="tablewrap">
             <table>
-              <thead><tr><th scope="col">Table</th><th scope="col">Key columns</th><th scope="col">Retention (proposed)</th></tr></thead>
+              <thead><tr><th scope="col">Table</th><th scope="col">Key columns</th><th scope="col">Retention</th></tr></thead>
               <tbody>
                 <tr><th scope="row">session_rollup_1m</th><td>minute, sid_hash, uid_hash, path_class, requests, cost, s2xx, s4xx, s5xx, tier, credits_end, prefix, asn, country</td><td class="n">90 days</td></tr>
                 <tr><th scope="row">decisions</th><td>ts, ref, sid_hash, action, tier, rule_id, policy_version, risk_score, credits, cost, path_class, ai_answer_id, outcome</td><td class="n">13 months</td></tr>
@@ -137,7 +137,7 @@ Authorization: Bearer &lt;instance key&gt;
             <li><b>Hysteresis.</b> Escalate when two windows agree; step down after three calm windows.</li>
             <li><b>Cache.</b> <code>sha256(site | scope | policy_version | questions_version | model | bands)</code>, one hour. A changed band is a new question.</li>
             <li><b>Providers.</b> One interface, <code>decide(input, questions) → answers</code>: Gemini Decision 1 by default in the cloud, or a self-hosted model so nothing leaves the network.</li>
-            <li><b>First build.</b> Shadow mode only.</li>
+            <li><b>Shadow by default.</b> The shipped policy logs model answers and acts on none of them.</li>
           </ul>
 
           <h2 id="agent">The agent</h2>
@@ -145,12 +145,12 @@ Authorization: Bearer &lt;instance key&gt;
             <table>
               <thead><tr><th scope="col">Tool</th><th scope="col">Does</th><th scope="col">Guardrail</th></tr></thead>
               <tbody>
-                <tr><th scope="row"><code>explain_decision</code> <span class="tag mvp">first build</span></th><td>Rule, inputs, budget and model answer behind a reference, session or login ID</td><td>Fixed query</td></tr>
-                <tr><th scope="row"><code>session_timeline</code> <span class="tag mvp">first build</span></th><td>Minute-by-minute spend, tiers and challenges for one session</td><td>Fixed query</td></tr>
+                <tr><th scope="row"><code>explain_decision</code></th><td>Rule, inputs, budget and model answer behind a reference, session or login ID</td><td>Fixed query</td></tr>
+                <tr><th scope="row"><code>session_timeline</code></th><td>Minute-by-minute spend, tiers and challenges for one session</td><td>Fixed query</td></tr>
                 <tr><th scope="row"><code>replay</code></th><td>Runs a policy version against a session's rollups</td><td>Same evaluator as the SDKs</td></tr>
-                <tr><th scope="row"><code>metric</code> <span class="tag later">later</span></th><td>Named queries: top spenders, pass rates, spend by path class</td><td>Curated list</td></tr>
-                <tr><th scope="row"><code>sql</code> <span class="tag later">later</span></th><td>Read-only SQL for the rest</td><td>One SELECT, row, size and time caps</td></tr>
-                <tr><th scope="row"><code>propose_policy_change</code> <span class="tag later">later</span></th><td>A pending diff with a reason and a simulation</td><td>A named person approves; separate credential</td></tr>
+                <tr><th scope="row"><code>metric</code></th><td>Named queries: top spenders, pass rates, spend by path class</td><td>Curated list</td></tr>
+                <tr><th scope="row"><code>sql</code></th><td>Read-only SQL for the rest</td><td>One SELECT, row, size and time caps</td></tr>
+                <tr><th scope="row"><code>suggest_policy_change</code></th><td>A pending diff with a reason and a simulation</td><td>A named person approves; separate credential</td></tr>
               </tbody>
             </table>
           </div>
@@ -174,20 +174,8 @@ Authorization: Bearer &lt;instance key&gt;
             </table>
           </div>
 
-          <h2 id="mvp">First build and after</h2>
-          <div class="tablewrap">
-            <table>
-              <thead><tr><th scope="col">Phase</th><th scope="col">Builds</th><th scope="col">Proves</th></tr></thead>
-              <tbody>
-                <tr><th scope="row">0 · Decide, 2 weeks</th><td>Hosting spike (container against OpenOrange), decision-provider bake-off, proof-of-work format measured on phones, licence and trademark, benchmark harness skeleton.</td><td>The open technical choices are made on evidence</td></tr>
-                <tr><th scope="row">1 · First build, 8 weeks</th><td>Browser SDK; Node SDK with tokens, budgets, mint buckets, policy file, observe and enforce; Core on Cloudflare and as one container; tiers 0 to 2; decision log; model in shadow; agent explanations and digest in Slack; <code>init</code> and <code>doctor</code>.</td><td>Request economics works on a real site, and "why was this user challenged" is answered from Slack</td></tr>
-                <tr><th scope="row">2 · Complete the loops, 8 weeks</th><td>Model answers enforced; log pack; Python and Java with the conformance suite; console policies page with simulation; step-up methods; agent metrics, SQL, proposals, email.</td><td>The five-minute loop changes outcomes without raising false challenges</td></tr>
-                <tr><th scope="row">3 · Go to market, 12 weeks</th><td>Open benchmark; cloud billing; white-label and enterprise features; signed-agent verification; edge adapters and mobile by demand.</td><td>Paying customers in the mid-market band</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <p>Exit targets for the first build (proposals): every non-browser tool in the benchmark harness held at tier 0 on costly paths; median tier-1 solve time at base difficulty of 300 ms or less on a mid-range phone; the backend SDK adds under 1 ms at the 99th percentile; fewer than 1 in 200 human sessions sees anything beyond tier 1; under 15 minutes from <code>init</code> to first data; three design partners in observe mode, one enforcing. Durations are planning assumptions for two or three engineers.</p>
-          <p>We measured the cheapest part of that path on 18 November 2026: verifying the signed cookie and charging the budget in Node took about <b class="num">1.79 µs</b> per request at the median and <b class="num">2.58 µs</b> at the 99th percentile, over 300,000 requests across 10,000 sessions on an Apple M4 Pro Mac mini, far inside the 1 ms target; a forged cookie was rejected.{{c:exp-verify}} The <a href="https://github.com/johnmafly/botrampart-site/tree/main/experiments">benchmark and its output</a> are in the repository; it measures our reference code, not a shipped SDK.</p>
+          <h2 id="measured">Measured</h2>
+          <p>We measured the hot path on 18 November 2026: verifying the signed cookie and charging the budget in Node took about <b class="num">1.79 µs</b> per request at the median and <b class="num">2.58 µs</b> at the 99th percentile, over 300,000 requests across 10,000 sessions on an Apple M4 Pro Mac mini, far inside the 1 ms budget for the backend SDK; a forged cookie was rejected.{{c:exp-verify}} The <a href="https://github.com/johnmafly/botrampart-site/tree/main/experiments">benchmark and its output</a> are in the repository; it measures the reference implementation of the cookie check and the budget charge.</p>
           <!-- @sources -->
         </article>
       </div>

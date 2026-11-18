@@ -1,6 +1,6 @@
-// Signup preview. Client-side only: no network requests, no cookies, no storage of any kind.
+// Run a session (signup). Client-side only: no network requests, no cookies, no storage of any kind.
 // Step 4 simulates one hour of traffic shaped by the answers with the reference economics code,
-// and times a real proof-of-work of the proposed shape on the visitor's device.
+// and times a real proof-of-work of the tier 1 shape on the visitor's device.
 import { newSession, charge, pass } from "/assets/economics.mjs";
 
 const form = document.querySelector("[data-flow]");
@@ -133,7 +133,7 @@ function simulate(a) {
   return { humansChallenged: humansChallenged * scale, humanSessions: humanSessionsReal, refused, botRequests, spend, example, bots, humanRequests: humanRequests * scale };
 }
 
-// A toy proof-of-work of the proposed shape: 16 small SHA-256 puzzles, each needing a hash
+// A proof-of-work of the tier 1 shape: 16 small SHA-256 puzzles, each needing a hash
 // with 10 leading zero bits. The final algorithm is still to be chosen (PBKDF2 or Argon2id).
 async function proofOfWork() {
   const enc = new TextEncoder();
@@ -177,7 +177,7 @@ async function runFirstHour() {
     chat.innerHTML = `<div class="chat-msg"><div class="avatar bot" aria-hidden="true">BR</div><div class="chat-body"><div class="chat-name">BotRampart</div><p>Quiet hour: no session ran out of budget on a costly path. ${r.bots.length ? "Clients that run no JavaScript stayed at tier 0 and read general pages only." : ""} Nothing to change yet.</p><p class="chat-cite">simulated · daily digest · policy v1</p></div></div>`;
   }
   out("next").textContent = pct < 0.5
-    ? "Switch to enforce mode with the default policy: under 1 in 200 people's sessions would have seen anything beyond the invisible check, which is the first build's target."
+    ? "Switch to enforce mode with the default policy: under 1 in 200 people's sessions would have seen anything beyond the invisible check, inside the 1-in-200 threshold for enforcing."
     : "Raise the refill rate or lower the cost of search before enforcing: more people than the target would have seen a check.";
   out("pow").textContent = "solving…";
   try {

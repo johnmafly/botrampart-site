@@ -1,4 +1,4 @@
-// Cloud plan calculator: the cheapest proposed plan for a number of protected sessions.
+// Cloud plan calculator: the cheapest plan for a number of protected sessions.
 const PLANS = [
   { name: "Free", fee: 0, included: 10_000, per1k: null },
   { name: "Starter", fee: 49, included: 100_000, per1k: 0.3 },
@@ -23,7 +23,7 @@ if (root) {
     const best = PLANS.map((p) => ({ p, c: cost(p, n) })).sort((a, b) => a.c - b.c)[0];
     out.textContent = `${best.p.name}: $${fmt(best.c)} a month`;
     const per = n ? (best.c / n) * 1000 : 0;
-    detail.textContent = `For ${fmt(n)} protected sessions, about $${per.toFixed(2)} per 1,000. Proposed prices; nothing is for sale yet.`;
+    detail.textContent = `For ${fmt(n)} protected sessions, about $${per.toFixed(2)} per 1,000.`;
     input.setAttribute("aria-valuetext", `${fmt(n)} sessions`);
   }
   input.addEventListener("input", update);

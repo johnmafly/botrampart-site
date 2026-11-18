@@ -10,7 +10,6 @@
 //     does not cite;
 //   - our own assumption (`basis` says where it comes from). These are the numbers to replace
 //     with measurements once the first build runs.
-// All prices are proposals; nothing is for sale.
 
 export const SOURCES = {
   "cf-workers-price": { claim: "cf-workers-price" },
@@ -105,7 +104,7 @@ export const ASSUMPTIONS = {
   rows_written_per_session: { value: 10, basis: "ours: a session's minute rollups, its token and replay rows in the site shard" },
   lake_tables: { value: 6, basis: "site: /build/inside/ (lake tables written every minute)" },
   lake_kb_per_session_month: { value: 2, basis: "ours: compressed parquet rows for one session's rollups, challenges and decisions" },
-  lake_retention_months: { value: 3, basis: "site: /build/inside/ (90 days proposed retention)" },
+  lake_retention_months: { value: 3, basis: "site: /build/inside/ (90 days retention)" },
   // Worst case for the model: every watched cohort misses the one-hour answer cache in every window.
   model_cache_misses_every_window: { value: true, basis: "ours: worst case; /meter/ says answers are cached up to an hour" },
   // We allocate the whole Workers Paid minimum to every Cloud plan, as if each were our only customer,
@@ -203,7 +202,7 @@ export function costModelYaml() {
   const out = [];
   out.push("# Cost model (pricing gate): every tier on /own/ with its price and what it costs us to serve,");
   out.push("# per month in USD. Generated from costs/model.mjs by `npm run cost-model`; the tests fail when");
-  out.push("# this block, the site's prices or the workings drift apart. All prices are proposals.");
+  out.push("# this block, the site's prices or the workings drift apart.");
   out.push("cost_model:");
   out.push("  currency: USD");
   out.push("  period: month");
