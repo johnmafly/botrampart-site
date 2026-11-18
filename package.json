@@ -9,6 +9,7 @@
     "build": "node scripts/build.mjs",
     "test": "node --test --test-concurrency=1 \"test/*.test.mjs\"",
     "bench": "node experiments/verify-bench.mjs",
-    "check-links": "node scripts/check-links.mjs"
+    "check-links": "node scripts/check-links.mjs",
+    "claims:where": "node scripts/claims-where.mjs"
   }
 }
