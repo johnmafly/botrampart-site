@@ -126,3 +126,4 @@ None from a judged round (no round submitted).
 1. Before any submit more than 30 days after 2026-11-18, re-fetch the quotes and refresh `checked` (the gate only tolerates refused links checked within 30 days).
 2. Run `greenhouse check` (preflight) when VC Joe says the CLI is ready; fix until green.
 3. Submit round 01 with `greenhouse submit` when VC Joe says so.
+- 2026-11-18, copy (r2 evidence_truth, via VC Joe): every intake non-goal that read as shipping (Vector log pack, tier 3 step-up and widgets, console editing, agent SQL/suggestions/email, Cloud billing, White-label, Enterprise/SSO, Web Bot Auth, the model acting live) now reads "not available yet", listed once at /docs/overview/#not-yet; `test/not-yet.test.mjs` keeps it so. Tables no longer force a min-width on desktop and show a scroll cue on phones.

@@ -44,7 +44,7 @@ It can, and solvers charge around $1 to $3 per thousand passes.{{c:solver-prices
 
 ## Does the AI model block anyone? {#model}
 
-No. The decision model answers typed questions about named bands and its answers become expiring fields. Your rules decide what they do, and the default policy only logs them. See [Directives](/docs/policy/#directives).
+No. The decision model answers typed questions about named bands and its answers become expiring fields. It runs in shadow mode: the answers are logged and act on nothing, and rules that act on them are [not available yet](/docs/overview/#not-yet). See [Directives](/docs/policy/#directives).
 
 ## Do I need consent for the cookie? {#consent}
 
@@ -60,7 +60,7 @@ The Community edition is free and includes every part. Paid editions sell conven
 
 ## What licence is it under? {#licence}
 
-The SDKs, the CLI and the log pack are Apache-2.0. Core, the agent and the console are AGPL-3.0, with a commercial licence in the Enterprise edition. See [Licences](/docs/architecture/#licences).
+The SDKs and the CLI are Apache-2.0. Core, the agent and the console are AGPL-3.0. A commercial licence comes with the Enterprise edition, which is [not available yet](/docs/overview/#not-yet). See [Licences](/docs/architecture/#licences).
 
 ## How does it compare with Cloudflare, DataDome or Anubis? {#compare}
 

@@ -258,3 +258,4 @@
 /docs/getting-started/#to-sdk
 /docs/getting-started/#to-policy
 /docs/getting-started/#to-self-hosting
+/docs/overview/#not-yet

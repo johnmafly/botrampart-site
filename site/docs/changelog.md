@@ -10,13 +10,14 @@ lede: Every change to this site, the guide and the spec, newest first. Each entr
 
 | Version | Date | Change |
 | --- | --- | --- |
-| `0.1.0` | 2026-11-18 | Present-tense descriptions; tier 3 step-up methods opt-in per policy; the decision model in shadow mode by default ([#10](https://github.com/johnmafly/botrampart-site/pull/10)). |
+| `0.1.0` | 2026-11-18 | Marks tier 3 step-up, the Vector log pack, console editing and rules acting on model answers as not available yet; the example policy drops its Web Bot Auth rule and step-up challenge. Present-tense descriptions; tier 3 step-up methods opt-in per policy; the decision model in shadow mode by default ([#10](https://github.com/johnmafly/botrampart-site/pull/10)). |
 | First version | 2026-11-18 | First published spec: SDK routes under `/_br` and the Core API for sync, challenges, keys, ingest, policy and decisions ([#1](https://github.com/johnmafly/botrampart-site/pull/1)). |
 
 The current spec is [spec/openapi.yaml](/spec/openapi.yaml); the [API reference](/docs/api/) is generated from it.
 
 ## 2026-11-18 {#d2026-11-18}
 
+- **What is not available yet.** Every page, the guide and the spec now mark the parts that are not available yet: the Vector log pack, tier 3 step-up methods and third-party widgets, console editing, free-form SQL, suggested policy changes and email from the agent, Cloud and its billing, the White-label and Enterprise editions, Web Bot Auth, and the decision model acting live (it runs in shadow mode). They are listed in one place in the [overview](/docs/overview/#not-yet). The example policy no longer uses a Web Bot Auth rule or a step-up challenge.
 - **Guide map and stable anchors.** `greenhouse.yaml` maps the thirteen guide sections (`docs:`), every card heading on `/docs/` and the quickstart carries an id, and the Anubis entry on [the field](/field/) cites its repository's creation date instead of a live star count ([#17](https://github.com/johnmafly/botrampart-site/pull/17)).
 - **User guide.** This guide at `/docs/`: thirteen sections with diagrams, an API reference generated from the spec, every page as Markdown, `/llms.txt` and `/llms-full.txt` ([#14](https://github.com/johnmafly/botrampart-site/pull/14)).
 - **No unpublished install commands.** The site carries an install command only for a package or image its registry has; a test checks every command against the registry ([#11](https://github.com/johnmafly/botrampart-site/pull/11), [#12](https://github.com/johnmafly/botrampart-site/pull/12)).
