@@ -164,7 +164,7 @@ A directive ([`Directive`](/docs/api/#schema-Directive)) publishes `ai.*` fields
 | `ai.attack` | 0.01 to 0.99: probability of automated abuse |
 | `ai.risk_level` | 0 to 4 |
 | `ai.intent` | `content_scraping`, `credential_stuffing`, `checkout_or_inventory_abuse`, `fake_signups`, `resource_exhaustion`, `organic_spike`, `normal` |
-| `ai.action` | `none`, `raise_pow`, `human_check`, `step_up`, `lower_budget` |
+| `ai.action` | `none`, `raise_pow`, `human_check`, `step_up` (step-up methods are not available yet), `lower_budget` |
 | `ai.confidence` | 0 to 1 |
 
 A directive matches on `asn_class`, `session_age`, `path_class` or a session's hash `sid`. Escalation needs two windows that agree; stepping down follows three calm windows.

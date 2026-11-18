@@ -20,18 +20,47 @@ if (sim && !reduce) {
   const script = lane("script");
   const clock = sim.querySelector("[data-clock]");
   const replay = sim.querySelector("[data-replay]");
+  // The shared time rail: one clock for both lanes, with each lane's challenges marked on it.
+  const STEPS = 37;
+  const syncFill = sim.querySelector("[data-sync]");
+  const syncTrack = sim.querySelector("[data-sync-track]");
+  const elapsed = sim.querySelector("[data-elapsed]");
+  const sync = (step) => {
+    syncFill.style.transform = `scaleX(${step / STEPS})`;
+    const s = step * (TICK / 1000);
+    elapsed.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+  };
+  const mark = (step, who) => {
+    const m = document.createElement("b");
+    m.className = who;
+    m.style.left = `${(step / STEPS) * 100}%`;
+    syncTrack.append(m);
+  };
 
+  // The tape is six fixed slots. A new line rewrites the slots' text from the top down, so no
+  // element ever moves: the replay causes no layout shift.
+  const slots = (l) => {
+    l.tape.textContent = "";
+    l.rows = [];
+    for (let i = 0; i < LINES; i++) {
+      const li = document.createElement("li");
+      li.append(document.createElement("span"), document.createElement("span"));
+      l.tape.append(li);
+    }
+  };
   const line = (l, text, amount, cls) => {
-    const li = document.createElement("li");
-    li.className = "new";
-    const a = document.createElement("span");
-    a.textContent = text;
-    const b = document.createElement("span");
-    b.textContent = amount;
-    b.className = cls;
-    li.append(a, b);
-    l.tape.prepend(li);
-    while (l.tape.children.length > LINES) l.tape.lastElementChild.remove();
+    l.rows.unshift([text, amount, cls]);
+    l.rows.length = Math.min(l.rows.length, LINES);
+    [...l.tape.children].forEach((li, i) => {
+      const [t = "\u00a0", a = "\u00a0", c = ""] = l.rows[i] || [];
+      li.firstChild.textContent = t;
+      li.lastChild.textContent = a;
+      li.lastChild.className = c;
+    });
+    const top = l.tape.firstElementChild;
+    top.classList.remove("new");
+    void top.offsetWidth;
+    top.classList.add("new");
   };
   const meter = (l, credits, scale) => {
     const lit = Math.round(Math.max(0, Math.min(1, credits / scale)) * l.cells.length);
@@ -49,8 +78,8 @@ if (sim && !reduce) {
 
   function run() {
     clearInterval(timer);
-    person.tape.textContent = "";
-    script.tape.textContent = "";
+    slots(person);
+    slots(script);
     person.verdict.textContent = "Browsing…";
     script.verdict.textContent = "Searching…";
     let t = Date.UTC(2026, 10, 16, 10, 12, 0);
@@ -60,6 +89,8 @@ if (sim && !reduce) {
     let scale = 300;
     let throttled = false;
     let checks = 0;
+    syncTrack.querySelectorAll("b").forEach((m) => m.remove());
+    sync(0);
     line(person, "GET /products (first visit)", "tier 0", "c");
     line(script, "GET /api/search (no cookie)", "tier 0", "c");
     meter(person, p.credits, 300);
@@ -69,8 +100,9 @@ if (sim && !reduce) {
       t += TICK;
       step += 1;
       clock.textContent = new Date(t).toISOString().slice(11, 19);
+      sync(step);
 
-      if (step === 1) { pass(p, "pow", t); line(person, "proof-of-work, unseen", "+300", "g"); }
+      if (step === 1) { pass(p, "pow", t); line(person, "proof-of-work, unseen", "+300", "g"); mark(step, "person"); }
       else {
         const req = personPlan[step % personPlan.length];
         if (req) {
@@ -92,6 +124,7 @@ if (sim && !reduce) {
           line(script, `search needs tier 1: ${r.challenge}`, "403", "x");
           scale = pass(s, "pow", t);
           line(script, "proof-of-work solved", `+${fmt(scale)}`, "g");
+          mark(step, "script");
         } else {
           let n = 0;
           let r;
@@ -103,17 +136,19 @@ if (sim && !reduce) {
             const got = pass(s, r.challenge, t);
             scale = Math.max(got, 300);
             checks += 1;
+            mark(step, "script");
             line(script, g < 3000 ? `pass ${checks}: grant halves` : "passed via paid solver", `+${fmt(got)}`, "g");
             script.verdict.textContent = `Human checks bought: ${checks}. Each buys half the last.`;
           } else if (r.action === "throttle") {
             throttled = true;
             line(script, "grants used up: throttled", "429", "x");
+            mark(step, "script stop");
             script.verdict.textContent = "Throttled: about 4 searches a minute, on the refill.";
           }
         }
       }
       meter(script, s.credits, scale);
-      if (step > 36) { clearInterval(timer); replay.hidden = false; }
+      if (step >= STEPS) { clearInterval(timer); replay.hidden = false; }
     }, SPEED);
   }
 

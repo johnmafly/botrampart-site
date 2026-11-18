@@ -66,11 +66,12 @@ claims:
   # source_title: "Everything Wrong With Anubis('s default configuration)"
   # Preceded on the page by 'It issues a challenge ONCE per-session'; the no-rate-limit part is
   # stated separately: 'It does NOT implement rate-limits'. Quote matched fetched text exactly
-  # (after whitespace collapse).
+  # (after whitespace collapse). The original host (hackerdude.tech) refused connections on
+  # 2026-11-18, so the source is its Wayback snapshot of 18 September 2026; quote re-matched there.
   - id: "anubis-throughput"
     claim: "With one challenge per session and no rate limit, increasing latency does not decrease throughput."
     where: ["/", "/docs/overview/", "/meter/"]
-    source_url: "https://hackerdude.tech/vault/Anubis/"
+    source_url: "https://web.archive.org/web/20260918205215/https://hackerdude.tech/vault/Anubis/"
     quote: "would need to wait around half a second to connect to a site, after that it can continue hammering the server with the same throughput as it would otherwise INCREASING LATENCY DOES NOT DECREASE THROUGHPUT"
     checked: "2026-11-18"
   # source_title: "ZenProxy: Residential Proxy Prices 2026 (secondary)"
