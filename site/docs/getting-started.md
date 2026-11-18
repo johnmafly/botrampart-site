@@ -59,25 +59,18 @@ Core listens on port 8787. These are the settings and secrets it starts with; [C
 | Secret `br_keys` | site keys | Signs session tokens and puzzles |
 | Secret `lake_writer` | bucket credential | Lets Core write the lake |
 
-## 2. Add the backend SDK in observe mode {#sdk}
+## 2. Mount the backend SDK in observe mode {#sdk}
 
-Mount the SDK at the root of your app so every route gets a path class by default. In `observe` mode it decides every request and logs the decision, but lets everything through.
+Mount the backend SDK at the root of your app so every route gets a path class by default, with these settings; [Configuration](/docs/configuration/#backend) explains each.
 
-```js op=syncInstance cap="server.js · Node, Express"
-import express from "express";
-import { botrampart } from "@botrampart/node";
+| Setting | Value | Meaning |
+| --- | --- | --- |
+| `site` | `"site_123"` | Your site ID |
+| `secretsFile` | `"./secrets/br_keys"` | The site keys that sign session tokens and puzzles |
+| `core` | `"http://localhost:8787"` | Core; counters sync there every 5 to 10 seconds through [`syncInstance`](/docs/api/#op-syncInstance) |
+| `mode` | `"observe"` | Decide and log every request, enforce nothing |
 
-const app = express();
-const br = botrampart({
-  site: "site_123",
-  secretsFile: "./secrets/br_keys",
-  core: "http://localhost:8787",   // counters sync here every 5 to 10 seconds
-  mode: "observe",                 // decide and log, enforce nothing
-});
-app.use(br.express());             // mounts /_br/*, verifies, charges, sets req.br
-```
-
-Fastify and Next.js use the same options; see [Integrations](/docs/integrations/#frameworks).
+It serves the [SDK routes](/docs/sdk/#routes) under `/_br` and sets `BR-Sid` and `BR-Decision` on every response, which your edge logs and strips.
 
 ## 3. Add the browser SDK {#script}
 
@@ -117,6 +110,6 @@ Switch `mode` to `"enforce"` with the default policy. Ordinary browsing stays in
 
 <!-- cards -->
 - [05 Configuration](/docs/configuration/): Every option, setting, credential and failure mode.
-- [08 SDK reference](/docs/sdk/): Per-route prices, sign-in, challenges in the browser and the request object.
+- [08 SDK reference](/docs/sdk/): The SDK routes, response headers, sign-in, challenges and signals.
 - [09 Policy reference](/docs/policy/): Path classes, budgets, rules and cohorts.
 - [10 Self-hosting](/docs/self-hosting/): Running Core and the lake in production.

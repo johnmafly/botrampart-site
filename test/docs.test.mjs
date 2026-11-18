@@ -183,7 +183,7 @@ const samples = () => pages.filter((p) => p.slug !== "api").flatMap((p) =>
 test("guide code samples that call the product name their operation", () => {
   const callsProduct = /\bbr\.[a-z]+\(|\/_br\/|\/v1\/(sync|challenge|keys|ingest|policy|decisions)|@botrampart\//;
   const all = samples();
-  assert.ok(all.length >= 25, `guide has code samples (${all.length})`);
+  assert.ok(all.length >= 20, `guide has code samples (${all.length})`);
   for (const s of all) if (callsProduct.test(s.code)) assert.ok(s.op, `${s.route}: sample calling the product lacks data-op: ${s.code.slice(0, 80)}`);
 });
 

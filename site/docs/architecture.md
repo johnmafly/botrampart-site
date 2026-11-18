@@ -11,7 +11,7 @@ lede: Each component, where it runs and what crosses each boundary. The per-requ
 | Component | Does | Runs | Licence |
 | --- | --- | --- | --- |
 | Browser SDK `@botrampart/browser` | Solves proof-of-work in a Web Worker, collects interaction counts, renders challenges, retries a request after one. Size budget: 15 kB compressed, no dependencies. | Visitor's browser, served from your origin | Apache-2.0 |
-| Backend SDK `@botrampart/node` | Issues and verifies the session token, keeps budgets and mint buckets, evaluates policy, mounts `/_br`, syncs with Core. | Inside your app process | Apache-2.0 |
+| Backend SDK | Issues and verifies the session token, keeps budgets and mint buckets, evaluates policy, mounts `/_br`, syncs with Core. | Inside your app process | Apache-2.0 |
 | Core | Challenge service, sync API, hot rollups, replay cache, policy store, state builder, decision client. | Cloudflare Workers, or one container | AGPL-3.0, commercial licence available |
 | Lake | Rollups, decisions, challenges, states, answers, directives, policy versions. | Your R2, S3, MinIO, GCS or Azure Blob | Open formats |
 | Agent | Explains decisions, sends reports, suggests policy changes for a person to approve. Slack, email, console. | One container in your infrastructure | AGPL-3.0 |

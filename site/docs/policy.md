@@ -47,7 +47,7 @@ rules:
 | `cost` | integer, 0 or more | Units each request costs; 0 for static files. |
 | `min_tier` | integer, 0 to 3 | The lowest tier that may use the class; a session below it is asked for a challenge first. |
 
-Override a class for one route in code with [`br.protect({ cost })`](/docs/sdk/#protect), or settle a response's true cost with [`BR-Cost`](/docs/sdk/#br-cost).
+Settle a response's true cost with [`BR-Cost`](/docs/sdk/#br-cost).
 
 ## Budget {#budget}
 
@@ -116,7 +116,7 @@ Rules are evaluated in order and the first match wins.
 | `pow(multiplier)` | Ask for a proof-of-work made harder by the multiplier. |
 | `throttle` | `429` with `Retry-After` until the budget refills. |
 | `block` | Refuse the request. |
-| `degrade` | Tell your app to serve a cheaper response, through `req.br.decision`. |
+| `degrade` | Tell your app to serve a cheaper response; `BR-Decision` reads `degrade`. |
 | `add_risk(n)` | Add `n` to the session's risk score. |
 
 A fallback after `||` applies when the first action cannot be served: `challenge(next_tier) || throttle` throttles once no grant is left. The compiled form is [`CompiledAction`](/docs/api/#schema-CompiledAction).

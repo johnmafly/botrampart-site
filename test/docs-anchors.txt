@@ -181,17 +181,11 @@
 /docs/api/#schema-AnswerV1
 /docs/sdk/#packages
 /docs/sdk/#backend
-/docs/sdk/#botrampart
-/docs/sdk/#adapters
-/docs/sdk/#protect
 /docs/sdk/#br-cost
 /docs/sdk/#identify
-/docs/sdk/#track
-/docs/sdk/#req-br
 /docs/sdk/#routes
 /docs/sdk/#browser
 /docs/sdk/#script-tag
-/docs/sdk/#init
 /docs/sdk/#methods
 /docs/sdk/#challenges
 /docs/sdk/#signals
@@ -245,3 +239,5 @@
 /docs/faq/#sources-h
 /docs/changelog/#spec-versions
 /docs/changelog/#d2026-11-18
+/docs/sdk/#protected
+/docs/sdk/#headers
