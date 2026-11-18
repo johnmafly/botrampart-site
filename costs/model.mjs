@@ -202,12 +202,14 @@ export function costModelYaml() {
   const out = [];
   out.push("# Cost model (pricing gate): every tier on /own/ with its price and what it costs us to serve,");
   out.push("# per month in USD. Generated from costs/model.mjs by `npm run cost-model`; the tests fail when");
-  out.push("# this block, the site's prices or the workings drift apart.");
+  out.push("# this block, the site's prices or the workings drift apart. Format: docs/package-contract.md");
+  out.push("# (Cost model) in johnmafly/greenhouse. pricing_page is all of /own/: the self-hosted editions");
+  out.push("# are under #editions and the Cloud plans under #cloud, and the gate reads only inside an anchor.");
   out.push("cost_model:");
   out.push("  currency: USD");
   out.push("  period: month");
   out.push(`  workings: ${q("costs/model.mjs")}`);
-  out.push(`  pricing_page: ${q("/own/#editions")}`);
+  out.push(`  pricing_page: ${q("/own/")}`);
   out.push("  tiers:");
   for (const t of TIERS) {
     const c = costToServe(t);
