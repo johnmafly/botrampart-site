@@ -21,6 +21,37 @@ test("greenhouse.yaml cost_model is generated from the current workings", () => 
   for (const key of ["content:", "slug:", "build:"]) assert.ok(yaml.includes(key), `greenhouse.yaml keeps ${key}`);
 });
 
+// Greenhouse's pricing gate reads only the pricing_page (and only inside its #anchor when it has
+// one), so every tier's name and price has to be in that part of the page.
+function elementById(html, id) {
+  const open = new RegExp(`<([a-z][a-z0-9]*)\\b[^>]*\\bid=["']?${id}["'\\s>]`, "i").exec(html);
+  if (!open) return null;
+  const tag = open[1].toLowerCase();
+  const re = new RegExp(`<(/?)${tag}\\b[^>]*>`, "gi");
+  re.lastIndex = open.index;
+  let depth = 0;
+  for (let m; (m = re.exec(html)); ) {
+    depth += m[1] ? -1 : 1;
+    if (depth === 0) return html.slice(open.index, re.lastIndex);
+  }
+  return html.slice(open.index);
+}
+
+test("the cost model's pricing_page shows every tier's name and price", () => {
+  const page = /^  pricing_page: "([^"]+)"$/m.exec(read("greenhouse.yaml"))?.[1];
+  assert.ok(page, "greenhouse.yaml cost_model has a pricing_page");
+  const [path, anchor] = page.split("#");
+  assert.equal(path, "/own/", "pricing_page is the /own/ page");
+  const scope = anchor ? elementById(own, anchor) : own;
+  assert.ok(scope, `#${anchor} is on /own/`);
+  const seen = text(scope);
+  for (const t of TIERS) {
+    assert.match(seen, new RegExp(`(^|[^\\p{L}\\p{N}])${t.name}($|[^\\p{L}\\p{N}])`, "iu"), `${page} names ${t.name}`);
+    const price = t.price === 0 ? /\$0(?![\d.])|\bfree\b/i : new RegExp(`\\$${t.price}(?![\\d.])`);
+    assert.match(seen, price, `${page} shows ${t.name}'s price ${t.price}`);
+  }
+});
+
 test("every edition's name and price matches /own/", () => {
   const cards = [...own.matchAll(/<div class="ed[^"]*">\s*<span class="kind">([^<]+)<\/span>\s*<h3>([^<]+)<\/h3>\s*<p class="price">([^<]+)<small>/g)]
     .map(([, kind, name, price]) => ({ kind: kind.trim().toLowerCase(), name: name.trim(), price: price.trim() }));
