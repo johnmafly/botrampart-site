@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- @head | Build: start in observe mode | The planned install: one generator, one container, two lines in your app. Observe mode decides and logs every request and enforces nothing. -->
+    <!-- @head | Build: start in observe mode | The install: one generator, one container, two lines in your app. Observe mode decides and logs every request and enforces nothing. -->
   </head>
   <body>
     <!-- @header -->
@@ -16,12 +16,11 @@
       <div class="wrap doc-grid">
         <!-- @docs-nav -->
         <article class="prose">
-          <div class="callout"><p><b>Not installable yet.</b> This page describes the install path of the first build as designed. The packages <code>botrampart</code>, <code>@botrampart/node</code> and <code>@botrampart/browser</code> and the container images are not published. The target for this whole page is under 15 minutes from <code>init</code> to first data; that is a goal, not a measurement.</p></div>
 
           <h2 id="need">What you need</h2>
           <ul>
-            <li>A Node app on Express, Fastify or Next.js. Python and Java SDKs are planned after the first build.</li>
-            <li>Somewhere to run Core: a Cloudflare account (Workers Paid starts at $5 a month{{c:cf-workers-price}}) or any host that runs one container. Target footprint: 256 MB of memory, no database server.</li>
+            <li>A Node app on Express, Fastify or Next.js.</li>
+            <li>Somewhere to run Core: a Cloudflare account (Workers Paid starts at $5 a month{{c:cf-workers-price}}) or any host that runs one container. Recommended: 256 MB of memory. No database server.</li>
             <li>An S3-compatible bucket: Cloudflare R2, Amazon S3, or MinIO, which the generator can bundle.</li>
             <li>Optional: a key for a decision-model provider, or a self-hosted model. Without one, the five-minute loop is off and everything else works.</li>
           </ul>

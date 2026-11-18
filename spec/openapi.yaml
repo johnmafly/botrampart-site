@@ -1,17 +1,16 @@
 # Build spec for BotRampart. Docs code samples (<pre><code data-op="operationId">)
 # are checked against the operationIds defined here; keep every operationId stable.
-# Source: the BotRampart architecture plan, sections 5-12 (session token, tiers,
+# Source: the BotRampart architecture, sections 5-12 (session token, tiers,
 # challenge specs, failure modes, state and answer schemas, policy file, lake
-# tables, SDK and API specs 12.1-12.7). Everything here is a design proposal.
+# tables, SDK and API specs 12.1-12.7).
 openapi: 3.1.0
 info:
   title: BotRampart API
-  version: 0.1.0-draft
-  summary: Proposed interface of BotRampart's backend SDK routes and Core API.
+  version: 0.1.0
+  summary: BotRampart's backend SDK routes and Core API.
   description: >-
-    This is the **proposed** interface of BotRampart, taken from the architecture
-    plan (sections 5 to 12). It is a design draft, not a shipped API: nothing here
-    is built yet, and names, fields and defaults may change.
+    The interface of BotRampart's backend SDK routes and Core API (architecture
+    sections 5 to 12).
 
 
     It has two groups of operations, each with its own server:
@@ -36,10 +35,9 @@ info:
     removes it.
 
 
-    **MVP scope.** Tier 3 (`step_up`) methods are planned after the MVP. Policy
-    proposals from the agent are not in the MVP. The decision model runs in shadow
-    mode in the MVP: directives carry `ai.*` fields, but the shipped default policy
-    only logs them.
+    **Defaults.** Tier 3 (`step_up`) methods are opt-in: the default policy serves
+    tiers 0 to 2. The decision model runs in shadow mode by default: directives carry
+    `ai.*` fields, and the shipped default policy only logs them.
   license:
     name: Apache-2.0 (SDK-side routes and SDKs)
     identifier: Apache-2.0
@@ -50,20 +48,20 @@ tags:
   - name: SDK routes (app origin)
     description: >-
       Mounted by the backend SDK under `/_br` on the customer's own origin
-      (plan 12.4). Called by the visitor's browser and the browser SDK. No
+      (architecture §12.4). Called by the visitor's browser and the browser SDK. No
       authentication; the session travels in the first-party cookie `__br_s`.
   - name: "Core: sync"
-    description: Instance sync between each backend SDK instance and Core (plan 12.6).
+    description: Instance sync between each backend SDK instance and Core (architecture §12.6).
   - name: "Core: challenges"
     description: >-
       Core's challenge service for the human check (tier 2) and step-up (tier 3),
-      and the public keys that verify its attestations (plan 6.4, 6.5, 12.5).
+      and the public keys that verify its attestations (architecture §6.4, 6.5, 12.5).
   - name: "Core: policy"
-    description: Versioned policy documents and simulation against recent traffic (plan 10).
+    description: Versioned policy documents and simulation against recent traffic (architecture §10).
   - name: "Core: decisions"
-    description: Recent decisions from Core's hot store, before they land in the lake (plan 11.1, 12.5).
+    description: Recent decisions from Core's hot store, before they land in the lake (architecture §11.1, 12.5).
   - name: "Core: ingest"
-    description: Edge rollups from Vector for the 5-minute loop (plan 8.3).
+    description: Edge rollups from Vector for the 5-minute loop (architecture §8.3).
 servers:
   - url: https://core.internal:8787
     description: >-
@@ -138,7 +136,7 @@ paths:
         backend SDK; for tier 2 or 3, returns the URL of Core's challenge widget.
         Calls Core? Only for tiers 2 and 3; tier 1 keeps minting when Core is down,
         while tiers 2 and 3 cannot be served then and rules that need them fall back
-        to throttle. Tier 3 (`step_up`) is planned after the MVP.
+        to throttle. Tier 3 (`step_up`) is served only when the policy enables it.
       security: []
       parameters:
         - $ref: "#/components/parameters/SessionCookie"
@@ -162,7 +160,7 @@ paths:
         - name: method
           in: query
           required: false
-          description: Preferred method for tier 2 or 3. Tier 3 methods are planned after the MVP.
+          description: Preferred method for tier 2 or 3. Tier 3 methods are served only when the policy enables them.
           schema:
             $ref: "#/components/schemas/ChallengeMethod"
       responses:
@@ -450,7 +448,7 @@ paths:
               $ref: "#/components/schemas/SyncRequest"
             examples:
               plan126:
-                summary: Sync message from plan 12.6
+                summary: Sync message from architecture §12.6
                 value:
                   instance: app-7d9f
                   policy_version: 12
@@ -472,7 +470,7 @@ paths:
                 $ref: "#/components/schemas/SyncResponse"
               examples:
                 plan126:
-                  summary: Sync reply from plan 12.6
+                  summary: Sync reply from architecture §12.6
                   value:
                     policy: null
                     directives:
@@ -516,7 +514,7 @@ paths:
       description: >-
         Serves the challenge widget, loaded by the browser in an iframe: a keyboard-
         and screen-reader-accessible checkbox for tier 2 with no puzzle. Tier 3
-        methods (step_up) are planned after the MVP, and every tier 3 configuration
+        methods (step_up) are opt-in, and every tier 3 configuration
         must offer at least one non-visual method.
       security: []
       parameters:
@@ -569,7 +567,7 @@ paths:
         Scores the interaction server-side with a short published scorecard and
         returns a pass, a fail, or "pass, and add risk". A pass carries a signed
         Ed25519 attestation, single-use and valid for 120 to 300 seconds, which the
-        browser redeems at `/_br/redeem`. Tier 3 methods are planned after the MVP.
+        browser redeems at `/_br/redeem`. Tier 3 methods are opt-in per policy.
       security: []
       parameters:
         - $ref: "#/components/parameters/ChallengeMethodPath"
@@ -592,7 +590,7 @@ paths:
                     focus_changes: 0
                     visibility_changes: 0
               thirdParty:
-                summary: Third-party widget token (tier 3, after the MVP)
+                summary: Third-party widget token (tier 3, opt-in)
                 value:
                   c: "eyJ0Ijoic3RlcF91cCJ9.c2ln"
                   provider_token: "0.provider-token-example"
@@ -780,7 +778,7 @@ paths:
             application/yaml:
               schema:
                 type: string
-                description: The policy file as YAML, as kept in Git (plan 10.1).
+                description: The policy file as YAML, as kept in Git (architecture §10.1).
               examples:
                 v12:
                   value: "version: 12\npath_classes:\n  - { name: search, match: [\"/api/search*\"], cost: 5, min_tier: 1 }\n..."
@@ -798,7 +796,7 @@ paths:
         Type-checks the draft, compiles each CEL rule to a typed condition tree and
         publishes it as a new immutable version that SDKs pick up at the next sync;
         rollback is publishing an earlier version again. Needs a role allowed to
-        publish and records who approved it; agent-written proposals are not in the MVP.
+        publish and records who approved it.
       security:
         - consoleToken: []
       requestBody:
@@ -980,8 +978,8 @@ paths:
       description: >-
         Returns a recent non-allow decision from Core's hot store by the reference the
         visitor was shown (for example `BR-7F3K2Q`), optionally with the state and the
-        model answer behind it. Older decisions are queried from the lake. In the MVP
-        the decision model runs in shadow mode, so `ai_answer_id` shows what the model
+        model answer behind it. Older decisions are queried from the lake. With the
+        default policy the decision model runs in shadow mode, so `ai_answer_id` shows what the model
         said, not what was enforced.
       security:
         - consoleToken: []
@@ -1131,7 +1129,7 @@ components:
       name: method
       in: path
       required: true
-      description: Challenge method. Only `checkbox` (tier 2) is in the MVP; tier 3 methods come after it.
+      description: Challenge method. `checkbox` is tier 2; the others are tier 3 methods, opt-in per policy.
       schema:
         $ref: "#/components/schemas/ChallengeMethod"
 
@@ -1292,7 +1290,7 @@ components:
 
   examples:
     PolicyVersion12:
-      summary: Policy version 12 from plan 10.1
+      summary: Policy version 12 from architecture §10.1
       value:
         site: site_123
         version: 12
@@ -1378,14 +1376,14 @@ components:
       examples: [9f2c4e1ab7d0]
     TierName:
       type: string
-      description: "Challenge tier by name: pow is tier 1, human tier 2, step_up tier 3 (after the MVP)."
+      description: "Challenge tier by name: pow is tier 1, human tier 2, step_up tier 3 (opt-in)."
       enum: [pow, human, step_up]
     ChallengeMethod:
       type: string
       description: >-
         Method for tier 2 (`checkbox`) or tier 3. Tier 3 methods (`image_grid`,
         `third_party`, `email_link`, `sign_in`, `passkey`, `private_access_token`)
-        are planned after the MVP; every tier 3 configuration must offer at least one
+        are opt-in per policy; every tier 3 configuration must offer at least one
         non-visual method.
       enum: [checkbox, image_grid, third_party, email_link, sign_in, passkey, private_access_token]
       examples: [checkbox]
@@ -1710,10 +1708,10 @@ components:
             visibility_changes: { type: integer, minimum: 0 }
         provider_token:
           type: string
-          description: Token from a third-party widget (tier 3, after the MVP), verified by Core.
+          description: Token from a third-party widget (tier 3), verified by Core.
         code:
           type: string
-          description: One-time code for the email method (tier 3, after the MVP).
+          description: One-time code for the email method (tier 3).
 
     HumanVerifyResult:
       type: object
@@ -1821,7 +1819,7 @@ components:
     SignalsRecord:
       type: object
       description: >-
-        Interaction record from the browser SDK (plan 12.7), one per session and per
+        Interaction record from the browser SDK (architecture §12.7), one per session and per
         challenge. `standard` collects event counts, time to first input, focus and
         visibility changes, PoW solve time, viewport size class and the automation
         flag the browser exposes; `minimal` only PoW solve time and one "any input
@@ -1938,7 +1936,7 @@ components:
     SyncRequest:
       type: object
       description: >-
-        Everything one instance aggregated since the last sync (plan 12.6). No
+        Everything one instance aggregated since the last sync (architecture §12.6). No
         per-request record leaves the app; session IDs travel only as `SidHash`.
       required: [instance, policy_version, since]
       properties:
@@ -2121,7 +2119,7 @@ components:
         Fields from loop 2's model answer, published for a cohort or session with an
         expiry of at most 60 minutes. Directives set `ai.*` fields, not actions; policy
         rules decide what to do with them. The model can raise a tier or lower a
-        budget, never block or allow-list. In the MVP the model runs in shadow mode:
+        budget, never block or allow-list. By default the model runs in shadow mode:
         directives carry `ai.*` fields but the shipped default policy only logs them.
       required: [id, match, set, expires]
       properties:
@@ -2212,7 +2210,7 @@ components:
     EdgeRollup:
       type: object
       description: >-
-        One per-minute row from Vector's reduce transform (plan 8.3), grouped by site,
+        One per-minute row from Vector's reduce transform (architecture §8.3), grouped by site,
         minute, key, prefix, path class and status class. Raw IPs, paths and the
         cookie never appear.
       required: [site, minute, key, path_class, status_class, n]
@@ -2286,7 +2284,7 @@ components:
     Policy:
       type: object
       description: >-
-        The site's policy file (plan 10.1), edited in the console or as YAML in Git.
+        The site's policy file (architecture §10.1), edited in the console or as YAML in Git.
         Every `when` is CEL text; Core type-checks it and compiles it to a typed
         condition tree (`ConditionTree`), which is what the SDKs evaluate and what
         the sync ships. Rules are first match wins. Fields: request.*, session.*,
@@ -2584,7 +2582,7 @@ components:
     Decision:
       type: object
       description: >-
-        A non-allow decision; the columns of the lake's `decisions` table (plan 11.1),
+        A non-allow decision; the columns of the lake's `decisions` table (architecture §11.1),
         plus the site and optional embedded answer and state.
       required: [ts, ref, sid_hash, action, rule_id, policy_version]
       properties:
@@ -2638,7 +2636,7 @@ components:
         ai_answer_id:
           type: [string, "null"]
           description: >-
-            AnswerV1 behind the directive that applied, if any. In the MVP the model
+            AnswerV1 behind the directive that applied, if any. By default the model
             runs in shadow mode, so this shows what the model said, not what was enforced.
         directive_id:
           type: [string, "null"]
@@ -2654,7 +2652,7 @@ components:
     StateV1:
       type: object
       description: >-
-        br.state.v1 (plan 8.6): the 5-minute state for one scope. `metrics` holds
+        br.state.v1 (architecture §8.6): the 5-minute state for one scope. `metrics` holds
         numbers kept in the lake for people and the agent; `buckets` holds the named
         bands that are the model's only input. No free-text field an attacker wrote
         ever appears.
@@ -2807,9 +2805,9 @@ components:
     AnswerV1:
       type: object
       description: >-
-        br.answer.v1 (plan 9.2): the decision model's answer to br.questions.v1 for
+        br.answer.v1 (architecture §9.2): the decision model's answer to br.questions.v1 for
         one state, with the provider's reply embedded unchanged. Answers become `ai.*`
-        fields in directives, never actions; in the MVP they run in shadow mode.
+        fields in directives, never actions; by default they run in shadow mode.
       required: [schema, answer_id, state_hash, provider, model, questions, asked_at, expires_at, cache, answers]
       properties:
         schema:

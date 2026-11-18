@@ -12,13 +12,19 @@ As of: 2026-11-18. Status: seed (package v2 redesign, rubric v2). Round: none su
 
 Response: package v2 (this redesign). See "Package v2" below.
 
+2026-11-18, on package v2's wording (relayed by VC Joe; verbatim):
+
+> "I don't like to see 'by design', 'planned', 'the proposal' around the site, it keeps reminding me it's not a real product, I need to make it look like a real product regardless what."
+
+Response: every page, the spec and the served JS rewritten in present tense as a shipping product; status hedges, the roadmap and phase tables cut. Honesty limits kept (VC Joe): no invented customers, metrics, availability, purchase or trial calls to action; `/try/` still says its traffic is simulated and that no account was created. `test/copy.test.mjs` fails the build output on any banned status phrase.
+
 ## Spend
 
-spend_usd: 36.28 · as_of: 2026-11-18 · cap $150 (provisional) = 24.2% · time: day 1 of 21 (provisional)
+spend_usd: 40.71 · as_of: 2026-11-18 · cap $150 (provisional) = 27.1% · time: day 1 of 21 (provisional)
 
 | Item | Amount | As of | Source |
 |---|---|---|---|
-| Chief Session (`882d416a-4ce7-42c5-9e99-26d0cba7894a`), v1 build, claims fixes, v2 redesign, apostrophe fix, asset fingerprinting, cost model | $29.41 | 2026-11-18 | `sessions_get(...).session.cost_usd` (read mid-turn, while writing the cost model) |
+| Chief Session (`882d416a-4ce7-42c5-9e99-26d0cba7894a`), v1 build, claims fixes, v2 redesign, apostrophe fix, asset fingerprinting, cost model, present-tense copy | $33.84 | 2026-11-18 | `sessions_get(...).session.cost_usd` (read mid-turn, while rewriting the copy) |
 | Package v1 helpers: claims verification A, claims verification B, OpenAPI spec | $1.28 + $1.87 + $1.74 = $4.89 | 2026-11-18 | `cost_usd` of each child Session |
 | Package v2 helper: QA harness (motion, CSP, axe, Lighthouse, recording scripts) | $1.98 | 2026-11-18 | `cost_usd` of child `8acf2001` |
 | Onboarding | $0.00 | 2026-11-18 | Done by VC Joe, not the Chief |
@@ -94,6 +100,7 @@ Package v1:
 - 2026-11-18, caching: fingerprinted assets only. The unversioned names are not published (nothing references them); HTML keeps Pages' `max-age=0, must-revalidate`.
 - 2026-11-18, cost model (VC Joe, for check v2's pricing gate, greenhouse#12): every tier on `/own/` is in `greenhouse.yaml` `cost_model:` with price, cost to serve, margin and cost lines. Conservative by construction: Stripe's Singapore card rate (3.4% + $0.50, above the US one), the high US software-developer wage ($103.21/h, CareerOneStop 2025) for support hours, Cloudflare's included allowances ignored and the $5 Workers minimum charged to every Cloud plan. Result: White-label $49 vs $27.97, Enterprise $799+ vs $440.51, Starter $49 vs $33.57, Growth $249 vs $88.69, Scale $999 vs $336.59; overage prices are 7-14x their marginal cost. Cloud Free costs $12.39 a site-month and is declared `below_cost` as acquisition (paused at its cap). The block's shape is ours: #12 has not defined one yet; conform when it lands.
 - 2026-11-18, Cloud Free decision (VC Joe): keep it, declared as below-cost acquisition (`below_cost: true` with its reason, paused at its cap). The pricing gate (greenhouse#12) is to pass a free tier declared below cost and fail any paid tier below cost.
+- 2026-11-18, copy (owner, via VC Joe): the site reads as a shipping product. Banned anywhere it serves: by design, in design, planned, plan to, propos*, hypothetical, concept, demo, mockup, prototype, roadmap, coming soon, not (yet) built, not for sale, for sale yet, illustrative, not a real, first build, come(s) later, ships later, architecture plan, placeholder copy. Where a fact can't be sourced the sentence is cut, not hedged. Later-phase items (Python and Java SDKs, mobile SDK, phase table, exit targets) are cut; tier 3 is described as opt-in, the decision model as shadow mode by default. The agent tool `propose_policy_change` is renamed `suggest_policy_change`; the spec version is `0.1.0`.
 - 2026-11-18, scrollable regions: the build makes every `<pre>` and `.tablewrap` a focusable region (`tabindex="0"`, `role="region"`, a unique `aria-label` from the nearest heading), so keyboard users can scroll them.
 
 ## Open findings

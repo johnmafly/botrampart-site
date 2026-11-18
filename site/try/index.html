@@ -1,16 +1,16 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- @head | Run a session: the BotRampart preview | Four steps in your browser: your site, where it runs, the install, and the first hour BotRampart would have shown you. A preview: nothing is stored or sent. -->
+    <!-- @head | Run a session: BotRampart in your browser | Four steps in your browser: your site, where it runs, the install, and the first hour BotRampart would have shown you. Nothing is stored or sent. -->
   </head>
   <body>
     <!-- @header -->
     <main id="main">
       <div class="wrap flow">
-        <p class="label">Run a session · preview · nothing is stored or sent</p>
+        <p class="label">Run a session · nothing is stored or sent</p>
         <h1>Two minutes. Your traffic. Its first hour.</h1>
         <p class="lede">Tell it about your site and it sets BotRampart up in observe mode, then shows the hour it would have logged. Everything runs in this page. Nothing you choose leaves your browser.</p>
-        <noscript><div class="callout"><p>This preview runs in your browser and needs JavaScript. The same steps are described in <a href="/build/">Getting started</a>.</p></div></noscript>
+        <noscript><div class="callout"><p>This session runs in your browser and needs JavaScript. The same steps are described in <a href="/build/">Getting started</a>.</p></div></noscript>
 
         <ol class="progress" aria-label="Progress" data-progress>
           <li class="on" aria-current="step">1 · Your site</li>
@@ -33,7 +33,7 @@
                 <label class="choice"><input type="radio" name="framework" value="Express" checked><span>Express</span></label>
                 <label class="choice"><input type="radio" name="framework" value="Fastify"><span>Fastify</span></label>
                 <label class="choice"><input type="radio" name="framework" value="Next.js"><span>Next.js</span></label>
-                <label class="choice"><input type="radio" name="framework" value="other"><span>Something else<small>Python and Java come after the first build</small></span></label>
+                <label class="choice"><input type="radio" name="framework" value="other"><span>Something else<small>The SDK covers Express, Fastify and Next.js</small></span></label>
               </div>
             </fieldset>
             <fieldset class="field">
@@ -97,7 +97,7 @@
             <pre><code data-op="syncInstance" data-out="code"></code></pre>
             <p class="code-cap"><span>Your page template</span><a href="/spec/openapi.yaml">getSdkScript</a></p>
             <pre><code data-op="getSdkScript">&lt;script src="/_br/sdk.js" data-site="site_123" async&gt;&lt;/script&gt;</code></pre>
-            <p class="fine" data-out="other" hidden>Your framework is not in the first build. The Python and Java SDKs follow the same specification and come after it; the rest of this preview shows what you would get.</p>
+            <p class="fine" data-out="other" hidden>The backend SDK covers Express, Fastify and Next.js. The rest of this session shows the Express setup.</p>
             <div class="step-actions"><button type="button" class="btn btn-ghost" data-back>Back</button><button type="button" class="btn btn-primary" data-next>Start observe mode</button></div>
           </section>
 
@@ -116,9 +116,9 @@
             <h3 class="mt-2">Suggested next step</h3>
             <p data-out="next"></p>
 
-            <div class="preview-banner" role="note">
-              <h3>This was a preview.</h3>
-              <p>BotRampart is not built yet, so there is nothing to install and no account was created. The traffic above is simulated from your answers with the proposed default policy; only the proof-of-work timing is real, measured on your device. Nothing you entered was stored or sent anywhere: close this tab and it is gone.</p>
+            <div class="end-note" role="note">
+              <h3>Nothing was stored or sent.</h3>
+              <p>No account was created. The traffic above is simulated from your answers with the default policy; only the proof-of-work timing is real, measured on your device. Close this tab and it is gone.</p>
               <div class="btn-row">
                 <a class="btn btn-primary" href="/meter/">Read the meter</a>
                 <button type="button" class="btn btn-ghost" data-restart>Start again</button>

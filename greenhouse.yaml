@@ -19,7 +19,7 @@ content:
 
 # Cost model (pricing gate): every tier on /own/ with its price and what it costs us to serve,
 # per month in USD. Generated from costs/model.mjs by `npm run cost-model`; the tests fail when
-# this block, the site's prices or the workings drift apart. All prices are proposals.
+# this block, the site's prices or the workings drift apart.
 cost_model:
   currency: USD
   period: month
@@ -223,6 +223,6 @@ cost_model:
     rows_written_per_session: { value: 10, basis: "ours: a session's minute rollups, its token and replay rows in the site shard" }
     lake_tables: { value: 6, basis: "site: /build/inside/ (lake tables written every minute)" }
     lake_kb_per_session_month: { value: 2, basis: "ours: compressed parquet rows for one session's rollups, challenges and decisions" }
-    lake_retention_months: { value: 3, basis: "site: /build/inside/ (90 days proposed retention)" }
+    lake_retention_months: { value: 3, basis: "site: /build/inside/ (90 days retention)" }
     model_cache_misses_every_window: { value: true, basis: "ours: worst case; /meter/ says answers are cached up to an hour" }
     allocate_platform_minimum_per_plan: { value: true, basis: "ours: conservative" }
