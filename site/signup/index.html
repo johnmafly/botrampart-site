@@ -1,28 +1,134 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="noindex, nofollow">
-    <title>Sign up | BotRampart</title>
+    <!-- @head | Try the preview | Walk through setting up BotRampart in observe mode and see a simulated first hour. A preview: it runs in your browser and stores nothing. -->
   </head>
   <body>
-    <header>
-      <nav aria-label="Main">
-        <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/docs/">Docs</a></li>
-        <li><a href="/pricing/">Pricing</a></li>
-        <li><a href="/signup/">Sign up</a></li>
-        </ul>
-      </nav>
-    </header>
-    <main>
-      <h1>Sign up</h1>
-      <p>A preview of signing up, through to a first-value screen. Coming in package v1. This is a preview: it asks for nothing and stores nothing.</p>
+    <!-- @header -->
+    <main id="main">
+      <div class="wrap flow">
+        <p class="eyebrow">Preview · nothing is stored or sent</p>
+        <h1 style="font-size:clamp(2rem,1.4rem + 2.4vw,3rem)">Set up BotRampart in observe mode.</h1>
+        <p class="lede" style="font-size:1.08rem">Four short steps: your site, where it runs, the install, and what the first hour would show you. Everything happens in this page. Nothing you choose leaves your browser, and nothing is saved.</p>
+        <noscript><div class="callout"><p>This preview runs in your browser and needs JavaScript. The same steps are described in <a href="/docs/getting-started/">Getting started</a>.</p></div></noscript>
+
+        <ol class="progress" aria-label="Progress" data-progress>
+          <li class="on" aria-current="step">1 · Your site</li>
+          <li>2 · Where it runs</li>
+          <li>3 · Install</li>
+          <li>4 · First hour</li>
+        </ol>
+
+        <form data-flow novalidate>
+          <section class="step" data-step="1" aria-labelledby="s1">
+            <h2 id="s1" tabindex="-1">Your site</h2>
+            <div class="field">
+              <label for="site-name">Site name</label>
+              <p class="hint">Only used to label the screens that follow.</p>
+              <input id="site-name" name="site" type="text" autocomplete="off" placeholder="shop.example.com" maxlength="60">
+            </div>
+            <fieldset class="field">
+              <legend>App framework</legend>
+              <div class="choices">
+                <label class="choice"><input type="radio" name="framework" value="Express" checked><span>Express</span></label>
+                <label class="choice"><input type="radio" name="framework" value="Fastify"><span>Fastify</span></label>
+                <label class="choice"><input type="radio" name="framework" value="Next.js"><span>Next.js</span></label>
+                <label class="choice"><input type="radio" name="framework" value="other"><span>Something else<small>Python and Java come after the first build</small></span></label>
+              </div>
+            </fieldset>
+            <fieldset class="field">
+              <legend>Requests a month</legend>
+              <div class="choices">
+                <label class="choice"><input type="radio" name="volume" value="3000000"><span>Under 5M</span></label>
+                <label class="choice"><input type="radio" name="volume" value="20000000" checked><span>5M to 50M</span></label>
+                <label class="choice"><input type="radio" name="volume" value="100000000"><span>50M to 200M</span></label>
+                <label class="choice"><input type="radio" name="volume" value="400000000"><span>Over 200M</span></label>
+              </div>
+            </fieldset>
+            <fieldset class="field">
+              <legend>What is costing you</legend>
+              <p class="hint">Pick any. The simulated hour in step 4 includes them.</p>
+              <div class="choices">
+                <label class="choice"><input type="checkbox" name="abuse" value="scraping" checked><span>Scraping search or prices</span></label>
+                <label class="choice"><input type="checkbox" name="abuse" value="stuffing"><span>Credential stuffing</span></label>
+                <label class="choice"><input type="checkbox" name="abuse" value="signups"><span>Fake sign-ups</span></label>
+                <label class="choice"><input type="checkbox" name="abuse" value="crawlers" checked><span>AI crawlers</span></label>
+              </div>
+            </fieldset>
+            <div class="step-actions"><span></span><button type="button" class="btn btn-primary" data-next>Continue</button></div>
+          </section>
+
+          <section class="step" data-step="2" aria-labelledby="s2" hidden>
+            <h2 id="s2" tabindex="-1">Where it runs</h2>
+            <p class="muted">BotRampart's SDK runs inside your app. Core, the small service it syncs with, runs wherever you choose.</p>
+            <fieldset class="field">
+              <legend>Core</legend>
+              <div class="choices">
+                <label class="choice"><input type="radio" name="core" value="cloudflare" checked><span>Cloudflare<small>Workers, about $5 a month</small></span></label>
+                <label class="choice"><input type="radio" name="core" value="docker"><span>One container<small>Any Linux host</small></span></label>
+                <label class="choice"><input type="radio" name="core" value="kubernetes"><span>Kubernetes<small>Plain manifests</small></span></label>
+              </div>
+            </fieldset>
+            <fieldset class="field">
+              <legend>Your bucket for the decision log</legend>
+              <div class="choices">
+                <label class="choice"><input type="radio" name="lake" value="R2" checked><span>Cloudflare R2</span></label>
+                <label class="choice"><input type="radio" name="lake" value="S3"><span>Amazon S3</span></label>
+                <label class="choice"><input type="radio" name="lake" value="MinIO"><span>MinIO<small>Bundled</small></span></label>
+              </div>
+            </fieldset>
+            <fieldset class="field">
+              <legend>Five-minute decision loop</legend>
+              <div class="choices">
+                <label class="choice"><input type="radio" name="model" value="off" checked><span>Off for now<small>Everything else works</small></span></label>
+                <label class="choice"><input type="radio" name="model" value="gemini"><span>Gemini Decision 1<small>Named bands leave your network</small></span></label>
+                <label class="choice"><input type="radio" name="model" value="local"><span>Self-hosted model<small>Nothing leaves</small></span></label>
+              </div>
+            </fieldset>
+            <div class="step-actions"><button type="button" class="btn btn-ghost" data-back>Back</button><button type="button" class="btn btn-primary" data-next>Continue</button></div>
+          </section>
+
+          <section class="step" data-step="3" aria-labelledby="s3" hidden>
+            <h2 id="s3" tabindex="-1">Your install</h2>
+            <p class="muted">This is what the generator would write for your answers. Two lines in your app, one script tag, and BotRampart starts in observe mode: it decides and logs every request, and enforces nothing.</p>
+            <p class="code-cap"><span>Terminal</span></p>
+            <pre><code data-out="init"></code></pre>
+            <p class="code-cap"><span data-out="file">server.js</span><a href="/spec/openapi.yaml">syncInstance</a></p>
+            <pre><code data-op="syncInstance" data-out="code"></code></pre>
+            <p class="code-cap"><span>Your page template</span><a href="/spec/openapi.yaml">getSdkScript</a></p>
+            <pre><code data-op="getSdkScript">&lt;script src="/_br/sdk.js" data-site="site_123" async&gt;&lt;/script&gt;</code></pre>
+            <p class="fine" data-out="other" hidden>Your framework is not in the first build. The Python and Java SDKs follow the same specification and come after it; the rest of this preview shows what you would get.</p>
+            <div class="step-actions"><button type="button" class="btn btn-ghost" data-back>Back</button><button type="button" class="btn btn-primary" data-next>Start observe mode</button></div>
+          </section>
+
+          <section class="step" data-step="4" aria-labelledby="s4" hidden>
+            <h2 id="s4" tabindex="-1">Your first hour, in observe mode</h2>
+            <p class="muted" data-out="intro">A simulated hour of traffic shaped like yours, run through the default policy by the same code this site uses for its examples. Nothing was enforced; this is what BotRampart would have done.</p>
+            <div class="result-grid" aria-live="polite">
+              <div><b data-out="humans">…</b><span>people's sessions that saw any challenge after the invisible one</span></div>
+              <div><b data-out="refused">…</b><span>requests from automation that would have been refused</span></div>
+              <div><b data-out="pow">…</b><span>for your own device to solve tier 1, just now</span></div>
+            </div>
+            <h3>Where the spend went</h3>
+            <div class="bars" data-out="bars"></div>
+            <h3>Ask why</h3>
+            <div class="chat" data-out="chat"></div>
+            <h3 style="margin-top:2rem">Suggested next step</h3>
+            <p data-out="next"></p>
+
+            <div class="preview-banner" role="note">
+              <h3>This was a preview.</h3>
+              <p>BotRampart is not built yet, so there is nothing to install and no account was created. The traffic above is simulated from your answers with the proposed default policy; only the proof-of-work timing is real, measured on your device. Nothing you entered was stored or sent anywhere: close this tab and it is gone.</p>
+              <div class="btn-row" style="margin-top:1rem">
+                <a class="btn btn-primary" href="/docs/how-it-works/">Read how it works</a>
+                <button type="button" class="btn btn-ghost" data-restart>Start again</button>
+              </div>
+            </div>
+          </section>
+        </form>
+      </div>
     </main>
-    <footer>
-      <p>BotRampart is a Greenhouse seed: a preview of a product that is not built yet.</p>
-    </footer>
+    <!-- @footer -->
+    <script type="module" src="/assets/signup.js"></script>
   </body>
 </html>

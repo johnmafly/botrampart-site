@@ -1,28 +1,157 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="noindex, nofollow">
-    <title>Pricing | BotRampart</title>
+    <!-- @head | Pricing | BotRampart pricing proposal: free and open source to self-host, paid editions for white-label and enterprise, and a cloud billed on protected sessions. -->
   </head>
   <body>
-    <header>
-      <nav aria-label="Main">
-        <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/docs/">Docs</a></li>
-        <li><a href="/pricing/">Pricing</a></li>
-        <li><a href="/signup/">Sign up</a></li>
-        </ul>
-      </nav>
-    </header>
-    <main>
-      <h1>Pricing</h1>
-      <p>What is free, what is paid, and how to self-host. Coming in package v1.</p>
+    <!-- @header -->
+    <main id="main">
+      <div class="page-head">
+        <div class="wrap">
+          <p class="eyebrow">Pricing · proposal</p>
+          <h1>Free to run yourself. Pay for convenience, never for the core.</h1>
+          <p class="lede">The whole product is open source and free to self-host. Paid editions sell what a company needs around it: no BotRampart mark, sign-on and audit, support, or someone else running Core. Every price on this page is a proposal to test; nothing is for sale yet.</p>
+        </div>
+      </div>
+
+      <section class="section" style="padding-top:2.5rem" aria-labelledby="editions">
+        <div class="wrap">
+          <h2 id="editions" class="visually-hidden">Editions</h2>
+          <div class="plans">
+            <div class="plan feature">
+              <p class="eyebrow">Self-hosted</p>
+              <h3>Community</h3>
+              <p class="price">Free</p>
+              <ul>
+                <li>Everything: SDKs, Core, every challenge tier, budgets, the decision loop, the agent, the console</li>
+                <li>Runs on Cloudflare, one container or Kubernetes</li>
+                <li>Your bucket, your model key</li>
+                <li>"Protected by BotRampart" on challenge pages</li>
+                <li>Apache-2.0 SDKs, AGPL-3.0 Core</li>
+              </ul>
+              <p class="avail">Ships with the first build</p>
+            </div>
+            <div class="plan">
+              <p class="eyebrow">Self-hosted</p>
+              <h3>White-label</h3>
+              <p class="price">$49 <small>a month per organisation</small></p>
+              <ul>
+                <li>The official signed build with the mark removed</li>
+                <li>Your own theme on challenge pages</li>
+                <li>Private issue tracker</li>
+                <li>Licence file that works offline</li>
+              </ul>
+              <p class="avail">Planned after the first build · price proposed</p>
+            </div>
+            <div class="plan">
+              <p class="eyebrow">Self-hosted</p>
+              <h3>Enterprise</h3>
+              <p class="price">$799 <small>a month and up</small></p>
+              <ul>
+                <li>White-label, plus single sign-on, roles and audit export</li>
+                <li>Multi-site and high-availability Core</li>
+                <li>Support with a response time</li>
+                <li>Commercial licence in place of AGPL</li>
+              </ul>
+              <p class="avail">Planned after the first build · price proposed</p>
+            </div>
+            <div class="plan">
+              <p class="eyebrow">Hosted</p>
+              <h3>Cloud</h3>
+              <p class="price">$0 <small>to start, then by protected session</small></p>
+              <ul>
+                <li>Core and the agent run for you on Cloudflare</li>
+                <li>Decision log in our bucket or yours</li>
+                <li>SDKs still run in your app: no proxy</li>
+                <li>Blocked and failed traffic never billed</li>
+              </ul>
+              <p class="avail">Planned after the first build · prices proposed</p>
+            </div>
+          </div>
+          <p class="fine" style="margin-top:1rem">Anchors for these proposals: Anubis's maker lists its unbranded build at US$50 a month;{{c:botstopper-price}} ALTCHA's self-hosted Sentinel runs €99 to €799 a month;{{c:altcha-sentinel}} Cloudflare keeps unbranded Turnstile for Enterprise customers.{{c:cf-offlabel}}</p>
+        </div>
+      </section>
+
+      <section class="section alt" aria-labelledby="cloud">
+        <div class="wrap">
+          <div class="section-head">
+            <p class="eyebrow">Cloud</p>
+            <div>
+              <h2 id="cloud">A fixed fee plus protected sessions.</h2>
+              <p>A protected session is one that passed the invisible proof-of-work in the month, counted once however many requests it makes. Bots that never pass are never billed, so an attack cannot inflate your invoice and a false positive is never counted as a success.</p>
+            </div>
+          </div>
+          <div class="tablewrap">
+            <table>
+              <thead><tr><th scope="col">Plan (proposal)</th><th scope="col">Monthly fee</th><th scope="col">Protected sessions included</th><th scope="col">Then, per 1,000</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Free</th><td class="n">$0</td><td class="n">10,000</td><td>Paused at the cap; your site keeps running on the SDK's last policy</td></tr>
+                <tr><th scope="row">Starter</th><td class="n">$49</td><td class="n">100,000</td><td class="n">$0.30</td></tr>
+                <tr><th scope="row">Growth</th><td class="n">$249</td><td class="n">1,000,000</td><td class="n">$0.20</td></tr>
+                <tr><th scope="row">Scale</th><td class="n">$999</td><td class="n">10,000,000</td><td class="n">$0.10</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="calc" data-calc>
+            <div>
+              <label for="sessions">Protected sessions a month</label>
+              <input id="sessions" type="range" min="0" max="100" step="1" value="64" aria-describedby="sessions-out">
+              <p class="fine">Rough guide: a site with 100 million requests a month might see about 5 million sessions (our planning assumption, not a measurement).</p>
+            </div>
+            <div>
+              <output id="sessions-out" for="sessions" aria-live="polite">Growth: $249 a month</output>
+              <p class="fine" data-calc-detail>For 1,000,000 protected sessions. Proposed prices.</p>
+            </div>
+          </div>
+          <h3 style="margin-top:2.5rem">Guard-rails on the invoice</h3>
+          <ul class="ticks" style="max-width:48rem">
+            <li><b>Never billed:</b> blocked, failed and unchallenged traffic. ALTCHA's cloud makes the same promise for blocked requests.{{c:altcha-sentinel}}</li>
+            <li><b>Hard cap you set,</b> above which Cloud stops counting instead of charging.</li>
+            <li><b>Attack waiver.</b> Sessions during a declared attack are not billed. Fingerprint does not bill API calls made while a site is under attack.{{c:fp-attack}}</li>
+            <li><b>Recomputable.</b> The count is a shipped query over your own decision log, so you can check the invoice without asking us.</li>
+          </ul>
+          <h3 style="margin-top:2.5rem">Why not charge per bot stopped?</h3>
+          <p style="max-width:48rem">Because BotRampart does not decide who is a bot, and because a vendor that detects, judges and bills its own unit has every reason to count high. Per-event pricing also turns an attack into a bill: AWS WAF bills Targeted Bot Control at $10 per million requests and charges for a challenge whether or not the visitor attempts it.{{c:aws-bot-control}} "Requests mitigated" will appear on your invoice as a number worth knowing, not as the price.</p>
+          <p style="max-width:48rem">For scale: reCAPTCHA charges $1 per 1,000 assessments above 100,000 a month,{{c:recaptcha-bill}} hCaptcha Pro is $99 to $139 a month,{{c:hcaptcha-pro}} IntelliFend lists $749 a month for 20 million requests{{c:if-price}} and DataDome's entry plan $3,830 a month.{{c:dd-entry-price}} These products bill different units, so the figures place BotRampart's proposal in the market rather than compare like with like.</p>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="selfhost">
+        <div class="wrap split">
+          <div>
+            <p class="eyebrow">Self-hosting, for real</p>
+            <h2 id="selfhost">What it costs to run it yourself.</h2>
+            <p>Core's load follows sessions and sync ticks, not requests, because your app verifies every request itself. Our estimate for a site with 100 million requests a month:</p>
+            <div class="tablewrap">
+              <table>
+                <thead><tr><th scope="col">Item</th><th scope="col">Estimate a month</th></tr></thead>
+                <tbody>
+                  <tr><th scope="row">Core on Cloudflare Workers Paid{{c:cf-workers-price}}</th><td class="n">about $5 to $10</td></tr>
+                  <tr><th scope="row">Decision log on R2, at $0.015 per GB-month{{c:r2-price}}</th><td class="n">a few dollars</td></tr>
+                  <tr><th scope="row">Decision model, one site-level call every 5 minutes{{c:gd-price}}</th><td class="n">about $2</td></tr>
+                  <tr><th scope="row">Decision model, also per abnormal cohort (up to 50)</th><td class="n">up to about $80</td></tr>
+                  <tr><th scope="row">Or one container on a host you already run</th><td class="n">your hardware</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="fine">Our arithmetic from list prices and stated assumptions (10 app instances syncing every 10 seconds, 1,800 tokens a model call); replace them with your own measurements.</p>
+          </div>
+          <div>
+            <p class="eyebrow">Promises</p>
+            <h2>The open core stays whole.</h2>
+            <ul class="ticks">
+              <li><b>Nothing shipped is taken back.</b> A feature that reaches the Community edition stays there.</li>
+              <li><b>The Community edition builds with the commercial directory deleted,</b> and the test suite checks it.</li>
+              <li><b>The mark is a trademark, not a licence trap.</b> You may fork and remove it; you may not ship the fork under the BotRampart name. The paid build is the convenient, supported way to remove it.</li>
+              <li><b>No telemetry required for billing.</b> Self-hosted editions are priced per organisation and site, with an offline licence file.</li>
+            </ul>
+            <div class="btn-row"><a class="btn btn-primary" href="/signup/">Walk through the preview</a><a class="btn btn-ghost" href="/docs/getting-started/">Self-hosting guide</a></div>
+          </div>
+        </div>
+        <div class="wrap"><!-- @sources --></div>
+      </section>
     </main>
-    <footer>
-      <p>BotRampart is a Greenhouse seed: a preview of a product that is not built yet.</p>
-    </footer>
+    <!-- @footer -->
+    <script src="/assets/pricing.js" defer></script>
   </body>
 </html>

@@ -1,10 +1,2891 @@
 # Build spec for BotRampart. Docs code samples (<pre><code data-op="operationId">)
-# are checked against the operationIds defined here. Operations arrive with package v1.
+# are checked against the operationIds defined here; keep every operationId stable.
+# Source: the BotRampart architecture plan, sections 5-12 (session token, tiers,
+# challenge specs, failure modes, state and answer schemas, policy file, lake
+# tables, SDK and API specs 12.1-12.7). Everything here is a design proposal.
 openapi: 3.1.0
 info:
   title: BotRampart API
-  version: 0.0.0
+  version: 0.1.0-draft
+  summary: Proposed interface of BotRampart's backend SDK routes and Core API.
   description: >-
-    Interface of BotRampart's backend SDK routes and Core API, as specified in the
-    architecture plan (sections 12.4 and 12.5). Coming in package v1.
-paths: {}
+    This is the **proposed** interface of BotRampart, taken from the architecture
+    plan (sections 5 to 12). It is a design draft, not a shipped API: nothing here
+    is built yet, and names, fields and defaults may change.
+
+
+    It has two groups of operations, each with its own server:
+
+
+    * **SDK routes (app origin)**: routes the backend SDK mounts under `/_br` on the
+    customer's own origin. The visitor's browser calls them; they need no
+    credentials beyond the first-party session cookie `__br_s`. The SDKs and these
+    routes are open source under Apache-2.0.
+
+    * **Core API**: the service the backend SDK syncs with, the challenge service
+    for tiers 2 and 3, policy and decision lookups for the console, agent and CLI,
+    and the ingest endpoint for Vector.
+
+
+    **Protected routes.** Any route the backend SDK protects can answer with a
+    challenge (`ChallengeRequired`, 403) or a throttle (`Throttled`, 429) instead of
+    the application's response, both marked with the header `BR-Challenge: v1`.
+    Every response that passes through the SDK carries `BR-Sid` and `BR-Decision`
+    for the access log; the edge logs and strips them. The application may set
+    `BR-Cost` on its own response to true up the request's cost; the SDK reads and
+    removes it.
+
+
+    **MVP scope.** Tier 3 (`step_up`) methods are planned after the MVP. Policy
+    proposals from the agent are not in the MVP. The decision model runs in shadow
+    mode in the MVP: directives carry `ai.*` fields, but the shipped default policy
+    only logs them.
+  license:
+    name: Apache-2.0 (SDK-side routes and SDKs)
+    identifier: Apache-2.0
+  contact:
+    name: BotRampart
+    url: https://botrampart.example.com
+tags:
+  - name: SDK routes (app origin)
+    description: >-
+      Mounted by the backend SDK under `/_br` on the customer's own origin
+      (plan 12.4). Called by the visitor's browser and the browser SDK. No
+      authentication; the session travels in the first-party cookie `__br_s`.
+  - name: "Core: sync"
+    description: Instance sync between each backend SDK instance and Core (plan 12.6).
+  - name: "Core: challenges"
+    description: >-
+      Core's challenge service for the human check (tier 2) and step-up (tier 3),
+      and the public keys that verify its attestations (plan 6.4, 6.5, 12.5).
+  - name: "Core: policy"
+    description: Versioned policy documents and simulation against recent traffic (plan 10).
+  - name: "Core: decisions"
+    description: Recent decisions from Core's hot store, before they land in the lake (plan 11.1, 12.5).
+  - name: "Core: ingest"
+    description: Edge rollups from Vector for the 5-minute loop (plan 8.3).
+servers:
+  - url: https://core.internal:8787
+    description: >-
+      BotRampart Core (default). Each path sets its own server: SDK routes run on the
+      customer's app origin, Core routes on Core.
+security: []
+
+paths:
+  # ---------------------------------------------------------------------------
+  # (a) Routes the backend SDK mounts on the customer's origin
+  # ---------------------------------------------------------------------------
+  /_br/sdk.js:
+    servers: &appOrigin
+      - url: https://app.example.com
+        description: The customer's own application origin; the backend SDK mounts `/_br/*` here.
+    get:
+      operationId: getSdkScript
+      tags: [SDK routes (app origin)]
+      summary: Serve the browser SDK
+      description: >-
+        Returns the browser SDK as a versioned, immutable, cacheable file served from
+        the customer's own origin, with a published integrity hash and a signed
+        release; there is no per-request code generation. Calls Core? No.
+      security: []
+      parameters:
+        - name: v
+          in: query
+          required: false
+          description: Pin a specific SDK version; defaults to the version bundled with the backend SDK.
+          schema:
+            type: string
+            examples: ["1.0.0"]
+      responses:
+        "200":
+          description: The browser SDK script.
+          headers:
+            Cache-Control:
+              description: Long-lived immutable caching for versioned URLs.
+              schema:
+                type: string
+                examples: ["public, max-age=31536000, immutable"]
+            ETag:
+              schema:
+                type: string
+                examples: ['"sdk-1.0.0"']
+            BR-SDK-Integrity:
+              description: Subresource Integrity hash of this file, matching the published release.
+              schema:
+                type: string
+                examples: ["sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/uxy9rx7HNQlGYl1kPzQho1wx4JwY8wC"]
+          content:
+            application/javascript:
+              schema:
+                type: string
+              examples:
+                script:
+                  summary: Minified SDK (truncated)
+                  value: "/*! @botrampart/browser 1.0.0 | Apache-2.0 */!function(){...}();"
+        "304":
+          description: Not modified.
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+  /_br/challenge:
+    servers: *appOrigin
+    get:
+      operationId: getChallenge
+      tags: [SDK routes (app origin)]
+      summary: Get a challenge for the current session
+      description: >-
+        For tier 1, returns a signed proof-of-work puzzle issued offline by the
+        backend SDK; for tier 2 or 3, returns the URL of Core's challenge widget.
+        Calls Core? Only for tiers 2 and 3; tier 1 keeps minting when Core is down,
+        while tiers 2 and 3 cannot be served then and rules that need them fall back
+        to throttle. Tier 3 (`step_up`) is planned after the MVP.
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/SessionCookie"
+        - name: c
+          in: query
+          required: false
+          description: Opaque signed challenge descriptor, as given in the `url` of a challenge response.
+          schema:
+            type: string
+            examples: ["eyJ0IjoiaHVtYW4iLCJyIjoiQlItN0YzSzJRIn0.Zm9v"]
+        - name: tier
+          in: query
+          required: false
+          description: >-
+            Tier to challenge for. Defaults to `pow` for a session below tier 1,
+            otherwise to what `c` names. `next` asks for the next tier above the one held.
+          schema:
+            type: string
+            enum: [pow, human, step_up, next]
+            default: pow
+        - name: method
+          in: query
+          required: false
+          description: Preferred method for tier 2 or 3. Tier 3 methods are planned after the MVP.
+          schema:
+            $ref: "#/components/schemas/ChallengeMethod"
+      responses:
+        "200":
+          description: A proof-of-work puzzle (tier 1) or a widget to load (tiers 2 and 3).
+          headers:
+            BR-Sid:
+              $ref: "#/components/headers/BR-Sid"
+            Set-Cookie:
+              $ref: "#/components/headers/Set-Cookie"
+            Cache-Control:
+              schema:
+                type: string
+                const: no-store
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/PowChallenge"
+                  - $ref: "#/components/schemas/WidgetChallenge"
+                discriminator:
+                  propertyName: type
+                  mapping:
+                    pow: "#/components/schemas/PowChallenge"
+                    widget: "#/components/schemas/WidgetChallenge"
+              examples:
+                pow:
+                  summary: Tier 1 proof-of-work puzzle
+                  value:
+                    type: pow
+                    v: 1
+                    id: ch_9Qx2LmT4vB7sK1aZ
+                    alg: pbkdf2-sha256
+                    params: { iterations: 1000 }
+                    salt: "V2hhdCBhIG5pY2Ugc2FsdA"
+                    puzzles: 16
+                    difficulty: 12
+                    multiplier: 1
+                    expires: 1794823620
+                    kid: s3
+                    sig: "q7R0dW1iU2lnbmF0dXJlT2ZDaGFsbGVuZ2U"
+                widget:
+                  summary: Tier 2 human check widget
+                  value:
+                    type: widget
+                    tier: human
+                    method: checkbox
+                    url: "https://challenge.example.com/v1/challenge/checkbox?c=eyJ0IjoiaHVtYW4ifQ.c2ln"
+                    c: "eyJ0IjoiaHVtYW4ifQ.c2ln"
+                    expires: 1794823800
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "429":
+          $ref: "#/components/responses/Throttled"
+        "503":
+          description: >-
+            Core is unreachable, so a tier 2 or 3 widget cannot be served. Rules that
+            need it fall back to throttle; tier 1 still works.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+              examples:
+                coreDown:
+                  value:
+                    type: https://botrampart.example.com/problems/core-unreachable
+                    title: Challenge service unavailable
+                    status: 503
+                    detail: Tier 2 and 3 challenges need Core, which is not reachable.
+
+  /_br/redeem:
+    servers: *appOrigin
+    post:
+      operationId: redeemChallenge
+      tags: [SDK routes (app origin)]
+      summary: Redeem a solved challenge
+      description: >-
+        Verifies a proof-of-work solution (one HMAC check plus one derivation) or a
+        Core attestation (Ed25519, with Core's public key), then sets or renews the
+        `__br_s` cookie and grants credit, halving on each repeat of the same tier
+        within 24 hours. Calls Core? No.
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/SessionCookie"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "#/components/schemas/PowSolution"
+                - $ref: "#/components/schemas/AttestationRedemption"
+              discriminator:
+                propertyName: type
+                mapping:
+                  pow: "#/components/schemas/PowSolution"
+                  attestation: "#/components/schemas/AttestationRedemption"
+            examples:
+              pow:
+                summary: Proof-of-work solution
+                value:
+                  type: pow
+                  challenge:
+                    type: pow
+                    v: 1
+                    id: ch_9Qx2LmT4vB7sK1aZ
+                    alg: pbkdf2-sha256
+                    params: { iterations: 1000 }
+                    salt: "V2hhdCBhIG5pY2Ugc2FsdA"
+                    puzzles: 16
+                    difficulty: 12
+                    multiplier: 1
+                    expires: 1794823620
+                    kid: s3
+                    sig: "q7R0dW1iU2lnbmF0dXJlT2ZDaGFsbGVuZ2U"
+                  solutions: [4121, 977, 15003, 2210, 6431, 88, 3190, 7712, 504, 12880, 2999, 431, 9027, 1666, 5120, 7003]
+                  solve_ms: 286
+              attestation:
+                summary: Core attestation from the human check
+                value:
+                  type: attestation
+                  attestation: "bra1.eyJ2IjoxLCJ0aWVyIjoyfQ.c2lnbmF0dXJl"
+      responses:
+        "200":
+          description: Accepted. The cookie is set or renewed and credit granted.
+          headers:
+            Set-Cookie:
+              $ref: "#/components/headers/Set-Cookie"
+            BR-Sid:
+              $ref: "#/components/headers/BR-Sid"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RedeemResult"
+              examples:
+                powPassed:
+                  value:
+                    ok: true
+                    tier: 1
+                    granted: 300
+                    credits: 300
+                    expires_at: 1794825300
+                    session_ends_at: 1795428300
+                    tier_expires_at: {}
+                humanPassed:
+                  value:
+                    ok: true
+                    tier: 2
+                    granted: 3000
+                    credits: 3012
+                    expires_at: 1794825300
+                    session_ends_at: 1795428300
+                    tier_expires_at: { "2": 1794827100 }
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "403":
+          $ref: "#/components/responses/ChallengeRequired"
+        "429":
+          $ref: "#/components/responses/Throttled"
+
+  /_br/signals:
+    servers: *appOrigin
+    post:
+      operationId: postSignals
+      tags: [SDK routes (app origin)]
+      summary: Send the session's interaction record
+      description: >-
+        Receives the browser SDK's compact interaction record for the session (one per
+        session and per challenge): event counts and timings only, never fingerprints,
+        coordinates or keystroke content. Checked server-side and forwarded to Core at
+        the next sync. Calls Core? No, forwarded at sync.
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/SessionCookie"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignalsRecord"
+            examples:
+              standard:
+                summary: Standard mode
+                value:
+                  mode: standard
+                  context: session
+                  input_events: 37
+                  pointer_events: 22
+                  touch_events: 0
+                  key_events: 15
+                  first_input_ms: 1840
+                  focus_changes: 2
+                  visibility_changes: 1
+                  pow_solve_ms: 286
+                  viewport_class: desktop
+                  automation_flag: false
+              minimal:
+                summary: Minimal mode
+                value:
+                  mode: minimal
+                  context: session
+                  pow_solve_ms: 286
+                  any_input: true
+      responses:
+        "204":
+          description: Recorded.
+          headers:
+            BR-Sid:
+              $ref: "#/components/headers/BR-Sid"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "413":
+          description: Record too large; signals are capped at a few hundred bytes.
+        "429":
+          $ref: "#/components/responses/Throttled"
+
+  /_br/status:
+    servers: *appOrigin
+    get:
+      operationId: getSessionStatus
+      tags: [SDK routes (app origin)]
+      summary: Get the current tier and expiry
+      description: >-
+        Returns the tier the session currently holds and when its token expires, for
+        the browser SDK's `br.status()`. The HttpOnly cookie itself is never readable
+        by page scripts. Calls Core? No.
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/SessionCookie"
+      responses:
+        "200":
+          description: Current session status.
+          headers:
+            BR-Sid:
+              $ref: "#/components/headers/BR-Sid"
+            Set-Cookie:
+              $ref: "#/components/headers/Set-Cookie"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionStatus"
+              examples:
+                tier1:
+                  value:
+                    tier: 1
+                    expiresAt: 1794825300
+                    sessionEndsAt: 1795428300
+                    tierExpiresAt: {}
+                    identified: false
+                noSession:
+                  summary: No valid cookie yet
+                  value:
+                    tier: 0
+                    expiresAt: null
+                    sessionEndsAt: null
+                    tierExpiresAt: {}
+                    identified: false
+        "429":
+          $ref: "#/components/responses/Throttled"
+
+  # ---------------------------------------------------------------------------
+  # (b) Core API
+  # ---------------------------------------------------------------------------
+  /v1/sync:
+    servers: &core
+      - url: https://core.internal:8787
+        description: BotRampart Core, self-hosted inside the customer's network.
+    post:
+      operationId: syncInstance
+      tags: ["Core: sync"]
+      summary: Sync one backend SDK instance with Core
+      description: >-
+        Each backend SDK instance sends its per-session counters, decision events,
+        mint counts and forwarded signals, and receives any new compiled policy,
+        directives, revocations, mint pressure and cross-instance spend. If Core is
+        unreachable the SDK keeps enforcing the last synced policy, tokens keep
+        verifying and directives expire on their own timers.
+      security:
+        - instanceKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SyncRequest"
+            examples:
+              plan126:
+                summary: Sync message from plan 12.6
+                value:
+                  instance: app-7d9f
+                  policy_version: 12
+                  since: 1794823500
+                  sessions:
+                    - { sid: 7c1e09a4b2d3, uid: 9f2c4e1ab7d0, path_class: search, n: 41, cost: 205, s2xx: 40, s4xx: 1, s5xx: 0, tier: 1, credits: 12 }
+                  events:
+                    - { ts: 1794823561, type: decision, ref: BR-7F3K2Q, action: challenge, tier: human, rule: over-budget }
+                  mint:
+                    - { key: "prefix:203.0.113.0/24", n: 14 }
+                  signals:
+                    - { sid: 7c1e09a4b2d3, mode: standard, context: session, input_events: 0, first_input_ms: null, automation_flag: false }
+      responses:
+        "200":
+          description: What the instance must apply until the next sync.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncResponse"
+              examples:
+                plan126:
+                  summary: Sync reply from plan 12.6
+                  value:
+                    policy: null
+                    directives:
+                      - id: d_01JD7KQ3M8
+                        match: { asn_class: hosting, session_age: under_10m, path_class: search }
+                        set:
+                          ai.attack: 0.96
+                          ai.risk_level: 3
+                          ai.intent: content_scraping
+                          ai.action: human_check
+                          ai.confidence: 0.64
+                        answer: a_01JD7KQ2ZP
+                        expires: 1794827400
+                    revoked: [a41b77c2d9e0]
+                    mint_pressure:
+                      - { key: "prefix:203.0.113.0/24", multiplier: 4 }
+                    spent:
+                      - { sid: 7c1e09a4b2d3, total: 1240 }
+                    next_sync_ms: 5000
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          description: Sync too frequent; wait `Retry-After` seconds.
+          headers:
+            Retry-After:
+              $ref: "#/components/headers/Retry-After"
+
+  /v1/challenge/{method}:
+    servers: &coreChallenge
+      - url: https://core.internal:8787
+        description: >-
+          BotRampart Core. Browsers reach the challenge service through a public host
+          for Core's challenge service, or proxied from the customer's origin in
+          self-hosted mode.
+    get:
+      operationId: getHumanChallenge
+      tags: ["Core: challenges"]
+      summary: Serve a human check or step-up widget
+      description: >-
+        Serves the challenge widget, loaded by the browser in an iframe: a keyboard-
+        and screen-reader-accessible checkbox for tier 2 with no puzzle. Tier 3
+        methods (step_up) are planned after the MVP, and every tier 3 configuration
+        must offer at least one non-visual method.
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/ChallengeMethodPath"
+        - name: c
+          in: query
+          required: true
+          description: Signed challenge context issued by the backend SDK's `/_br/challenge`.
+          schema:
+            type: string
+            examples: ["eyJ0IjoiaHVtYW4ifQ.c2ln"]
+        - name: locale
+          in: query
+          required: false
+          schema:
+            type: string
+            default: auto
+            examples: [auto, en, de]
+        - name: theme
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [auto, light, dark]
+            default: auto
+      responses:
+        "200":
+          description: The widget page.
+          content:
+            text/html:
+              schema:
+                type: string
+              examples:
+                checkbox:
+                  value: "<!doctype html><html lang=\"en\"><body><label><input type=\"checkbox\"> I am human</label>...</body></html>"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "410":
+          description: The challenge context has expired; ask `/_br/challenge` for a new one.
+
+  /v1/challenge/{method}/verify:
+    servers: *coreChallenge
+    post:
+      operationId: verifyHumanChallenge
+      tags: ["Core: challenges"]
+      summary: Score a human check or step-up and return an attestation
+      description: >-
+        Scores the interaction server-side with a short published scorecard and
+        returns a pass, a fail, or "pass, and add risk". A pass carries a signed
+        Ed25519 attestation, single-use and valid for 120 to 300 seconds, which the
+        browser redeems at `/_br/redeem`. Tier 3 methods are planned after the MVP.
+      security: []
+      parameters:
+        - $ref: "#/components/parameters/ChallengeMethodPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HumanVerifyRequest"
+            examples:
+              checkbox:
+                value:
+                  c: "eyJ0IjoiaHVtYW4ifQ.c2ln"
+                  interaction:
+                    render_to_action_ms: 1830
+                    pointer_samples: 42
+                    pointer_path: curved
+                    touch_events: 0
+                    key_events: 0
+                    focus_changes: 0
+                    visibility_changes: 0
+              thirdParty:
+                summary: Third-party widget token (tier 3, after the MVP)
+                value:
+                  c: "eyJ0Ijoic3RlcF91cCJ9.c2ln"
+                  provider_token: "0.provider-token-example"
+      responses:
+        "200":
+          description: The verdict, with an attestation on a pass.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HumanVerifyResult"
+              examples:
+                pass:
+                  value:
+                    result: pass
+                    add_risk: 0
+                    attestation: "bra1.eyJ2IjoxLCJ0aWVyIjoyfQ.c2lnbmF0dXJl"
+                    claims:
+                      v: 1
+                      jti: at_5Rk2Vx81Lq
+                      kid: core-ed25519-2026-11
+                      site: site_123
+                      sid_hash: 7c1e09a4b2d3
+                      tier: 2
+                      method: checkbox
+                      result: pass
+                      add_risk: 0
+                      iat: 1794823570
+                      exp: 1794823870
+                fail:
+                  value:
+                    result: fail
+                    add_risk: 0
+                    attestation: null
+                    claims: null
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "410":
+          description: The challenge context has expired or was already used.
+        "429":
+          $ref: "#/components/responses/Throttled"
+
+  /v1/keys:
+    servers: *core
+    get:
+      operationId: getKeys
+      tags: ["Core: challenges"]
+      summary: Get Core's public keys
+      description: >-
+        Returns the Ed25519 public keys that verify Core attestations (and, if the
+        site opts in, Core-signed session tokens). Cacheable; two keys are valid at
+        once during rotation, with 60 seconds of clock tolerance.
+      security: []
+      responses:
+        "200":
+          description: Current key set.
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                examples: ["public, max-age=3600"]
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/KeySet"
+              examples:
+                rotation:
+                  value:
+                    keys:
+                      - { kid: core-ed25519-2026-11, kty: OKP, crv: Ed25519, alg: EdDSA, use: sig, x: "11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo", nbf: 1793491200 }
+                      - { kid: core-ed25519-2026-10, kty: OKP, crv: Ed25519, alg: EdDSA, use: sig, x: "dGhpcyBpcyBhbiBleGFtcGxlIGtleSBvbmx5IDEyMzQ", nbf: 1790812800, exp: 1794096000 }
+        "429":
+          description: Too many requests; keys are cacheable, so fetch them at most once per `Cache-Control` period.
+          headers:
+            Retry-After:
+              $ref: "#/components/headers/Retry-After"
+
+  /v1/ingest/rollups:
+    servers: *core
+    post:
+      operationId: ingestRollups
+      tags: ["Core: ingest"]
+      summary: Ingest per-minute edge rollups from Vector
+      description: >-
+        Receives a copy of Vector's per-minute rollups (by session or network prefix,
+        path class and status class) for the 5-minute state builder; the lake copy
+        goes straight to object storage. Delivery is at-least-once, so Core
+        de-duplicates on the group key.
+      security:
+        - ingestKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              maxItems: 10000
+              items:
+                $ref: "#/components/schemas/EdgeRollup"
+            examples:
+              batch:
+                value:
+                  - site: site_123
+                    minute: "2026-11-16T10:05"
+                    key: 7c1e09a4b2d3
+                    prefix: 203.0.113.0/24
+                    path_class: search
+                    status_class: 2xx
+                    n: 41
+                    bytes: 287400
+                    upstream_ms: 3690.5
+                    br_decision: allow
+                  - site: site_123
+                    minute: "2026-11-16T10:05"
+                    key: "anon:198.51.100.0/24"
+                    prefix: 198.51.100.0/24
+                    path_class: general
+                    status_class: 4xx
+                    n: 120
+                    bytes: 36000
+                    upstream_ms: 240.0
+                    br_decision: ""
+          application/x-ndjson:
+            schema:
+              type: string
+              description: One EdgeRollup JSON object per line.
+            examples:
+              ndjson:
+                value: "{\"site\":\"site_123\",\"minute\":\"2026-11-16T10:05\",\"key\":\"7c1e09a4b2d3\",\"prefix\":\"203.0.113.0/24\",\"path_class\":\"search\",\"status_class\":\"2xx\",\"n\":41,\"bytes\":287400,\"upstream_ms\":3690.5}\n"
+      responses:
+        "202":
+          description: Accepted for the next state window.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [accepted]
+                properties:
+                  accepted:
+                    type: integer
+                    description: Rows accepted.
+                  duplicates:
+                    type: integer
+                    description: Rows ignored as already received.
+              examples:
+                ok:
+                  value: { accepted: 2, duplicates: 0 }
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "413":
+          description: Batch too large.
+
+  /v1/policy:
+    servers: *core
+    get:
+      operationId: getPolicy
+      tags: ["Core: policy"]
+      summary: Get the current or a specific policy version
+      description: >-
+        Returns a published, immutable policy version with its CEL rule text and the
+        compiled condition trees the SDKs evaluate. Defaults to the version currently
+        enforced.
+      security:
+        - consoleToken: []
+      parameters:
+        - name: version
+          in: query
+          required: false
+          description: Policy version number; omit for the current one.
+          schema:
+            type: integer
+            minimum: 1
+            examples: [12]
+      responses:
+        "200":
+          description: The policy version.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PolicyVersion"
+              examples:
+                v12:
+                  $ref: "#/components/examples/PolicyVersion12"
+            application/yaml:
+              schema:
+                type: string
+                description: The policy file as YAML, as kept in Git (plan 10.1).
+              examples:
+                v12:
+                  value: "version: 12\npath_classes:\n  - { name: search, match: [\"/api/search*\"], cost: 5, min_tier: 1 }\n..."
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      operationId: putPolicy
+      tags: ["Core: policy"]
+      summary: Publish a new policy version
+      description: >-
+        Type-checks the draft, compiles each CEL rule to a typed condition tree and
+        publishes it as a new immutable version that SDKs pick up at the next sync;
+        rollback is publishing an earlier version again. Needs a role allowed to
+        publish and records who approved it; agent-written proposals are not in the MVP.
+      security:
+        - consoleToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PolicyPublishRequest"
+            examples:
+              publish:
+                value:
+                  base_version: 12
+                  comment: Raise search cost from 5 to 6 after the agent's cost suggestion.
+                  approved_by: ops@example.com
+                  policy:
+                    path_classes:
+                      - { name: static, match: ["/assets/*", "*.css", "*.js", "*.png"], cost: 0, min_tier: 0 }
+                      - { name: general, match: ["/*"], cost: 1, min_tier: 0 }
+                      - { name: search, match: ["/api/search*"], cost: 6, min_tier: 1 }
+                    budget: { refill_per_min: 20, burst: 300, provisional: 30, grants: { pow: 300, human: 3000, step_up: 6000 }, grant_decay: 0.5, identified_multiplier: 3, account_ceiling_per_hour: 20000, max_concurrent: 6 }
+                    mint: { ip: 20, prefix: 60, asn: baseline_x5, ja4: baseline_x5 }
+                    risk_score:
+                      - { when: "session.debt_ratio >= 1", add: 2 }
+                    rules:
+                      - { id: over-budget, when: "session.credits < request.cost", then: "challenge(next_tier) || throttle" }
+                      - { id: default, when: "true", then: allow }
+      responses:
+        "201":
+          description: Published.
+          headers:
+            Location:
+              schema:
+                type: string
+                examples: ["/v1/policy?version=13"]
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PolicyVersion"
+              examples:
+                v13:
+                  value:
+                    site: site_123
+                    version: 13
+                    parent_version: 12
+                    published_at: "2026-11-16T11:02:00Z"
+                    published_by: ops@example.com
+                    approved_by: ops@example.com
+                    comment: Raise search cost from 5 to 6 after the agent's cost suggestion.
+                    checksum: "sha256:0a91c4d2e7"
+                    policy:
+                      version: 13
+                      path_classes:
+                        - { name: search, match: ["/api/search*"], cost: 6, min_tier: 1 }
+                      budget: { refill_per_min: 20, burst: 300, provisional: 30, grants: { pow: 300, human: 3000, step_up: 6000 }, grant_decay: 0.5, identified_multiplier: 3, account_ceiling_per_hour: 20000, max_concurrent: 6 }
+                      mint: { ip: 20, prefix: 60, asn: baseline_x5, ja4: baseline_x5 }
+                      risk_score: []
+                      rules:
+                        - { id: default, when: "true", then: allow }
+                    compiled:
+                      rules:
+                        - { id: default, tree: { const: true }, then: { action: allow } }
+                      risk_score: []
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          description: "`base_version` is no longer current; fetch the latest and rebase the draft."
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+              examples:
+                stale:
+                  value:
+                    type: https://botrampart.example.com/problems/stale-policy
+                    title: Policy changed since your draft
+                    status: 409
+                    detail: Current version is 13, draft was based on 12.
+        "422":
+          description: The policy does not type-check or a CEL expression does not compile.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+              examples:
+                badCel:
+                  value:
+                    type: https://botrampart.example.com/problems/policy-invalid
+                    title: Policy does not compile
+                    status: 422
+                    detail: "rules[3].when: unknown field session.credit (did you mean session.credits?)"
+
+  /v1/policy/simulate:
+    servers: *core
+    post:
+      operationId: simulatePolicy
+      tags: ["Core: policy"]
+      summary: Simulate a draft policy against recent traffic
+      description: >-
+        Replays a draft policy (or an existing version) against the last 24 hours of
+        rollups with the same evaluator the SDKs use, and compares it with the version
+        currently enforced, for example "would have challenged 1.2% of sessions
+        against 0.4% today, none of them signed in". Read-only; nothing is published.
+      security:
+        - consoleToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SimulationRequest"
+            examples:
+              draft:
+                value:
+                  against_version: 12
+                  window: { from: "2026-11-15T11:00:00Z", to: "2026-11-16T11:00:00Z" }
+                  policy:
+                    path_classes:
+                      - { name: search, match: ["/api/search*"], cost: 6, min_tier: 1 }
+                    budget: { refill_per_min: 20, burst: 300, provisional: 30, grants: { pow: 300, human: 3000, step_up: 6000 }, grant_decay: 0.5, identified_multiplier: 3, account_ceiling_per_hour: 20000, max_concurrent: 6 }
+                    mint: { ip: 20, prefix: 60, asn: baseline_x5, ja4: baseline_x5 }
+                    risk_score: []
+                    rules:
+                      - { id: default, when: "true", then: allow }
+      responses:
+        "200":
+          description: Simulation result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SimulationResult"
+              examples:
+                result:
+                  value:
+                    window: { from: "2026-11-15T11:00:00Z", to: "2026-11-16T11:00:00Z" }
+                    current_version: 12
+                    sessions_evaluated: 184220
+                    requests_evaluated: 3920114
+                    challenged_share_current: 0.004
+                    challenged_share_draft: 0.012
+                    blocked_share_current: 0.0011
+                    blocked_share_draft: 0.0011
+                    throttled_share_current: 0.0003
+                    throttled_share_draft: 0.0005
+                    signed_in_affected: 0
+                    rule_matches:
+                      - { rule_id: over-budget, current: 737, draft: 2211 }
+                      - { rule_id: not-a-browser, current: 203, draft: 203 }
+                    summary: Would have challenged 1.2% of sessions against 0.4% today, none of them signed in.
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          description: The draft does not type-check.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+              examples:
+                badCel:
+                  value:
+                    type: https://botrampart.example.com/problems/policy-invalid
+                    title: Policy does not compile
+                    status: 422
+                    detail: "rules[0].when: expected bool, got int"
+
+  /v1/decisions/{ref}:
+    servers: *core
+    get:
+      operationId: getDecision
+      tags: ["Core: decisions"]
+      summary: Look up a decision by its reference
+      description: >-
+        Returns a recent non-allow decision from Core's hot store by the reference the
+        visitor was shown (for example `BR-7F3K2Q`), optionally with the state and the
+        model answer behind it. Older decisions are queried from the lake. In the MVP
+        the decision model runs in shadow mode, so `ai_answer_id` shows what the model
+        said, not what was enforced.
+      security:
+        - consoleToken: []
+      parameters:
+        - name: ref
+          in: path
+          required: true
+          description: Decision reference shown to the visitor.
+          schema:
+            type: string
+            pattern: "^BR-[0-9A-Z]{6}$"
+            examples: [BR-7F3K2Q]
+        - name: include
+          in: query
+          required: false
+          description: Embed the linked model answer and/or the state it was asked about.
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [answer, state]
+      responses:
+        "200":
+          description: The decision.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Decision"
+              examples:
+                overBudget:
+                  summary: Plan 11.4's example, with the answer embedded
+                  value:
+                    site: site_123
+                    ts: "2026-11-16T10:12:41Z"
+                    ref: BR-7F3K2Q
+                    sid_hash: 7c1e09a4b2d3
+                    uid_hash: 9f2c4e1ab7d0
+                    action: challenge
+                    tier: human
+                    rule_id: over-budget
+                    policy_version: 12
+                    risk_score: 1
+                    risk_parts:
+                      - { when: "session.network_changes_1h >= 5", add: 0 }
+                      - { when: "net.mint_pressure", add: 1 }
+                    credits: 3
+                    cost: 5
+                    path_class: search
+                    path: /api/search
+                    ai_answer_id: null
+                    directive_id: null
+                    outcome: passed
+                withAnswer:
+                  summary: A decision under an AI directive (shadow mode logs it)
+                  value:
+                    site: site_123
+                    ts: "2026-11-16T10:14:03Z"
+                    ref: BR-K2M8Q1
+                    sid_hash: 3b9d02c1e477
+                    uid_hash: null
+                    action: log
+                    tier: null
+                    rule_id: ai-escalation
+                    policy_version: 12
+                    risk_score: 4
+                    risk_parts:
+                      - { when: "signals.no_input_after_30_requests", add: 2 }
+                      - { when: "net.mint_pressure", add: 2 }
+                    credits: 140
+                    cost: 5
+                    path_class: search
+                    path: /api/search
+                    ai_answer_id: a_01JD7KQ2ZP
+                    directive_id: d_01JD7KQ3M8
+                    outcome: served
+                    ai_answer:
+                      schema: br.answer.v1
+                      answer_id: a_01JD7KQ2ZP
+                      state_hash: "sha256:5f0c9a1e"
+                      provider: gemini
+                      model: gemini-decision-1
+                      questions: br.questions.v1
+                      asked_at: "2026-11-16T10:10:02Z"
+                      expires_at: "2026-11-16T11:10:02Z"
+                      cache: miss
+                      answers:
+                        attack: { type: noul, noul: 0.96, confidence: 0.96 }
+                        risk_level: { type: score, score: 3.1, confidence: 0.58 }
+                        intent: { type: choice, choice: content_scraping, confidence: 0.88 }
+                        action: { type: choice, choice: human_check, confidence: 0.64 }
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Not in the hot store; query the lake's `decisions` table instead.
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+              examples:
+                notHot:
+                  value:
+                    type: https://botrampart.example.com/problems/decision-not-found
+                    title: Decision not in the hot store
+                    status: 404
+                    detail: BR-7F3K2Q is older than the hot store; query decisions in the lake.
+
+components:
+  securitySchemes:
+    instanceKey:
+      type: http
+      scheme: bearer
+      description: >-
+        Per-instance credential for `/v1/sync`, issued to each backend SDK deployment
+        and stored with the site secrets (for example `/run/secrets/br_keys`).
+    consoleToken:
+      type: http
+      scheme: bearer
+      description: >-
+        Bearer token for the console, agent and CLI. Role-scoped: reading policy and
+        decisions needs a viewer role, publishing a policy an admin role. The agent
+        inherits the asking person's role.
+    ingestKey:
+      type: http
+      scheme: bearer
+      description: Bearer key for Vector's HTTP sink to `/v1/ingest/rollups`.
+
+  parameters:
+    SessionCookie:
+      name: __br_s
+      in: cookie
+      required: false
+      description: >-
+        The session token `br1.<payload>.<signature>`, set HttpOnly by the backend SDK;
+        see `SessionTokenPayload`. Absent on first contact.
+      schema:
+        type: string
+        pattern: "^br1\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"
+        contentMediaType: application/json
+        contentSchema:
+          $ref: "#/components/schemas/SessionTokenPayload"
+        examples: ["br1.eyJ2IjoxLCJzaWQiOiJrM0p2OXMwUXhUMm1BN2NSMXVZYjV3In0.c2lnbmF0dXJl"]
+    ChallengeMethodPath:
+      name: method
+      in: path
+      required: true
+      description: Challenge method. Only `checkbox` (tier 2) is in the MVP; tier 3 methods come after it.
+      schema:
+        $ref: "#/components/schemas/ChallengeMethod"
+
+  headers:
+    BR-Challenge:
+      description: Marks a BotRampart challenge or throttle response; the browser SDK's `autoRetry` keys on it.
+      schema:
+        type: string
+        const: v1
+    BR-Sid:
+      description: >-
+        First 12 hex characters of SHA-256(sid), never the session ID itself. Set on
+        every response that passes through the SDK; the edge logs it and strips it.
+      schema:
+        type: string
+        pattern: "^[0-9a-f]{12}$"
+        examples: [7c1e09a4b2d3]
+    BR-Decision:
+      description: The SDK's decision for this request; logged by the edge and stripped before the response leaves.
+      schema:
+        type: string
+        enum: [allow, log, "challenge:pow", "challenge:human", "challenge:step_up", throttle, block, degrade]
+        examples: [allow]
+    BR-Cost:
+      description: >-
+        Optional true-up set by the application on its own response: the request's
+        actual cost in units. The SDK charges the difference from the path class cost
+        and removes the header.
+      schema:
+        type: integer
+        minimum: 0
+        examples: [12]
+    Retry-After:
+      description: Seconds until the session's budget has refilled enough to retry.
+      schema:
+        type: integer
+        minimum: 1
+        examples: [30]
+    Set-Cookie:
+      description: >-
+        Sets or renews the session token, once half its 30-minute life has passed.
+        Not set on responses marked publicly cacheable.
+      schema:
+        type: string
+        examples: ["__br_s=br1.eyJ2IjoxfQ.c2ln; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=604800"]
+
+  responses:
+    ChallengeRequired:
+      description: >-
+        403 from any protected route: the session must pass a challenge first. Page
+        navigations get a small HTML interstitial that loads the same challenge and
+        shows the reference; API calls get this JSON body.
+      headers:
+        BR-Challenge:
+          $ref: "#/components/headers/BR-Challenge"
+        BR-Sid:
+          $ref: "#/components/headers/BR-Sid"
+        BR-Decision:
+          $ref: "#/components/headers/BR-Decision"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ChallengeBody"
+          examples:
+            human:
+              value:
+                botrampart: { v: 1, action: challenge, tier: human, ref: BR-7F3K2Q, url: "/_br/challenge?c=eyJ0IjoiaHVtYW4ifQ.c2ln", retry: true }
+        text/html:
+          schema:
+            type: string
+          examples:
+            interstitial:
+              value: "<!doctype html><html><body><p>Checking your browser. Reference BR-7F3K2Q.</p><small>Protected by BotRampart</small></body></html>"
+    Throttled:
+      description: >-
+        429 from any protected route or from minting: the budget is used up, or a
+        network minted too many sessions. Retry after `Retry-After` seconds.
+      headers:
+        BR-Challenge:
+          $ref: "#/components/headers/BR-Challenge"
+        BR-Sid:
+          $ref: "#/components/headers/BR-Sid"
+        BR-Decision:
+          $ref: "#/components/headers/BR-Decision"
+        Retry-After:
+          $ref: "#/components/headers/Retry-After"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ChallengeBody"
+          examples:
+            throttle:
+              value:
+                botrampart: { v: 1, action: throttle, ref: BR-Q8W3N5, retry: false, retry_after: 30 }
+    ProtectedRouteResponse:
+      description: >-
+        Headers on any application response that passes through the backend SDK.
+        Documented here for completeness; the body is the application's own.
+      headers:
+        BR-Sid:
+          $ref: "#/components/headers/BR-Sid"
+        BR-Decision:
+          $ref: "#/components/headers/BR-Decision"
+        BR-Cost:
+          $ref: "#/components/headers/BR-Cost"
+        Set-Cookie:
+          $ref: "#/components/headers/Set-Cookie"
+    BadRequest:
+      description: The request is malformed or fails validation.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          examples:
+            invalid:
+              value:
+                type: https://botrampart.example.com/problems/invalid-request
+                title: Invalid request
+                status: 400
+                detail: "solutions: expected 16 items, got 15"
+    Unauthorized:
+      description: Missing or invalid credential.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          examples:
+            noToken:
+              value:
+                type: https://botrampart.example.com/problems/unauthorized
+                title: Unauthorized
+                status: 401
+    Forbidden:
+      description: The credential's role does not allow this operation.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          examples:
+            role:
+              value:
+                type: https://botrampart.example.com/problems/forbidden
+                title: Role not allowed
+                status: 403
+                detail: Publishing a policy needs the admin role.
+    NotFound:
+      description: Not found.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+          examples:
+            missing:
+              value:
+                type: https://botrampart.example.com/problems/not-found
+                title: Not found
+                status: 404
+
+  examples:
+    PolicyVersion12:
+      summary: Policy version 12 from plan 10.1
+      value:
+        site: site_123
+        version: 12
+        parent_version: 11
+        published_at: "2026-11-10T09:00:00Z"
+        published_by: ops@example.com
+        approved_by: ops@example.com
+        comment: Add ai-escalation rule (logs only while the model is in shadow mode).
+        checksum: "sha256:5d1e7a90bc"
+        policy:
+          version: 12
+          path_classes:
+            - { name: static, match: ["/assets/*", "*.css", "*.js", "*.png"], cost: 0, min_tier: 0 }
+            - { name: general, match: ["/*"], cost: 1, min_tier: 0 }
+            - { name: search, match: ["/api/search*"], cost: 5, min_tier: 1 }
+            - { name: login, match: ["POST /login", "POST /api/session"], cost: 10, min_tier: 1 }
+            - { name: checkout, match: ["/api/checkout*"], cost: 20, min_tier: 1 }
+          budget: { refill_per_min: 20, burst: 300, provisional: 30, grants: { pow: 300, human: 3000, step_up: 6000 }, grant_decay: 0.5, identified_multiplier: 3, account_ceiling_per_hour: 20000, max_concurrent: 6 }
+          mint: { ip: 20, prefix: 60, asn: baseline_x5, ja4: baseline_x5 }
+          risk_score:
+            - { when: "session.debt_ratio >= 1", add: 2 }
+            - { when: "signals.automation_flag", add: 4 }
+            - { when: "signals.no_input_after_30_requests", add: 2 }
+            - { when: "signals.pow_ms_implausible", add: 1 }
+            - { when: "net.mint_pressure", add: 2 }
+            - { when: "session.network_changes_1h >= 5", add: 2 }
+            - { when: "ai.attack >= 0.9", add_field: ai.risk_level }
+          rules:
+            - { id: verified-bots, when: "net.verified_bot in ['search_engine', 'monitoring']", then: allow }
+            - { id: signed-agents, when: "request.web_bot_auth.valid", then: "allow(budget: agent)" }
+            - { id: not-a-browser, when: "!ua.is_browser || ua.browser_age_years > 3", then: block }
+            - { id: risk-5, when: "risk.score >= 5", then: "challenge(step_up)" }
+            - { id: ai-escalation, when: "ai.attack >= 0.9 && ai.confidence >= 0.7 && request.path_class in ['search', 'login']", then: "challenge(human)", mode: log }
+            - { id: over-budget, when: "session.credits < request.cost", then: "challenge(next_tier) || throttle" }
+            - { id: default, when: "true", then: allow }
+        compiled:
+          risk_score:
+            - { tree: { field: session.debt_ratio, op: ">=", value: 1 }, add: 2 }
+          rules:
+            - id: not-a-browser
+              tree:
+                any:
+                  - { not: { field: ua.is_browser, op: "==", value: true } }
+                  - { field: ua.browser_age_years, op: ">", value: 3 }
+              then: { action: block }
+            - id: over-budget
+              tree: { field: session.credits, op: "<", ref: request.cost }
+              then: { action: challenge, challenge: next_tier, fallback: throttle }
+            - { id: default, tree: { const: true }, then: { action: allow } }
+
+  schemas:
+    # --- Shared ------------------------------------------------------------
+    Problem:
+      type: object
+      description: RFC 9457 problem details.
+      required: [type, title, status]
+      properties:
+        type: { type: string, format: uri }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }
+        instance: { type: string }
+      examples:
+        - type: https://botrampart.example.com/problems/invalid-request
+          title: Invalid request
+          status: 400
+    UnixTime:
+      type: integer
+      description: Unix time in seconds.
+      minimum: 0
+      examples: [1794823500]
+    SidHash:
+      type: string
+      description: First 12 hex characters of SHA-256(sid). Never the session ID or cookie value.
+      pattern: "^[0-9a-f]{12}$"
+      examples: [7c1e09a4b2d3]
+    UidHash:
+      type: [string, "null"]
+      description: >-
+        Keyed hash HMAC-SHA256(site_uid_key, login ID) of the customer's login ID,
+        truncated; the login ID never leaves the customer's infrastructure in clear.
+        Pseudonymised personal data.
+      examples: [9f2c4e1ab7d0]
+    TierName:
+      type: string
+      description: "Challenge tier by name: pow is tier 1, human tier 2, step_up tier 3 (after the MVP)."
+      enum: [pow, human, step_up]
+    ChallengeMethod:
+      type: string
+      description: >-
+        Method for tier 2 (`checkbox`) or tier 3. Tier 3 methods (`image_grid`,
+        `third_party`, `email_link`, `sign_in`, `passkey`, `private_access_token`)
+        are planned after the MVP; every tier 3 configuration must offer at least one
+        non-visual method.
+      enum: [checkbox, image_grid, third_party, email_link, sign_in, passkey, private_access_token]
+      examples: [checkbox]
+    PathClassName:
+      type: string
+      description: Name of a path class from the site's policy.
+      examples: [search]
+
+    # --- Session token and challenges -------------------------------------
+    SessionTokenPayload:
+      type: object
+      description: >-
+        Base64url JSON payload of the `__br_s` cookie `br1.<payload>.<signature>`,
+        where signature = HMAC-SHA256(site_secret[kid], "br1." + payload). Optionally
+        Ed25519-signed by Core instead, at one Core call per new session. Token lives
+        30 minutes, renewed on use after half its life, inside a session of at most 7 days.
+      required: [v, sid, iat, exp, ses, tier, kid]
+      properties:
+        v:
+          type: integer
+          const: 1
+        sid:
+          type: string
+          description: 128 random bits, base64url; the only identifier.
+          pattern: "^[A-Za-z0-9_-]{22}$"
+          examples: [k3Jv9s0QxT2mA7cR1uYb5w]
+        iat:
+          $ref: "#/components/schemas/UnixTime"
+        exp:
+          description: Token expiry, 30 minutes after issue.
+          $ref: "#/components/schemas/UnixTime"
+        ses:
+          description: Session end, at most 7 days after the session began.
+          $ref: "#/components/schemas/UnixTime"
+        tier:
+          type: integer
+          description: Highest tier currently held (0 provisional, 1 proof-of-work, 2 human, 3 step-up).
+          minimum: 0
+          maximum: 3
+        tx:
+          type: object
+          description: Expiry of each tier above 1, keyed by tier number.
+          propertyNames:
+            enum: ["2", "3"]
+          additionalProperties:
+            $ref: "#/components/schemas/UnixTime"
+          examples: [{ "2": 1794827100 }]
+        bind:
+          type: object
+          description: >-
+            Soft binding. A mismatch does not block; it drops the session to tier 0
+            and asks for a new proof-of-work.
+          properties:
+            ua:
+              type: string
+              description: Browser family and major version.
+              examples: [chrome-131]
+            net:
+              type: string
+              description: Network ASN.
+              examples: [AS64512]
+        uid:
+          description: Optional keyed hash of the customer's login ID, set by `br.identify`.
+          $ref: "#/components/schemas/UidHash"
+        kid:
+          type: string
+          description: Signing key id, for rotation; two keys are accepted at once.
+          examples: [s3]
+      examples:
+        - v: 1
+          sid: k3Jv9s0QxT2mA7cR1uYb5w
+          iat: 1794823500
+          exp: 1794825300
+          ses: 1795428300
+          tier: 1
+          tx: { "2": 1794827100 }
+          bind: { ua: chrome-131, net: AS64512 }
+          uid: 9f2c4e1ab7d0
+          kid: s3
+
+    PowChallenge:
+      type: object
+      description: >-
+        Tier 1 proof-of-work, issued offline by the backend SDK and signed with the
+        site secret (ALTCHA-style deterministic mode). 16 to 50 small puzzles rather
+        than one large one. Expires in 120 s, bound to the network prefix and browser
+        family; its salt is single-use in a replay cache. Difficulty is set by the
+        server from risk, never from what the client says.
+      required: [type, v, id, alg, salt, puzzles, difficulty, multiplier, expires, kid, sig]
+      properties:
+        type:
+          type: string
+          const: pow
+        v:
+          type: integer
+          const: 1
+        id:
+          type: string
+          description: Challenge id.
+          examples: [ch_9Qx2LmT4vB7sK1aZ]
+        alg:
+          type: string
+          description: >-
+            Key-derivation puzzle. PBKDF2 through the browser's native crypto,
+            Argon2id through WebAssembly where memory allows, plain SHA-256 as fallback.
+          enum: [pbkdf2-sha256, argon2id, sha256]
+        params:
+          type: object
+          description: Algorithm parameters.
+          properties:
+            iterations:
+              type: integer
+              description: PBKDF2 iterations.
+              minimum: 1
+            memory_kib:
+              type: integer
+              description: Argon2id memory cost.
+              minimum: 8
+            time_cost:
+              type: integer
+              description: Argon2id passes.
+              minimum: 1
+          examples: [{ iterations: 1000 }]
+        salt:
+          type: string
+          description: Single-use salt, base64url.
+          examples: ["V2hhdCBhIG5pY2Ugc2FsdA"]
+        puzzles:
+          type: integer
+          description: Number of independent small puzzles; the browser SDK shows progress after 1 second.
+          minimum: 16
+          maximum: 50
+          examples: [16]
+        difficulty:
+          type: integer
+          description: >-
+            Leading zero bits each puzzle's derived hash must have, tuned so the base
+            target is a 300 ms median on a mid-range phone before the multiplier.
+          minimum: 1
+          maximum: 32
+          examples: [12]
+        multiplier:
+          type: number
+          description: Work multiplier from mint pressure and directives, 1 to 10.
+          minimum: 1
+          maximum: 10
+          examples: [1, 4]
+        expires:
+          description: Expiry, 120 s after issue.
+          $ref: "#/components/schemas/UnixTime"
+        kid:
+          type: string
+          description: Site secret key id used for `sig`.
+          examples: [s3]
+        sig:
+          type: string
+          description: HMAC-SHA256 over the other fields and the bound prefix and browser family, base64url.
+          examples: ["q7R0dW1iU2lnbmF0dXJlT2ZDaGFsbGVuZ2U"]
+      examples:
+        - type: pow
+          v: 1
+          id: ch_9Qx2LmT4vB7sK1aZ
+          alg: argon2id
+          params: { memory_kib: 16384, time_cost: 1 }
+          salt: "V2hhdCBhIG5pY2Ugc2FsdA"
+          puzzles: 32
+          difficulty: 10
+          multiplier: 4
+          expires: 1794823620
+          kid: s3
+          sig: "q7R0dW1iU2lnbmF0dXJlT2ZDaGFsbGVuZ2U"
+
+    WidgetChallenge:
+      type: object
+      description: Tier 2 or 3 challenge served by Core's challenge service in an iframe.
+      required: [type, tier, method, url, c, expires]
+      properties:
+        type:
+          type: string
+          const: widget
+        tier:
+          type: string
+          enum: [human, step_up]
+        method:
+          $ref: "#/components/schemas/ChallengeMethod"
+        url:
+          type: string
+          format: uri-reference
+          description: Widget URL (`getHumanChallenge`) to load in an iframe.
+        c:
+          type: string
+          description: Signed challenge context.
+        expires:
+          $ref: "#/components/schemas/UnixTime"
+      examples:
+        - type: widget
+          tier: human
+          method: checkbox
+          url: "https://challenge.example.com/v1/challenge/checkbox?c=eyJ0IjoiaHVtYW4ifQ.c2ln"
+          c: "eyJ0IjoiaHVtYW4ifQ.c2ln"
+          expires: 1794823800
+
+    PowSolution:
+      type: object
+      description: >-
+        A solved tier 1 challenge. The challenge is echoed back so verification stays
+        stateless apart from the replay cache.
+      required: [type, challenge, solutions]
+      properties:
+        type:
+          type: string
+          const: pow
+        challenge:
+          $ref: "#/components/schemas/PowChallenge"
+        solutions:
+          type: array
+          description: One nonce per puzzle, in order.
+          minItems: 16
+          maxItems: 50
+          items:
+            type: integer
+            minimum: 0
+        solve_ms:
+          type: integer
+          description: Wall time to solve, in milliseconds; implausible values add risk.
+          minimum: 0
+          examples: [286]
+
+    AttestationRedemption:
+      type: object
+      description: A Core attestation from `verifyHumanChallenge`, redeemed for tier 2 or 3 credit.
+      required: [type, attestation]
+      properties:
+        type:
+          type: string
+          const: attestation
+        attestation:
+          type: string
+          description: Compact attestation `bra1.<payload>.<Ed25519 signature>`.
+          pattern: "^bra1\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"
+          examples: ["bra1.eyJ2IjoxLCJ0aWVyIjoyfQ.c2lnbmF0dXJl"]
+
+    Attestation:
+      type: object
+      description: >-
+        Claims of a Core attestation, signed with Ed25519 (`GET /v1/keys`). Single-use
+        (`jti` is kept in a replay cache) and valid for 120 to 300 seconds.
+      required: [v, jti, kid, site, sid_hash, tier, method, result, iat, exp]
+      properties:
+        v:
+          type: integer
+          const: 1
+        jti:
+          type: string
+          description: Single-use id.
+          examples: [at_5Rk2Vx81Lq]
+        kid:
+          type: string
+          description: Core signing key id.
+          examples: [core-ed25519-2026-11]
+        site:
+          type: string
+          examples: [site_123]
+        sid_hash:
+          $ref: "#/components/schemas/SidHash"
+        tier:
+          type: integer
+          enum: [2, 3]
+        method:
+          $ref: "#/components/schemas/ChallengeMethod"
+        result:
+          type: string
+          description: Only passing results are attested.
+          enum: [pass, pass_add_risk]
+        add_risk:
+          type: integer
+          description: Risk points to add to the session when `result` is `pass_add_risk`.
+          minimum: 0
+          maximum: 10
+        iat:
+          $ref: "#/components/schemas/UnixTime"
+        exp:
+          description: 120 to 300 seconds after `iat`.
+          $ref: "#/components/schemas/UnixTime"
+      examples:
+        - v: 1
+          jti: at_5Rk2Vx81Lq
+          kid: core-ed25519-2026-11
+          site: site_123
+          sid_hash: 7c1e09a4b2d3
+          tier: 2
+          method: checkbox
+          result: pass
+          add_risk: 0
+          iat: 1794823570
+          exp: 1794823870
+
+    HumanVerifyRequest:
+      type: object
+      description: Interaction captured by the widget, or a provider token for a third-party widget.
+      required: [c]
+      properties:
+        c:
+          type: string
+          description: Signed challenge context from the widget URL.
+        interaction:
+          type: object
+          description: >-
+            How the pointer reached the box, touch and key events, time from render
+            to action, focus and visibility changes. No coordinates leave the widget
+            beyond this summary.
+          properties:
+            render_to_action_ms: { type: integer, minimum: 0 }
+            pointer_samples: { type: integer, minimum: 0 }
+            pointer_path:
+              type: string
+              description: Shape class of the pointer path; a straight line is suspicious.
+              enum: [none, straight, curved, jittered]
+            touch_events: { type: integer, minimum: 0 }
+            key_events: { type: integer, minimum: 0 }
+            focus_changes: { type: integer, minimum: 0 }
+            visibility_changes: { type: integer, minimum: 0 }
+        provider_token:
+          type: string
+          description: Token from a third-party widget (tier 3, after the MVP), verified by Core.
+        code:
+          type: string
+          description: One-time code for the email method (tier 3, after the MVP).
+
+    HumanVerifyResult:
+      type: object
+      required: [result, attestation]
+      properties:
+        result:
+          type: string
+          enum: [pass, fail, pass_add_risk]
+        add_risk:
+          type: integer
+          minimum: 0
+          maximum: 10
+        attestation:
+          type: [string, "null"]
+          description: Compact signed attestation to redeem at `/_br/redeem`; null on fail.
+        claims:
+          description: Decoded claims of `attestation`, for convenience; null on fail.
+          oneOf:
+            - $ref: "#/components/schemas/Attestation"
+            - type: "null"
+
+    RedeemResult:
+      type: object
+      required: [ok, tier, granted, credits, expires_at]
+      properties:
+        ok:
+          type: boolean
+          const: true
+        tier:
+          type: integer
+          description: Highest tier now held.
+          minimum: 0
+          maximum: 3
+        granted:
+          type: integer
+          description: >-
+            Credit granted for this pass: 300 / 3,000 / 6,000 by default for pow /
+            human / step_up, times grant_decay (0.5) per repeat of the tier within 24 h.
+          minimum: 0
+        credits:
+          type: integer
+          description: Session credits after the grant.
+        expires_at:
+          description: Token expiry.
+          $ref: "#/components/schemas/UnixTime"
+        session_ends_at:
+          $ref: "#/components/schemas/UnixTime"
+        tier_expires_at:
+          type: object
+          description: Expiry of each tier above 1, keyed by tier number.
+          additionalProperties:
+            $ref: "#/components/schemas/UnixTime"
+        add_risk:
+          type: integer
+          description: Risk added by a `pass_add_risk` attestation.
+          minimum: 0
+      examples:
+        - ok: true
+          tier: 1
+          granted: 300
+          credits: 300
+          expires_at: 1794825300
+          session_ends_at: 1795428300
+          tier_expires_at: {}
+
+    ChallengeBody:
+      type: object
+      description: >-
+        JSON body of a challenge or throttle response from any protected route
+        (header `BR-Challenge: v1`). The reference is shown to the visitor so support
+        can look it up with `getDecision`.
+      required: [botrampart]
+      properties:
+        botrampart:
+          type: object
+          required: [v, action, ref]
+          properties:
+            v:
+              type: integer
+              const: 1
+            action:
+              type: string
+              enum: [challenge, throttle, block]
+            tier:
+              $ref: "#/components/schemas/TierName"
+            ref:
+              type: string
+              pattern: "^BR-[0-9A-Z]{6}$"
+              examples: [BR-7F3K2Q]
+            url:
+              type: string
+              format: uri-reference
+              description: Where to get the challenge (`getChallenge`), with its signed descriptor.
+              examples: ["/_br/challenge?c=eyJ0IjoiaHVtYW4ifQ.c2ln"]
+            retry:
+              type: boolean
+              description: Whether the browser SDK should retry the original request once after passing.
+            retry_after:
+              type: integer
+              description: For throttle, seconds until retry (same as `Retry-After`).
+              minimum: 1
+      examples:
+        - botrampart: { v: 1, action: challenge, tier: human, ref: BR-7F3K2Q, url: "/_br/challenge?c=eyJ0IjoiaHVtYW4ifQ.c2ln", retry: true }
+
+    SignalsRecord:
+      type: object
+      description: >-
+        Interaction record from the browser SDK (plan 12.7), one per session and per
+        challenge. `standard` collects event counts, time to first input, focus and
+        visibility changes, PoW solve time, viewport size class and the automation
+        flag the browser exposes; `minimal` only PoW solve time and one "any input
+        seen" flag; `off` sends nothing beyond the PoW solution. Never collected in
+        any mode: canvas, WebGL or audio fingerprints, font lists, anything hashed into
+        a stable device identifier, keystroke content, pointer coordinates outside the
+        challenge widget.
+      required: [mode]
+      additionalProperties: false
+      properties:
+        sid:
+          description: Added by the backend SDK when it forwards the record at sync; never sent by the browser.
+          $ref: "#/components/schemas/SidHash"
+        mode:
+          type: string
+          enum: [standard, minimal]
+        context:
+          type: string
+          description: Whether the record covers the session or one challenge.
+          enum: [session, challenge]
+          default: session
+        challenge_id:
+          type: string
+          description: Challenge id when `context` is `challenge`.
+        input_events:
+          type: integer
+          minimum: 0
+          description: Standard mode.
+        pointer_events:
+          type: integer
+          minimum: 0
+          description: Standard mode.
+        touch_events:
+          type: integer
+          minimum: 0
+          description: Standard mode.
+        key_events:
+          type: integer
+          minimum: 0
+          description: Standard mode. Count only, never content.
+        first_input_ms:
+          type: [integer, "null"]
+          minimum: 0
+          description: Standard mode. Milliseconds to first input; null if none yet.
+        focus_changes:
+          type: integer
+          minimum: 0
+          description: Standard mode.
+        visibility_changes:
+          type: integer
+          minimum: 0
+          description: Standard mode.
+        pow_solve_ms:
+          type: integer
+          minimum: 0
+          description: Standard and minimal mode.
+        viewport_class:
+          type: string
+          enum: [phone, tablet, desktop, large]
+          description: Standard mode.
+        automation_flag:
+          type: boolean
+          description: Standard mode. The automation flag the browser exposes (for example navigator.webdriver).
+        any_input:
+          type: boolean
+          description: Minimal mode. Whether any input was seen.
+      examples:
+        - mode: standard
+          context: session
+          input_events: 37
+          pointer_events: 22
+          touch_events: 0
+          key_events: 15
+          first_input_ms: 1840
+          focus_changes: 2
+          visibility_changes: 1
+          pow_solve_ms: 286
+          viewport_class: desktop
+          automation_flag: false
+
+    SessionStatus:
+      type: object
+      description: What `br.status()` returns.
+      required: [tier, expiresAt]
+      properties:
+        tier:
+          type: integer
+          minimum: 0
+          maximum: 3
+        expiresAt:
+          description: Token expiry; null without a valid session.
+          oneOf:
+            - $ref: "#/components/schemas/UnixTime"
+            - type: "null"
+        sessionEndsAt:
+          oneOf:
+            - $ref: "#/components/schemas/UnixTime"
+            - type: "null"
+        tierExpiresAt:
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/UnixTime"
+        identified:
+          type: boolean
+          description: Whether a login ID is attached.
+      examples:
+        - tier: 1
+          expiresAt: 1794825300
+          sessionEndsAt: 1795428300
+          tierExpiresAt: {}
+          identified: false
+
+    # --- Sync -------------------------------------------------------------
+    SyncRequest:
+      type: object
+      description: >-
+        Everything one instance aggregated since the last sync (plan 12.6). No
+        per-request record leaves the app; session IDs travel only as `SidHash`.
+      required: [instance, policy_version, since]
+      properties:
+        instance:
+          type: string
+          description: Instance id.
+          examples: [app-7d9f]
+        policy_version:
+          type: integer
+          description: Policy version the instance enforces; Core sends a new one if it changed.
+          examples: [12]
+        since:
+          description: Start of the period these counters cover.
+          $ref: "#/components/schemas/UnixTime"
+        sessions:
+          type: array
+          items:
+            $ref: "#/components/schemas/SessionCounter"
+        events:
+          type: array
+          items:
+            $ref: "#/components/schemas/DecisionEvent"
+        mint:
+          type: array
+          items:
+            $ref: "#/components/schemas/MintCount"
+        signals:
+          type: array
+          description: Signals records received at `/_br/signals`, with `sid` added.
+          items:
+            $ref: "#/components/schemas/SignalsRecord"
+
+    SyncResponse:
+      type: object
+      required: [policy, directives, revoked, mint_pressure, spent, next_sync_ms]
+      properties:
+        policy:
+          description: The new compiled policy when the version changed, else null.
+          oneOf:
+            - $ref: "#/components/schemas/PolicyVersion"
+            - type: "null"
+        directives:
+          type: array
+          items:
+            $ref: "#/components/schemas/Directive"
+        revoked:
+          type: array
+          description: Revoked sessions (as `SidHash`); they stop working within one token lifetime at most.
+          items:
+            $ref: "#/components/schemas/SidHash"
+        mint_pressure:
+          type: array
+          items:
+            $ref: "#/components/schemas/MintPressure"
+        spent:
+          type: array
+          description: Spend per session summed across instances.
+          items:
+            type: object
+            required: [sid, total]
+            properties:
+              sid:
+                $ref: "#/components/schemas/SidHash"
+              total:
+                type: integer
+                minimum: 0
+        next_sync_ms:
+          type: integer
+          description: When to sync next, in milliseconds.
+          minimum: 1000
+          examples: [5000]
+
+    SessionCounter:
+      type: object
+      description: Per-session, per-path-class counters since the last sync; mirrors the lake's session_rollup_1m.
+      required: [sid, path_class, n, cost]
+      properties:
+        sid:
+          $ref: "#/components/schemas/SidHash"
+        uid:
+          $ref: "#/components/schemas/UidHash"
+        path_class:
+          $ref: "#/components/schemas/PathClassName"
+        n:
+          type: integer
+          description: Requests.
+          minimum: 0
+        cost:
+          type: integer
+          description: Cost units spent.
+          minimum: 0
+        s2xx: { type: integer, minimum: 0 }
+        s4xx: { type: integer, minimum: 0 }
+        s5xx: { type: integer, minimum: 0 }
+        tier:
+          type: integer
+          minimum: 0
+          maximum: 3
+        credits:
+          type: integer
+          description: Credits left at the end of the period.
+      examples:
+        - { sid: 7c1e09a4b2d3, uid: 9f2c4e1ab7d0, path_class: search, n: 41, cost: 205, s2xx: 40, s4xx: 1, s5xx: 0, tier: 1, credits: 12 }
+
+    DecisionEvent:
+      type: object
+      description: An event the instance reports at sync, mostly non-allow decisions.
+      required: [ts, type]
+      properties:
+        ts:
+          $ref: "#/components/schemas/UnixTime"
+        type:
+          type: string
+          enum: [decision, challenge_issued, challenge_passed, challenge_failed, login_failed, identify]
+        ref:
+          type: string
+          pattern: "^BR-[0-9A-Z]{6}$"
+        sid:
+          $ref: "#/components/schemas/SidHash"
+        action:
+          type: string
+          enum: [allow, log, challenge, pow, throttle, block, degrade, add_risk]
+        tier:
+          $ref: "#/components/schemas/TierName"
+        rule:
+          type: string
+          description: Rule id that matched.
+        risk_score:
+          type: integer
+          minimum: 0
+          maximum: 10
+        path_class:
+          $ref: "#/components/schemas/PathClassName"
+      examples:
+        - { ts: 1794823561, type: decision, ref: BR-7F3K2Q, action: challenge, tier: human, rule: over-budget }
+
+    MintCount:
+      type: object
+      description: New sessions minted per network key since the last sync.
+      required: [key, n]
+      properties:
+        key:
+          type: string
+          description: Mint bucket key; the exact IP stays in memory only.
+          pattern: "^(ip|prefix|asn|ja4):.+$"
+          examples: ["prefix:203.0.113.0/24", "asn:AS64512"]
+        n:
+          type: integer
+          minimum: 0
+      examples:
+        - { key: "prefix:203.0.113.0/24", n: 14 }
+
+    MintPressure:
+      type: object
+      description: >-
+        Combined mint pressure for a key across instances. The response is a price:
+        first a harder puzzle (multiplier 1.5 to 10), then a human check for new
+        sessions on costly paths, and only at an extreme 429. Established and
+        signed-in sessions are exempt.
+      required: [key, multiplier]
+      properties:
+        key:
+          type: string
+          pattern: "^(ip|prefix|asn|ja4):.+$"
+        multiplier:
+          type: number
+          minimum: 1
+          maximum: 10
+        require:
+          type: string
+          description: Extra step for new sessions from this key, beyond a harder puzzle.
+          enum: [none, human_on_costly, refuse]
+          default: none
+      examples:
+        - { key: "prefix:203.0.113.0/24", multiplier: 4 }
+
+    Directive:
+      type: object
+      description: >-
+        Fields from loop 2's model answer, published for a cohort or session with an
+        expiry of at most 60 minutes. Directives set `ai.*` fields, not actions; policy
+        rules decide what to do with them. The model can raise a tier or lower a
+        budget, never block or allow-list. In the MVP the model runs in shadow mode:
+        directives carry `ai.*` fields but the shipped default policy only logs them.
+      required: [id, match, set, expires]
+      properties:
+        id:
+          type: string
+          examples: [d_01JD7KQ3M8]
+        match:
+          type: object
+          description: Cohort or session the directive applies to.
+          properties:
+            asn_class:
+              type: string
+              enum: [hosting, consumer_broadband, mobile, other]
+            session_age:
+              type: string
+              examples: [under_10m]
+            path_class:
+              $ref: "#/components/schemas/PathClassName"
+            sid:
+              $ref: "#/components/schemas/SidHash"
+        set:
+          type: object
+          additionalProperties: false
+          properties:
+            ai.attack:
+              type: number
+              minimum: 0.01
+              maximum: 0.99
+            ai.risk_level:
+              type: integer
+              minimum: 0
+              maximum: 4
+            ai.intent:
+              type: string
+              enum: [content_scraping, credential_stuffing, checkout_or_inventory_abuse, fake_signups, resource_exhaustion, organic_spike, normal]
+            ai.action:
+              type: string
+              enum: [none, raise_pow, human_check, step_up, lower_budget]
+            ai.confidence:
+              type: number
+              minimum: 0
+              maximum: 1
+        answer:
+          type: string
+          description: AnswerV1 `answer_id` this directive came from.
+        source:
+          type: string
+          description: Model answer or deterministic tripwire.
+          enum: [model, tripwire]
+          default: model
+        expires:
+          $ref: "#/components/schemas/UnixTime"
+      examples:
+        - id: d_01JD7KQ3M8
+          match: { asn_class: hosting, session_age: under_10m, path_class: search }
+          set: { ai.attack: 0.96, ai.risk_level: 3, ai.intent: content_scraping, ai.action: human_check, ai.confidence: 0.64 }
+          answer: a_01JD7KQ2ZP
+          expires: 1794827400
+
+    KeySet:
+      type: object
+      description: JWK set of Core's Ed25519 public keys.
+      required: [keys]
+      properties:
+        keys:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required: [kid, kty, crv, x]
+            properties:
+              kid: { type: string }
+              kty: { type: string, const: OKP }
+              crv: { type: string, const: Ed25519 }
+              alg: { type: string, const: EdDSA }
+              use: { type: string, const: sig }
+              x:
+                type: string
+                description: Public key, base64url.
+              nbf:
+                $ref: "#/components/schemas/UnixTime"
+              exp:
+                $ref: "#/components/schemas/UnixTime"
+      examples:
+        - keys:
+            - { kid: core-ed25519-2026-11, kty: OKP, crv: Ed25519, alg: EdDSA, use: sig, x: "11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo" }
+
+    EdgeRollup:
+      type: object
+      description: >-
+        One per-minute row from Vector's reduce transform (plan 8.3), grouped by site,
+        minute, key, prefix, path class and status class. Raw IPs, paths and the
+        cookie never appear.
+      required: [site, minute, key, path_class, status_class, n]
+      properties:
+        site:
+          type: string
+          examples: [site_123]
+        minute:
+          type: string
+          description: Minute, `YYYY-MM-DDTHH:MM`.
+          pattern: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$"
+          examples: ["2026-11-16T10:05"]
+        key:
+          type: string
+          description: "`BR-Sid` value, or `anon:<prefix>` for requests without a session."
+          examples: [7c1e09a4b2d3, "anon:198.51.100.0/24"]
+        prefix:
+          type: string
+          description: /24 for IPv4, /48 for IPv6.
+          examples: [203.0.113.0/24]
+        asn:
+          type: [string, "null"]
+          examples: [AS64512]
+        path_class:
+          $ref: "#/components/schemas/PathClassName"
+        status_class:
+          type: string
+          enum: [1xx, 2xx, 3xx, 4xx, 5xx]
+        n:
+          type: integer
+          description: Requests (summed).
+          minimum: 0
+        bytes:
+          type: integer
+          description: Body bytes sent (summed).
+          minimum: 0
+        upstream_ms:
+          type: number
+          description: Upstream time in milliseconds (summed).
+          minimum: 0
+        br_decision:
+          type: string
+          description: BR-Decision as logged; empty means the route has no SDK coverage (`br doctor`).
+        ja4_family:
+          type: [string, "null"]
+          description: TLS fingerprint family, when the edge logs it.
+
+    # --- Policy -----------------------------------------------------------
+    PathClass:
+      type: object
+      required: [name, match, cost, min_tier]
+      properties:
+        name:
+          type: string
+          examples: [search]
+        match:
+          type: array
+          description: Path globs, optionally prefixed with a method.
+          items:
+            type: string
+          examples: [["/api/search*"], ["POST /login", "POST /api/session"]]
+        cost:
+          type: integer
+          description: Units each request costs; 0 for static.
+          minimum: 0
+        min_tier:
+          type: integer
+          minimum: 0
+          maximum: 3
+
+    Policy:
+      type: object
+      description: >-
+        The site's policy file (plan 10.1), edited in the console or as YAML in Git.
+        Every `when` is CEL text; Core type-checks it and compiles it to a typed
+        condition tree (`ConditionTree`), which is what the SDKs evaluate and what
+        the sync ships. Rules are first match wins. Fields: request.*, session.*,
+        ua.*, net.*, signals.*, risk.score, ai.*. Actions: allow, log,
+        challenge(pow|human|step_up|next_tier), pow(multiplier), throttle, block,
+        degrade, add_risk(n).
+      required: [path_classes, budget, mint, rules]
+      properties:
+        version:
+          type: integer
+          description: Set by Core on publish; ignored in drafts.
+          readOnly: true
+        path_classes:
+          type: array
+          items:
+            $ref: "#/components/schemas/PathClass"
+        budget:
+          type: object
+          required: [refill_per_min, burst, provisional, grants]
+          properties:
+            refill_per_min:
+              type: integer
+              description: Cost units a session regains each minute.
+              examples: [20]
+            burst:
+              type: integer
+              description: Bucket size.
+              examples: [300]
+            provisional:
+              type: integer
+              description: Tier 0 allowance, general paths only.
+              examples: [30]
+            grants:
+              type: object
+              properties:
+                pow: { type: integer, examples: [300] }
+                human: { type: integer, examples: [3000] }
+                step_up: { type: integer, examples: [6000] }
+            grant_decay:
+              type: number
+              description: Each repeat pass within 24 h buys this fraction of the previous one.
+              minimum: 0
+              maximum: 1
+              examples: [0.5]
+            identified_multiplier:
+              type: number
+              description: Budget multiplier for sessions with an attached login ID.
+              examples: [3]
+            account_ceiling_per_hour:
+              type: integer
+              description: Spend summed across all sessions of one login ID.
+              examples: [20000]
+            max_concurrent:
+              type: integer
+              description: In-flight requests per session.
+              examples: [6]
+        mint:
+          type: object
+          description: New sessions per network key in a 10-minute window; integers or `baseline_xN`.
+          properties:
+            ip:
+              oneOf: [{ type: integer }, { type: string, pattern: "^baseline_x\\d+(\\.\\d+)?$" }]
+            prefix:
+              oneOf: [{ type: integer }, { type: string, pattern: "^baseline_x\\d+(\\.\\d+)?$" }]
+            asn:
+              oneOf: [{ type: integer }, { type: string, pattern: "^baseline_x\\d+(\\.\\d+)?$" }]
+            ja4:
+              oneOf: [{ type: integer }, { type: string, pattern: "^baseline_x\\d+(\\.\\d+)?$" }]
+        risk_score:
+          type: array
+          description: Visible scorecard, 0 to 10; every line editable.
+          items:
+            type: object
+            required: [when]
+            properties:
+              when:
+                type: string
+                description: CEL condition.
+              add:
+                type: integer
+              add_field:
+                type: string
+                description: Add the value of a field, such as `ai.risk_level`.
+        rules:
+          type: array
+          items:
+            type: object
+            required: [id, when, then]
+            properties:
+              id:
+                type: string
+                examples: [over-budget]
+              when:
+                type: string
+                description: CEL condition text, compiled by Core to a `ConditionTree`.
+                examples: ["session.credits < request.cost"]
+              then:
+                type: string
+                description: Action, optionally with a fallback (`a || b`).
+                examples: ["challenge(next_tier) || throttle"]
+              mode:
+                type: string
+                description: "`log` runs the rule as a dry run before it enforces."
+                enum: [enforce, log]
+                default: enforce
+
+    ConditionTree:
+      description: >-
+        Typed condition tree compiled from CEL. SDKs evaluate it with a small
+        interpreter; one conformance suite runs against every SDK.
+      oneOf:
+        - type: object
+          required: [all]
+          properties:
+            all: { type: array, items: { $ref: "#/components/schemas/ConditionTree" } }
+        - type: object
+          required: [any]
+          properties:
+            any: { type: array, items: { $ref: "#/components/schemas/ConditionTree" } }
+        - type: object
+          required: [not]
+          properties:
+            not: { $ref: "#/components/schemas/ConditionTree" }
+        - type: object
+          required: [field, op]
+          properties:
+            field:
+              type: string
+              examples: [session.credits]
+            op:
+              type: string
+              enum: ["==", "!=", "<", "<=", ">", ">=", in]
+            value:
+              description: Literal to compare with.
+            ref:
+              type: string
+              description: Another field to compare with, instead of `value`.
+        - type: object
+          required: [const]
+          properties:
+            const: { type: boolean }
+
+    CompiledAction:
+      type: object
+      required: [action]
+      properties:
+        action:
+          type: string
+          enum: [allow, log, challenge, pow, throttle, block, degrade, add_risk]
+        challenge:
+          type: string
+          enum: [pow, human, step_up, next_tier]
+        multiplier:
+          type: number
+        add:
+          type: integer
+        budget:
+          type: string
+          examples: [agent]
+        fallback:
+          type: string
+          enum: [allow, log, throttle, block]
+
+    PolicyVersion:
+      type: object
+      description: An immutable published policy version, with who published and approved it.
+      required: [site, version, published_at, policy, compiled]
+      properties:
+        site:
+          type: string
+          examples: [site_123]
+        version:
+          type: integer
+          minimum: 1
+        parent_version:
+          type: [integer, "null"]
+        published_at:
+          type: string
+          format: date-time
+        published_by:
+          type: string
+        approved_by:
+          type: string
+        comment:
+          type: string
+        checksum:
+          type: string
+        policy:
+          $ref: "#/components/schemas/Policy"
+        compiled:
+          type: object
+          description: What the sync ships and the SDKs evaluate.
+          properties:
+            rules:
+              type: array
+              items:
+                type: object
+                required: [id, tree, then]
+                properties:
+                  id: { type: string }
+                  tree: { $ref: "#/components/schemas/ConditionTree" }
+                  then: { $ref: "#/components/schemas/CompiledAction" }
+                  mode: { type: string, enum: [enforce, log] }
+            risk_score:
+              type: array
+              items:
+                type: object
+                required: [tree]
+                properties:
+                  tree: { $ref: "#/components/schemas/ConditionTree" }
+                  add: { type: integer }
+                  add_field: { type: string }
+
+    PolicyPublishRequest:
+      type: object
+      required: [base_version, policy]
+      properties:
+        base_version:
+          type: integer
+          description: Version the draft was based on; publishing fails with 409 if it is no longer current.
+        policy:
+          $ref: "#/components/schemas/Policy"
+        comment:
+          type: string
+        approved_by:
+          type: string
+          description: Person who approved the change.
+
+    SimulationRequest:
+      type: object
+      description: Provide either a draft `policy` or an existing `version` to replay.
+      properties:
+        policy:
+          $ref: "#/components/schemas/Policy"
+        version:
+          type: integer
+          description: Replay an existing version instead of a draft.
+        against_version:
+          type: integer
+          description: Version to compare with; defaults to the current one.
+        window:
+          type: object
+          description: Defaults to the last 24 hours.
+          properties:
+            from: { type: string, format: date-time }
+            to: { type: string, format: date-time }
+      oneOf:
+        - required: [policy]
+        - required: [version]
+
+    SimulationResult:
+      type: object
+      required: [window, current_version, sessions_evaluated, challenged_share_current, challenged_share_draft, signed_in_affected]
+      properties:
+        window:
+          type: object
+          properties:
+            from: { type: string, format: date-time }
+            to: { type: string, format: date-time }
+        current_version:
+          type: integer
+        sessions_evaluated:
+          type: integer
+        requests_evaluated:
+          type: integer
+        challenged_share_current:
+          type: number
+          minimum: 0
+          maximum: 1
+        challenged_share_draft:
+          type: number
+          minimum: 0
+          maximum: 1
+        blocked_share_current: { type: number, minimum: 0, maximum: 1 }
+        blocked_share_draft: { type: number, minimum: 0, maximum: 1 }
+        throttled_share_current: { type: number, minimum: 0, maximum: 1 }
+        throttled_share_draft: { type: number, minimum: 0, maximum: 1 }
+        signed_in_affected:
+          type: integer
+          description: Signed-in sessions the draft would challenge, throttle or block that the current version does not.
+          minimum: 0
+        rule_matches:
+          type: array
+          items:
+            type: object
+            required: [rule_id, current, draft]
+            properties:
+              rule_id: { type: string }
+              current: { type: integer }
+              draft: { type: integer }
+        summary:
+          type: string
+
+    # --- Decisions, state and answers --------------------------------------
+    Decision:
+      type: object
+      description: >-
+        A non-allow decision; the columns of the lake's `decisions` table (plan 11.1),
+        plus the site and optional embedded answer and state.
+      required: [ts, ref, sid_hash, action, rule_id, policy_version]
+      properties:
+        site:
+          type: string
+          examples: [site_123]
+        ts:
+          type: string
+          format: date-time
+        ref:
+          type: string
+          pattern: "^BR-[0-9A-Z]{6}$"
+        sid_hash:
+          $ref: "#/components/schemas/SidHash"
+        uid_hash:
+          $ref: "#/components/schemas/UidHash"
+        action:
+          type: string
+          enum: [log, challenge, pow, throttle, block, degrade, add_risk]
+        tier:
+          oneOf:
+            - $ref: "#/components/schemas/TierName"
+            - type: "null"
+        rule_id:
+          type: string
+        policy_version:
+          type: integer
+        risk_score:
+          type: integer
+          minimum: 0
+          maximum: 10
+        risk_parts:
+          type: array
+          description: Scorecard lines that contributed to the risk score.
+          items:
+            type: object
+            properties:
+              when: { type: string }
+              add: { type: number }
+        credits:
+          type: integer
+          description: Session credits at decision time.
+        cost:
+          type: integer
+          description: Cost of the request.
+        path_class:
+          $ref: "#/components/schemas/PathClassName"
+        path:
+          type: string
+          description: Request path (no query string).
+        ai_answer_id:
+          type: [string, "null"]
+          description: >-
+            AnswerV1 behind the directive that applied, if any. In the MVP the model
+            runs in shadow mode, so this shows what the model said, not what was enforced.
+        directive_id:
+          type: [string, "null"]
+        outcome:
+          type: string
+          description: What happened next.
+          enum: [pending, passed, failed, abandoned, served]
+        ai_answer:
+          $ref: "#/components/schemas/AnswerV1"
+        state:
+          $ref: "#/components/schemas/StateV1"
+
+    StateV1:
+      type: object
+      description: >-
+        br.state.v1 (plan 8.6): the 5-minute state for one scope. `metrics` holds
+        numbers kept in the lake for people and the agent; `buckets` holds the named
+        bands that are the model's only input. No free-text field an attacker wrote
+        ever appears.
+      required: [schema, scope, metrics, buckets, state_hash]
+      properties:
+        schema:
+          type: string
+          const: br.state.v1
+        scope:
+          type: object
+          required: [kind, site, window]
+          properties:
+            kind:
+              type: string
+              enum: [site, cohort, session]
+            site:
+              type: string
+            window:
+              type: string
+              description: ISO 8601 interval.
+              examples: ["2026-11-16T10:05:00Z/PT5M"]
+            cohort:
+              type: object
+              properties:
+                network_class:
+                  type: string
+                  enum: [hosting, consumer_broadband, mobile, other]
+                session_age: { type: string, examples: [under_10m] }
+                path_class: { $ref: "#/components/schemas/PathClassName" }
+            sid_hash:
+              $ref: "#/components/schemas/SidHash"
+        metrics:
+          type: object
+          description: Numbers; stored in the lake, not sent to the model.
+          additionalProperties:
+            type: number
+          properties:
+            requests: { type: integer }
+            requests_baseline: { type: integer }
+            cost_spent: { type: integer }
+            cost_baseline: { type: integer }
+            sessions_active: { type: integer }
+            sessions_new: { type: integer }
+            sessions_over_budget: { type: integer }
+            provisional_share: { type: number }
+            login_fail_ratio: { type: number }
+            status_4xx_share: { type: number }
+            status_5xx_share: { type: number }
+            pow_passed: { type: integer }
+            pow_median_ms: { type: integer }
+            human_issued: { type: integer }
+            human_passed: { type: integer }
+            sessions_with_input_events_share: { type: number }
+            input_events_baseline: { type: number }
+            distinct_prefixes: { type: integer }
+            top_asn_share: { type: number }
+            mint_pressure_keys: { type: integer }
+        buckets:
+          type: object
+          description: Named bands; this object is the model's input.
+          properties:
+            traffic:
+              type: object
+              properties:
+                requests_vs_baseline: { type: string, examples: [x3_to_x6] }
+                cost_vs_baseline: { type: string, examples: [x6_plus] }
+                new_session_share: { type: string, examples: [over_60pct] }
+                provisional_share: { type: string, examples: [20_to_40pct] }
+            targets:
+              type: object
+              properties:
+                top_path_class: { type: string, examples: [search] }
+                top_path_spend_share: { type: string, examples: [over_60pct] }
+                login_fail_ratio: { type: string, examples: [normal] }
+                status_4xx_share: { type: string, examples: [elevated] }
+            challenges:
+              type: object
+              properties:
+                pow_pass_rate: { type: string, examples: [over_95pct] }
+                pow_solve_time: { type: string, examples: [under_100ms] }
+                human_pass_rate: { type: string, examples: [60_to_90pct] }
+            interaction:
+              type: object
+              properties:
+                sessions_with_input_events: { type: string, examples: [under_40pct] }
+                vs_baseline: { type: string, examples: [far_below] }
+                automation_flag_share: { type: string, examples: [under_5pct] }
+            network:
+              type: object
+              properties:
+                network_class: { type: string, examples: [hosting] }
+                spread: { type: string, examples: [many_prefixes] }
+                top_asn_share: { type: string, examples: [under_10pct] }
+                mint_pressure: { type: string, examples: [some_keys] }
+            budget:
+              type: object
+              properties:
+                sessions_over_budget: { type: string, examples: [over_10pct] }
+            context:
+              type: object
+              properties:
+                declared_event:
+                  type: string
+                  description: Set by the operator, for example a sale or a press launch.
+                  examples: [none]
+                hour_class: { type: string, examples: [weekday_evening] }
+                current_ai_level: { type: integer, examples: [1] }
+        state_hash:
+          type: string
+          description: Hash of the bucketed state, used in the answer cache key.
+          examples: ["sha256:5f0c9a1e"]
+      examples:
+        - schema: br.state.v1
+          scope:
+            kind: cohort
+            site: site_123
+            window: "2026-11-16T10:05:00Z/PT5M"
+            cohort: { network_class: hosting, session_age: under_10m, path_class: search }
+          metrics:
+            requests: 48210
+            requests_baseline: 14100
+            cost_spent: 181400
+            cost_baseline: 29700
+            sessions_active: 3920
+            sessions_new: 2710
+            sessions_over_budget: 412
+            provisional_share: 0.22
+            login_fail_ratio: 0.12
+            status_4xx_share: 0.19
+            status_5xx_share: 0.01
+            pow_passed: 2688
+            pow_median_ms: 41
+            human_issued: 120
+            human_passed: 97
+            sessions_with_input_events_share: 0.31
+            input_events_baseline: 0.88
+            distinct_prefixes: 1890
+            top_asn_share: 0.07
+            mint_pressure_keys: 3
+          buckets:
+            traffic: { requests_vs_baseline: x3_to_x6, cost_vs_baseline: x6_plus, new_session_share: over_60pct, provisional_share: 20_to_40pct }
+            targets: { top_path_class: search, top_path_spend_share: over_60pct, login_fail_ratio: normal, status_4xx_share: elevated }
+            challenges: { pow_pass_rate: over_95pct, pow_solve_time: under_100ms, human_pass_rate: 60_to_90pct }
+            interaction: { sessions_with_input_events: under_40pct, vs_baseline: far_below, automation_flag_share: under_5pct }
+            network: { network_class: hosting, spread: many_prefixes, top_asn_share: under_10pct, mint_pressure: some_keys }
+            budget: { sessions_over_budget: over_10pct }
+            context: { declared_event: none, hour_class: weekday_evening, current_ai_level: 1 }
+          state_hash: "sha256:5f0c9a1e"
+
+    AnswerV1:
+      type: object
+      description: >-
+        br.answer.v1 (plan 9.2): the decision model's answer to br.questions.v1 for
+        one state, with the provider's reply embedded unchanged. Answers become `ai.*`
+        fields in directives, never actions; in the MVP they run in shadow mode.
+      required: [schema, answer_id, state_hash, provider, model, questions, asked_at, expires_at, cache, answers]
+      properties:
+        schema:
+          type: string
+          const: br.answer.v1
+        answer_id:
+          type: string
+          examples: [a_01JD7KQ2ZP]
+        state_hash:
+          type: string
+        provider:
+          type: string
+          enum: [gemini, openai, jev, strands, kev, llm]
+        model:
+          type: string
+          examples: [gemini-decision-1]
+        questions:
+          type: string
+          const: br.questions.v1
+        asked_at:
+          type: string
+          format: date-time
+        expires_at:
+          type: string
+          format: date-time
+          description: Cache TTL, 1 hour after asking.
+        cache:
+          type: string
+          enum: [hit, miss]
+        answers:
+          type: object
+          required: [attack, risk_level, intent, action]
+          properties:
+            attack:
+              type: object
+              properties:
+                type: { type: string, const: noul }
+                noul: { type: number, minimum: 0.01, maximum: 0.99 }
+                confidence: { type: number }
+            risk_level:
+              type: object
+              properties:
+                type: { type: string, const: score }
+                score: { type: number, minimum: 0, maximum: 4 }
+                confidence: { type: number }
+            intent:
+              type: object
+              properties:
+                type: { type: string, const: choice }
+                choice:
+                  type: string
+                  enum: [content_scraping, credential_stuffing, checkout_or_inventory_abuse, fake_signups, resource_exhaustion, organic_spike, normal]
+                confidence: { type: number }
+            action:
+              type: object
+              properties:
+                type: { type: string, const: choice }
+                choice:
+                  type: string
+                  enum: [none, raise_pow, human_check, step_up, lower_budget]
+                confidence: { type: number }
+        provider_reply:
+          type: object
+          description: The provider's reply, embedded unchanged.
+      examples:
+        - schema: br.answer.v1
+          answer_id: a_01JD7KQ2ZP
+          state_hash: "sha256:5f0c9a1e"
+          provider: gemini
+          model: gemini-decision-1
+          questions: br.questions.v1
+          asked_at: "2026-11-16T10:10:02Z"
+          expires_at: "2026-11-16T11:10:02Z"
+          cache: miss
+          answers:
+            attack: { type: noul, noul: 0.96, confidence: 0.96 }
+            risk_level: { type: score, score: 3.1, confidence: 0.58 }
+            intent: { type: choice, choice: content_scraping, confidence: 0.88 }
+            action: { type: choice, choice: human_check, confidence: 0.64 }

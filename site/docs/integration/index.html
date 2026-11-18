@@ -1,28 +1,210 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="noindex, nofollow">
-    <title>Integration guide | BotRampart</title>
+    <!-- @head | Integration guide | BotRampart docs -->
   </head>
   <body>
-    <header>
-      <nav aria-label="Main">
-        <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/docs/">Docs</a></li>
-        <li><a href="/pricing/">Pricing</a></li>
-        <li><a href="/signup/">Sign up</a></li>
-        </ul>
-      </nav>
-    </header>
-    <main>
-      <h1>Integration guide</h1>
-      <p>Adding BotRampart to an application server, route by route. Coming in package v1.</p>
+    <!-- @header -->
+    <main id="main">
+      <div class="page-head">
+        <div class="wrap">
+          <p class="eyebrow">Docs · Integration guide</p>
+          <h1>Wiring BotRampart into a Node app.</h1>
+          <p class="lede">Everything an application touches: options, route costs, sign-in, challenge handling in the browser, the policy file, logs and failure behaviour. Every HTTP exchange here is defined in the <a href="/spec/openapi.yaml">OpenAPI spec</a>, and each sample names the operation it exercises.</p>
+        </div>
+      </div>
+      <div class="wrap doc-grid">
+        <!-- @docs-nav -->
+        <article class="prose">
+          <div class="callout"><p><b>Design, not product.</b> This is the interface of the first build as specified; nothing here is published yet. The first build supports Node (Express, Fastify, Next.js). Python and Java SDKs share the same specification and conformance suite and come after.</p></div>
+
+          <h2 id="options">Backend SDK options</h2>
+          <p class="code-cap"><span>server.js · Node, Express</span><a href="/spec/openapi.yaml">syncInstance</a></p>
+          <pre><code data-op="syncInstance">import { botrampart } from "@botrampart/node";
+
+const br = botrampart({
+  site: "site_123",
+  secretsFile: "/run/secrets/br_keys",   <span class="d">// site signing keys; two accepted at once for rotation</span>
+  core: "https://core.internal:8787",
+  store: "memory",                        <span class="d">// or a Redis / Valkey client for exact shared budgets</span>
+  mode: "observe",                        <span class="d">// "observe" logs decisions; "enforce" applies them</span>
+  onCoreDown: "static",                   <span class="d">// keep enforcing the last synced policy</span>
+});
+app.use(br.express());</code></pre>
+          <div class="tablewrap">
+            <table>
+              <thead><tr><th scope="col">Option</th><th scope="col">Default</th><th scope="col">What it does</th></tr></thead>
+              <tbody>
+                <tr><th scope="row"><code>site</code></th><td>required</td><td>Site ID; keys, policy and lake partitions are per site.</td></tr>
+                <tr><th scope="row"><code>secretsFile</code></th><td>required</td><td>HMAC keys that sign the session cookie and proof-of-work puzzles, so tier 1 works with Core unreachable. Alternative: tokens signed by Core with Ed25519, at one Core call per new session.</td></tr>
+                <tr><th scope="row"><code>core</code></th><td>none</td><td>Core's URL. Without it the SDK runs alone: tiers 0 and 1, local budgets, the policy file on disk.</td></tr>
+                <tr><th scope="row"><code>store</code></th><td><code>"memory"</code></td><td>Where budgets live. In memory, spend across instances is reconciled at each sync, so overspend is bounded by one sync interval; Redis or Valkey makes it exact.</td></tr>
+                <tr><th scope="row"><code>mode</code></th><td><code>"observe"</code></td><td>Start every install in observe mode.</td></tr>
+                <tr><th scope="row"><code>onCoreDown</code></th><td><code>"static"</code></td><td>Tokens still verify, budgets still count, the last policy still applies. Tier 2 cannot be served, so rules that require it fall back to throttle.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Each instance sends its counters to Core every 5 to 10 seconds and receives policy, directives and revocations in the same call. No per-request record leaves your app; session IDs travel as hashes.</p>
+
+          <h2 id="routes">Route costs</h2>
+          <p>Path classes in the policy file cover most routes. Override a single route in code when the cost depends on the request:</p>
+          <p class="code-cap"><span>Per-route costs</span><a href="/spec/openapi.yaml">redeemChallenge</a></p>
+          <pre><code data-op="redeemChallenge">app.get("/api/search", br.protect({ cost: 5 }), search);
+
+<span class="d">// One GraphQL endpoint: price each operation by what it does</span>
+const COST = { ProductPage: 2, SearchProducts: 5, ExportOrders: 50 };
+app.post("/graphql", br.protect({ cost: (req) =&gt; COST[req.body.operationName] ?? 10 }), graphql);
+
+<span class="d">// A session that cannot pay gets a challenge response; once it passes and redeems,
+// the browser SDK retries the request with the new credit.</span></code></pre>
+          <p>For responses whose cost is only known afterwards (a report, an export), set <code>BR-Cost</code> on the response; the SDK settles the difference against the session.</p>
+          <pre><code class="language-js">res.set("BR-Cost", String(rowsExported / 100));</code></pre>
+
+          <h2 id="identify">Signing in</h2>
+          <p>Attach your user's ID once they authenticate. BotRampart stores only a keyed hash of it. Signed-in sessions refill three times faster, are exempt from network mint pressure, and their spend is also summed per account, so one account cannot fan out over many cookies.</p>
+          <p class="code-cap"><span>Login handler</span><a href="/spec/openapi.yaml">syncInstance</a></p>
+          <pre><code data-op="syncInstance">app.post("/login", async (req, res) =&gt; {
+  const user = await authenticate(req);
+  if (!user) {
+    br.track(req, "login_failed");       <span class="d">// feeds credential-stuffing metrics at the next sync</span>
+    return res.sendStatus(401);
+  }
+  br.identify(req, res, user.id);        <span class="d">// stores HMAC-SHA256(site_uid_key, user.id) in the session</span>
+  res.json({ ok: true });
+});
+
+<span class="d">// In any handler:</span>
+<span class="d">// req.br = { sessionId, tier, credits, identified, risk: { score }, ai: {...}, decision: { action, ruleId, ref } }</span></code></pre>
+
+          <h2 id="browser">In the browser</h2>
+          <p>The browser SDK solves the proof-of-work in a Web Worker, collects a small set of interaction counts, and by default wraps <code>fetch</code> and <code>XMLHttpRequest</code>: when a response is a challenge, it runs the challenge and retries the request once.</p>
+          <p class="code-cap"><span>app.js</span><a href="/spec/openapi.yaml">getChallenge</a></p>
+          <pre><code data-op="getChallenge">import { BotRampart } from "@botrampart/browser";
+
+const br = BotRampart.init({
+  site: "site_123",
+  endpoint: "/_br",          <span class="d">// first-party routes mounted by the backend SDK</span>
+  mode: "lazy",              <span class="d">// solve in the background; "gate" shows an interstitial first</span>
+  autoRetry: true,
+  signals: "standard",       <span class="d">// "standard" | "minimal" | "off"</span>
+  onBlock(ref) { showSupportMessage(ref); },
+});
+
+await br.ready();            <span class="d">// resolves once tier 1 is held</span>
+await br.ensure("human");    <span class="d">// step up before a sensitive action, such as opening checkout</span></code></pre>
+          <p>If you handle responses yourself, a protected route answers <code>403</code> (or <code>429</code> with <code>Retry-After</code> for a throttle) with a header <code>BR-Challenge: v1</code> and this body:</p>
+          <p class="code-cap"><span>Challenge response from any protected route</span><a href="/spec/openapi.yaml">getChallenge</a></p>
+          <pre><code data-op="getChallenge">HTTP/1.1 403 Forbidden
+BR-Challenge: v1
+Content-Type: application/json
+
+{ "botrampart": { "v": 1, "action": "challenge", "tier": "human", "ref": "BR-7F3K2Q",
+                  "url": "/_br/challenge?c=eyJ0IjoiaHVtYW4ifQ.c2ln", "retry": true } }</code></pre>
+          <p>Pass the descriptor to <code>br.challenge()</code>, or fetch <code>url</code> yourself: for tier 1 it returns a signed puzzle, for tier 2 a widget URL. The solution or the widget's attestation goes to <code>/_br/redeem</code>:</p>
+          <p class="code-cap"><span>Redeem a solved puzzle</span><a href="/spec/openapi.yaml">redeemChallenge</a></p>
+          <pre><code data-op="redeemChallenge">POST /_br/redeem
+Content-Type: application/json
+
+{ "type": "pow", "challenge": { "id": "ch_9Qx2LmT4vB7sK1aZ", "alg": "pbkdf2-sha256", "puzzles": 16, "...": "..." },
+  "solutions": [4121, 977, 15003, 2210, 6431, 88, 3190, 7712, 504, 12880, 2999, 431, 9027, 1666, 5120, 7003],
+  "solve_ms": 286 }
+
+200 OK
+Set-Cookie: __br_s=br1.…; Path=/; Secure; HttpOnly; SameSite=Lax
+{ "ok": true, "tier": 1, "granted": 300, "credits": 300, "expires_at": 1794825300 }</code></pre>
+          <p>For a page navigation the SDK serves a small interstitial instead, which shows the reference so the visitor can quote it to your support team. That page carries the "Protected by BotRampart" mark in the Community edition.</p>
+          <h3 id="signals">What the browser SDK collects</h3>
+          <div class="tablewrap">
+            <table>
+              <thead><tr><th scope="col">Mode</th><th scope="col">Collected</th></tr></thead>
+              <tbody>
+                <tr><th scope="row"><code>standard</code></th><td>Counts of pointer, touch and key events; time to first input; focus and visibility changes; proof-of-work solve time; viewport size class; the automation flag browsers expose.</td></tr>
+                <tr><th scope="row"><code>minimal</code></th><td>Proof-of-work solve time and one "any input seen" flag.</td></tr>
+                <tr><th scope="row"><code>off</code></th><td>Nothing beyond the proof-of-work solution.</td></tr>
+                <tr><th scope="row">Never, in any mode</th><td>Canvas, WebGL or audio fingerprints, font lists, stable device identifiers, keystroke content, pointer coordinates outside the challenge widget.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="code-cap"><span>Sent once per session and per challenge</span><a href="/spec/openapi.yaml">postSignals</a></p>
+          <pre><code data-op="postSignals">POST /_br/signals
+{ "mode": "standard", "input_events": 14, "pointer_events": 9, "touch_events": 0, "key_events": 5,
+  "first_input_ms": 1840, "automation_flag": false, "viewport_class": "desktop", "pow_solve_ms": 286 }</code></pre>
+          <p>For EU sites, run <code>signals: "minimal"</code> or <code>"off"</code> and document the cookie as a security measure. France's regulator says anti-robot measures whose sole purpose is securing the site or its sign-in need no consent;{{c:cnil-antibot}} the cookie and signals must then be used for nothing else. This is an engineering reading, not legal advice.</p>
+
+          <h2 id="policy">The policy file</h2>
+          <p>One versioned YAML file per site, kept in Git or edited in the console. Rules are evaluated in order and the first match wins, like Cloudflare's rules. Conditions are written in CEL and compiled by Core into a typed condition tree, which every SDK evaluates with the same small interpreter and the same conformance suite.</p>
+          <p class="code-cap"><span>botrampart.policy.yaml (abridged)</span><a href="/spec/openapi.yaml">putPolicy</a></p>
+          <pre><code data-op="putPolicy">version: 12
+path_classes:
+  - { name: static,   match: ["/assets/*", "*.css", "*.js", "*.png"], cost: 0,  min_tier: 0 }
+  - { name: general,  match: ["/*"],                                  cost: 1,  min_tier: 0 }
+  - { name: search,   match: ["/api/search*"],                        cost: 5,  min_tier: 1 }
+  - { name: login,    match: ["POST /login"],                         cost: 10, min_tier: 1 }
+  - { name: checkout, match: ["/api/checkout*"],                      cost: 20, min_tier: 1 }
+budget:
+  refill_per_min: 20
+  burst: 300
+  provisional: 30
+  grants: { pow: 300, human: 3000, step_up: 6000 }
+  grant_decay: 0.5
+  identified_multiplier: 3
+mint: { ip: 20, prefix: 60, asn: baseline_x5 }
+rules:
+  - { id: verified-bots, when: "net.verified_bot in ['search_engine', 'monitoring']", then: allow }
+  - { id: not-a-browser, when: "!ua.is_browser || ua.browser_age_years &gt; 3", then: block }
+  - { id: risk-5,        when: "risk.score &gt;= 5", then: "challenge(human)" }
+  - { id: ai-escalation, when: "ai.attack &gt;= 0.9 &amp;&amp; ai.confidence &gt;= 0.7 &amp;&amp; request.path_class in ['search', 'login']",
+                         then: "log" }      <span class="d"># shadow first: change to challenge(human) later</span>
+  - { id: over-budget,   when: "session.credits &lt; request.cost", then: "challenge(next_tier) || throttle" }
+  - { id: default,       when: "true", then: allow }</code></pre>
+          <div class="tablewrap">
+            <table>
+              <thead><tr><th scope="col">Fields</th><th scope="col">Examples</th><th scope="col">From</th></tr></thead>
+              <tbody>
+                <tr><th scope="row"><code>request.*</code></th><td>path_class, cost, method</td><td>The request and your path classes</td></tr>
+                <tr><th scope="row"><code>session.*</code></th><td>tier, age, credits, identified, network_changes_1h</td><td>The cookie and the local budget</td></tr>
+                <tr><th scope="row"><code>ua.*</code></th><td>is_browser, family, browser_age_years</td><td>User agent, parsed against a bundled release table</td></tr>
+                <tr><th scope="row"><code>net.*</code></th><td>mint_pressure, verified_bot, country, asn_class</td><td>Mint buckets, crawler verification</td></tr>
+                <tr><th scope="row"><code>signals.*</code></th><td>automation_flag, no_input_after_30_requests</td><td>Browser SDK, checked on the server</td></tr>
+                <tr><th scope="row"><code>risk.score</code></th><td>0 to 10</td><td>A visible scorecard in the same file, every line editable</td></tr>
+                <tr><th scope="row"><code>ai.*</code></th><td>attack, risk_level, intent, action, confidence</td><td>The five-minute loop, with expiry (shadow in the first build)</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Actions: <code>allow</code>, <code>log</code>, <code>challenge(pow | human | next_tier)</code>, <code>pow(multiplier)</code>, <code>throttle</code>, <code>block</code>, <code>degrade</code> (tell your app to serve a cheaper response) and <code>add_risk(n)</code>. A rule can run as <code>log</code> for a week before it enforces. Publishing creates an immutable version that SDKs pick up at the next sync; rollback is publishing the previous one. Always simulate first (<a href="/docs/getting-started/#observe">example</a>).</p>
+
+          <h2 id="logs">Logs and headers</h2>
+          <p>The cookie is a bearer credential and must never reach a log. The SDK instead adds two response headers your edge can log and strip: <code>BR-Sid</code>, the first 12 hex characters of a hash of the session ID, and <code>BR-Decision</code>. A path that shows up in your access logs without <code>BR-Decision</code> is a route the SDK does not cover, which is how <code>br doctor</code> finds gaps.</p>
+          <pre><code class="language-nginx">log_format br escape=json '{"time":"$time_iso8601","path":"$uri","status":$status,'
+  '"br_sid":"$upstream_http_br_sid","br_decision":"$upstream_http_br_decision"}';
+proxy_hide_header BR-Sid;
+proxy_hide_header BR-Decision;</code></pre>
+
+          <h2 id="edges">Edge cases</h2>
+          <div class="tablewrap">
+            <table>
+              <thead><tr><th scope="col">Situation</th><th scope="col">What to do</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Publicly cacheable pages</th><td>The SDK never sets the cookie on a response marked publicly cacheable, so your CDN can still cache it; the browser SDK starts the session through <code>/_br</code>.</td></tr>
+                <tr><th scope="row">An API on another origin</th><td>Set the cookie <code>Domain</code> for sibling subdomains, or send the token in a header for cross-origin calls.</td></tr>
+                <tr><th scope="row">WebSockets and streams</th><td>Verified at the upgrade, charged by connection time, re-verified on a timer.</td></tr>
+                <tr><th scope="row">Webhooks, partner APIs, mobile apps</th><td>Add a rule that allows requests authenticated by your own API key or signature before the over-budget rule.</td></tr>
+                <tr><th scope="row">SDK error or missing configuration</th><td>Fail mode per route: open for content, closed for login, sign-up and checkout.</td></tr>
+                <tr><th scope="row">Clock skew and key rotation</th><td>60 seconds of tolerance; two keys accepted during rotation.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2 id="test">Testing your integration</h2>
+          <ul>
+            <li>Run CI and staging in <code>observe</code> mode, and assert on <code>req.br.decision</code> in your own tests.</li>
+            <li>Replay a draft policy against production traffic with <code>simulatePolicy</code> before every publish.</li>
+            <li>Look up any decision a tester saw by its reference with <code>getDecision</code> (<a href="/docs/how-it-works/#explain">example</a>).</li>
+          </ul>
+          <!-- @sources -->
+        </article>
+      </div>
     </main>
-    <footer>
-      <p>BotRampart is a Greenhouse seed: a preview of a product that is not built yet.</p>
-    </footer>
+    <!-- @footer -->
   </body>
 </html>

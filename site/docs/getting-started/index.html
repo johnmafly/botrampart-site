@@ -1,28 +1,119 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="noindex, nofollow">
-    <title>Getting started | BotRampart</title>
+    <!-- @head | Getting started | BotRampart docs -->
   </head>
   <body>
-    <header>
-      <nav aria-label="Main">
-        <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/docs/">Docs</a></li>
-        <li><a href="/pricing/">Pricing</a></li>
-        <li><a href="/signup/">Sign up</a></li>
-        </ul>
-      </nav>
-    </header>
-    <main>
-      <h1>Getting started</h1>
-      <p>From installation to the first data in observe mode. Coming in package v1.</p>
+    <!-- @header -->
+    <main id="main">
+      <div class="page-head">
+        <div class="wrap">
+          <p class="eyebrow">Docs · Getting started</p>
+          <h1>From nothing to your first hour of data, in observe mode.</h1>
+          <p class="lede">The planned install takes one generator, one container and two lines in your app. Nothing is enforced until you choose to: the first step only watches, and shows you what it would have done.</p>
+        </div>
+      </div>
+      <div class="wrap doc-grid">
+        <!-- @docs-nav -->
+        <article class="prose">
+          <div class="callout"><p><b>Not installable yet.</b> This page describes the install path of the first build as designed. The packages <code>botrampart</code>, <code>@botrampart/node</code> and <code>@botrampart/browser</code> and the container images are not published. The target for this whole page is under 15 minutes from <code>init</code> to first data; that is a goal, not a measurement.</p></div>
+
+          <h2 id="need">What you need</h2>
+          <ul>
+            <li>A Node app on Express, Fastify or Next.js. Python and Java SDKs are planned after the first build.</li>
+            <li>Somewhere to run Core: a Cloudflare account (Workers Paid starts at $5 a month{{c:cf-workers-price}}) or any host that runs one container. Target footprint: 256 MB of memory, no database server.</li>
+            <li>An S3-compatible bucket: Cloudflare R2, Amazon S3, or MinIO, which the generator can bundle.</li>
+            <li>Optional: a key for a decision-model provider, or a self-hosted model. Without one, the five-minute loop is off and everything else works.</li>
+          </ul>
+
+          <ol class="steps">
+            <li>
+              <h3 id="init">Generate the install</h3>
+              <p>The generator asks four questions and writes plain files you can read and commit. It generates your site keys locally and sends them nowhere.</p>
+              <pre><code class="language-shell">$ npx botrampart init
+? Where will Core run?      Cloudflare | Docker on a Linux host | Kubernetes
+? Object storage?           R2 | S3 | MinIO (bundled)
+? Where are access logs?    nginx | ingress-nginx | ALB | none yet
+? App framework?            Express | Fastify | Next.js
+<span class="s">✓</span> wrote docker-compose.yml, botrampart.policy.yaml
+<span class="s">✓</span> generated site keys into ./secrets (never sent anywhere)
+Next: add two lines to your app and one script tag. Then run `br doctor`.</code></pre>
+              <p>On Cloudflare it writes a Wrangler configuration and a deploy button instead of a compose file. Kubernetes gets plain manifests.</p>
+            </li>
+            <li>
+              <h3 id="core">Start Core</h3>
+              <pre><code class="language-yaml"><span class="d"># docker-compose.yml, as generated (abridged)</span>
+services:
+  core:
+    image: ghcr.io/botrampart/core:1
+    ports: ["8787:8787"]
+    environment:
+      BR_LAKE_URL: s3://acme-botrampart/br/v1/
+      BR_DECISION_PROVIDER: off        <span class="d"># or gemini, openai, a self-hosted model</span>
+    secrets: [br_keys, lake_writer]</code></pre>
+              <pre><code class="language-shell">$ docker compose up -d core</code></pre>
+            </li>
+            <li>
+              <h3 id="sdk">Add the backend SDK, in observe mode</h3>
+              <p>Mount the SDK at the root of your app so every route gets a path class by default. In <code>observe</code> mode it decides every request and logs the decision, but lets everything through.</p>
+              <p class="code-cap"><span>server.js · Node, Express</span><a href="/spec/openapi.yaml">syncInstance</a></p>
+              <pre><code data-op="syncInstance">import express from "express";
+import { botrampart } from "@botrampart/node";
+
+const app = express();
+const br = botrampart({
+  site: "site_123",
+  secretsFile: "./secrets/br_keys",
+  core: "http://localhost:8787",   <span class="d">// counters sync here every 5 to 10 seconds</span>
+  mode: "observe",                 <span class="d">// decide and log, enforce nothing</span>
+});
+app.use(br.express());             <span class="d">// mounts /_br/*, verifies, charges, sets req.br</span></code></pre>
+            </li>
+            <li>
+              <h3 id="script">Add the browser SDK</h3>
+              <p>One script tag, served from your own origin by the backend SDK, so no third-party domain can change the code your visitors run. That is the lesson of the 2024 Polyfill.io incident, when a CDN script under new ownership served malware to more than 100,000 sites.{{c:polyfill}}</p>
+              <p class="code-cap"><span>Your page template</span><a href="/spec/openapi.yaml">getSdkScript</a></p>
+              <pre><code data-op="getSdkScript">&lt;script src="/_br/sdk.js" data-site="site_123" async&gt;&lt;/script&gt;</code></pre>
+            </li>
+            <li>
+              <h3 id="doctor">Check the install</h3>
+              <p class="code-cap"><span>Terminal · checks Core, the script route and the lake</span><a href="/spec/openapi.yaml">getSdkScript</a></p>
+              <pre><code data-op="getSdkScript">$ npx br doctor
+<span class="s">✓</span> Core reachable, policy v1 synced to 1 instance
+<span class="s">✓</span> /_br/sdk.js served from your origin
+<span class="s">✓</span> lake writable: s3://acme-botrampart/br/v1/
+<span class="k">!</span> 3 paths in recent responses carry no BotRampart header: /healthz, /legacy/export, /feed.xml</code></pre>
+              <p>Open your site and ask the SDK what the browser holds. A first visit is tier 0; a moment later the proof-of-work has run in the background and the session is tier 1.</p>
+              <p class="code-cap"><span>In the browser, from your own origin</span><a href="/spec/openapi.yaml">getSessionStatus</a></p>
+              <pre><code data-op="getSessionStatus">await fetch("/_br/status").then((r) =&gt; r.json());
+<span class="d">// { "tier": 1, "expiresAt": 1794825300, "sessionEndsAt": 1795428300, "tierExpiresAt": {}, "identified": false }</span></code></pre>
+            </li>
+            <li>
+              <h3 id="observe">Watch for an hour</h3>
+              <p>Within the first hour the decision log in your bucket shows spend by path class, the sessions that would have been challenged and why, and path costs suggested from how long each path takes to answer. Try a draft policy against that traffic before you enforce anything:</p>
+              <p class="code-cap"><span>Replay a draft against the last 24 hours</span><a href="/spec/openapi.yaml">simulatePolicy</a></p>
+              <pre><code data-op="simulatePolicy">curl -X POST "http://localhost:8787/v1/policy/simulate" \
+  -H "Authorization: Bearer $BR_CONSOLE_TOKEN" -H "Content-Type: application/json" \
+  -d @draft-policy.json
+
+{ "challenged_share_current": 0.004, "challenged_share_draft": 0.012, "signed_in_affected": 0,
+  "summary": "Would have challenged 1.2% of sessions against 0.4% today, none of them signed in." }</code></pre>
+            </li>
+            <li>
+              <h3 id="enforce">Enforce tier 1</h3>
+              <p>Switch <code>mode</code> to <code>"enforce"</code> with the default policy. Ordinary browsing stays inside the refill rate and sees nothing. Clients that cannot run JavaScript keep reading general pages on their 30-unit allowance and are asked for a proof-of-work on costly paths. Keep the five-minute loop in shadow until its answers match what you would have done.</p>
+            </li>
+          </ol>
+
+          <h2 id="next">Where to go next</h2>
+          <div class="cards">
+            <a class="card" href="/docs/integration/"><p class="eyebrow">Guide</p><h3>Integration</h3><p>Route costs, sign-in, GraphQL, challenge handling, fail modes and the policy file.</p></a>
+            <a class="card" href="/docs/architecture/"><p class="eyebrow">Reference</p><h3>Architecture</h3><p>Components, data layout, the decision model contract and the threat model.</p></a>
+          </div>
+          <!-- @sources -->
+        </article>
+      </div>
     </main>
-    <footer>
-      <p>BotRampart is a Greenhouse seed: a preview of a product that is not built yet.</p>
-    </footer>
+    <!-- @footer -->
   </body>
 </html>

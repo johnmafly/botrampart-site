@@ -1,28 +1,304 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="noindex, nofollow">
-    <title>BotRampart</title>
+    <!-- @head | BotRampart: price the request, not the visitor | An open-source bot defense that runs inside your app server. Every session has a budget, every path a cost, and heavy use is paid for with work. Your data stays in your bucket. -->
   </head>
-  <body>
-    <header>
-      <nav aria-label="Main">
-        <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/docs/">Docs</a></li>
-        <li><a href="/pricing/">Pricing</a></li>
-        <li><a href="/signup/">Sign up</a></li>
-        </ul>
-      </nav>
-    </header>
-    <main>
-      <h1>BotRampart</h1>
-      <p>BotRampart is an open-source, self-hosted bot defense that puts a price on each session's requests instead of deciding who is a bot. The introduction site is coming in package v1.</p>
+  <body class="home">
+    <!-- @header -->
+    <main id="main">
+      <section class="hero">
+        <div class="wrap hero-grid">
+          <div>
+            <p class="eyebrow">Open-source bot defense, self-hosted</p>
+            <h1>Price the request, <em>not the visitor.</em></h1>
+            <p class="lede">BotRampart never decides who is a bot. It runs inside your own app server, gives every session a budget and every path a cost, and asks heavy users to pay with work: a proof-of-work, then a human check, then a wait. No proxy in front of your site, no device fingerprint, and the record of every decision stays in your own bucket.</p>
+            <div class="btn-row">
+              <a class="btn btn-primary" href="/signup/">Walk through the preview</a>
+              <a class="btn btn-ghost" href="/docs/how-it-works/">How it works</a>
+            </div>
+            <p class="hero-note"><span class="dot" aria-hidden="true"></span><span>In design. Nothing is built or installable yet; this site previews the plan, and every number from someone else is sourced.</span></p>
+          </div>
+
+          <figure class="ledger" aria-labelledby="ledger-cap" style="margin:0">
+            <div class="ledger-head"><strong>Two sessions, one policy</strong><span style="white-space:nowrap">each line = 10 s</span></div>
+            <div class="lanes">
+              <div class="lane" data-lane="person">
+                <p class="lane-title">A person browsing the catalogue</p>
+                <p class="lane-sub">tier 1 · signed out</p>
+                <div class="meter" role="img" aria-label="Credit balance"><i style="width:100%"></i></div>
+                <div class="meter-label"><span>credits</span><span data-bal>300</span></div>
+                <ol class="tape" aria-live="off">
+                  <li><span>GET /products/42</span><span class="c">−1</span></li>
+                  <li><span>GET /products/42/reviews</span><span class="c">−1</span></li>
+                  <li><span>GET /api/search?q=boots</span><span class="c">−5</span></li>
+                  <li><span>refill, 20 a minute</span><span class="g">+7</span></li>
+                  <li><span>GET /products/77</span><span class="c">−1</span></li>
+                  <li><span>no challenge after tier 1</span><span class="g">ok</span></li>
+                </ol>
+              </div>
+              <div class="lane" data-lane="script">
+                <p class="lane-title">A script working through search</p>
+                <p class="lane-sub">60 searches every 10 s</p>
+                <div class="meter low" role="img" aria-label="Credit balance"><i style="width:0%"></i></div>
+                <div class="meter-label"><span>credits</span><span data-bal>0</span></div>
+                <ol class="tape" aria-live="off">
+                  <li><span>proof-of-work solved</span><span class="g">+300</span></li>
+                  <li><span>60 × GET /api/search</span><span class="c">−300</span></li>
+                  <li><span>over budget: human check</span><span class="x">403</span></li>
+                  <li><span>check passed (paid solver)</span><span class="g">+3,000</span></li>
+                  <li><span>repeat pass, grant halves</span><span class="g">+750</span></li>
+                  <li><span>grants spent: throttled</span><span class="x">429</span></li>
+                </ol>
+              </div>
+            </div>
+            <figcaption class="ledger-foot" id="ledger-cap">
+              <span>Simulated with the proposed default policy: search costs 5, refill 20 a minute, grants 300 then 3,000, halving on repeat.</span>
+              <button type="button" data-replay hidden>Replay</button>
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="why">
+        <div class="wrap">
+          <div class="section-head">
+            <p class="eyebrow">01 · Why now</p>
+            <div>
+              <h2 id="why">Telling bots from people has become a guess you can buy your way past.</h2>
+              <p>More than half of web traffic is automated, the puzzles meant to separate people from machines are solved by machines, and the IP addresses that used to identify an abuser now rent by the gigabyte. A verdict of "bot" or "human" is cheap to fake. A budget still has to be spent.</p>
+            </div>
+          </div>
+          <div class="facts">
+            <div class="fact">
+              <b>53%</b>
+              <p>of the web traffic Thales observed in 2025 was automated, by its annual count.{{c:thales-automated}}</p>
+            </div>
+            <div class="fact">
+              <b>100%</b>
+              <p>of reCAPTCHA v2 image challenges were solved by a published model in a 2024 study.{{c:recaptcha-solved}}</p>
+            </div>
+            <div class="fact">
+              <b>$1–$2.99</b>
+              <p>per 1,000 solved reCAPTCHA v2 challenges at a solver service; people and models do the clicking for you.{{c:solver-prices}}</p>
+            </div>
+            <div class="fact">
+              <b>65.3%</b>
+              <p>of 21,491 domains in DataDome's 2026 test stopped none of its 10 test bots. A vendor's test, and it favours the vendor's case.{{c:dd-unprotected}}</p>
+            </div>
+          </div>
+
+          <div class="thesis">
+            <div class="was">
+              <h3>"Is this a bot?" A classifier decides, and you defend the answer.</h3>
+              <p>Every false positive is a customer you blocked and cannot explain. Every pass is a clearance that can be resold. Solving the challenge once buys the session unlimited throughput.</p>
+            </div>
+            <div class="is">
+              <h3>"What has this session spent?" Arithmetic decides, and anyone can check it.</h3>
+              <p>Ordinary browsing stays under the refill rate and never sees a challenge after the first invisible one. Heavy use runs out of credit, and each challenge buys a bounded, shrinking amount more. Nobody is labelled; everybody is metered.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section alt" aria-labelledby="how">
+        <div class="wrap">
+          <div class="section-head">
+            <p class="eyebrow">02 · How it works</p>
+            <div>
+              <h2 id="how">Three loops at three speeds, and only the fastest one is in the request path.</h2>
+              <p>The backend SDK decides each request in memory, with no network call. A five-minute loop looks for patterns no single session shows. People stay in charge of the policy.</p>
+            </div>
+          </div>
+          <div class="loops">
+            <div class="loop">
+              <span class="speed">Microseconds · in your app</span>
+              <h3>Per request</h3>
+              <p>The backend SDK checks the signed session cookie, charges the path's cost to the session's budget and runs your policy rules. Allow, challenge, throttle or block, before your handler runs.</p>
+              <dl><dt>Knows</dt><dd>This session and the last synced policy</dd><dt>Calls</dt><dd>Nothing</dd></dl>
+            </div>
+            <div class="loop">
+              <span class="speed">Every 5 minutes · in Core</span>
+              <h3>Per window</h3>
+              <p>Core turns the last window into named bands ("cost x6 over baseline", "new sessions over 60%") and asks a decision model typed questions. The answer becomes fields your rules can use. It can raise a price; it can never block.</p>
+              <dl><dt>Knows</dt><dd>Aggregates, never strings a visitor wrote</dd><dt>First build</dt><dd>Shadow mode: answers are logged, not enforced</dd></dl>
+            </div>
+            <div class="loop">
+              <span class="speed">Human time · in Slack</span>
+              <h3>Per question</h3>
+              <p>An agent reads the decision log in your bucket with read-only access and answers "why was this person challenged?" with the rule, the numbers and the reference. It proposes changes; a person approves them.</p>
+              <dl><dt>Knows</dt><dd>Everything in your bucket, read-only</dd><dt>First build</dt><dd>Explanations and a daily digest</dd></dl>
+            </div>
+          </div>
+
+          <figure class="figure">
+            <div class="tablewrap" style="border:0;background:transparent;margin:0">
+            <svg viewBox="0 0 960 300" role="img" aria-labelledby="flow-t flow-d" style="min-width:720px">
+              <title id="flow-t">Where BotRampart sits</title>
+              <desc id="flow-d">Visitors reach your app through your existing CDN. The backend SDK inside the app verifies and charges each request with no network call. It syncs counters with Core every few seconds. Core asks a decision model about bucketed state every five minutes and writes everything to your own object storage, which the agent reads to answer questions in Slack.</desc>
+              <defs>
+                <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
+              </defs>
+              <g style="color:var(--ink)">
+                <rect class="f-box" x="10" y="40" width="130" height="64" rx="6"/>
+                <text x="75" y="68" text-anchor="middle" class="t-b">Visitor</text>
+                <text x="75" y="88" text-anchor="middle" class="t-mono">browser SDK, PoW</text>
+
+                <rect class="f-box" x="190" y="40" width="130" height="64" rx="6"/>
+                <text x="255" y="68" text-anchor="middle" class="t-b">Your CDN / WAF</text>
+                <text x="255" y="88" text-anchor="middle" class="t-mono">unchanged, floods</text>
+
+                <rect class="f-hot" x="370" y="22" width="250" height="100" rx="8"/>
+                <text x="495" y="50" text-anchor="middle" class="t-b">Your app server</text>
+                <text x="495" y="72" text-anchor="middle" class="t-mono">backend SDK: verify cookie,</text>
+                <text x="495" y="88" text-anchor="middle" class="t-mono">charge budget, run rules</text>
+                <text x="495" y="108" text-anchor="middle" class="t-mono">no network call</text>
+
+                <rect class="f-box" x="680" y="40" width="130" height="64" rx="6"/>
+                <text x="745" y="68" text-anchor="middle" class="t-b">Your handler</text>
+                <text x="745" y="88" text-anchor="middle" class="t-mono">req.br has the decision</text>
+
+                <line x1="140" y1="72" x2="186" y2="72" class="f-ink" stroke-width="1.5" marker-end="url(#ah)"/>
+                <line x1="320" y1="72" x2="366" y2="72" class="f-ink" stroke-width="1.5" marker-end="url(#ah)"/>
+                <line x1="620" y1="72" x2="676" y2="72" class="f-ink" stroke-width="1.5" marker-end="url(#ah)"/>
+
+                <rect class="f-box" x="370" y="190" width="250" height="78" rx="8"/>
+                <text x="495" y="218" text-anchor="middle" class="t-b">BotRampart Core</text>
+                <text x="495" y="238" text-anchor="middle" class="t-mono">sync, challenges, policy,</text>
+                <text x="495" y="254" text-anchor="middle" class="t-mono">5-minute state builder</text>
+                <line x1="470" y1="124" x2="470" y2="186" class="a-cost" stroke-width="1.5" marker-end="url(#ah)" style="color:var(--cost)"/>
+                <line x1="520" y1="186" x2="520" y2="124" class="a-credit" stroke-width="1.5" marker-end="url(#ah)" style="color:var(--credit)"/>
+                <text x="462" y="160" text-anchor="end" class="t-mono">counters, every 5–10 s</text>
+                <text x="528" y="160" class="t-mono">policy, directives</text>
+
+                <rect class="f-box" x="680" y="190" width="130" height="78" rx="6"/>
+                <text x="745" y="218" text-anchor="middle" class="t-b">Decision model</text>
+                <text x="745" y="238" text-anchor="middle" class="t-mono">named bands only,</text>
+                <text x="745" y="254" text-anchor="middle" class="t-mono">every 5 min, cached</text>
+                <line x1="620" y1="229" x2="676" y2="229" class="a-dim" stroke-width="1.5" marker-end="url(#ah)" style="color:var(--muted)"/>
+
+                <rect class="f-cool" x="190" y="190" width="130" height="78" rx="6"/>
+                <text x="255" y="218" text-anchor="middle" class="t-b">Your bucket</text>
+                <text x="255" y="238" text-anchor="middle" class="t-mono">R2, S3 or MinIO</text>
+                <text x="255" y="254" text-anchor="middle" class="t-mono">Parquet + JSON</text>
+                <line x1="370" y1="229" x2="324" y2="229" class="a-credit" stroke-width="1.5" marker-end="url(#ah)" style="color:var(--credit)"/>
+
+                <rect class="f-box" x="10" y="190" width="130" height="78" rx="6"/>
+                <text x="75" y="218" text-anchor="middle" class="t-b">Agent</text>
+                <text x="75" y="238" text-anchor="middle" class="t-mono">DuckDB, read-only</text>
+                <text x="75" y="254" text-anchor="middle" class="t-mono">answers in Slack</text>
+                <line x1="190" y1="229" x2="144" y2="229" class="f-ink" stroke-width="1.5" marker-end="url(#ah)"/>
+              </g>
+            </svg>
+            </div>
+            <figcaption>Where BotRampart sits. Orange is the request path, which gains no extra hop. Green is what stays in your infrastructure. The decision model is the only outside call, it sees named bands rather than visitor data, and it can be a model you host yourself. Our design.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="own">
+        <div class="wrap split">
+          <div>
+            <p class="eyebrow">03 · Control</p>
+            <h2 id="own">It runs where your app runs. Your traffic data never leaves.</h2>
+            <p class="lede" style="font-size:1.1rem">Most bot defense is a service your traffic passes through: a proxy, an edge network, or a module that asks the vendor about every request. BotRampart is software you run.</p>
+            <ul class="ticks">
+              <li><b>No proxy in the request path.</b> The SDK is a framework filter in your app. Your CDN or WAF keeps handling floods, as it does today.</li>
+              <li><b>Verified offline.</b> The session cookie is signed with your key and checked in memory. If Core is unreachable, tier 1, budgets and rules keep working.</li>
+              <li><b>Your bucket, open formats.</b> Rollups, decisions and every model answer are Parquet and JSON in your R2, S3 or MinIO, readable with DuckDB without asking us.</li>
+              <li><b>No fingerprint ID.</b> One server-set session cookie, an optional hashed login ID, and IP only as a network bucket. No canvas, font or audio fingerprinting in any mode.</li>
+              <li><b>Open source.</b> SDKs under Apache-2.0; Core and the agent under AGPL-3.0 with a commercial licence for those who need one.</li>
+            </ul>
+          </div>
+          <div>
+            <p class="eyebrow">04 · Explains itself</p>
+            <h2>Ask why. Get the rule, the numbers and the reference.</h2>
+            <div class="chat" aria-label="Example conversation in Slack">
+              <div class="chat-msg">
+                <div class="avatar" aria-hidden="true">MK</div>
+                <div class="chat-body">
+                  <div class="chat-name">Support engineer <span>10:31</span></div>
+                  <p>@BotRampart why was user 4217 challenged around 10:12 today? They say they were just searching.</p>
+                </div>
+              </div>
+              <div class="chat-msg">
+                <div class="avatar bot" aria-hidden="true">BR</div>
+                <div class="chat-body">
+                  <div class="chat-name">BotRampart <span>10:31</span></div>
+                  <p>Session BR-7F3K2Q got a human check at 10:12:41 from rule <code>over-budget</code>, policy v12. In the five minutes before, it spent 1,240 units, 96% on search at 5 units a call. A signed-in session regains 300 units in five minutes. Risk score 1; no model directive applied. The check was passed in 4 seconds and the session carried on.</p>
+                  <p class="chat-cite">query explain_decision · 3 rows · window 10:07–10:12 · policy v12</p>
+                  <div class="chat-actions"><span>Show timeline</span><span>Replay with draft policy</span></div>
+                </div>
+              </div>
+              <p class="illus">Illustrative: the answer format from the design, not a real user</p>
+            </div>
+            <p style="margin-top:1.4rem;color:var(--ink-2)">Every non-allow decision is logged with a reference shown to the visitor, so support can look it up. Because each decision is a rule, a budget or a recorded model answer, an explanation is a lookup rather than a guess.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section alt" aria-labelledby="fit">
+        <div class="wrap">
+          <div class="section-head">
+            <p class="eyebrow">05 · Who it is for</p>
+            <div>
+              <h2 id="fit">Built for teams who cannot, or will not, route their traffic through a vendor.</h2>
+              <p>And honest about who should use something else. If a CDN in front of your site is fine with you, the incumbents already do a lot for free.</p>
+            </div>
+          </div>
+          <div class="fit">
+            <div>
+              <h3>A good fit</h3>
+              <ul>
+                <li>Engineering-led SaaS, shops, marketplaces, travel and ticketing sites with roughly 5 to 200 million requests a month, scraping, fake sign-ups or credential stuffing, and no security team.</li>
+                <li>Teams priced out of enterprise bot management, whose entry plans start in the thousands of dollars a month.{{c:dd-entry-price}}</li>
+                <li>Regulated and data-sovereign teams: fintech, health, government suppliers, EU residency rules.</li>
+                <li>Apps on private networks or behind several CDNs, which cannot sit behind one vendor's edge.</li>
+              </ul>
+            </div>
+            <div class="no">
+              <h3>Probably not for you, yet</h3>
+              <ul>
+                <li>You already run behind Cloudflare and are happy: its free plan includes Bot Fight Mode and Turnstile is free with unlimited challenges.{{c:cf-turnstile-free}}</li>
+                <li>You need volumetric DDoS protection. BotRampart refuses requests in your app; floods belong at the edge.</li>
+                <li>You need mobile apps or partner APIs protected now. The first build covers browsers only.</li>
+                <li>You need something in production this quarter. BotRampart is in design; <a href="/docs/comparison/">the comparison</a> names what to use today.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="status">
+        <div class="wrap">
+          <div class="section-head">
+            <p class="eyebrow">06 · Status</p>
+            <div>
+              <h2 id="status">Where it stands, plainly.</h2>
+              <p>The design is written, the interface is specified and the first build is scoped. Durations are planning assumptions for a team of two or three engineers, not estimates from measured work.</p>
+            </div>
+          </div>
+          <div class="status">
+            <div class="now"><span class="ph">Now</span><h3>Design</h3><p>Architecture, <a href="/spec/openapi.yaml" style="color:inherit">OpenAPI spec</a>, policy format and threat model. Nothing to install.</p></div>
+            <div><span class="ph">Phase 0 · 2 weeks</span><h3>Decide</h3><p>Hosting spike, decision-model bake-off, proof-of-work format measured on phones, licence and trademark.</p></div>
+            <div><span class="ph">Phase 1 · 8 weeks</span><h3>First build</h3><p>Node SDK, tiers 0 to 2, budgets, Core on Cloudflare or one container, decision log, agent explanations in Slack.</p></div>
+            <div><span class="ph">Later</span><h3>Complete the loops</h3><p>Model answers enforced, log pack, Python and Java, console, step-up methods, an open benchmark, cloud.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="closing">
+        <div class="wrap">
+          <h2>See what the first hour would look like on your traffic.</h2>
+          <p class="lede">The preview walks through setup in observe mode and ends on what BotRampart would have shown you. It runs in your browser and stores nothing.</p>
+          <div class="btn-row">
+            <a class="btn btn-primary" href="/signup/">Walk through the preview</a>
+            <a class="btn btn-ghost" href="/pricing/">Pricing and editions</a>
+          </div>
+          <!-- @sources -->
+        </div>
+      </section>
     </main>
-    <footer>
-      <p>BotRampart is a Greenhouse seed: a preview of a product that is not built yet.</p>
-    </footer>
+    <!-- @footer -->
+    <script src="/assets/home.js" defer></script>
   </body>
 </html>
