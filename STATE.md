@@ -34,8 +34,14 @@ At 80% of any budget (rounds, spend, time) the Chief stops and reports.
 ## Checks (local, 2026-11-18)
 
 - `npm test`: 18 of 18 pass (contract structure, data-op against spec, claims coverage, comparison and pricing rules, economics numbers, no tracking or storage, signup is a preview, non-goals not presented as available).
-- `npm run check-links`: 53 of 60 source URLs answer 200 to an automated request. 403 or 429 (bot defenses refusing a script; each was read by a person-like fetch or an archive on 2026-11-18): ppc.land, w3.org WCAG page, vmblog.com, three web.archive.org DataDome snapshots. 404 until merged: the experiment result on `main`.
+- `npm run check-links`: 53 of 60 source URLs answer 200 to an automated request. 403 or 429 (bot defenses refusing a script; each was read by a person-like fetch or an archive on 2026-11-18): ppc.land, w3.org WCAG page, vmblog.com, three web.archive.org DataDome snapshots. The experiment result on `main` resolves since the merge.
 - Lighthouse 12 (mobile, local server): performance 100 and accessibility 100 on `/`, `/docs/`, all five docs sections; 100/100 on `/signup/` and `/pricing/`. SEO 60 by design (noindex).
+
+## Live (2026-11-18)
+
+- PR #1 merged as `19f0845`; https://botrampart.agenthatch.ai serves it (`/.well-known/greenhouse.json` sha `19f0845200c9514300bd3de8793f95eddfcc96f2`, built 2026-11-18T10:36:35Z).
+- 200 on `/`, `/docs/`, the five docs sections, `/pricing/`, `/signup/`, `/spec/openapi.yaml`; `X-Robots-Tag: noindex, nofollow` and the robots meta are present. `claims.yaml` is not served; pages link to it on GitHub.
+- Desktop (1440) and phone (390) screenshots of the live `/` match the local build.
 
 ## Decisions
 
@@ -58,6 +64,5 @@ None from a judged round (no round submitted).
 
 ## Next steps
 
-1. After merge: confirm the live deploy at https://botrampart.agenthatch.ai (routes, `/.well-known/greenhouse.json` SHA), screenshots.
-2. Run `greenhouse check` (preflight) when VC Joe says the CLI is ready; fix until green.
-3. Submit round 01 with `greenhouse submit` when VC Joe says so.
+1. Run `greenhouse check` (preflight) when VC Joe says the CLI is ready; fix until green.
+2. Submit round 01 with `greenhouse submit` when VC Joe says so.
