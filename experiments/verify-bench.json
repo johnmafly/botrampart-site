@@ -1,0 +1,15 @@
+{
+  "experiment": "verify-and-charge",
+  "date": "2026-11-18",
+  "machine": "Apple M4 Pro, darwin arm64, one Node process",
+  "node": "v25.9.0",
+  "requests_measured": 300000,
+  "sessions": 10000,
+  "verify_p50_us": 1.79,
+  "verify_p90_us": 2.04,
+  "verify_p99_us": 2.58,
+  "verify_p999_us": 8.04,
+  "allowed_share": 1,
+  "forged_cookie_rejected": true,
+  "target_p99_us": 1000
+}

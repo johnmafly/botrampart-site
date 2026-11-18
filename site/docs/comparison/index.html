@@ -1,28 +1,90 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="noindex, nofollow">
-    <title>Comparison | BotRampart</title>
+    <!-- @head | Comparison | BotRampart docs -->
   </head>
   <body>
-    <header>
-      <nav aria-label="Main">
-        <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/docs/">Docs</a></li>
-        <li><a href="/pricing/">Pricing</a></li>
-        <li><a href="/signup/">Sign up</a></li>
-        </ul>
-      </nav>
-    </header>
-    <main>
-      <h1>Comparison with other bot defenses</h1>
-      <p>A fair, sourced and dated comparison with other bot defense products. Coming in package v1.</p>
+    <!-- @header -->
+    <main id="main">
+      <div class="page-head">
+        <div class="wrap">
+          <p class="eyebrow">Docs · Comparison · as of 18 November 2026</p>
+          <h1>How BotRampart compares, including where you should pick someone else.</h1>
+          <p class="lede">Four commercial products and the open-source projects closest to BotRampart, compared on how they are deployed, where your traffic data goes, what they cost to start and where each one is the better choice. Facts about other products are sourced, with the supporting words quoted at the foot of the page, and were checked on the date above.</p>
+        </div>
+      </div>
+      <div class="wrap doc-grid">
+        <!-- @docs-nav -->
+        <article class="prose">
+          <div class="callout cost"><p><b>Read this first.</b> Every product below exists and protects sites today. BotRampart does not: it is a design. So this page compares a plan with shipping products, which favours the plan. We say where that matters, and we say where an incumbent is simply better. BotRampart also has no cross-customer data network, which several of these vendors treat as their main strength.</p></div>
+
+          <h2 id="summary">At a glance</h2>
+          <div class="tablewrap wide">
+            <table>
+              <thead><tr><th scope="col"></th><th scope="col">How it is deployed</th><th scope="col">Where detection runs</th><th scope="col">Open source</th><th scope="col">Public entry price</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">BotRampart (planned)</th><td>SDKs in your app plus Core you host</td><td>Your app server and your Core</td><td>Yes: SDKs Apache-2.0, Core AGPL-3.0</td><td>Free to self-host; cloud prices are proposals</td></tr>
+                <tr><th scope="row">Cloudflare</th><td>Reverse proxy in front of your site</td><td>Cloudflare's network</td><td>No</td><td>Bot Fight Mode on the Free plan;{{c:cf-bot-mgmt-enterprise}} Business $200 a month billed annually{{c:cf-business-price}}</td></tr>
+                <tr><th scope="row">DataDome</th><td>Modules in your CDN or server that call DataDome</td><td>DataDome's service</td><td>No</td><td>$3,830 a month (Essentials){{c:dd-entry-price}}</td></tr>
+                <tr><th scope="row">Netacea</th><td>Plugs into your CDN, WAF or load balancer{{c:net-platform}}</td><td>Server-side, Netacea's service</td><td>No</td><td>Per-unit AWS Marketplace contract, sized with the vendor{{c:net-aws}}</td></tr>
+                <tr><th scope="row">IntelliFend</th><td>CDN worker, a proxy next to your origin, or log forwarding{{c:if-deploy}}</td><td>IntelliFend's detection platform</td><td>No</td><td>$749 a month for 20M requests{{c:if-price}}</td></tr>
+                <tr><th scope="row">Anubis</th><td>A proxy you run in front of your app</td><td>Your server</td><td>Yes, MIT{{c:anubis-readme}}</td><td>Free</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="fine">"Public entry price" is the lowest price the vendor or a marketplace lists, not what a typical customer pays. Enterprise prices are usually negotiated.</p>
+
+          <h2 id="cloudflare">Cloudflare</h2>
+          <p>Cloudflare sits in front of a very large share of the web: W3Techs puts it at 86.6% of sites that use a reverse proxy service.{{c:cf-reach}} Its bot tools come in layers: Bot Fight Mode on the Free plan, and per-request bot scores with custom rules in Bot Management for Enterprise.{{c:cf-bot-mgmt-enterprise}} Turnstile, its CAPTCHA replacement, is free with unlimited challenges,{{c:cf-turnstile-free}} and since 1 July 2025 new domains block AI crawlers by default.{{c:cf-ai-default}}</p>
+          <p><b>Where Cloudflare is the better choice.</b> If you are willing to put a proxy in front of your site, start there. It is free or cheap, it absorbs floods that BotRampart cannot, and it learns from traffic across a large part of the internet, which no self-hosted product can match.</p>
+          <p><b>Where BotRampart differs.</b> Your traffic must pass through Cloudflare's network, and the free tools are coarse: its own documentation covers false positives from Bot Fight Mode and notes that Bot Fight Mode cannot be skipped with WAF custom rules.{{c:cf-fp}} Removing Cloudflare's branding from Turnstile is reserved for Enterprise customers.{{c:cf-offlabel}} BotRampart is for apps that cannot or will not sit behind one vendor's edge, and for teams that want every decision explained from a log they own. The two also combine: keep Cloudflare for floods and run BotRampart in the app.</p>
+
+          <h2 id="datadome">DataDome</h2>
+          <p>DataDome was founded in Paris in 2015{{c:dd-founded}} and says it detects bots in under 2 milliseconds from more than 35 points of presence.{{c:dd-2ms}} Forrester's 2026 evaluation, as summarised by a competitor, named it a Leader alongside HUMAN and Kasada.{{c:forrester-leaders}} It published Agent Trust, a control plane for AI agent traffic, on 5 May 2026.{{c:dd-agent-trust}}</p>
+          <p><b>Where DataDome is the better choice.</b> A large site under sustained, well-funded attack, with budget for an enterprise contract and no objection to sending request data to a vendor, gets a vendor with more than a decade of operation and an agent-traffic product already published. BotRampart cannot claim comparable detection quality, and will not until an open benchmark says otherwise.</p>
+          <p><b>Where BotRampart differs.</b> Price and custody. DataDome's entry plan lists at $3,830 a month,{{c:dd-entry-price}} and data is kept for up to 30 days depending on the plan.{{c:dd-retention}} Its server modules ask DataDome's API about requests and, if its response header is missing, treat the request as allowed.{{c:dd-protapi}} BotRampart decides in your process without a network call and keeps the decision log in your bucket for as long as you choose.</p>
+
+          <h2 id="netacea">Netacea</h2>
+          <p>Netacea raised a further £4 million from Mercia in December 2024.{{c:net-mercia}} Its Talos engine is agentless: no JavaScript and no device fingerprinting, with detection server-side.{{c:net-talos}} It plugs into the CDNs, WAFs and load balancers you already run.{{c:net-platform}}</p>
+          <p><b>Where Netacea is the better choice.</b> If you want nothing at all in the browser and nothing in your application code, Netacea's model fits better than BotRampart's, which needs a script tag and an SDK in your app.</p>
+          <p><b>Where BotRampart differs.</b> Netacea shows that a consent-light, server-side approach sells. BotRampart shares the no-fingerprint stance but runs in your infrastructure, publishes its code and policy format, and meters sessions instead of classifying intent. Netacea's public pricing is a per-unit marketplace contract sized with the vendor;{{c:net-aws}} BotRampart's Community edition is free to self-host.</p>
+
+          <h2 id="intellifend">IntelliFend</h2>
+          <p>IntelliFend is a Singapore company with teams across Hong Kong, Taiwan and Vietnam,{{c:if-singapore}} launched on AWS Marketplace in August 2024.{{c:if-launch}} It deploys three ways: a CDN worker, a lightweight proxy next to your origin, or NGINX configuration that pushes access logs to its servers for analysis.{{c:if-deploy}} Its browser SDK, RequestShield, obtains single-use proof-of-work tokens.{{c:if-pow}}</p>
+          <p><b>Where IntelliFend is the better choice.</b> An APAC team that wants a regional vendor, sits behind an existing CDN, and is happy at a published $749 a month for up to 20 million requests{{c:if-price}} gets a working product today.</p>
+          <p><b>Where BotRampart differs.</b> IntelliFend already ships proof-of-work, so that is not a difference. The differences are open source, detection inside your own infrastructure, the decision log in your own bucket, and explanations on request.</p>
+
+          <h2 id="oss">Open-source peers</h2>
+          <h3 id="anubis">Anubis</h3>
+          <p>Anubis is an MIT-licensed "Web AI Firewall Utility" that weighs each connection with one or more challenges, mostly proof-of-work, to keep scrapers off upstream resources.{{c:anubis-readme}} It had more than 24,000 GitHub stars in November 2026,{{c:anubis-stars}} and its maker lists an unbranded commercial build, BotStopper, at US$50 a month, marked "coming soon".{{c:botstopper-price}}</p>
+          <p><b>Where Anubis is the better choice.</b> A documentation site, a forge or a wiki being hammered by AI crawlers needs something today, in one container, with no code changes. That is Anubis. BotRampart needs an SDK in your app and is aimed at applications with logins, search and checkout.</p>
+          <p><b>What BotRampart learns from it.</b> One challenge per session buys a week-long cookie in Anubis's design.{{c:anubis-week}} Tavis Ormandy estimated that a free-tier cloud VM could mine tokens for every Anubis deployment in about six minutes, using its star count as a stand-in for deployments,{{c:anubis-ormandy}} and Codeberg reported AI crawlers solving its challenges in August 2025.{{c:anubis-codeberg}} BotRampart keeps proof-of-work as a minting cost and adds what a single challenge lacks: a budget per session, a shrinking grant per pass, and a price per network for new sessions.</p>
+          <h3 id="crowdsec">CrowdSec</h3>
+          <p>CrowdSec analyses your logs locally and its Security Engines share attack signals across a large installed base.{{c:crowdsec}} Choose it for IP-reputation blocking with a community network behind it; BotRampart deliberately does not make the IP address the identity.</p>
+          <h3 id="altcha">ALTCHA</h3>
+          <p>ALTCHA sells a proof-of-work CAPTCHA replacement with a self-hosted Sentinel edition at €99 to €799 a month, and its cloud does not count blocked requests towards usage.{{c:altcha-sentinel}} Choose it for a drop-in challenge widget; BotRampart is a metering system that uses a challenge as one of its parts, and borrows ALTCHA's rule of never billing blocked traffic.</p>
+
+          <h2 id="choose">Choosing</h2>
+          <div class="tablewrap">
+            <table>
+              <thead><tr><th scope="col">If you…</th><th scope="col">Consider</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">are happy behind a CDN and want protection this week</th><td>Cloudflare</td></tr>
+                <tr><th scope="row">face a sustained, funded attack and have an enterprise budget</th><td>DataDome, or another Forrester Leader</td></tr>
+                <tr><th scope="row">want nothing in the browser and nothing in your code</th><td>Netacea</td></tr>
+                <tr><th scope="row">want a managed service in APAC at a published mid-market price</th><td>IntelliFend</td></tr>
+                <tr><th scope="row">need to stop crawlers on a docs site or forge today, for free</th><td>Anubis</td></tr>
+                <tr><th scope="row">cannot route traffic or visitor data through a vendor, want every decision explained from your own log, and can wait for a first build</th><td>BotRampart</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2 id="method">Method</h2>
+          <p>Facts about other products come from their own documentation, pricing pages, marketplace listings, press releases and, where marked, secondary sources. Each was re-fetched on 18 November 2026 and the supporting sentence is quoted below. Detection quality is not compared: no independent benchmark of these products was found, and vendor figures are not comparable with each other. BotRampart's plan includes an open benchmark run only on its own sites, with each vendor's results sent to the vendor for reply before publication. If a statement here is wrong or out of date, the source of this site is public and corrections are welcome.</p>
+          <!-- @sources -->
+        </article>
+      </div>
     </main>
-    <footer>
-      <p>BotRampart is a Greenhouse seed: a preview of a product that is not built yet.</p>
-    </footer>
+    <!-- @footer -->
   </body>
 </html>

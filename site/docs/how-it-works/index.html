@@ -1,28 +1,134 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="noindex, nofollow">
-    <title>How it works | BotRampart</title>
+    <!-- @head | How it works | BotRampart docs -->
   </head>
   <body>
-    <header>
-      <nav aria-label="Main">
-        <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/docs/">Docs</a></li>
-        <li><a href="/pricing/">Pricing</a></li>
-        <li><a href="/signup/">Sign up</a></li>
-        </ul>
-      </nav>
-    </header>
-    <main>
-      <h1>How it works</h1>
-      <p>How sessions, path costs, budgets and challenge tiers fit together. Coming in package v1.</p>
+    <!-- @header -->
+    <main id="main">
+      <div class="page-head">
+        <div class="wrap">
+          <p class="eyebrow">Docs · How it works</p>
+          <h1>A budget for every session, a cost for every path.</h1>
+          <p class="lede">BotRampart does not try to tell bots from people. It meters what each session consumes and asks for a little work when a session wants more. This page explains the idea, the numbers behind it and what it does not cover.</p>
+        </div>
+      </div>
+      <div class="wrap doc-grid">
+        <!-- @docs-nav -->
+        <article class="prose">
+          <div class="callout"><p><b>Design, not product.</b> BotRampart is not built yet. Everything below is the proposed design from the architecture plan of 16 November 2026. Default numbers are proposals to be tuned, and items marked <span class="tag later">later</span> are outside the first build.</p></div>
+
+          <h2 id="idea">The idea</h2>
+          <p>Bot defense usually asks one question: is this client a bot? That question has become expensive to answer and cheap to fool. Image puzzles are solved by published models,{{c:recaptcha-solved}} solver services sell passes by the thousand,{{c:solver-prices}} and residential proxies make an IP address a disposable identity at prices starting near a dollar a gigabyte.{{c:proxy-prices}}</p>
+          <p>BotRampart asks a different question: what has this session spent? Every session holds credit. Every path has a cost. Ordinary use refills faster than it spends; heavy use runs out and has to earn more by passing a challenge, and each repeat earns less. A pass buys credit, never a clearance.</p>
+          <p>Nobody is labelled a bot, so there is no verdict to dispute. Anyone can check the arithmetic, so every decision can be explained.</p>
+
+          <h2 id="session">A session's life</h2>
+          <p>Identity is one first-party cookie, <code>__br_s</code>, set by your own server with <code>HttpOnly</code> and signed with your site key. It carries a random session ID, its tier and its expiry; no device fingerprint. The token lives 30 minutes and is renewed while in use, inside a session of at most seven days, so a revoked session stops working within half an hour even on an app instance that missed a sync. That lifetime follows Cloudflare's own guidance for its clearance cookie, 30 minutes by default and 15 to 45 recommended.{{c:cf-passage}}</p>
+          <p>Because your server sets the cookie, page scripts cannot read it, and Safari's rule that deletes script-written cookies after seven days without interaction does not apply to it.{{c:webkit-7day}}</p>
+          <div class="tablewrap">
+            <table>
+              <thead><tr><th scope="col">Tier</th><th scope="col">What the visitor does</th><th scope="col">Buys (proposed)</th><th scope="col">Stops</th><th scope="col">Scope</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">0 · provisional</th><td>Nothing. First contact gets a cookie.</td><td class="n">30 units, general paths only</td><td>Nothing alone; makes requests attributable</td><td><span class="tag mvp">first build</span></td></tr>
+                <tr><th scope="row">1 · proof-of-work</th><td>Nothing visible. The browser SDK solves 16 to 50 small puzzles in a Web Worker.</td><td class="n">300, then refill</td><td>Plain HTTP clients and anything without JavaScript. Not headless browsers.</td><td><span class="tag mvp">first build</span></td></tr>
+                <tr><th scope="row">2 · human check</th><td>Ticks a box. Pointer, touch and key dynamics are scored. Works with a keyboard and a screen reader.</td><td class="n">3,000, halving on each repeat in 24 h</td><td>Unattended automation that does not pay a solver</td><td><span class="tag mvp">first build</span></td></tr>
+                <tr><th scope="row">3 · step-up</th><td>A pluggable method: email link, sign-in or passkey, an image puzzle, or a third-party widget. Always with a non-visual option.</td><td class="n">6,000, halving</td><td>Raises the price again; methods tied to an account are hardest to farm</td><td><span class="tag later">later</span></td></tr>
+                <tr><th scope="row">Throttle</th><td>Waits. <code>429</code> with <code>Retry-After</code>.</td><td class="n">Refill only</td><td>Sustained heavy use, whoever is behind it</td><td><span class="tag mvp">first build</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Accessibility shapes the top tier. WCAG 2.2 success criterion 3.3.8 does not allow a cognitive test in an authentication step unless an alternative, a mechanism to help, or one of its narrow exceptions applies.{{c:wcag-338}} So the image puzzle is one step-up option among several, not the fixed top of the ladder, and every step-up configuration must offer a method that needs no puzzle at all.</p>
+
+          <h2 id="economics">Request economics</h2>
+          <p>Each request is charged the cost of its path class before your handler runs. The policy file names the classes; these are the proposed defaults:</p>
+          <div class="tablewrap">
+            <table>
+              <thead><tr><th scope="col">Path class</th><th scope="col">Example match</th><th scope="col">Cost</th><th scope="col">Lowest tier</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">static</th><td><code>/assets/*</code>, <code>*.css</code>, <code>*.png</code></td><td class="n">0</td><td class="n">0</td></tr>
+                <tr><th scope="row">general</th><td><code>/*</code></td><td class="n">1</td><td class="n">0</td></tr>
+                <tr><th scope="row">search</th><td><code>/api/search*</code></td><td class="n">5</td><td class="n">1</td></tr>
+                <tr><th scope="row">login</th><td><code>POST /login</code></td><td class="n">10</td><td class="n">1</td></tr>
+                <tr><th scope="row">checkout</th><td><code>/api/checkout*</code></td><td class="n">20</td><td class="n">1</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>A session regains 20 units a minute up to a balance of 300, and three times as fast once your app attaches a login ID. When it cannot pay, the over-budget rule asks for the next challenge; when the shrinking grants are spent, it throttles. In code, the whole of it:</p>
+          <pre><code class="language-text">on request(session, path_class):
+    cost = path_cost[path_class]                     <span class="d"># 0 for static</span>
+    rate = refill_per_min * multiplier(session)      <span class="d"># x3 when signed in</span>
+    session.credits = min(burst, session.credits + rate * minutes_since_last)
+    if session.credits &gt;= cost: session.credits -= cost; return ALLOW
+    return over_budget(session)                      <span class="d"># next challenge, else throttle</span>
+
+on challenge passed(session, tier):
+    n = passes of this tier by session in the last 24 h
+    session.credits += grant[tier] * 0.5 ** n        <span class="d"># 300 / 3,000 / 6,000, halving</span></code></pre>
+          <p>This is not a new idea, only a new place for it. GitHub's GraphQL API gives each user 5,000 points an hour and prices each query by the work it implies,{{c:gh-graphql}} Shopify limits its Admin API by calculated query cost,{{c:shopify-cost}} and Cloudflare's complexity-based rate limiting reads a cost your origin returns in a response header.{{c:cf-rl-complexity}} BotRampart applies the same accounting to anonymous browser sessions. Your app can report the true cost of an expensive response in a <code>BR-Cost</code> header, and the difference is settled on the session.</p>
+
+          <h3 id="ceiling">Why a pass buys credit, not clearance</h3>
+          <p>A design that challenges once per session and then waves the session through has a known flaw: once the challenge is solved, latency rises but throughput does not fall.{{c:anubis-throughput}} Tying each pass to a fixed grant that halves on repeat gives every session a hard daily ceiling instead.</p>
+          <p>With the default policy, one session can spend at most <b class="num">35,363</b> units in a day in the first build (tiers 0 to 2), and <b class="num">47,175</b> once step-up methods exist: a day of refill, the burst, and every grant until a repeat would buy less than 100 units. At 5 units a search that is about 7,000 to 9,400 searches a day. Someone who wants a million searches a day needs more than a hundred sessions, and new sessions are rationed per network, below. These figures come from the <a href="https://github.com/johnmafly/botrampart-site/blob/main/site/assets/economics.mjs">reference implementation</a> this site runs, and a test in the repository checks them.</p>
+          <p>A challenge is not an economic wall by itself. Solvers charge around $1 to $3 per thousand passes,{{c:solver-prices}} so a paid pass that buys 600 searches adds a fraction of a cent per thousand searches. Challenges do three jobs: they shut out clients with no JavaScript engine, they produce interaction signals, and they meter credit. The ceiling and the mint buckets do the limiting.</p>
+
+          <h3 id="mint">Clients that throw cookies away</h3>
+          <p>A client that discards its cookie arrives as a new session every time. If new sessions were free, that client would have unlimited budgets. So every new session starts at tier 0 with 30 units for general pages only, and new sessions are counted per network:</p>
+          <div class="tablewrap">
+            <table>
+              <thead><tr><th scope="col">Mint bucket</th><th scope="col">Window</th><th scope="col">Default (proposed)</th><th scope="col">Catches</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Exact IP</th><td>10 min</td><td class="n">20 new sessions</td><td>One machine discarding cookies</td></tr>
+                <tr><th scope="row">/24 or /48 prefix</th><td>10 min</td><td class="n">60 new sessions</td><td>A small block, or an IPv6 host rotating addresses</td></tr>
+                <tr><th scope="row">ASN</th><td>10 min</td><td class="n">5 × its own baseline</td><td>A proxy pool inside one provider</td></tr>
+                <tr><th scope="row">TLS fingerprint family</th><td>10 min</td><td class="n">5 × baseline</td><td>One automation stack spread over many networks <span class="tag later">later</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>The response to pressure is a price, not a block: a proof-of-work 1.5 to 10 times harder, then a human check for new sessions on costly paths, and only at an extreme a <code>429</code>. Sessions that are already established or signed in are exempt, so a café or a mobile carrier's shared address does not lock out the people already using your site. IP addresses are disposable to an attacker, and in one study 60% of residential proxy addresses were seen only once in 90 days,{{c:ipinfo-rotation}} which is why the address is a bucket here and never the identity.</p>
+
+          <h2 id="window">The five-minute loop</h2>
+          <p>Some abuse is invisible one session at a time: a slow scrape spread over thousands of sessions, each under budget. Every five minutes Core merges the counters from your app instances, compares them with each cohort's own baseline for that hour of the week, and turns every number into a named band such as <code>cost_vs_baseline: x6_plus</code> or <code>new_session_share: over_60pct</code>. Free text is removed: paths become your class names, user agents become a family. The result is a small JSON state with nothing a visitor typed in it.</p>
+          <p>Core then asks a decision model four typed questions about that state: is this automated abuse (yes or no, with a probability), how risky is it (a five-level score), what is it most likely for (scraping, credential stuffing, fake sign-ups, an organic spike), and which is the least intrusive step that would contain it. This follows the guidance Google publishes for its Decisions API: compare numbers in code and pass a named bucket,{{c:gd-guide-code}} and treat input as untrusted.{{c:gd-guide-untrusted}} Google launched that API with Gemini Decision 1 on 11 November 2026{{c:gd-launch}} at $0.10 per million input tokens,{{c:gd-price}} so one site-level question every five minutes costs on the order of a few dollars a month (our estimate at about 1,800 tokens a call). The provider sits behind one interface, and a self-hosted model can replace it so nothing leaves your network.</p>
+          <p>The answer never acts directly. It becomes fields such as <code>ai.attack</code> and <code>ai.action</code>, with an expiry, and your rules decide what to do with them. The model can raise a price or lower a cohort's budget; it can never block or allow a client. Answers are cached on a hash of the bands for up to an hour, so a quiet site asks rarely, and any change in a band is a new question at the next window.</p>
+          <div class="callout cost"><p><b>First build: shadow mode.</b> In the first build the model's answers are logged and shown beside what the rules actually did, so you can set thresholds from your own traffic before anything acts on them. Enforcing <code>ai.*</code> fields comes after.</p></div>
+          <div class="tablewrap">
+            <table>
+              <thead><tr><th scope="col">What happens</th><th scope="col">Which loop reacts</th><th scope="col">Time to effect</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">One session exceeds its budget</th><td>Per request, in the SDK</td><td>The same request</td></tr>
+                <tr><th scope="row">One network mints sessions in a burst</th><td>Per request</td><td>Seconds on one instance; one sync interval across instances</td></tr>
+                <tr><th scope="row">Site-wide spend jumps</th><td>A deterministic tripwire, then the five-minute loop</td><td>One sync interval, then 5 to 10 minutes</td></tr>
+                <tr><th scope="row">Slow distributed scrape, every session under budget</th><td>Five-minute loop</td><td>10 to 15 minutes: two windows must agree</td></tr>
+                <tr><th scope="row">The attack ends</th><td>Five-minute loop</td><td>15 minutes to step down a level; 60 at most</td></tr>
+                <tr><th scope="row">You disagree with a mitigation</th><td>You, in Slack or the policy file</td><td>The next sync</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2 id="explain">Explaining a decision</h2>
+          <p>Every non-allow decision is written to a decision log in your bucket with a reference such as <code>BR-7F3K2Q</code>, which the visitor sees on the challenge. The log records the rule, the policy version, the budget, the cost and the model answer in force, so "why was this person challenged?" is a lookup, not a reconstruction.</p>
+          <p class="code-cap"><span>Look up a decision by the reference the visitor saw</span><a href="/spec/openapi.yaml">getDecision</a></p>
+          <pre><code data-op="getDecision">curl -H "Authorization: Bearer $BR_CONSOLE_TOKEN" \
+  "https://core.internal:8787/v1/decisions/BR-7F3K2Q?include=answer"
+
+{ "ref": "BR-7F3K2Q", "ts": "2026-11-16T10:12:41Z", "action": "challenge", "tier": "human",
+  "rule_id": "over-budget", "policy_version": 12, "risk_score": 1,
+  "credits": 3, "cost": 5, "path_class": "search", "ai_answer_id": null }</code></pre>
+          <p>An agent with read-only access to the same log answers in Slack, by email or in the console. It uses named, fixed queries before any free-form SQL, attaches the query and rows to every answer, and cannot change anything: it proposes a policy change and a person approves it. That separation matters, because stored log text can carry instructions aimed at a model: injected log entries steered LLM log analysis up to 88.2% of the time in one 2026 study.{{c:loginject}} The first build ships explanations and a daily digest; proposals and free SQL come later.</p>
+
+          <h2 id="not">What it does not do</h2>
+          <ul>
+            <li><b>Floods and DDoS.</b> The request reaches your app before it is refused. Keep your CDN or WAF for volume; BotRampart refuses before your handler runs, in about 300 bytes.</li>
+            <li><b>Cached pages and static files.</b> They never reach your app. The browser SDK still starts a session from a cached page and protects the data APIs behind it.</li>
+            <li><b>Headless browsers driven by a patient operator.</b> Proof-of-work does not stop them. Budgets ration them: they get bounded throughput per session and sessions are rationed per network.</li>
+            <li><b>Mobile apps and partner APIs</b> <span class="tag later">later</span>. They carry no cookie and run no JavaScript. Rules can pass requests signed with an API key; a mobile SDK and signed-agent verification are on the roadmap.</li>
+          </ul>
+          <p>Next: <a href="/docs/getting-started/">Getting started</a> walks through the planned install, and <a href="/docs/architecture/">Architecture</a> has the full component design.</p>
+          <!-- @sources -->
+        </article>
+      </div>
     </main>
-    <footer>
-      <p>BotRampart is a Greenhouse seed: a preview of a product that is not built yet.</p>
-    </footer>
+    <!-- @footer -->
   </body>
 </html>
