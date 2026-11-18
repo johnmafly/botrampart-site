@@ -14,11 +14,11 @@ Response: package v2 (this redesign). See "Package v2" below.
 
 ## Spend
 
-spend_usd: 32.41 · as_of: 2026-11-18 · cap $150 (provisional) = 21.6% · time: day 1 of 21 (provisional)
+spend_usd: 34.52 · as_of: 2026-11-18 · cap $150 (provisional) = 23.0% · time: day 1 of 21 (provisional)
 
 | Item | Amount | As of | Source |
 |---|---|---|---|
-| Chief Session (`882d416a-4ce7-42c5-9e99-26d0cba7894a`), v1 build, claims fixes, v2 redesign and its live verification | $25.54 | 2026-11-18 | `sessions_get(...).session.cost_usd` (read mid-turn; the rest of the verification turn comes after) |
+| Chief Session (`882d416a-4ce7-42c5-9e99-26d0cba7894a`), v1 build, claims fixes, v2 redesign, apostrophe fix, asset fingerprinting | $27.65 | 2026-11-18 | `sessions_get(...).session.cost_usd` (read mid-turn, before the fingerprinting PR's live verification) |
 | Package v1 helpers: claims verification A, claims verification B, OpenAPI spec | $1.28 + $1.87 + $1.74 = $4.89 | 2026-11-18 | `cost_usd` of each child Session |
 | Package v2 helper: QA harness (motion, CSP, axe, Lighthouse, recording scripts) | $1.98 | 2026-11-18 | `cost_usd` of child `8acf2001` |
 | Onboarding | $0.00 | 2026-11-18 | Done by VC Joe, not the Chief |
@@ -36,6 +36,7 @@ At 80% of any budget (rounds, spend, time) the Chief stops and reports.
 | Motion | `site/assets/home.js`, `site.css` | Live two-session instrument (reference economics) feeding a printing tape and draining meter cells; Act I stage pinned beside five steps, lit by IntersectionObserver; scroll-linked CSS view timelines (bars rise, receipt feeds out, figures resolve, the old question gets struck out, header meter drains with reading); request pulses along the flow map; hover light that follows the pointer. All motion sits inside `prefers-reduced-motion: no-preference`; nothing starts hidden; content complete with JS off. |
 | Copy | all pages | Rewritten in one voice: "Don't catch bots. Charge them." Every factual claim still cites `claims.yaml`. |
 | Apostrophes | `h1 .ap, h2 .ap` in `site.css` | The tight display cut (-.03em tracking, 76-82% width) pressed the straight apostrophe into its letters ("Don't", VC Joe 2026-11-18). Headings now use a curly apostrophe in a span with zero tracking and a little side margin: hero, "Here’s the plan", "A session’s life", the 404 heading. |
+| Asset fingerprinting | `scripts/build.mjs` `fingerprint()`, `site/_headers` | The owner's iPhone showed v2 HTML styled by a cached v1 `site.css`: assets kept unversioned names, and the zone's 4-hour Browser Cache TTL turned Pages' `max-age=0` into `max-age=14400` for them (HTML stays `max-age=0`). The build now publishes every CSS, JS, module, font and SVG only as `name.<sha256 prefix>.ext`, rewrites references in HTML, CSS `url()` and module imports (dependencies first, so a font change renames the CSS too), and appends a year-long `immutable` rule per file to `_headers`. A test fails on any unversioned `/assets/` URL, a hash that does not match its bytes, or a missing cache rule. |
 | CSP | `site/_headers`, head meta | `default-src 'self'`, no inline script or style attributes (a test enforces it). Also keeps out host-injected analytics. |
 
 ## What package v1 contains
@@ -88,11 +89,14 @@ Package v1:
 - 2026-11-18, docs code samples that call the product carry `data-op`; SDK-call samples point at the wire operation they produce (for example `br.express()` setup → `syncInstance`).
 
 - 2026-11-18, delivery check: before merging, confirm the PR's commit list holds every intended commit; after merging, verify on a fresh clone of `origin/main`, never the working tree.
+- 2026-11-18, caching: fingerprinted assets only. The unversioned names are not published (nothing references them); HTML keeps Pages' `max-age=0, must-revalidate`.
 - 2026-11-18, scrollable regions: the build makes every `<pre>` and `.tablewrap` a focusable region (`tabindex="0"`, `role="region"`, a unique `aria-label` from the nearest heading), so keyboard users can scroll them.
 
 ## Open findings
 
 None from a judged round (no round submitted).
+
+- 2026-11-18, outside this repo: Cloudflare injects its Web Analytics beacon (`static.cloudflareinsights.com/beacon.min.js`) into the live pages. The CSP blocks it, so nothing is sent, but the zone (or Pages project) has Web Analytics on. Turning it off needs the Cloudflare account; the Chief holds no credential for it.
 
 ## Open questions (for VC Joe)
 

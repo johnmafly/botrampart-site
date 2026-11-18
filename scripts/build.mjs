@@ -11,8 +11,9 @@
 // numbered link to its source, and fails on an unknown id. <!-- @sources --> lists the page's
 // sources with the verbatim quote and the date each was checked.
 import { readClaims } from "./claims.mjs";
-import { cpSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { appendFileSync, cpSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { join, relative, sep } from "node:path";
 
 const SLUG = "botrampart";
@@ -131,6 +132,55 @@ rmSync(out, { recursive: true, force: true });
 cpSync(src, out, { recursive: true, filter: (p) => !p.startsWith(partials) });
 for (const file of walk(out)) if (file.endsWith(".html")) render(file);
 
+// Fingerprint every same-origin asset (CSS, JS, modules, fonts, SVG): /assets/site.css becomes
+// /assets/site.<content hash>.css, and every reference to it in HTML, CSS url() and JS imports is
+// rewritten. A browser that cached an older file under its old name can then never pair it with
+// newer HTML (it happened: v2 HTML rendered with a phone's cached v1 site.css). Files are hashed
+// after their own references are rewritten, so a font change also renames the CSS that loads it.
+// The unversioned names are not published: nothing references them.
+const ASSET_REF = /\/assets\/[\w/.-]+?\.(?:css|js|mjs|woff2|svg)\b/g;
+const FINGERPRINTED = /\.(?:css|js|mjs|woff2|svg)$/;
+const urlOf = (file) => "/" + relative(out, file).split(sep).join("/");
+
+function fingerprint() {
+  const pending = new Map(walk(join(out, "assets")).filter((f) => FINGERPRINTED.test(f)).map((f) => [urlOf(f), f]));
+  const renamed = new Map();
+  while (pending.size) {
+    let progressed = false;
+    for (const [url, file] of pending) {
+      let body = readFileSync(file);
+      if (!file.endsWith(".woff2")) {
+        const text = body.toString("utf8");
+        const refs = new Set(text.match(ASSET_REF) ?? []);
+        for (const r of refs) if (!renamed.has(r) && !pending.has(r)) throw new Error(`${url}: references missing asset ${r}`);
+        if ([...refs].some((r) => r !== url && pending.has(r))) continue; // its dependencies first
+        body = Buffer.from(text.replace(ASSET_REF, (r) => renamed.get(r) ?? r));
+      }
+      const hash = createHash("sha256").update(body).digest("hex").slice(0, 10);
+      const hashed = file.replace(/(\.[a-z0-9]+)$/, `.${hash}$1`);
+      writeFileSync(hashed, body);
+      rmSync(file);
+      renamed.set(url, urlOf(hashed));
+      pending.delete(url);
+      progressed = true;
+    }
+    if (!progressed) throw new Error(`asset reference cycle among ${[...pending.keys()].join(", ")}`);
+  }
+  for (const file of walk(out).filter((f) => f.endsWith(".html"))) {
+    const html = readFileSync(file, "utf8").replace(ASSET_REF, (r) => {
+      if (!renamed.has(r)) throw new Error(`${routeOf(file)}: references missing asset ${r}`);
+      return renamed.get(r);
+    });
+    writeFileSync(file, html);
+  }
+  // Fingerprinted files never change under their name, so browsers may keep them for a year.
+  // One rule per file: an /assets/* rule would also cover the unversioned font licences.
+  appendFileSync(join(out, "_headers"), "\n# Fingerprinted assets (written by scripts/build.mjs): content-hashed names, cached for a year.\n" +
+    [...renamed.values()].sort().map((u) => `${u}\n  Cache-Control: public, max-age=31536000, immutable\n`).join("\n"));
+  return renamed;
+}
+const assets = fingerprint();
+
 // Copy the build spec so docs can link to it.
 mkdirSync(join(out, "spec"), { recursive: true });
 cpSync(join(root, "spec", "openapi.yaml"), join(out, "spec", "openapi.yaml"));
@@ -138,4 +188,4 @@ cpSync(join(root, "spec", "openapi.yaml"), join(out, "spec", "openapi.yaml"));
 mkdirSync(join(out, ".well-known"), { recursive: true });
 const info = { slug: SLUG, sha, built_at: new Date().toISOString() };
 writeFileSync(join(out, ".well-known", "greenhouse.json"), JSON.stringify(info, null, 2) + "\n");
-console.log(`dist/ built for ${SLUG} at ${sha}`);
+console.log(`dist/ built for ${SLUG} at ${sha} (${assets.size} fingerprinted assets)`);

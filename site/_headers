@@ -7,8 +7,9 @@
   Referrer-Policy: strict-origin-when-cross-origin
   X-Content-Type-Options: nosniff
 
-/assets/fonts/*
-  Cache-Control: public, max-age=31536000, immutable
+# HTML keeps Cloudflare Pages' default (public, max-age=0, must-revalidate). CSS, JS, fonts and
+# SVG are published only under content-hashed names; the build appends one year-long immutable
+# rule per file at the end of this file.
 
 /.well-known/greenhouse.json
   Cache-Control: no-cache
