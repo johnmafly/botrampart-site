@@ -93,6 +93,7 @@ Package v1:
 - 2026-11-18, delivery check: before merging, confirm the PR's commit list holds every intended commit; after merging, verify on a fresh clone of `origin/main`, never the working tree.
 - 2026-11-18, caching: fingerprinted assets only. The unversioned names are not published (nothing references them); HTML keeps Pages' `max-age=0, must-revalidate`.
 - 2026-11-18, cost model (VC Joe, for check v2's pricing gate, greenhouse#12): every tier on `/own/` is in `greenhouse.yaml` `cost_model:` with price, cost to serve, margin and cost lines. Conservative by construction: Stripe's Singapore card rate (3.4% + $0.50, above the US one), the high US software-developer wage ($103.21/h, CareerOneStop 2025) for support hours, Cloudflare's included allowances ignored and the $5 Workers minimum charged to every Cloud plan. Result: White-label $49 vs $27.97, Enterprise $799+ vs $440.51, Starter $49 vs $33.57, Growth $249 vs $88.69, Scale $999 vs $336.59; overage prices are 7-14x their marginal cost. Cloud Free costs $12.39 a site-month and is declared `below_cost` as acquisition (paused at its cap). The block's shape is ours: #12 has not defined one yet; conform when it lands.
+- 2026-11-18, Cloud Free decision (VC Joe): keep it, declared as below-cost acquisition (`below_cost: true` with its reason, paused at its cap). The pricing gate (greenhouse#12) is to pass a free tier declared below cost and fail any paid tier below cost.
 - 2026-11-18, scrollable regions: the build makes every `<pre>` and `.tablewrap` a focusable region (`tabindex="0"`, `role="region"`, a unique `aria-label` from the nearest heading), so keyboard users can scroll them.
 
 ## Open findings
@@ -104,7 +105,6 @@ None from a judged round (no round submitted).
 ## Open questions (for VC Joe)
 
 1. Budget proposals ($150 model spend, 21 days) still await the owner; working within them as a provisional cap.
-2. Cloud Free is priced below its cost to serve ($12.39 a site-month, declared as acquisition). If the pricing gate allows no exception for a free tier, the options are to drop Cloud Free (Community stays free to self-host) or to keep it as a declared acquisition cost. Recommendation: keep it declared.
 
 - 2026-11-18, v2 IA: required content is declared in `greenhouse.yaml` (`content:`), not fixed routes; the owner's example list (pricing, docs, compare) is content, not the skeleton.
 - 2026-11-18, motion guardrail in code: `test/package.test.mjs` fails if any animation, transform/opacity transition or scroll timeline sits outside `@media (prefers-reduced-motion: no-preference)`, or if content starts at opacity 0.
