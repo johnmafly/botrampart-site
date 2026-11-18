@@ -145,8 +145,8 @@ These parts of BotRampart are not available yet. Pages that mention them say so.
 | Session | One `__br_s` cookie: a random 128-bit ID, a tier and an expiry. At most seven days. |
 | Unit | The currency of a budget. A path class costs a whole number of units per request. |
 | Path class | A named group of routes with one cost and a lowest tier, defined in the policy file. |
-| Tier | The highest challenge a session has passed: 0 provisional, 1 proof-of-work, 2 human check, 3 step-up. |
-| Grant | The credit a passed challenge buys: 300, 3,000 or 6,000 by default, halving on each repeat in 24 hours. |
+| Tier | The highest challenge a session has passed: 0 provisional, 1 proof-of-work, 2 human check, 3 step-up ([not available yet](#not-yet)). |
+| Grant | The credit a passed challenge buys: 300, 3,000 or 6,000 (step-up, not available yet) by default, halving on each repeat in 24 hours. |
 | Mint bucket | A count of new sessions per IP, prefix, ASN or TLS fingerprint family in a 10-minute window. |
 | Cohort | A group of sessions the five-minute loop watches: network class, session age and path class. |
 | Directive | `ai.*` fields Core publishes for a cohort or session, with an expiry of at most 60 minutes. |

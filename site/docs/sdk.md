@@ -42,7 +42,7 @@ Any route the backend SDK protects can answer with a challenge ([`ChallengeRequi
 | Header | Set by | Meaning |
 | --- | --- | --- |
 | [`BR-Sid`](/docs/api/#header-br-sid) | The SDK, on every response that passes through it | The first 12 hex characters of SHA-256 of the session ID, never the ID itself. |
-| [`BR-Decision`](/docs/api/#header-br-decision) | The SDK, on every response that passes through it | The decision for this request: `allow`, `log`, `challenge:pow`, `challenge:human`, `challenge:step_up`, `throttle`, `block` or `degrade`. |
+| [`BR-Decision`](/docs/api/#header-br-decision) | The SDK, on every response that passes through it | The decision for this request: `allow`, `log`, `challenge:pow`, `challenge:human`, `challenge:step_up`, `throttle`, `block` or `degrade`. `challenge:step_up` is reserved for step-up methods, which are [not available yet](/docs/overview/#not-yet). |
 | [`BR-Cost`](#br-cost) | Your app, on its own response | The request's actual cost in units. |
 
 Your edge logs `BR-Sid` and `BR-Decision` and strips them before the response leaves; the [nginx example](/docs/configuration/#headers) does both.

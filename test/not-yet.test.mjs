@@ -66,3 +66,11 @@ test("the example policy uses no non-goal: no Web Bot Auth rule, no step-up chal
     assert.doesNotMatch(src, /then: "challenge\(step_up\)"/);
   }
 });
+
+// Billing follows the rule, not the slogan: sessions that pass the proof-of-work are billed, and a
+// headless browser can pass it, so no headline promises that bots are never billed.
+test("/own/ billing copy does not promise bots are never billed", () => {
+  const t = text(page("own"));
+  assert.doesNotMatch(t, /never for bots|bots are never billed|bots that never pass are never billed/i);
+  assert.match(t, /headless browser that solves the proof-of-work does count as a session/);
+});

@@ -41,7 +41,7 @@ By default each app instance keeps budgets in memory and reconciles spend at eac
 - **Cached pages.** The SDK never sets the cookie on a response marked publicly cacheable, so your CDN keeps caching it; the browser SDK starts the session through `/_br`.
 - **The log pack ([not available yet](/docs/overview/#not-yet)).** Vector configurations for nginx, ingress-nginx, ALB, CloudFront and Cloudflare logs will reduce each minute to rollups by site, key, prefix, path class and status class, and send them to Core for traffic that never reaches the SDK. Raw IPs, paths and the cookie never leave.
 
-```http op=ingestRollups cap="Vector's HTTP sink, one NDJSON line per rollup"
+```http op=ingestRollups cap="One NDJSON line per rollup, the shape the log pack will send (not available yet)"
 POST /v1/ingest/rollups
 Authorization: Bearer <ingest key>
 Content-Type: application/x-ndjson

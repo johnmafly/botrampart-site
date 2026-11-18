@@ -207,7 +207,21 @@ h1 .ap, h2 .ap { letter-spacing: 0; margin-inline: .035em .02em; }
 .inst-bar .dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--ink-3); }
 .inst-bar .clock { margin-left: auto; color: var(--bone-2); font-variant-numeric: tabular-nums; }
 .inst-bar button { font: inherit; color: var(--bone-2); background: var(--ink-2); border: 1px solid var(--line-2); border-radius: 999px; padding: .4rem .7rem; cursor: pointer; }
+/* The Replay button keeps its place while hidden, so the bar never changes height when it appears. */
+.inst-bar button[hidden] { display: inline-block; visibility: hidden; }
 .inst-bar button:hover { color: var(--bone); border-color: var(--bone-3); }
+/* One clock for both lanes: the rail fills as simulated time passes, and each lane's challenges
+   are marked on it, so the two traces read against the same time. Transform only: nothing moves. */
+.sync { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: .8rem; padding: .95rem 1.2rem; border-bottom: 1px solid var(--line); font: 500 .68rem/1 var(--f-mono); color: var(--bone-3); letter-spacing: .04em; }
+.sync-track { position: relative; height: 6px; border-radius: 3px; background: var(--ink-3); }
+.sync-track i { position: absolute; inset: 0; border-radius: 3px; background: linear-gradient(90deg, rgb(143 227 207 / .55), rgb(255 197 107 / .55)); transform-origin: left center; }
+.sync-track b { position: absolute; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%; }
+.sync-track b.person { top: -9px; }
+.sync-track b.script { top: 7px; }
+.sync-track b.person { background: var(--frost); box-shadow: 0 0 8px var(--glow-frost); }
+.sync-track b.script { background: var(--ember); box-shadow: 0 0 8px var(--glow-ember); }
+.sync-track b.stop { border-radius: 2px; }
+.sync-e { min-width: 4ch; text-align: right; color: var(--bone-2); font-variant-numeric: tabular-nums; }
 .lanes { display: grid; grid-template-columns: 1fr 1fr; }
 .lane { padding: 1.4rem 1.4rem 1.2rem; min-width: 0; }
 .lane + .lane { border-left: 1px solid var(--line); }
@@ -216,11 +230,13 @@ h1 .ap, h2 .ap { letter-spacing: 0; margin-inline: .035em .02em; }
 .lane-h .who { font: 500 .7rem/1 var(--f-mono); padding: .3rem .5rem; border-radius: 999px; border: 1px solid currentColor; }
 .lane-sub { font: 400 .78rem/1.4 var(--f-mono); color: var(--bone-3); margin: 0 0 1rem; }
 .bal { display: flex; justify-content: space-between; align-items: baseline; margin: .55rem 0 1rem; font: 500 .8rem/1 var(--f-mono); color: var(--bone-3); }
-.bal b { font: 600 1.9rem/1 var(--f-mono); letter-spacing: -.03em; color: var(--bone); font-variant-numeric: tabular-nums; }
+.bal b { font: 600 1.9rem/1 var(--f-mono); letter-spacing: -.03em; color: var(--bone); font-variant-numeric: tabular-nums; min-width: 5ch; text-align: right; }
 .lane[data-lane="script"] .bal b { color: var(--amber); }
-.tape { list-style: none; margin: 0; padding: 0; font: 400 .8rem/1 var(--f-mono); }
-.tape li { display: flex; justify-content: space-between; gap: 1rem; padding: .55rem 0; border-top: 1px dashed var(--line-2); color: var(--bone-2); }
+/* The tape holds its full six rows from the start, so a replay that begins with two lines never grows the instrument. */
+.tape { list-style: none; margin: 0; padding: 0; font: 400 .8rem/1 var(--f-mono); min-height: 12rem; }
+.tape li { display: flex; align-items: center; justify-content: space-between; gap: 1rem; height: 2rem; padding: 0; border-top: 1px dashed var(--line-2); color: var(--bone-2); }
 .tape li span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tape li span:last-child { flex-shrink: 0; white-space: nowrap; }
 .tape .c { color: var(--bone-3); font-variant-numeric: tabular-nums; }
 .tape .g { color: var(--frost); }
 .tape .x { color: var(--ember); font-weight: 600; }
@@ -229,11 +245,25 @@ h1 .ap, h2 .ap { letter-spacing: 0; margin-inline: .035em .02em; }
 .verdict { margin-top: 1rem; padding: .7rem .8rem; border-radius: 10px; font: 500 .8rem/1.4 var(--f-mono); background: var(--ink-2); border: 1px solid var(--line); color: var(--bone-2); }
 .lane[data-lane="person"] .verdict { border-color: rgb(143 227 207 / .3); color: var(--frost); }
 .lane[data-lane="script"] .verdict { border-color: rgb(255 91 46 / .35); color: var(--ember-2); }
+/* Phones keep the pair side by side: a compact column each, with fixed line heights so the
+   running replay never changes the instrument's height. */
 @media (max-width: 720px) {
-  .lanes { grid-template-columns: 1fr; }
-  .lane + .lane { border-left: 0; border-top: 1px solid var(--line); }
-  .tape li:nth-child(n+5) { display: none; }
   .inst-bar .label-long { display: none; }
+  .inst-bar { padding: .75rem .9rem; }
+  .sync { padding: .9rem .9rem; gap: .6rem; }
+  .lane { padding: .9rem .75rem .85rem; }
+  .lane-h { flex-direction: column; align-items: flex-start; gap: .4rem; }
+  .lane-h .lane-t { font-size: .95rem; min-height: 2.2em; }
+  .lane-h .who { font-size: .62rem; padding: .22rem .4rem; }
+  .lane-sub { display: none; }
+  .bal { margin: .5rem 0 .6rem; font-size: .68rem; }
+  .bal b { font-size: 1.35rem; }
+  .meter { gap: 1px; height: 22px; }
+  .tape { font-size: .66rem; min-height: 10.4rem; }
+  .tape li { gap: .4rem; height: 2.6rem; line-height: 1.3; }
+  .tape li span:first-child { white-space: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; height: 2.6em; overflow-wrap: anywhere; }
+  .tape li:nth-child(n+5) { display: none; }
+  .verdict { margin-top: .7rem; padding: .55rem .6rem; font-size: .68rem; line-height: 1.35; min-height: calc(4 * 1.35em + 1.1rem); }
 }
 
 /* ---------- Home: odds (why now) ---------- */
@@ -649,7 +679,8 @@ input[type=text]:focus { border-color: var(--amber); outline: none; box-shadow: 
   @keyframes heat { from { text-shadow: 0 0 30px rgb(255 91 46 / .25); } to { text-shadow: 0 0 80px rgb(255 91 46 / .6); } }
 
   .tape li.new { animation: print .45s var(--ease); }
-  @keyframes print { from { transform: translateY(-8px); background: rgb(255 197 107 / .12); } to { transform: none; background: transparent; } }
+  .sync-track i { transition: transform .7s linear; }
+  @keyframes print { from { background: rgb(255 197 107 / .12); } to { background: transparent; } }
   .meter i.burn { animation: burn .6s ease-out; }
   @keyframes burn { from { box-shadow: 0 0 24px 4px rgb(255 91 46 / .7); } }
 

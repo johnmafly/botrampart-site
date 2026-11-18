@@ -103,6 +103,7 @@ test("home page tells the story in four acts and keeps the live instrument's sta
   const home = pages.find((p) => p.name === "index.html").html;
   for (const act of ["Act I", "Act II", "Act III", "Act IV"]) assert.ok(home.includes(act), act);
   assert.match(home, /data-sim/);
+  assert.match(home, /class="sync"[\s\S]*?data-sync-track[\s\S]*?data-elapsed/, "both lanes share one time rail");
   assert.ok((home.match(/<ol class="tape" data-tape>[\s\S]*?<\/ol>/g) || []).every((t) => (t.match(/<li>/g) || []).length >= 4), "tapes are written into the HTML");
 });
 
