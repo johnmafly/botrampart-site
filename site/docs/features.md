@@ -16,7 +16,7 @@ lede: What BotRampart does, grouped by the job it does for you. Each feature lin
 ## Budgets and prices {#budgets}
 
 - **Path classes with prices.** Static files cost 0, a page 1, search 5, a login attempt 10, checkout 20 by default; you name the classes and set the prices. [Path classes](/docs/policy/#path-classes).
-- **Per-route and after-the-fact pricing.** Price one route in code, price GraphQL operations by name, or report a response's true cost in `BR-Cost` and settle the difference. [`br.protect`](/docs/sdk/#protect).
+- **After-the-fact pricing.** Report a response's true cost in `BR-Cost` and the SDK settles the difference from the path class's cost. [`BR-Cost`](/docs/sdk/#br-cost).
 - **Refill and burst.** A session regains 20 units a minute up to 300; signed-in sessions refill three times faster and are also capped per account. [Budget fields](/docs/policy/#budget).
 - **Shrinking grants and a daily ceiling.** Each repeat pass of a tier within 24 hours buys half the previous one, so one session can spend at most 35,363 units a day with tiers 0 to 2. [The ceiling](/docs/overview/#ceiling).
 - **Mint buckets.** New sessions are counted per IP, prefix, ASN and TLS fingerprint family; pressure raises the price of a new session, and established or signed-in sessions are exempt. [Mint](/docs/policy/#mint).

@@ -10,27 +10,15 @@ lede: Every setting, where it lives and what it does. The policy file has its ow
 
 | What | Where | Reference |
 | --- | --- | --- |
-| Backend SDK options | The `botrampart({...})` call in your app | [Backend SDK options](#backend) |
-| Browser SDK options | The script tag, or `BotRampart.init({...})` | [Browser SDK options](#browser) |
+| Backend SDK options | Your app, where it mounts the backend SDK | [Backend SDK options](#backend) |
+| Browser SDK options | The script tag and the browser SDK's settings | [Browser SDK options](#browser) |
 | Core settings and secrets | Core's environment and secret store | [Core](#core) |
 | Path classes, budgets, mint limits, rules | `botrampart.policy.yaml`, one per site, in Git or the console | [Policy reference](/docs/policy/) |
 | Credentials | Your secret store | [Credentials and roles](#credentials) |
 
 ## Backend SDK options {#backend}
 
-```js op=syncInstance cap="server.js · Node, Express"
-import { botrampart } from "@botrampart/node";
-
-const br = botrampart({
-  site: "site_123",
-  secretsFile: "/run/secrets/br_keys",   // site signing keys; two accepted at once for rotation
-  core: "https://core.internal:8787",
-  store: "memory",                        // or a Redis / Valkey client for exact shared budgets
-  mode: "observe",                        // "observe" logs decisions; "enforce" applies them
-  onCoreDown: "static",                   // keep enforcing the last synced policy
-});
-app.use(br.express());
-```
+The backend SDK reads these settings when your app mounts it.
 
 | Option | Default | What it does |
 | --- | --- | --- |
@@ -43,7 +31,7 @@ app.use(br.express());
 
 ## Browser SDK options {#browser}
 
-The script tag needs only the site ID: `<script src="/_br/sdk.js" data-site="site_123" async></script>`. As a module, the options are:
+The script tag needs only the site ID: `<script src="/_br/sdk.js" data-site="site_123" async></script>`. The browser SDK's other settings:
 
 | Option | Example | What it does |
 | --- | --- | --- |

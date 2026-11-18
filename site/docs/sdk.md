@@ -2,95 +2,24 @@
 title: SDK reference
 nav: SDK reference
 order: 8
-description: The BotRampart backend SDK for Node (botrampart(), framework adapters, br.protect, br.identify, br.track, req.br, BR-Cost) and the browser SDK (BotRampart.init, ready, ensure, challenge, status, signals), with the HTTP routes behind each.
-lede: The two SDKs and everything they expose. Each function maps to an HTTP exchange in the spec, linked beside it.
+description: What BotRampart's SDKs expose, as spec/openapi.yaml defines it: the routes the backend SDK mounts under /_br, the headers it sets and reads, br.identify, and the browser SDK served at /_br/sdk.js with br.status(), autoRetry, challenges and signals.
+lede: The SDK surface the API spec defines, each part linked to its HTTP exchange in the API reference. Everything the SDKs do on the wire is in the spec, so you can also integrate over HTTP directly.
 ---
 
 ## Packages {#packages}
 
-| Package | Runs | Licence |
+| SDK | Runs | Licence |
 | --- | --- | --- |
-| `@botrampart/node` | Your Node app: Express, Fastify, and Next.js through `@botrampart/node/next` | Apache-2.0 |
-| `@botrampart/browser` | The visitor's browser, served from your origin at `/_br/sdk.js` | Apache-2.0 |
+| Backend SDK | Inside your app process; mounts the [SDK routes](#routes) under `/_br` on your own origin | Apache-2.0 |
+| Browser SDK, `@botrampart/browser` | The visitor's browser, served by the backend SDK from your own origin at `/_br/sdk.js` | Apache-2.0 |
+
+The SDKs and the routes they mount are open source under Apache-2.0. The browser SDK is a versioned, immutable file served from your origin, with a published integrity hash and a signed release; no third-party domain serves the code your visitors run.
 
 Every SDK evaluates the policy's compiled [condition trees](/docs/api/#schema-ConditionTree) with the same small interpreter and is checked by one conformance suite.
 
 ## Backend SDK {#backend}
 
-### `botrampart(options)` {#botrampart}
-
-Creates the SDK for one site. The options are in [Configuration](/docs/configuration/#backend): `site`, `secretsFile`, `core`, `store`, `mode` and `onCoreDown`. It returns `br`, used below.
-
-### Framework adapters {#adapters}
-
-| Call | Framework | Does |
-| --- | --- | --- |
-| `br.express()` | Express | Middleware: mounts `/_br/*`, verifies the cookie, charges the request, applies policy and sets `req.br`. |
-| `br.fastify()` | Fastify | The same, as a plugin: `await app.register(br.fastify())`. |
-| `botrampart({...})` from `@botrampart/node/next` | Next.js | The same, as the default export of `middleware.ts`. |
-
-Mount the SDK at the root of your app so every route gets a path class by default.
-
-### `br.protect({ cost })` {#protect}
-
-Prices one route in code, overriding its path class. `cost` is a number of units, or a function of the request that returns one.
-
-```js op=redeemChallenge cap="Per-route costs"
-app.get("/api/search", br.protect({ cost: 5 }), search);
-
-// One GraphQL endpoint: price each operation by what it does
-const COST = { ProductPage: 2, SearchProducts: 5, ExportOrders: 50 };
-app.post("/graphql", br.protect({ cost: (req) => COST[req.body.operationName] ?? 10 }), graphql);
-
-// A session that cannot pay gets a challenge response; once it passes and redeems,
-// the browser SDK retries the request with the new credit.
-```
-
-### `BR-Cost` {#br-cost}
-
-For responses whose cost is only known afterwards (a report, an export), set `BR-Cost` on your response. The SDK charges the difference from the path class's cost and removes the header.
-
-```js cap="Settle the true cost of an export"
-res.set("BR-Cost", String(rowsExported / 100));
-```
-
-### `br.identify(req, res, userId)` {#identify}
-
-Attaches your user's ID once they authenticate. BotRampart stores only a keyed hash of it, `HMAC-SHA256(site_uid_key, userId)`, in the session as `uid`. Signed-in sessions refill three times faster, are exempt from network mint pressure, and their spend is also summed per account (`account_ceiling_per_hour`), so one account cannot fan out over many cookies.
-
-### `br.track(req, event)` {#track}
-
-Records an application event for the next sync. `"login_failed"` feeds the credential-stuffing metrics.
-
-```js op=syncInstance cap="Login handler"
-app.post("/login", async (req, res) => {
-  const user = await authenticate(req);
-  if (!user) {
-    br.track(req, "login_failed");       // feeds credential-stuffing metrics at the next sync
-    return res.sendStatus(401);
-  }
-  br.identify(req, res, user.id);        // stores HMAC-SHA256(site_uid_key, user.id) in the session
-  res.json({ ok: true });
-});
-```
-
-### `req.br` {#req-br}
-
-Every request that passes through the SDK carries `req.br`:
-
-| Field | Meaning |
-| --- | --- |
-| `sessionId` | The session this request belongs to. |
-| `tier` | Highest tier the session holds, 0 to 3. |
-| `credits` | The session's balance. |
-| `identified` | Whether a login ID is attached. |
-| `risk.score` | The scorecard's total, 0 to 10. |
-| `ai` | The `ai.*` fields in force for this session, if any. |
-| `decision.action` | What the SDK decided, as in the [`BR-Decision`](/docs/api/#header-br-decision) header. |
-| `decision.ruleId` | The rule that matched. |
-| `decision.ref` | The decision reference, such as `BR-7F3K2Q`, for non-allow decisions. |
-
-`degrade` tells your app to serve a cheaper response. In `observe` mode the decision is computed and logged but the request always reaches your handler, so tests can assert on `req.br.decision`.
+The backend SDK sits in your process in front of your handlers. Its settings are in [Configuration](/docs/configuration/#backend).
 
 ### Routes the backend SDK mounts {#routes}
 
@@ -104,6 +33,32 @@ Every request that passes through the SDK carries `req.br`:
 
 It also calls Core: [`syncInstance`](/docs/api/#op-syncInstance) every 5 to 10 seconds, and verifies tier 2 and 3 attestations with Core's public keys from [`getKeys`](/docs/api/#op-getKeys).
 
+### Protected routes {#protected}
+
+Any route the backend SDK protects can answer with a challenge ([`ChallengeRequired`](/docs/api/#response-challengerequired), 403) or a throttle ([`Throttled`](/docs/api/#response-throttled), 429) instead of your app's response. Both carry the header [`BR-Challenge: v1`](/docs/api/#header-br-challenge); the body is in [Handling challenges yourself](#challenges).
+
+### Response headers {#headers}
+
+| Header | Set by | Meaning |
+| --- | --- | --- |
+| [`BR-Sid`](/docs/api/#header-br-sid) | The SDK, on every response that passes through it | The first 12 hex characters of SHA-256 of the session ID, never the ID itself. |
+| [`BR-Decision`](/docs/api/#header-br-decision) | The SDK, on every response that passes through it | The decision for this request: `allow`, `log`, `challenge:pow`, `challenge:human`, `challenge:step_up`, `throttle`, `block` or `degrade`. |
+| [`BR-Cost`](#br-cost) | Your app, on its own response | The request's actual cost in units. |
+
+Your edge logs `BR-Sid` and `BR-Decision` and strips them before the response leaves; the [nginx example](/docs/configuration/#headers) does both.
+
+### `BR-Cost` {#br-cost}
+
+For responses whose cost is only known afterwards (a report, an export), set `BR-Cost` on your response. The SDK charges the difference from the path class's cost and removes the header.
+
+```js cap="Settle the true cost of an export"
+res.set("BR-Cost", String(rowsExported / 100));
+```
+
+### `br.identify` {#identify}
+
+Attaches your user's login ID to the session once they authenticate. BotRampart stores only a keyed hash of it, `HMAC-SHA256(site_uid_key, login ID)`, as the session's [`uid`](/docs/api/#schema-UidHash). Signed-in sessions refill at the policy's `identified_multiplier` (3 in the default policy), are exempt from network mint pressure, and their spend is also summed per account up to `account_ceiling_per_hour`, so one account cannot fan out over many cookies.
+
 ## Browser SDK {#browser}
 
 ### Script tag {#script-tag}
@@ -112,38 +67,22 @@ It also calls Core: [`syncInstance`](/docs/api/#op-syncInstance) every 5 to 10 s
 <script src="/_br/sdk.js" data-site="site_123" async></script>
 ```
 
-### `BotRampart.init(options)` {#init}
-
-```js op=getChallenge cap="app.js"
-import { BotRampart } from "@botrampart/browser";
-
-const br = BotRampart.init({
-  site: "site_123",
-  endpoint: "/_br",          // first-party routes mounted by the backend SDK
-  mode: "lazy",              // solve in the background; "gate" shows an interstitial first
-  autoRetry: true,
-  signals: "standard",       // "standard" | "minimal" | "off"
-  onBlock(ref) { showSupportMessage(ref); },
-});
-
-await br.ready();            // resolves once tier 1 is held
-await br.ensure("human");    // step up before a sensitive action, such as opening checkout
-```
-
-The options are in [Configuration](/docs/configuration/#browser).
+[`getSdkScript`](/docs/api/#op-getSdkScript) serves the version bundled with the backend SDK; add `?v=1.0.0` to pin one. The response carries `Cache-Control: public, max-age=31536000, immutable`, an `ETag` and `BR-SDK-Integrity`, the Subresource Integrity hash of the published release. Its settings are in [Configuration](/docs/configuration/#browser).
 
 ### Methods {#methods}
 
 | Method | Does |
 | --- | --- |
-| `br.ready()` | Resolves once the session holds tier 1, after the background proof-of-work. |
-| `br.ensure(tier)` | Steps the session up to the named tier ([`TierName`](/docs/api/#schema-TierName)), such as `"human"`, before a sensitive action. |
-| `br.challenge(descriptor)` | Runs the challenge described by a challenge response body, then redeems it. |
-| `br.status()` | The session's tier and expiries, from `GET /_br/status` ([`SessionStatus`](/docs/api/#schema-SessionStatus)). |
+| `br.status()` | The session's tier and expiries, from [`GET /_br/status`](/docs/api/#op-getSessionStatus) ([`SessionStatus`](/docs/api/#schema-SessionStatus)). The HttpOnly cookie itself is never readable by page scripts. |
+
+```js op=getSessionStatus cap="The same exchange over HTTP, from your own origin"
+await fetch("/_br/status").then((r) => r.json());
+// { "tier": 1, "expiresAt": 1794825300, "sessionEndsAt": 1795428300, "tierExpiresAt": {}, "identified": false }
+```
 
 ### Handling challenges yourself {#challenges}
 
-With `autoRetry`, the SDK runs a challenge and retries the request once. If you handle responses yourself, a protected route answers `403` (or `429` with `Retry-After` for a throttle) with the header `BR-Challenge: v1` and this body:
+With `autoRetry`, the browser SDK keys on `BR-Challenge`, runs the challenge and retries the original request once when the body's `retry` is `true`. If you handle responses yourself, a protected route answers `403` (or `429` with `Retry-After` for a throttle) with the header `BR-Challenge: v1` and this body:
 
 ```http op=getChallenge cap="Challenge response from any protected route"
 HTTP/1.1 403 Forbidden
@@ -154,7 +93,7 @@ Content-Type: application/json
                   "url": "/_br/challenge?c=eyJ0IjoiaHVtYW4ifQ.c2ln", "retry": true } }
 ```
 
-Pass the descriptor to `br.challenge()`, or fetch `url` yourself: for tier 1 it returns a signed puzzle, for tier 2 a widget URL. The solution or the widget's attestation goes to `/_br/redeem`:
+Fetch `url`: for tier 1 it returns a signed puzzle, for tier 2 a widget URL. The solution or the widget's attestation goes to `/_br/redeem`:
 
 ```http op=redeemChallenge cap="Redeem a solved puzzle"
 POST /_br/redeem
@@ -169,7 +108,7 @@ Set-Cookie: __br_s=br1.…; Path=/; Secure; HttpOnly; SameSite=Lax
 { "ok": true, "tier": 1, "granted": 300, "credits": 300, "expires_at": 1794825300 }
 ```
 
-For a page navigation the SDK serves a small interstitial instead, which shows the reference so the visitor can quote it to your support team. That page carries the "Protected by BotRampart" mark in the Community edition.
+A page navigation gets a small HTML interstitial instead, which loads the same challenge and shows the reference so the visitor can quote it to your support team. That page carries the "Protected by BotRampart" mark in the Community edition.
 
 ### Signals {#signals}
 

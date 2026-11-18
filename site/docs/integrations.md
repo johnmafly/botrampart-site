@@ -2,34 +2,21 @@
 title: Integrations
 nav: Integrations
 order: 6
-description: How BotRampart fits with your stack: Express, Fastify and Next.js; Core on Cloudflare Workers, a container, Kubernetes or OpenOrange; R2, S3, MinIO, GCS and Azure Blob; Redis and Valkey; edge logs through Vector; decision-model providers; Slack, email and the console.
+description: How BotRampart fits with your stack: your app and the SDK routes; Core on Cloudflare Workers, a container, Kubernetes or OpenOrange; R2, S3, MinIO, GCS and Azure Blob; Redis and Valkey; edge logs through Vector; decision-model providers; Slack, email and the console.
 lede: BotRampart sits inside your app and next to the infrastructure you already run. This page lists every system it connects to and how.
 ---
 
-## Web frameworks {#frameworks}
+## Your app {#frameworks}
 
-The backend SDK for Node is one package with an adapter per framework. Every adapter takes the same [options](/docs/configuration/#backend).
+The backend SDK runs inside your Node app, in front of your handlers, with the [settings](/docs/configuration/#backend) in Configuration. Whatever the framework, the integration is the same on the wire, and the [API reference](/docs/api/) defines all of it:
 
-| Framework | How it mounts |
+| The SDK | Spec |
 | --- | --- |
-| Express | `app.use(br.express())` |
-| Fastify | `await app.register(br.fastify())` |
-| Next.js | Middleware: `middleware.ts` default-exports `botrampart({...})` from `@botrampart/node/next` |
-
-```js op=syncInstance cap="server.js · Fastify"
-import { botrampart } from "@botrampart/node";
-
-const br = botrampart({ site: "site_123", secretsFile: "./secrets/br_keys",
-  core: "http://localhost:8787", mode: "observe" });
-await app.register(br.fastify());
-```
-
-```ts op=syncInstance cap="middleware.ts · Next.js"
-import { botrampart } from "@botrampart/node/next";
-
-export default botrampart({ site: "site_123", secretsFile: "./secrets/br_keys",
-  core: "http://localhost:8787", mode: "observe" });
-```
+| Serves the browser SDK and the challenge routes under `/_br` on your origin | [SDK routes](/docs/sdk/#routes) |
+| Answers a protected route with a challenge (403) or a throttle (429), marked `BR-Challenge: v1` | [`ChallengeRequired`](/docs/api/#response-challengerequired), [`Throttled`](/docs/api/#response-throttled) |
+| Sets `BR-Sid` and `BR-Decision` on every response that passes through it | [Response headers](/docs/sdk/#headers) |
+| Reads and removes `BR-Cost` from your response | [`BR-Cost`](/docs/sdk/#br-cost) |
+| Syncs counters with Core every 5 to 10 seconds | [`syncInstance`](/docs/api/#op-syncInstance) |
 
 ## Where Core runs {#hosting}
 
@@ -46,7 +33,7 @@ The lake is any S3-compatible bucket: Cloudflare R2, Amazon S3, MinIO, Google Cl
 
 ## Shared budgets: Redis and Valkey {#store}
 
-By default each app instance keeps budgets in memory and reconciles spend at each sync. Pass a Redis or Valkey client as `store` to make budgets exact across instances.
+By default each app instance keeps budgets in memory and reconciles spend at each sync. Set the backend SDK's [`store`](/docs/configuration/#backend) to a Redis or Valkey client to make budgets exact across instances.
 
 ## Edge, CDN and access logs {#edge}
 
@@ -93,6 +80,6 @@ The state the model sees follows Google's published guidance: numbers are compar
 
 ## Your own tests {#testing}
 
-- Run CI and staging in `observe` mode, and assert on `req.br.decision` in your own tests.
+- Run CI and staging in `observe` mode, and assert on the `BR-Decision` header of your app's responses in your own tests, before the edge strips it.
 - Replay a changed policy against production traffic with [`simulatePolicy`](/docs/api/#op-simulatePolicy) before every publish.
 - Look up any decision a tester saw by its reference with [`getDecision`](/docs/api/#op-getDecision).
