@@ -14,11 +14,11 @@ Response: package v2 (this redesign). See "Package v2" below.
 
 ## Spend
 
-spend_usd: 34.52 · as_of: 2026-11-18 · cap $150 (provisional) = 23.0% · time: day 1 of 21 (provisional)
+spend_usd: 36.28 · as_of: 2026-11-18 · cap $150 (provisional) = 24.2% · time: day 1 of 21 (provisional)
 
 | Item | Amount | As of | Source |
 |---|---|---|---|
-| Chief Session (`882d416a-4ce7-42c5-9e99-26d0cba7894a`), v1 build, claims fixes, v2 redesign, apostrophe fix, asset fingerprinting | $27.65 | 2026-11-18 | `sessions_get(...).session.cost_usd` (read mid-turn, before the fingerprinting PR's live verification) |
+| Chief Session (`882d416a-4ce7-42c5-9e99-26d0cba7894a`), v1 build, claims fixes, v2 redesign, apostrophe fix, asset fingerprinting, cost model | $29.41 | 2026-11-18 | `sessions_get(...).session.cost_usd` (read mid-turn, while writing the cost model) |
 | Package v1 helpers: claims verification A, claims verification B, OpenAPI spec | $1.28 + $1.87 + $1.74 = $4.89 | 2026-11-18 | `cost_usd` of each child Session |
 | Package v2 helper: QA harness (motion, CSP, axe, Lighthouse, recording scripts) | $1.98 | 2026-11-18 | `cost_usd` of child `8acf2001` |
 | Onboarding | $0.00 | 2026-11-18 | Done by VC Joe, not the Chief |
@@ -37,6 +37,7 @@ At 80% of any budget (rounds, spend, time) the Chief stops and reports.
 | Copy | all pages | Rewritten in one voice: "Don't catch bots. Charge them." Every factual claim still cites `claims.yaml`. |
 | Apostrophes | `h1 .ap, h2 .ap` in `site.css` | The tight display cut (-.03em tracking, 76-82% width) pressed the straight apostrophe into its letters ("Don't", VC Joe 2026-11-18). Headings now use a curly apostrophe in a span with zero tracking and a little side margin: hero, "Here’s the plan", "A session’s life", the 404 heading. |
 | Asset fingerprinting | `scripts/build.mjs` `fingerprint()`, `site/_headers` | The owner's iPhone showed v2 HTML styled by a cached v1 `site.css`: assets kept unversioned names, and the zone's 4-hour Browser Cache TTL turned Pages' `max-age=0` into `max-age=14400` for them (HTML stays `max-age=0`). The build now publishes every CSS, JS, module, font and SVG only as `name.<sha256 prefix>.ext`, rewrites references in HTML, CSS `url()` and module imports (dependencies first, so a font change renames the CSS too), and appends a year-long `immutable` rule per file to `_headers`. A test fails on any unversioned `/assets/` URL, a hash that does not match its bytes, or a missing cache rule. |
+| Cost model | `costs/model.mjs`, `greenhouse.yaml` `cost_model:`, `test/cost-model.test.mjs` | What each edition and Cloud plan costs us to serve a month, from list prices (claims.yaml ids, or a quoted source in the workings) and stated assumptions (`site:` ones the pages already state, `ours:` ones to replace with measurements). `npm run cost-model` writes the block; tests fail when it drifts, when a name, fee, allowance, overage or cohort limit differs from `/own/` or `pricing.js`, when a paid tier or overage is below cost, or when a list price is not in its source text. Cloud plans gained a cohort limit (Free site only, Starter 5, Growth 20, Scale 50), shown on `/own/`, because with all 50 cohorts the model alone would cost Starter about $79. |
 | CSP | `site/_headers`, head meta | `default-src 'self'`, no inline script or style attributes (a test enforces it). Also keeps out host-injected analytics. |
 
 ## What package v1 contains
@@ -76,6 +77,7 @@ Package v1:
 - PR #1 merged as `19f0845`; https://botrampart.agenthatch.ai serves it (`/.well-known/greenhouse.json` sha `19f0845200c9514300bd3de8793f95eddfcc96f2`, built 2026-11-18T10:36:35Z).
 - 200 on `/`, `/docs/`, the five docs sections, `/pricing/`, `/signup/`, `/spec/openapi.yaml`; `X-Robots-Tag: noindex, nofollow` and the robots meta are present. `claims.yaml` is not served; pages link to it on GitHub.
 - Desktop (1440) and phone (390) screenshots of the live `/` match the local build.
+- PR #7 (asset fingerprinting) merged as `47bce6f`; live greenhouse.json showed it about 30 s after the merge. Playwright WebKit, iPhone 15 Pro, on the live site: fresh load and stale-cache simulation (the old `/assets/site.css` routed to v1's stylesheet) both render v2 with 0 unversioned asset requests (the stale route is never hit); fingerprinted CSS is served `public, max-age=31536000, immutable`, HTML `max-age=0, must-revalidate`. The old `/assets/site.css` still answers 200 with `max-age=14400` (an edge copy; no page references it). iOS Simulator: `simctl` hangs on the Mac mini (twice, 30-60 s), not tried further.
 - PR #2 merged as `70f8161` but without its claims-schema commit: that commit was made after the branch was last pushed, and `validate` was run on the working tree, not `origin/main`. Caught by VC Joe on a fresh clone. PR #3 carries it, plus the placeholder, `data-signup-final` and scrollable-region fixes.
 
 ## Decisions
@@ -90,6 +92,7 @@ Package v1:
 
 - 2026-11-18, delivery check: before merging, confirm the PR's commit list holds every intended commit; after merging, verify on a fresh clone of `origin/main`, never the working tree.
 - 2026-11-18, caching: fingerprinted assets only. The unversioned names are not published (nothing references them); HTML keeps Pages' `max-age=0, must-revalidate`.
+- 2026-11-18, cost model (VC Joe, for check v2's pricing gate, greenhouse#12): every tier on `/own/` is in `greenhouse.yaml` `cost_model:` with price, cost to serve, margin and cost lines. Conservative by construction: Stripe's Singapore card rate (3.4% + $0.50, above the US one), the high US software-developer wage ($103.21/h, CareerOneStop 2025) for support hours, Cloudflare's included allowances ignored and the $5 Workers minimum charged to every Cloud plan. Result: White-label $49 vs $27.97, Enterprise $799+ vs $440.51, Starter $49 vs $33.57, Growth $249 vs $88.69, Scale $999 vs $336.59; overage prices are 7-14x their marginal cost. Cloud Free costs $12.39 a site-month and is declared `below_cost` as acquisition (paused at its cap). The block's shape is ours: #12 has not defined one yet; conform when it lands.
 - 2026-11-18, scrollable regions: the build makes every `<pre>` and `.tablewrap` a focusable region (`tabindex="0"`, `role="region"`, a unique `aria-label` from the nearest heading), so keyboard users can scroll them.
 
 ## Open findings
@@ -101,6 +104,7 @@ None from a judged round (no round submitted).
 ## Open questions (for VC Joe)
 
 1. Budget proposals ($150 model spend, 21 days) still await the owner; working within them as a provisional cap.
+2. Cloud Free is priced below its cost to serve ($12.39 a site-month, declared as acquisition). If the pricing gate allows no exception for a free tier, the options are to drop Cloud Free (Community stays free to self-host) or to keep it as a declared acquisition cost. Recommendation: keep it declared.
 
 - 2026-11-18, v2 IA: required content is declared in `greenhouse.yaml` (`content:`), not fixed routes; the owner's example list (pricing, docs, compare) is content, not the skeleton.
 - 2026-11-18, motion guardrail in code: `test/package.test.mjs` fails if any animation, transform/opacity transition or scroll timeline sits outside `@media (prefers-reduced-motion: no-preference)`, or if content starts at opacity 0.

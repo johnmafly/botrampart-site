@@ -91,15 +91,16 @@
           </div>
           <div class="tablewrap">
             <table>
-              <thead><tr><th scope="col">Plan (proposal)</th><th scope="col" class="num">Monthly fee</th><th scope="col" class="num">Protected sessions included</th><th scope="col" class="num">Then, per 1,000</th></tr></thead>
+              <thead><tr><th scope="col">Plan (proposal)</th><th scope="col" class="num">Monthly fee</th><th scope="col" class="num">Protected sessions included</th><th scope="col" class="num">Then, per 1,000</th><th scope="col" class="num">Cohorts the model watches</th></tr></thead>
               <tbody>
-                <tr><th scope="row">Free</th><td class="num">$0</td><td class="num">10,000</td><td class="num">paused at the cap; your site keeps running on the SDK's last policy</td></tr>
-                <tr><th scope="row">Starter</th><td class="num">$49</td><td class="num">100,000</td><td class="num">$0.30</td></tr>
-                <tr><th scope="row">Growth</th><td class="num">$249</td><td class="num">1,000,000</td><td class="num">$0.20</td></tr>
-                <tr><th scope="row">Scale</th><td class="num">$999</td><td class="num">10,000,000</td><td class="num">$0.10</td></tr>
+                <tr><th scope="row">Free</th><td class="num">$0</td><td class="num">10,000</td><td class="num">paused at the cap</td><td class="num">site only</td></tr>
+                <tr><th scope="row">Starter</th><td class="num">$49</td><td class="num">100,000</td><td class="num">$0.30</td><td class="num">5</td></tr>
+                <tr><th scope="row">Growth</th><td class="num">$249</td><td class="num">1,000,000</td><td class="num">$0.20</td><td class="num">20</td></tr>
+                <tr><th scope="row">Scale</th><td class="num">$999</td><td class="num">10,000,000</td><td class="num">$0.10</td><td class="num">50</td></tr>
               </tbody>
             </table>
           </div>
+          <p class="fine">Free pauses at the cap, and your site keeps running on the SDK's last policy. A cohort is a group of sessions the decision model is asked about when it drifts from its own baseline (see <a href="/meter/">The meter</a>); Free asks only about the site as a whole. Each plan's limit keeps its model bill below its fee.</p>
           <div class="pair">
             <div>
               <h3>Guard-rails on the invoice</h3>

@@ -16,3 +16,213 @@ content:
   comparison: /field/
   pricing: /own/#editions
   signup: /try/
+
+# Cost model (pricing gate): every tier on /own/ with its price and what it costs us to serve,
+# per month in USD. Generated from costs/model.mjs by `npm run cost-model`; the tests fail when
+# this block, the site's prices or the workings drift apart. All prices are proposals.
+cost_model:
+  currency: USD
+  period: month
+  workings: "costs/model.mjs"
+  pricing_page: "/own/#editions"
+  tiers:
+    - name: "Community"
+      edition: "Community"
+      kind: self-hosted
+      price: 0
+      cost_to_serve: 0
+      margin: 0
+      below_cost: false
+      cost_lines:
+        card_fees: 0
+        support: 0
+      serves: "nothing: the person runs every part on their own account; we publish releases from public CI"
+    - name: "White-label"
+      edition: "White-label"
+      kind: self-hosted
+      price: 49
+      cost_to_serve: 27.97
+      margin: 21.03
+      below_cost: false
+      cost_lines:
+        card_fees: 2.17
+        support: 25.8
+      serves: "a signed build and an offline licence file (no running service), a private issue tracker"
+    - name: "Enterprise"
+      edition: "Enterprise"
+      kind: self-hosted
+      price: 799
+      price_is_floor: true
+      cost_to_serve: 440.51
+      margin: 358.49
+      below_cost: false
+      cost_lines:
+        card_fees: 27.67
+        support: 412.84
+      serves: "White-label plus support with a response time; high-availability Core runs on their infrastructure"
+    - name: "Free"
+      edition: "Cloud"
+      kind: cloud
+      price: 0
+      included_sessions: 10000
+      overage_per_1000: null
+      overage_cost_per_1000: null
+      cohorts_watched: 0
+      cost_to_serve: 12.39
+      margin: -12.39
+      below_cost: true
+      below_cost_reason: "Free is not priced to cover cost: it is what a free site costs us, paid as acquisition. Paused at the cap, so it cannot grow past it."
+      cost_lines:
+        card_fees: 0
+        support: 0
+        platform_minimum: 5
+        worker_requests: 0.08
+        worker_cpu: 0.03
+        shard_requests: 0.04
+        shard_duration: 4.15
+        shard_rows: 0.36
+        lake_writes: 1.19
+        lake_storage: 0
+        decision_model: 1.56
+    - name: "Starter"
+      edition: "Cloud"
+      kind: cloud
+      price: 49
+      included_sessions: 100000
+      overage_per_1000: 0.3
+      overage_cost_per_1000: 0.02113
+      cohorts_watched: 5
+      cost_to_serve: 33.57
+      margin: 15.43
+      below_cost: false
+      cost_lines:
+        card_fees: 2.17
+        support: 10.32
+        platform_minimum: 5
+        worker_requests: 0.08
+        worker_cpu: 0.03
+        shard_requests: 0.04
+        shard_duration: 4.15
+        shard_rows: 1.26
+        lake_writes: 1.19
+        lake_storage: 0.01
+        decision_model: 9.33
+    - name: "Growth"
+      edition: "Cloud"
+      kind: cloud
+      price: 249
+      included_sessions: 1000000
+      overage_per_1000: 0.2
+      overage_cost_per_1000: 0.01773
+      cohorts_watched: 20
+      cost_to_serve: 88.69
+      margin: 160.31
+      below_cost: false
+      cost_lines:
+        card_fees: 8.97
+        support: 25.8
+        platform_minimum: 5
+        worker_requests: 0.18
+        worker_cpu: 0.06
+        shard_requests: 0.09
+        shard_duration: 4.15
+        shard_rows: 10.52
+        lake_writes: 1.19
+        lake_storage: 0.09
+        decision_model: 32.66
+    - name: "Scale"
+      edition: "Cloud"
+      kind: cloud
+      price: 999
+      included_sessions: 10000000
+      overage_per_1000: 0.1
+      overage_cost_per_1000: 0.01433
+      cohorts_watched: 50
+      cost_to_serve: 336.59
+      margin: 662.41
+      below_cost: false
+      cost_lines:
+        card_fees: 34.47
+        support: 103.21
+        platform_minimum: 5
+        worker_requests: 1.74
+        worker_cpu: 0.58
+        shard_requests: 0.87
+        shard_duration: 4.15
+        shard_rows: 105.18
+        lake_writes: 1.19
+        lake_storage: 0.9
+        decision_model: 79.32
+  self_hosting:
+    path: "/build/"
+    costs_page: "/own/#selfhost"
+    price: 0
+    cost_to_us: 0
+    paid_by: "the person running it, on their own Cloudflare account or one container"
+    reference_month:
+      requests_per_month: 100000000
+      sessions: 5000000
+      instances: 10
+      core: 8.03
+      decision_log: 0.45
+      decision_model_site_level: 1.56
+      decision_model_all_cohorts: 79.32
+  sources:
+    - id: "cf-workers-price"
+      claim: "cf-workers-price"
+    - id: "r2-price"
+      claim: "r2-price"
+    - id: "gd-price"
+      claim: "gd-price"
+    - id: "cf-workers-overage"
+      source_url: "https://developers.cloudflare.com/workers/platform/pricing/"
+      quote: "Standard 10 million included per month +$0.30 per additional million No charge or limit for duration 30 million CPU milliseconds included per month +$0.02 per additional million CPU milliseconds"
+      checked: "2026-11-18"
+    - id: "cf-do-price"
+      source_url: "https://developers.cloudflare.com/durable-objects/platform/pricing/"
+      quote: "400,000 GB-s / month, + $12.50/million GB-s"
+      checked: "2026-11-18"
+    - id: "cf-do-rows"
+      source_url: "https://developers.cloudflare.com/durable-objects/platform/pricing/"
+      quote: "First 50 million / month included + $1.00 / million rows"
+      checked: "2026-11-18"
+    - id: "cf-do-requests"
+      source_url: "https://developers.cloudflare.com/durable-objects/platform/pricing/"
+      quote: "requests x $0.15 / 1,000,000 = $0.15"
+      checked: "2026-11-18"
+    - id: "cf-do-128mb"
+      source_url: "https://developers.cloudflare.com/durable-objects/platform/pricing/"
+      quote: "1,000,000 seconds * 128 MB / 1 GB = 128,000 GB-s"
+      checked: "2026-11-18"
+    - id: "r2-class-a"
+      source_url: "https://developers.cloudflare.com/r2/pricing/"
+      quote: "Class A Operations $4.50 / million requests"
+      checked: "2026-11-18"
+    - id: "r2-free"
+      source_url: "https://developers.cloudflare.com/r2/pricing/"
+      quote: "Free Storage 10 GB-month / month Class A Operations 1 million requests / month"
+      checked: "2026-11-18"
+    - id: "card-fee"
+      source_url: "https://stripe.com/en-sg/pricing"
+      quote: "3.4% + $0.50 per successful transaction for domestic cards"
+      checked: "2026-11-18"
+    - id: "dev-wage"
+      source_url: "https://www.careeronestop.org/Toolkit/Wages/find-salary.aspx?dataview=table&hourly=False&keyword=Software+Developers&location=California&national=True&soccode=151252"
+      quote: "United States Hourly $39.64 $65.38 $103.21"
+      checked: "2026-11-18"
+  assumptions:
+    sessions_per_100m_requests: { value: 5000000, basis: "site: /own/ (planning assumption, about 5 million sessions for 100 million requests)" }
+    sessions_per_instance: { value: 500000, basis: "site: /build/inside/#core (10 app instances for that site)" }
+    sync_seconds: { value: 10, basis: "site: /build/inside/#core (each instance syncs every 10 seconds)" }
+    escalation_share: { value: 0.06, basis: "site: /build/inside/#core (about 0.3 million escalated challenges for 5 million sessions)" }
+    model_tokens_per_call: { value: 1800, basis: "site: /own/#selfhost (1,800 tokens a model call)" }
+    model_window_minutes: { value: 5, basis: "site: /meter/ (Core builds a state every five minutes)" }
+    max_cohorts: { value: 50, basis: "site: /own/#selfhost (decision model per abnormal cohort, up to 50)" }
+    cpu_ms_per_core_call: { value: 5, basis: "ours: a sync merges counters and returns policy; no crypto beyond one signature check" }
+    rows_written_per_sync: { value: 1, basis: "ours: one counter row per instance per sync in the site shard" }
+    rows_written_per_session: { value: 10, basis: "ours: a session's minute rollups, its token and replay rows in the site shard" }
+    lake_tables: { value: 6, basis: "site: /build/inside/ (lake tables written every minute)" }
+    lake_kb_per_session_month: { value: 2, basis: "ours: compressed parquet rows for one session's rollups, challenges and decisions" }
+    lake_retention_months: { value: 3, basis: "site: /build/inside/ (90 days proposed retention)" }
+    model_cache_misses_every_window: { value: true, basis: "ours: worst case; /meter/ says answers are cached up to an hour" }
+    allocate_platform_minimum_per_plan: { value: true, basis: "ours: conservative" }
