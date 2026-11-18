@@ -14,12 +14,13 @@ Response: package v2 (this redesign). See "Package v2" below.
 
 ## Spend
 
-spend_usd: 4.89 (lower bound) · as_of: 2026-11-18
+spend_usd: 32.41 · as_of: 2026-11-18 · cap $150 (provisional) = 21.6% · time: day 1 of 21 (provisional)
 
 | Item | Amount | As of | Source |
 |---|---|---|---|
-| Package v1 helpers: claims verification A, claims verification B, OpenAPI spec | $1.28 + $1.87 + $1.74 = $4.89 | 2026-11-18 | `sessions_get(...).session.cost_usd` of each child Session of the Chief's v1 Session |
-| Chief Session building v1 (`882d416a-4ce7-42c5-9e99-26d0cba7894a`) | not yet reported | 2026-11-18 | Its own `cost_usd` read `null` while the Session was running; VC Joe recomputes |
+| Chief Session (`882d416a-4ce7-42c5-9e99-26d0cba7894a`), v1 build, claims fixes, v2 redesign and its live verification | $25.54 | 2026-11-18 | `sessions_get(...).session.cost_usd` (read mid-turn; the rest of the verification turn comes after) |
+| Package v1 helpers: claims verification A, claims verification B, OpenAPI spec | $1.28 + $1.87 + $1.74 = $4.89 | 2026-11-18 | `cost_usd` of each child Session |
+| Package v2 helper: QA harness (motion, CSP, axe, Lighthouse, recording scripts) | $1.98 | 2026-11-18 | `cost_usd` of child `8acf2001` |
 | Onboarding | $0.00 | 2026-11-18 | Done by VC Joe, not the Chief |
 | Pre-intake research (market analysis, architecture plan) | not counted against the budget | 2026-11-18 | Done before the project became a seed |
 | Model-spend cap | $150 (proposal, awaiting owner approval) | 2026-11-18 | `portfolio/botrampart/intake.yaml` in johnmafly/greenhouse |
@@ -50,6 +51,17 @@ At 80% of any budget (rounds, spend, time) the Chief stops and reports.
 | Experiment 1 | `experiments/verify-bench.mjs`, `.json` | Tests locked assumption "enforcement with SDKs only, tokens verified offline": cookie HMAC verify + budget charge = 1.79 µs p50, 2.58 µs p99 (Node 25, Apple M4 Pro, 300k requests, 10k sessions); forged cookie rejected. Target was < 1 ms p99. |
 
 ## Checks (local, 2026-11-18)
+
+Package v2 live (PR #4, merge 4ee7712), verified on a fresh clone of origin/main and on https://botrampart.agenthatch.ai:
+- Live `/.well-known/greenhouse.json` sha 4ee7712af967, built 12:21:19Z (13 s after the merge). The 8 content routes, greenhouse.json and the spec answer 200; all 16 v1 URLs 301 to their v2 homes; X-Robots-Tag and robots meta noindex; CSP header present; `/try/` carries `data-signup-final`.
+- Fresh clone: `npm test` 26/26; `greenhouse validate claims.yaml` (greenhouse main c030c52) ok, exit 0.
+- `greenhouse check` v2 (greenhouse main c030c52, local, not a preflight): every gate passes (routes, signup-flow, reduced-motion, no-js-content, template-likeness 0.016, Lighthouse median of 5 on all 8 routes: 100/100, CLS 0, TBT 0 ms) except axe, which cannot run because it injects an inline script the site's CSP blocks (a check issue: it needs `bypassCSP`). claim-links warns (2 of 60 refuse automation). Own axe run on the live site: 0 violations on all 8 pages, desktop and phone.
+
+Package v2 (PR #4, 212f046):
+- `npm test` 26/26. Own QA harness (`~/workspace/botrampart/qa`), desktop and phone, all 8 pages: reduced-motion and no-JS gates pass; axe 0 violations; Lighthouse mobile median of 3 = performance 100, accessibility 100, CLS 0, TBT 0 ms on every page; no CSP violations or cross-origin requests.
+- `greenhouse check` (greenhouse main c5dd13e, local): build, package-files, deployed-sha, links, page-structure, placeholder, noindex, spec-samples, secrets pass; claim-links warns (2 of 60 refuse automation). routes, signup-flow and lighthouse fail on the v1 fixed routes (`/docs/...`, `/pricing/`, `/signup/`), which now 301 through `_redirects` that the check's local server does not apply: expected until check v2 reads `content:`. axe fails to run because it injects an inline script that the site's CSP blocks (check needs `bypassCSP`). Lighthouse on `/` inside the gate: 100/100, 5 of 5 runs.
+
+Package v1:
 
 - `greenhouse check` from the unmerged check branch (greenhouse #31, `reason/greenhouse-4-schemas-sco-5703921d`), run on the PR #3 head from a clean checkout: every gate passes (build, package-files, deployed-sha, routes, links, page-structure, placeholder, noindex, spec-samples, secrets, axe with 0 violations of any impact, signup-flow, lighthouse 100/100 on all 9 routes); canary not requested. On `70f8161` (main before #3) package-files (claims schema, 248 problems), placeholder and signup-flow failed, and axe warned on 4 serious violations. Not a preflight: VC Joe has not called one.
 - `greenhouse validate claims.yaml` (greenhouse main): exit 0.
