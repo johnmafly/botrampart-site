@@ -19,6 +19,11 @@ const walk = (dir, ext) => readdirSync(dir).flatMap((n) => {
   return statSync(p).isDirectory() ? walk(p, ext) : p.endsWith(ext) ? [p] : [];
 });
 const pages = walk(dist, ".html").map((f) => ({ name: relative(dist, f), html: readFileSync(f, "utf8") }));
+// The stylesheet every page loads, under its fingerprinted name.
+const siteCss = () => {
+  const href = pages.find((p) => p.name === "index.html").html.match(/<link rel="stylesheet" href="(\/assets\/site\.[0-9a-f]{10}\.css)">/)[1];
+  return readFileSync(join(dist, href), "utf8");
+};
 const spec = readFileSync(join(root, "spec", "openapi.yaml"), "utf8");
 const operationIds = [...spec.matchAll(/^\s+operationId:\s*(\S+)\s*$/gm)].map((m) => m[1]);
 
@@ -208,13 +213,13 @@ test("CSP-safe markup: no inline scripts, no style attributes or blocks, a CSP m
 });
 
 test("fonts are self-hosted, subset woff2 with font-display swap and their licences", () => {
-  const css = readFileSync(join(dist, "assets", "site.css"), "utf8");
+  const css = siteCss();
   const faces = [...css.matchAll(/@font-face \{([^}]*)\}/g)].map((m) => m[1]).filter((f) => /url\(/.test(f));
   assert.equal(faces.length, 3);
   for (const f of faces) {
     assert.match(f, /font-display: swap/);
     const url = f.match(/url\("([^"]+)"\)/)[1];
-    assert.match(url, /^\/assets\/fonts\/[a-z-]+\.woff2$/);
+    assert.match(url, /^\/assets\/fonts\/[a-z-]+\.[0-9a-f]{10}\.woff2$/);
     const size = statSync(join(dist, url)).size;
     assert.ok(size < 60_000, `${url} is subset (${size} bytes)`);
   }
@@ -222,7 +227,7 @@ test("fonts are self-hosted, subset woff2 with font-display swap and their licen
 });
 
 test("motion is opt-in: outside prefers-reduced-motion: no-preference, nothing animates transform or opacity", () => {
-  const css = readFileSync(join(dist, "assets", "site.css"), "utf8");
+  const css = siteCss();
   // Remove the no-preference block (balanced braces), then check what remains.
   const start = css.indexOf("@media (prefers-reduced-motion: no-preference) {");
   assert.ok(start > 0, "has a motion block");
@@ -234,4 +239,34 @@ test("motion is opt-in: outside prefers-reduced-motion: no-preference, nothing a
   assert.doesNotMatch(still, /animation-timeline/, "scroll-linked animation outside the motion block");
   // Nothing starts hidden: content must be visible without JS.
   assert.deepEqual([...css.matchAll(/([^{}]+)\{[^}]*opacity:\s*0[;\s}]/g)].map((m) => m[1].trim()), [".choice input"], "only the native radio inputs under their visible labels start at opacity 0");
+});
+
+test("assets are fingerprinted: no page, stylesheet or module loads an unversioned /assets/ URL", async () => {
+  const { createHash } = await import("node:crypto");
+  const REF = /\/assets\/[\w/.-]+?\.(?:css|js|mjs|woff2|svg)\b/g;
+  const HASHED = /^\/assets\/(?:[\w-]+\/)*[\w-]+\.([0-9a-f]{10})\.(?:css|js|mjs|woff2|svg)$/;
+  const headers = readFileSync(join(dist, "_headers"), "utf8");
+  const sources = pages.map(({ name, html }) => [name, html]).concat(
+    ["css", "js", "mjs", "svg"].flatMap((ext) => walk(join(dist, "assets"), `.${ext}`)).map((f) => [relative(dist, f), readFileSync(f, "utf8")]));
+  let refs = 0;
+  for (const [name, text] of sources) {
+    for (const [url] of text.matchAll(REF)) {
+      refs += 1;
+      assert.match(url, HASHED, `${name}: unversioned asset URL ${url}`);
+      assert.ok(existsSync(join(dist, url)), `${name}: ${url} does not exist`);
+    }
+    // Relative imports would dodge the rewrite; modules import by absolute /assets/ path only.
+    assert.doesNotMatch(text, /\bfrom\s+["']\.{1,2}\//, `${name}: relative module import`);
+  }
+  assert.ok(refs >= 10, `pages and assets reference fingerprinted files (found ${refs})`);
+  // Every published CSS/JS/module/font/SVG carries the hash of its own bytes, so the name changes
+  // whenever the content does, and gets a year-long immutable cache rule.
+  for (const f of ["css", "js", "mjs", "woff2", "svg"].flatMap((ext) => walk(join(dist, "assets"), `.${ext}`))) {
+    const url = "/" + relative(dist, f).split(sep).join("/");
+    const m = url.match(HASHED);
+    assert.ok(m, `${url} is published under an unversioned name`);
+    assert.equal(m[1], createHash("sha256").update(readFileSync(f)).digest("hex").slice(0, 10), `${url}: hash does not match its content`);
+    assert.match(headers, new RegExp(`^${url.replace(/\./g, "\\.")}\\n  Cache-Control: public, max-age=31536000, immutable$`, "m"), `${url}: no immutable cache rule`);
+  }
+  assert.doesNotMatch(headers, /^\/assets\/\S*\*/m, "no wildcard asset rule (it would also cover unversioned files)");
 });
