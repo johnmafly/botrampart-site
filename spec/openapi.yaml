@@ -1,0 +1,10 @@
+# Build spec for BotRampart. Docs code samples (<pre><code data-op="operationId">)
+# are checked against the operationIds defined here. Operations arrive with package v1.
+openapi: 3.1.0
+info:
+  title: BotRampart API
+  version: 0.0.0
+  description: >-
+    Interface of BotRampart's backend SDK routes and Core API, as specified in the
+    architecture plan (sections 12.4 and 12.5). Coming in package v1.
+paths: {}

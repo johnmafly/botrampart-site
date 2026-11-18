@@ -1,0 +1,12 @@
+{
+  "name": "botrampart-site",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "BotRampart's Greenhouse package: introduction site, docs, pricing, mock signup and build spec",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test \"test/*.test.mjs\""
+  }
+}

@@ -1,0 +1,6 @@
+# Greenhouse package manifest (contract v1).
+slug: botrampart
+build:
+  command: npm run build
+  output: dist
+production_branch: main
