@@ -18,7 +18,7 @@ At 80% of any budget (rounds, spend, time) the Chief stops and reports.
 ## Decisions
 
 - Intake: the founder's architecture plan (16 November 2026) and market analysis (15 November 2026), as recorded in `portfolio/botrampart/intake.yaml`.
-- Hosting: Cloudflare Pages project `botrampart`, built by Cloudflare from `main` only (`npm run build`, output `dist`). Public, `noindex` until the owner publishes.
+- Hosting: Cloudflare Pages project `botrampart` (Git-connected through the Cloudflare GitHub app; no deploy token in this repo), built by Cloudflare from `main` only, previews off (`npm run build`, output `dist`). Public, `noindex` until the owner publishes.
 - This repository starts as an unstyled skeleton that satisfies the package contract's structure. Visual design is the Chief's.
 
 ## Open findings
