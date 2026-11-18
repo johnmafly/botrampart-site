@@ -8,6 +8,10 @@
 # (read by scripts/claims.mjs, not part of the schema); the other comment lines are the check notes.
 # "Corrected" marks a claim reworded to match its source when re-checked.
 # Quotes were re-fetched and matched in code on 2026-11-18.
+# Published packages: a claim with id "published-<name>" whose source_url is the package's registry page
+# (npmjs.com/package/<name>, hub.docker.com/r/<ns>/<repo>, github.com/<owner>/<repo>/pkgs/container/<name>, ...)
+# lists that package as published. test/registry.test.mjs allows an install command only for a listed package
+# and checks the registry has it. None is listed today.
 claims:
   # source_title: "2026 Thales Bad Bot Report (PDF)"
   # Quote matched fetched text exactly (after whitespace collapse).

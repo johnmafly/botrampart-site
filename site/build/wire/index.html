@@ -173,7 +173,7 @@ rules:
           <p>Actions: <code>allow</code>, <code>log</code>, <code>challenge(pow | human | next_tier)</code>, <code>pow(multiplier)</code>, <code>throttle</code>, <code>block</code>, <code>degrade</code> (tell your app to serve a cheaper response) and <code>add_risk(n)</code>. A rule can run as <code>log</code> for a week before it enforces. Publishing creates an immutable version that SDKs pick up at the next sync; rollback is publishing the previous one. Always simulate first (<a href="/build/#observe">example</a>).</p>
 
           <h2 id="logs">Logs and headers</h2>
-          <p>The cookie is a bearer credential and must never reach a log. The SDK instead adds two response headers your edge can log and strip: <code>BR-Sid</code>, the first 12 hex characters of a hash of the session ID, and <code>BR-Decision</code>. A path that shows up in your access logs without <code>BR-Decision</code> is a route the SDK does not cover, which is how <code>br doctor</code> finds gaps.</p>
+          <p>The cookie is a bearer credential and must never reach a log. The SDK instead adds two response headers your edge can log and strip: <code>BR-Sid</code>, the first 12 hex characters of a hash of the session ID, and <code>BR-Decision</code>. A path that shows up in your access logs without <code>BR-Decision</code> is a route the SDK does not cover.</p>
           <pre><code class="language-nginx">log_format br escape=json '{"time":"$time_iso8601","path":"$uri","status":$status,'
   '"br_sid":"$upstream_http_br_sid","br_decision":"$upstream_http_br_decision"}';
 proxy_hide_header BR-Sid;
