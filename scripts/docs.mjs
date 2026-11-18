@@ -199,7 +199,9 @@ export function markdownToHtml(md, { svg, ops = new Set(), where = "docs" } = {}
         if (!cards.length) fail("cards marker without card items");
         html.push(`<div class="cards">${cards.map(([, t, href, text]) => {
           const label = t.match(/^(\d\d) (.*)$/);
-          return `<a class="card" href="${esc(href)}">${label ? `<p class="label">${label[1]}</p>` : ""}<h3 id="card-${slug(href) || "guide"}">${inline(label ? label[2] : t)}</h3><p>${inline(text)}</p></a>`;
+          // A stable anchor per card heading, from the page it links to: /docs/configuration/ -> to-configuration.
+          const id = `to-${(href.replace(/[#?].*$/, "").split("/").filter(Boolean).pop() ?? "home").toLowerCase().replace(/[^a-z0-9-]+/g, "-")}`;
+          return `<a class="card" href="${esc(href)}">${label ? `<p class="label">${label[1]}</p>` : ""}<h3 id="${id}">${inline(label ? label[2] : t)}</h3><p>${inline(text)}</p></a>`;
         }).join("")}</div>`);
         continue;
       }
@@ -546,6 +548,12 @@ export function buildDocsHtml({ out, root }) {
     for (const h of headings) {
       if (ids.has(h.id)) throw new Error(`site/docs/${page.file}: duplicate heading id ${h.id}`);
       ids.add(h.id);
+    }
+    // Every id on the page is unique, card headings included.
+    const all = new Set();
+    for (const [, id] of html.matchAll(/\sid="([^"]+)"/g)) {
+      if (all.has(id)) throw new Error(`site/docs/${page.file}: duplicate id ${id}`);
+      all.add(id);
     }
     const target = page.slug === "index" ? join(dir, "index.html") : join(dir, page.slug, "index.html");
     mkdirSync(join(target, ".."), { recursive: true });

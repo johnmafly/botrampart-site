@@ -17,8 +17,9 @@ content:
   pricing: /own/#editions
   signup: /try/
 
-
-# User guide (docs gate, greenhouse decision 0006): where each required section of the guide lives.
+# User guide (docs gate, decision 0006): where each of the thirteen required sections lives.
+# Format: docs/package-contract.md (User guide: the docs: block) in johnmafly/greenhouse.
+# Every page also has a Markdown version at /docs/<page>.md, listed in /llms.txt.
 docs:
   overview: /docs/overview/
   architecture: /docs/architecture/

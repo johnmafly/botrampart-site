@@ -450,13 +450,13 @@ claims:
     quote: "Anubis is a Web AI Firewall Utility that weighs the soul of your connection using one or more challenges in order to protect upstream resources from scraper bots."
     checked: "2026-11-18"
   # source_title: "GitHub REST API: repos/TecharoHQ/anubis"
-  # 24,235 stars at fetch on 2026-11-18 (unauthenticated API call); repo page shows 24.2k; licence
-  # spdx_id MIT, 826 forks.
-  - id: "anubis-stars"
-    claim: "Anubis had more than 24,000 GitHub stars in November 2026."
+  # Replaced the star count (anubis-stars): a live count drifts between fetches (24,235, then
+  # 24,243 on 2026-11-18), so the quote stopped matching. created_at never changes.
+  - id: "anubis-created"
+    claim: "Anubis's GitHub repository was created in March 2025."
     where: ["/field/"]
     source_url: "https://api.github.com/repos/TecharoHQ/anubis"
-    quote: "\"stargazers_count\": 24235,"
+    quote: "\"created_at\": \"2025-03-17T17:35:28Z\","
     checked: "2026-11-18"
   # source_title: "Techaro: Pricing (markdown version)"
   # Corrected. pricing.md (the page's own markdown alternate, last_updated 2026-09-18) also says
