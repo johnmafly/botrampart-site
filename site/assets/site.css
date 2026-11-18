@@ -185,6 +185,8 @@ button.btn { font-family: var(--f-text); }
   -webkit-mask: linear-gradient(180deg, transparent, #000 30%, #000 70%, transparent); mask: linear-gradient(180deg, transparent, #000 30%, #000 70%, transparent);
 }
 .hero h1 { max-width: 11ch; margin-bottom: .35em; }
+/* The display cut is tight (-.03em, 76-82% width): give the apostrophe its own air. */
+h1 .ap, h2 .ap { letter-spacing: 0; margin-inline: .035em .02em; }
 .hero h1 .hot { color: var(--ember); text-shadow: 0 0 60px rgb(255 91 46 / .45); }
 .hero-top { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); gap: 2rem 4rem; align-items: end; }
 .hero-side { padding-bottom: 1.3rem; }
