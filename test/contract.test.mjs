@@ -12,7 +12,9 @@ execFileSync(process.execPath, [join(root, "scripts", "build.mjs")], { stdio: "i
 // Contract v2: required content, declared in greenhouse.yaml, not fixed routes.
 const CONTENT_KEYS = ["how_it_works", "getting_started", "architecture", "integration", "comparison", "pricing", "signup"];
 const manifest = readFileSync(join(root, "greenhouse.yaml"), "utf8");
-const content = Object.fromEntries([...manifest.slice(manifest.indexOf("\ncontent:")).matchAll(/^  ([a-z_]+): (\S+)$/gm)].map((m) => [m[1], m[2]]));
+// The content: block runs to the next top-level key (cost_model: follows it).
+const contentBlock = manifest.slice(manifest.indexOf("\ncontent:") + 1).split(/\n(?=[a-z_#])/)[0];
+const content = Object.fromEntries([...contentBlock.matchAll(/^  ([a-z_]+): (\S+)$/gm)].map((m) => [m[1], m[2]]));
 const ROUTES = ["/", ...new Set(Object.values(content).map((v) => v.split("#")[0]))];
 // Package v1 URLs that must keep working through site/_redirects.
 const V1_ROUTES = ["/docs/", "/docs/how-it-works/", "/docs/comparison/", "/docs/getting-started/", "/docs/architecture/", "/docs/integration/", "/pricing/", "/signup/"];
