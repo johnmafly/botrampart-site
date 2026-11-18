@@ -42,8 +42,14 @@ test("every docs page links to its Markdown, and the Markdown is the page's text
     assert.doesNotMatch(md, /^---\n/, `${p.md}: no front matter`);
     assert.doesNotMatch(md, /<!-- @|\{\{c:/, `${p.md}: unresolved marker or citation`);
     // Every heading in the HTML is in the Markdown, with the same id.
+    // Card headings are list links in the Markdown: the card's link is there instead.
+    const cards = new Map([...page.matchAll(/<a class="card" href="([^"]+)">(?:<p class="label">[^<]*<\/p>)?<h3 id="([^"]+)">/g)].map((m) => [m[2], m[1]]));
     for (const [, id] of page.matchAll(/<h[2-4] id="([^"]+)"/g)) {
       if (id === "sources-h") continue;
+      if (cards.has(id)) {
+        assert.ok(md.includes(`](${cards.get(id)})`), `${p.md}: card link ${cards.get(id)}`);
+        continue;
+      }
       assert.ok(md.includes(`{#${id}}`), `${p.md}: heading #${id}`);
     }
     // Every cited source on the HTML page is listed in the Markdown.
@@ -233,5 +239,30 @@ test("no registry install command in the guide or the llms files", () => {
   for (const f of [...pages.map((p) => p.md), "/llms.txt", "/llms-full.txt", ...pages.map((p) => `${p.route}index.html`)]) {
     const m = text(f).match(install);
     assert.equal(m, null, `${f}: registry install command "${m?.[0]}"`);
+  }
+});
+
+test("greenhouse.yaml's docs: block maps the thirteen required sections to built guide pages", () => {
+  const KEYS = ["overview", "architecture", "features", "quickstart", "configuration", "integrations", "api_reference", "sdk_reference", "domain_reference", "self_hosting", "security", "faq", "changelog"];
+  const { docs } = parseYaml(readFileSync(join(root, "greenhouse.yaml"), "utf8"));
+  assert.ok(docs && typeof docs === "object", "greenhouse.yaml has a docs: block");
+  assert.deepEqual(Object.keys(docs), KEYS);
+  const routes = new Set(pages.map((p) => p.route));
+  const llms = text("llms.txt");
+  for (const [key, value] of Object.entries(docs)) {
+    for (const ref of [value].flat()) {
+      const [route, anchor] = ref.split("#");
+      assert.ok(routes.has(route), `docs.${key}: ${route} is a guide page`);
+      if (anchor) assert.match(html(route), new RegExp(`id="${anchor}"`), `docs.${key}: #${anchor} on ${route}`);
+      assert.ok(llms.includes(`${route.replace(/\/$/, "")}.md`) || llms.includes(`${route}index.md`), `docs.${key}: ${route} is in llms.txt`);
+    }
+  }
+});
+
+test("every h2 and h3 in the guide's content has an id", () => {
+  for (const p of pages) {
+    const body = html(p.route).replace(/<(header|footer|nav|aside)\b[\s\S]*?<\/\1>/g, "");
+    const bare = [...body.matchAll(/<h([23])\b([^>]*)>([\s\S]*?)<\/h\1>/g)].filter((m) => !/\sid="/.test(m[2])).map((m) => m[3].replace(/<[^>]+>/g, ""));
+    assert.deepEqual(bare, [], `${p.route}: headings without an id`);
   }
 });

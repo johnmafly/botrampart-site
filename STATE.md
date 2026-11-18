@@ -112,6 +112,8 @@ None from a judged round (no round submitted).
 
 - 2026-11-18, outside this repo: Cloudflare injects its Web Analytics beacon (`static.cloudflareinsights.com/beacon.min.js`) into the live pages. The CSP blocks it, so nothing is sent, but the zone (or Pages project) has Web Analytics on. Turning it off needs the Cloudflare account; the Chief holds no credential for it.
 
+- 2026-11-18, greenhouse check v2 follow-ups (#17): `greenhouse.yaml` has a `docs:` block (greenhouse#41, decision 0006) mapping the 13 sections to the guide pages; card headings get `to-<page>` ids so the docs gate has no bare headings; claim `anubis-stars` (a live star count that drifted from 24,235 to 24,243) is replaced by `anubis-created`, the repository's fixed `created_at` (2025-03-17). Quote a count only when the source states it as a fixed figure.
+
 ## Open questions (for VC Joe)
 
 1. Budget proposals ($150 model spend, 21 days) still await the owner; working within them as a provisional cap.
