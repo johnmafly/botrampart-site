@@ -35,15 +35,29 @@ test("greenhouse.yaml declares all seven content keys, each resolving to a built
   assert.ok(existsSync(join(dist, "404.html")), "404 page");
 });
 
-test("v1 URLs redirect (301) to pages that exist", () => {
+test("v1 URLs keep working: a built page, or a 301 to a page that exists", () => {
   const rules = readFileSync(join(dist, "_redirects"), "utf8").split("\n").filter((l) => l.trim() && !l.startsWith("#")).map((l) => l.trim().split(/\s+/));
   for (const route of V1_ROUTES) {
+    const served = existsSync(fileFor(route));
     for (const from of [route, route.slice(0, -1)]) {
       const rule = rules.find((r) => r[0] === from);
-      assert.ok(rule, `no redirect for ${from}`);
+      if (served) {
+        // A redirect would shadow the page; the host adds the trailing slash itself.
+        assert.ok(!rule, `${from} is a built page but also redirects to ${rule?.[1]}`);
+        continue;
+      }
+      assert.ok(rule, `no page and no redirect for ${from}`);
       assert.equal(rule[2], "301", `${from}: permanent`);
       assert.ok(existsSync(fileFor(rule[1])), `${from} redirects to missing ${rule[1]}`);
     }
+  }
+});
+
+test("no redirect rule shadows a built page", () => {
+  const rules = readFileSync(join(dist, "_redirects"), "utf8").split("\n").filter((l) => l.trim() && !l.startsWith("#")).map((l) => l.trim().split(/\s+/));
+  for (const [from] of rules) {
+    const page = from.endsWith("/") ? fileFor(from) : join(dist, from);
+    assert.ok(!existsSync(page) || statSync(page).isDirectory() && !existsSync(join(page, "index.html")), `${from} redirects away from a built page`);
   }
 });
 

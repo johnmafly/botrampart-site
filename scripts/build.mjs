@@ -11,6 +11,7 @@
 // numbered link to its source, and fails on an unknown id. <!-- @sources --> lists the page's
 // sources with the verbatim quote and the date each was checked.
 import { readClaims } from "./claims.mjs";
+import { buildDocsHtml, buildDocsText } from "./docs.mjs";
 import { appendFileSync, cpSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
@@ -130,6 +131,8 @@ const walk = (dir) => readdirSync(dir).flatMap((name) => {
 
 rmSync(out, { recursive: true, force: true });
 cpSync(src, out, { recursive: true, filter: (p) => !p.startsWith(partials) });
+// The user guide: site/docs/*.md become /docs/<page>/ HTML pages here (scripts/docs.mjs).
+const docs = buildDocsHtml({ out, root });
 for (const file of walk(out)) if (file.endsWith(".html")) render(file);
 
 // Fingerprint every same-origin asset (CSS, JS, modules, fonts, SVG): /assets/site.css becomes
@@ -180,6 +183,9 @@ function fingerprint() {
   return renamed;
 }
 const assets = fingerprint();
+
+// The guide as Markdown (/docs/<page>.md), /llms.txt and /llms-full.txt, with fingerprinted asset URLs.
+buildDocsText({ out, docs, claims, assets, sha });
 
 // Copy the build spec so docs can link to it.
 mkdirSync(join(out, "spec"), { recursive: true });

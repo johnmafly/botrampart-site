@@ -11,6 +11,7 @@
     "bench": "node experiments/verify-bench.mjs",
     "check-links": "node scripts/check-links.mjs",
     "claims:where": "node scripts/claims-where.mjs",
-    "cost-model": "node scripts/cost-model.mjs"
+    "cost-model": "node scripts/cost-model.mjs",
+    "docs:anchors": "node scripts/docs-anchors.mjs"
   }
 }
