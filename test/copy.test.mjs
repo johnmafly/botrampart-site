@@ -12,13 +12,40 @@ if (!existsSync(join(dist, "index.html"))) {
   execFileSync(process.execPath, [join(root, "scripts", "build.mjs")], { stdio: "inherit" });
 }
 
-export const BANNED = [
-  /\bby design\b/i, /\bin design\b/i, /\bplanned\b/i, /\bplan to\b/i, /\bpropos/i, /\bhypothetical/i,
-  /\bconcept/i, /\bdemo/i, /\bmock-?up/i, /\bprototype/i, /\broadmap/i, /\bcoming soon\b/i,
-  /\bnot (yet )?built\b/i, /\bnot for sale\b/i, /\bnothing is for sale\b/i, /\bfor sale yet\b/i,
-  /\billustrative/i, /\bnot a real\b/i, /\bfirst build\b/i, /\bcomes? later\b/i, /\bships later\b/i,
-  /\barchitecture plan\b/i, /\bplaceholder copy\b/i,
+// The banned list (STATE.md, 2026-11-18), matched the way greenhouse's product-voice gate matches it
+// (cli/src/check/voice.ts, VOICE_LIST): case-insensitive, whole words, each entry naming its explicit
+// forms. Inflected hedges (proposal, proposed, demos, mockups, prototyping...) are listed, not caught by
+// a prefix, so "concept" does not match "Concepts" (a docs section), "propos*" does not match
+// "proposition" and "demo" does not match "demonstrate".
+export const VOICE_LIST = [
+  ["by design", ["by design"]],
+  ["in design", ["in design"]],
+  ["planned", ["planned"]],
+  ["plan to", ["plan to", "plans to", "planning to"]],
+  ["propos*", ["propose", "proposes", "proposed", "proposing", "proposal", "proposals"]],
+  ["hypothetical", ["hypothetical", "hypothetically"]],
+  ["concept", ["concept"]],
+  ["demo", ["demo", "demos"]],
+  ["mockup", ["mockup", "mockups", "mock-up", "mock-ups"]],
+  ["prototype", ["prototype", "prototypes", "prototyped", "prototyping"]],
+  ["roadmap", ["roadmap", "roadmaps", "road-map", "road-maps"]],
+  ["coming soon", ["coming soon"]],
+  ["not built", ["not built", "not yet built"]],
+  ["not for sale", ["not for sale"]],
+  ["nothing is for sale", ["nothing is for sale"]],
+  ["for sale yet", ["for sale yet"]],
+  ["illustrative", ["illustrative", "illustratively"]],
+  ["not a real", ["not a real"]],
+  ["first build", ["first build"]],
+  ["come later", ["come later", "comes later"]],
+  ["ships later", ["ship later", "ships later"]],
+  ["architecture plan", ["architecture plan", "architecture plans"]],
+  ["placeholder copy", ["placeholder copy"]],
 ];
+const formRe = (forms) => new RegExp(`\\b(?:${[...forms].sort((a, b) => b.length - a.length)
+  .map((f) => f.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/ /g, "\\s+")).join("|")})\\b`, "i");
+export const BANNED = VOICE_LIST.map(([, forms]) => formRe(forms));
+const hedged = (text) => BANNED.some((re) => re.test(text));
 
 const BINARY = /\.(woff2?|png|jpe?g|gif|webp|avif|ico)$/i;
 const walk = (dir) => readdirSync(dir).flatMap((n) => {
@@ -55,7 +82,29 @@ test("no banned status phrase anywhere the site serves", () => {
 test("the copy gate catches a hedge in text, in an attribute and split by markup", () => {
   const sample = '<p title="Proposed defaults">x</p><p>by <b>design</b></p><p>Not&nbsp;yet built</p>';
   const views = [decode(sample).replace(/\s+/g, " "), rendered(sample)];
-  for (const word of [/\bpropos/i, /\bby design\b/i, /\bnot (yet )?built\b/i]) {
+  for (const word of [BANNED[4], BANNED[0], BANNED[12]]) {
     assert.ok(views.some((v) => word.test(v)), `${word} is caught`);
+  }
+});
+
+test("the copy gate matches whole words: a Concepts heading passes, a concept still fails", () => {
+  const heading = '<h2 id="concepts">Concepts</h2>';
+  for (const v of [decode(heading), rendered(heading)]) assert.ok(!hedged(v), `passes: ${v}`);
+  for (const ok of ["Overview and concepts", "Core concepts", "Our value proposition is simple.",
+    "We demonstrate it below.", "Designed for platform teams.", "The Team plan includes SSO.", "Plans and pricing"]) {
+    assert.ok(!hedged(ok), `passes: ${ok}`);
+  }
+  for (const bad of ["This is a concept", "BotRampart is a concept.", "The proposal covers three tiers.",
+    "Under the proposed pricing", "Book a DEMO", "Two demos", "See the mockup", "the mock-ups below",
+    "This prototype runs locally.", "We plan to add SSO.", "It is planning to ship", "It is not yet built.",
+    "Exports come later.", "Illustratively"]) {
+    assert.ok(hedged(bad), `fails: ${bad}`);
+  }
+});
+
+test("every banned entry fails on each of its explicit forms", () => {
+  for (const [label, forms] of VOICE_LIST) for (const f of forms) {
+    assert.ok(hedged(`It is ${f} here.`), `${label}: "${f}" is caught`);
+    assert.ok(hedged(`It is ${f.toUpperCase()} here.`), `${label}: "${f}" is caught in capitals`);
   }
 });

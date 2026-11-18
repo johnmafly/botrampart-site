@@ -44,6 +44,12 @@ test("every docs page links to its Markdown, and the Markdown is the page's text
     // Every heading in the HTML is in the Markdown, with the same id.
     for (const [, id] of page.matchAll(/<h[2-4] id="([^"]+)"/g)) {
       if (id === "sources-h") continue;
+      // A card's title takes its id from its link (#card-docs-overview); the Markdown has that link as a list item.
+      if (id.startsWith("card-")) {
+        const href = page.match(new RegExp(`<a class="card" href="([^"]+)">(?:(?!</a>).)*<h3 id="${id}"`))?.[1];
+        assert.ok(href && md.includes(`](${href})`), `${p.md}: card #${id} links ${href}`);
+        continue;
+      }
       assert.ok(md.includes(`{#${id}}`), `${p.md}: heading #${id}`);
     }
     // Every cited source on the HTML page is listed in the Markdown.

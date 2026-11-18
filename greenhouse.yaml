@@ -17,6 +17,23 @@ content:
   pricing: /own/#editions
   signup: /try/
 
+
+# User guide (docs gate, greenhouse decision 0006): where each required section of the guide lives.
+docs:
+  overview: /docs/overview/
+  architecture: /docs/architecture/
+  features: /docs/features/
+  quickstart: /docs/getting-started/
+  configuration: /docs/configuration/
+  integrations: /docs/integrations/
+  api_reference: /docs/api/
+  sdk_reference: /docs/sdk/
+  domain_reference: /docs/policy/
+  self_hosting: /docs/self-hosting/
+  security: /docs/security/
+  faq: /docs/faq/
+  changelog: /docs/changelog/
+
 # Cost model (pricing gate): every tier on /own/ with its price and what it costs us to serve,
 # per month in USD. Generated from costs/model.mjs by `npm run cost-model`; the tests fail when
 # this block, the site's prices or the workings drift apart. Format: docs/package-contract.md

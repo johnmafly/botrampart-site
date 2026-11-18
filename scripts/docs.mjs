@@ -199,7 +199,7 @@ export function markdownToHtml(md, { svg, ops = new Set(), where = "docs" } = {}
         if (!cards.length) fail("cards marker without card items");
         html.push(`<div class="cards">${cards.map(([, t, href, text]) => {
           const label = t.match(/^(\d\d) (.*)$/);
-          return `<a class="card" href="${esc(href)}">${label ? `<p class="label">${label[1]}</p>` : ""}<h3>${inline(label ? label[2] : t)}</h3><p>${inline(text)}</p></a>`;
+          return `<a class="card" href="${esc(href)}">${label ? `<p class="label">${label[1]}</p>` : ""}<h3 id="card-${slug(href) || "guide"}">${inline(label ? label[2] : t)}</h3><p>${inline(text)}</p></a>`;
         }).join("")}</div>`);
         continue;
       }
