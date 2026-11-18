@@ -2,7 +2,15 @@
 
 Kept current by the Chief (the BotRampart Reason). Greenhouse reads this file every round.
 
-As of: 2026-11-18. Status: seed (building package v1). Round: none submitted. Rounds used: 0 of 6.
+As of: 2026-11-18. Status: seed (package v2 redesign, rubric v2). Round: none submitted. Rounds used: 0 of 6.
+
+## Owner feedback
+
+2026-11-18, on package v1 (relayed by VC Joe; recorded verbatim here, the brief's OWNER FEEDBACK rule):
+
+> "The site is look so ugly, like born last era, the wording is not attractive to me, no design, no page effects, no animations, no transitions during scrolling, and the site structure exactly follows what I mentioned (pricing, docs, compare), I just give my example, how come every product site looks the same? Think deeply and adjust your scoring accordingly, you can study some reference sites if needed."
+
+Response: package v2 (this redesign). See "Package v2" below.
 
 ## Spend
 
@@ -17,6 +25,16 @@ spend_usd: 4.89 (lower bound) · as_of: 2026-11-18
 | Model-spend cap | $150 (proposal, awaiting owner approval) | 2026-11-18 | `portfolio/botrampart/intake.yaml` in johnmafly/greenhouse |
 
 At 80% of any budget (rounds, spend, time) the Chief stops and reports.
+
+## Package v2 (redesign after owner feedback, rubric v2)
+
+| Part | Where | Notes |
+|---|---|---|
+| Identity | `site/assets/site.css`, `site/assets/fonts/` | "The meter": warm near-black, bone type, two temperatures of light (frost = credit, ember = cost). Motif: the crenel meter, a row of budget cells cut like a rampart's top, that fills and drains (logo, header reading meter, instrument, stage, footer). Bricolage Grotesque (condensed display cut + text cut) and Martian Mono for every number; SIL OFL 1.1, self-hosted, instanced and subset to woff2 (44 KB, 35 KB, 19 KB), font-display swap, metric-adjusted fallbacks. Grain and ember glow for light and depth. |
+| Story-shaped IA | `greenhouse.yaml` `content:` | Home in four acts: Price (a stepped, pinned walk through one request), Pay (the challenge ladder and the halving grants), Prove (a decision receipt and the Slack answer), Own (no hop, your bucket, open source). Nav uses the product's own nouns: The meter (how it works), The field (comparison), Own it (editions and prices), Build (start, wire it in, inside), Run a session (mock signup). v1 URLs 301 to the new ones (`site/_redirects`). |
+| Motion | `site/assets/home.js`, `site.css` | Live two-session instrument (reference economics) feeding a printing tape and draining meter cells; Act I stage pinned beside five steps, lit by IntersectionObserver; scroll-linked CSS view timelines (bars rise, receipt feeds out, figures resolve, the old question gets struck out, header meter drains with reading); request pulses along the flow map; hover light that follows the pointer. All motion sits inside `prefers-reduced-motion: no-preference`; nothing starts hidden; content complete with JS off. |
+| Copy | all pages | Rewritten in one voice: "Don't catch bots. Charge them." Every factual claim still cites `claims.yaml`. |
+| CSP | `site/_headers`, head meta | `default-src 'self'`, no inline script or style attributes (a test enforces it). Also keeps out host-injected analytics. |
 
 ## What package v1 contains
 
@@ -66,6 +84,9 @@ None from a judged round (no round submitted).
 ## Open questions (for VC Joe)
 
 1. Budget proposals ($150 model spend, 21 days) still await the owner; working within them as a provisional cap.
+
+- 2026-11-18, v2 IA: required content is declared in `greenhouse.yaml` (`content:`), not fixed routes; the owner's example list (pricing, docs, compare) is content, not the skeleton.
+- 2026-11-18, motion guardrail in code: `test/package.test.mjs` fails if any animation, transform/opacity transition or scroll timeline sits outside `@media (prefers-reduced-motion: no-preference)`, or if content starts at opacity 0.
 
 ## Next steps
 

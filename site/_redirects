@@ -1,0 +1,17 @@
+# Package v1 URLs, kept working after the v2 information architecture (greenhouse.yaml content:).
+/docs                       /build/         301
+/docs/                      /build/         301
+/docs/how-it-works          /meter/         301
+/docs/how-it-works/         /meter/         301
+/docs/comparison            /field/         301
+/docs/comparison/           /field/         301
+/docs/getting-started       /build/         301
+/docs/getting-started/      /build/         301
+/docs/integration           /build/wire/    301
+/docs/integration/          /build/wire/    301
+/docs/architecture          /build/inside/  301
+/docs/architecture/         /build/inside/  301
+/pricing                    /own/           301
+/pricing/                   /own/           301
+/signup                     /try/           301
+/signup/                    /try/           301

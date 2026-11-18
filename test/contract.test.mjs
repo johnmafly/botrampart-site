@@ -9,18 +9,40 @@ const root = new URL("..", import.meta.url).pathname;
 const dist = join(root, "dist");
 execFileSync(process.execPath, [join(root, "scripts", "build.mjs")], { stdio: "inherit" });
 
-const ROUTES = [
-  "/", "/docs/", "/docs/how-it-works/", "/docs/comparison/", "/docs/getting-started/",
-  "/docs/architecture/", "/docs/integration/", "/pricing/", "/signup/",
-];
+// Contract v2: required content, declared in greenhouse.yaml, not fixed routes.
+const CONTENT_KEYS = ["how_it_works", "getting_started", "architecture", "integration", "comparison", "pricing", "signup"];
+const manifest = readFileSync(join(root, "greenhouse.yaml"), "utf8");
+const content = Object.fromEntries([...manifest.slice(manifest.indexOf("\ncontent:")).matchAll(/^  ([a-z_]+): (\S+)$/gm)].map((m) => [m[1], m[2]]));
+const ROUTES = ["/", ...new Set(Object.values(content).map((v) => v.split("#")[0]))];
+// Package v1 URLs that must keep working through site/_redirects.
+const V1_ROUTES = ["/docs/", "/docs/how-it-works/", "/docs/comparison/", "/docs/getting-started/", "/docs/architecture/", "/docs/integration/", "/pricing/", "/signup/"];
 const fileFor = (route) => join(dist, route, "index.html");
 const htmlFiles = (dir) => readdirSync(dir).flatMap((name) => {
   const p = join(dir, name);
   return statSync(p).isDirectory() ? htmlFiles(p) : p.endsWith(".html") ? [p] : [];
 });
 
-test("every required route exists", () => {
-  for (const route of ROUTES) assert.ok(existsSync(fileFor(route)), `missing ${route}`);
+test("greenhouse.yaml declares all seven content keys, each resolving to a built page and anchor", () => {
+  assert.deepEqual(Object.keys(content).sort(), [...CONTENT_KEYS].sort());
+  for (const [key, value] of Object.entries(content)) {
+    const [route, anchor] = value.split("#");
+    assert.match(route, /^\/([a-z0-9-]+\/)*$/, `${key}: a site path`);
+    assert.ok(existsSync(fileFor(route)), `${key}: missing ${route}`);
+    if (anchor) assert.match(readFileSync(fileFor(route), "utf8"), new RegExp(`id="${anchor}"`), `${key}: #${anchor} not on ${route}`);
+  }
+  assert.ok(existsSync(join(dist, "404.html")), "404 page");
+});
+
+test("v1 URLs redirect (301) to pages that exist", () => {
+  const rules = readFileSync(join(dist, "_redirects"), "utf8").split("\n").filter((l) => l.trim() && !l.startsWith("#")).map((l) => l.trim().split(/\s+/));
+  for (const route of V1_ROUTES) {
+    for (const from of [route, route.slice(0, -1)]) {
+      const rule = rules.find((r) => r[0] === from);
+      assert.ok(rule, `no redirect for ${from}`);
+      assert.equal(rule[2], "301", `${from}: permanent`);
+      assert.ok(existsSync(fileFor(rule[1])), `${from} redirects to missing ${rule[1]}`);
+    }
+  }
 });
 
 test("every page has lang, a title, one h1, noindex meta and no placeholder text", () => {

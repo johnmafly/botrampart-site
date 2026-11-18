@@ -99,6 +99,14 @@ function scrollRegions(html, route) {
   });
 }
 
+// <!-- @toc --> becomes an "On this page" nav built from the page's h2 elements that have an id.
+function toc(html, route) {
+  if (!html.includes("<!-- @toc -->")) return html;
+  const items = [...html.matchAll(/<h2 id="([^"]+)"[^>]*>(.*?)<\/h2>/g)].map(([, id, text]) => `<li><a href="#${id}">${text.replace(/<[^>]+>/g, "")}</a></li>`);
+  if (!items.length) throw new Error(`${route}: @toc but no h2 with an id`);
+  return html.replace("<!-- @toc -->", `<nav class="docnav" aria-label="On this page"><p class="docnav-title">On this page</p><ol>${items.join("")}</ol><p class="docnav-spec">Build it: <a href="/build/">start in observe mode</a></p><p class="docnav-status">Status: design. Nothing here is installable yet.</p></nav>`);
+}
+
 function render(file) {
   const route = routeOf(file);
   let html = readFileSync(file, "utf8");
@@ -107,6 +115,7 @@ function render(file) {
   for (const name of ["header", "footer", "docs-nav"]) {
     html = html.replace(`<!-- @${name} -->`, markCurrent(partial(name), route));
   }
+  html = toc(html, route);
   html = cite(html, route);
   html = scrollRegions(html, route);
   if (/<!-- @/.test(html)) throw new Error(`${route}: unreplaced marker`);

@@ -1,6 +1,18 @@
-# Greenhouse package manifest (contract v1).
+# Greenhouse package manifest (contract v2).
 slug: botrampart
 build:
   command: npm run build
   output: dist
 production_branch: main
+# Where each required piece of content lives (contract v2 section 3). The site's own IA:
+# the home page tells the story in four acts (Price, Pay, Prove, Own); The meter explains the
+# mechanism; The field is the comparison; Own it holds editions and prices; Build is for engineers;
+# Run a session is the mock signup. Package v1 URLs redirect here (site/_redirects).
+content:
+  how_it_works: /meter/
+  getting_started: /build/
+  architecture: /build/inside/
+  integration: /build/wire/
+  comparison: /field/
+  pricing: /own/#editions
+  signup: /try/

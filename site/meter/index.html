@@ -1,20 +1,20 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- @head | How it works | BotRampart docs -->
+    <!-- @head | The meter: how BotRampart works | Every session gets a budget, every path a price. How credit is spent, earned back and capped, the five-minute loop, and what BotRampart does not cover. -->
   </head>
   <body>
     <!-- @header -->
     <main id="main">
       <div class="page-head">
         <div class="wrap">
-          <p class="eyebrow">Docs · How it works</p>
-          <h1>A budget for every session, a cost for every path.</h1>
-          <p class="lede">BotRampart does not try to tell bots from people. It meters what each session consumes and asks for a little work when a session wants more. This page explains the idea, the numbers behind it and what it does not cover.</p>
+          <p class="label">The meter · how it works</p>
+          <h1>Every session gets a budget. Every path gets a price.</h1>
+          <p class="lede">That's the whole mechanism. This page walks through it: what a session is, what things cost, how credit comes back, why a pass buys less each time, and what the meter can't see.</p>
         </div>
       </div>
       <div class="wrap doc-grid">
-        <!-- @docs-nav -->
+        <!-- @toc -->
         <article class="prose">
           <div class="callout"><p><b>Design, not product.</b> BotRampart is not built yet. Everything below is the proposed design from the architecture plan of 16 November 2026. Default numbers are proposals to be tuned, and items marked <span class="tag later">later</span> are outside the first build.</p></div>
 
@@ -124,7 +124,7 @@ on challenge passed(session, tier):
             <li><b>Headless browsers driven by a patient operator.</b> Proof-of-work does not stop them. Budgets ration them: they get bounded throughput per session and sessions are rationed per network.</li>
             <li><b>Mobile apps and partner APIs</b> <span class="tag later">later</span>. They carry no cookie and run no JavaScript. Rules can pass requests signed with an API key; a mobile SDK and signed-agent verification are on the roadmap.</li>
           </ul>
-          <p>Next: <a href="/docs/getting-started/">Getting started</a> walks through the planned install, and <a href="/docs/architecture/">Architecture</a> has the full component design.</p>
+          <p>Next: <a href="/build/">start in observe mode</a>, or go <a href="/build/inside/">inside BotRampart</a> for the full component design.</p>
           <!-- @sources -->
         </article>
       </div>
