@@ -46,7 +46,8 @@ export function readClaims(path) {
   return claims;
 }
 
-// Routes that cite each claim, from the {{c:id}} markers in site/**/*.html:
+// Routes that cite each claim, from the {{c:id}} markers in site/**/*.html and the user guide's
+// Markdown sources (site/docs/<page>.md -> /docs/<page>/):
 // site/index.html -> /, site/docs/comparison/index.html -> /docs/comparison/.
 export function citedRoutes(siteDir, { readdirSync, statSync, join, relative, sep }) {
   const where = new Map();
@@ -54,9 +55,11 @@ export function citedRoutes(siteDir, { readdirSync, statSync, join, relative, se
     for (const name of readdirSync(dir)) {
       const p = join(dir, name);
       if (statSync(p).isDirectory()) { if (name !== "_partials") walk(p); continue; }
-      if (!name.endsWith(".html")) continue;
       const rel = relative(siteDir, p).split(sep).join("/");
-      const route = rel === "index.html" ? "/" : rel.endsWith("/index.html") ? `/${rel.slice(0, -10)}` : `/${rel}`;
+      let route;
+      if (name.endsWith(".html")) route = rel === "index.html" ? "/" : rel.endsWith("/index.html") ? `/${rel.slice(0, -10)}` : `/${rel}`;
+      else if (/^docs\/[a-z0-9-]+\.md$/.test(rel)) route = name === "index.md" ? "/docs/" : `/docs/${name.slice(0, -3)}/`; // user guide sources
+      else continue;
       for (const [, id] of readFileSync(p, "utf8").matchAll(/\{\{c:([a-z0-9-]+)\}\}/g)) {
         if (!where.has(id)) where.set(id, new Set());
         where.get(id).add(route);

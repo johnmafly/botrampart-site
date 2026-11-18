@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" width="960" height="560" font-family="'BR Text', system-ui, -apple-system, 'Segoe UI', sans-serif">
+  <title>BotRampart system overview</title>
+  <rect x="0" y="0" width="960" height="560" rx="14" fill="#0c0b0a"/>
+  <g fill="#12110f" stroke="#3b3732" stroke-width="1.5">
+    <rect x="20" y="180" width="210" height="150" rx="12"/>
+    <rect x="320" y="30" width="230" height="80" rx="12" stroke-dasharray="6 5"/>
+    <rect x="650" y="30" width="130" height="80" rx="12"/>
+    <rect x="800" y="30" width="140" height="80" rx="12"/>
+    <rect x="320" y="420" width="230" height="110" rx="12"/>
+    <rect x="650" y="420" width="290" height="110" rx="12"/>
+  </g>
+  <rect x="320" y="180" width="230" height="150" rx="12" fill="#12110f" stroke="#ff5b2e" stroke-width="1.5"/>
+  <rect x="650" y="180" width="290" height="150" rx="12" fill="#12110f" stroke="#8fe3cf" stroke-width="1.5"/>
+  <g fill="#efe8da" font-size="16" font-weight="600">
+    <text x="36" y="208">Visitor's browser</text>
+    <text x="336" y="208">Your app</text>
+    <text x="666" y="208">Core</text>
+    <text x="336" y="58">Edge or CDN</text>
+    <text x="666" y="58">Vector</text>
+    <text x="816" y="58">Decision model</text>
+    <text x="336" y="448">Agent</text>
+    <text x="666" y="448">Lake: your bucket</text>
+  </g>
+  <g font-size="13.5" font-weight="600">
+    <text x="36" y="236" fill="#8fe3cf">Browser SDK</text>
+    <text x="336" y="236" fill="#ff8a3d">Backend SDK</text>
+    <text x="666" y="236" fill="#8fe3cf">Workers or one container</text>
+  </g>
+  <g fill="#bdb5a6" font-size="13">
+    <text x="36" y="260">proof-of-work in a Worker</text>
+    <text x="36" y="282">challenges and signals</text>
+    <text x="36" y="304">served from your origin</text>
+    <text x="336" y="260">verifies the cookie in memory</text>
+    <text x="336" y="282">charges, runs your policy</text>
+    <text x="336" y="304">mounts the /_br routes</text>
+    <text x="666" y="260">challenges, sync, policy store</text>
+    <text x="666" y="282">hot rollups, replay cache</text>
+    <text x="666" y="304">five-minute loop, console</text>
+    <text x="336" y="82">logs BR-Sid, BR-Decision</text>
+    <text x="666" y="82">log pack</text>
+    <text x="816" y="82">Gemini or</text>
+    <text x="816" y="100">self-hosted</text>
+    <text x="336" y="474">Slack, email, console</text>
+    <text x="336" y="496">read-only, through DuckDB</text>
+    <text x="666" y="474">R2, S3, MinIO, GCS, Azure Blob</text>
+    <text x="666" y="496">rollups, decisions, challenges,</text>
+    <text x="666" y="516">states, answers, policy versions</text>
+  </g>
+  <g stroke="#948b7c" stroke-width="1.6" fill="none">
+    <path d="M230 240 H314"/>
+    <path d="M550 240 H644"/>
+    <path d="M125 330 V372 H760 V336"/>
+    <path d="M795 330 V414"/>
+    <path d="M870 180 V116"/>
+    <path d="M550 70 H644"/>
+    <path d="M715 110 V174"/>
+    <path d="M435 110 V174" stroke-dasharray="5 4"/>
+    <path d="M650 475 H556"/>
+  </g>
+  <g fill="#948b7c">
+    <path d="M320 240 l-9 -5 v10 z"/>
+    <path d="M650 240 l-9 -5 v10 z"/>
+    <path d="M550 240 l9 -5 v10 z"/>
+    <path d="M760 330 l-5 9 h10 z"/>
+    <path d="M795 420 l-5 -9 h10 z"/>
+    <path d="M870 110 l-5 9 h10 z"/>
+    <path d="M650 70 l-9 -5 v10 z"/>
+    <path d="M715 180 l-5 -9 h10 z"/>
+    <path d="M435 180 l-5 -9 h10 z"/>
+    <path d="M550 475 l9 -5 v10 z"/>
+  </g>
+  <g fill="#948b7c" font-family="'BR Mono', ui-monospace, Menlo, monospace" font-size="11.5">
+    <text x="275" y="230" text-anchor="middle">requests</text>
+    <text x="275" y="262" text-anchor="middle">/_br/*</text>
+    <text x="600" y="230" text-anchor="middle">sync</text>
+    <text x="600" y="262" text-anchor="middle">every 5-10 s</text>
+    <text x="440" y="392" text-anchor="middle">tier 2 and 3 widgets: /v1/challenge</text>
+    <text x="805" y="380">writes</text>
+    <text x="860" y="146" text-anchor="end">every 5 min</text>
+    <text x="600" y="62" text-anchor="middle">access logs</text>
+    <text x="725" y="150">/v1/ingest</text>
+    <text x="445" y="150">proxies</text>
+    <text x="603" y="467" text-anchor="middle">reads</text>
+  </g>
+</svg>
