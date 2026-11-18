@@ -1,5 +1,5 @@
 ---
-title: Overview and how it works
+title: Overview and concepts
 nav: Overview
 order: 1
 description: What BotRampart is, and how it works: sessions, tiers, path costs, budgets, the daily ceiling, mint buckets, the five-minute loop and explained decisions.
@@ -10,7 +10,7 @@ lede: BotRampart asks what a session has spent, not whether it is a bot. Every s
 
 BotRampart is open-source bot defense that runs inside your app. A backend SDK in your process verifies a first-party session cookie in memory, charges each request the price of its path, applies your policy and decides before your handler runs. A browser SDK, served from your own origin, solves a small proof-of-work in the background and runs challenges when a session needs more credit. Core, a separate service on Cloudflare Workers or in one container, issues human checks, syncs counters across your app instances, stores policy and runs a five-minute loop over the whole site. Every non-allow decision lands in a decision log in your own bucket.
 
-The SDKs are Apache-2.0. Core, the agent and the console are AGPL-3.0, with a commercial licence available. The [architecture](/docs/architecture/) page shows each part and what crosses each boundary.
+The SDKs are Apache-2.0. Core, the agent and the console are AGPL-3.0, with a commercial licence in the Enterprise edition, which is [not available yet](#not-yet). The [architecture](/docs/architecture/) page shows each part and what crosses each boundary.
 
 ## The idea {#idea}
 
@@ -29,10 +29,10 @@ Identity is one first-party cookie, `__br_s`, set by your own server with `HttpO
 | 0 · provisional | Nothing. First contact gets a cookie. | 30 units, general paths only | Nothing alone; makes requests attributable |
 | 1 · proof-of-work | Nothing visible. The browser SDK solves 16 to 50 small puzzles in a Web Worker. | 300, then refill | Plain HTTP clients and anything without JavaScript. Not headless browsers. |
 | 2 · human check | Ticks a box. Pointer, touch and key dynamics are scored. Works with a keyboard and a screen reader. | 3,000, halving on each repeat in 24 h | Unattended automation that does not pay a solver |
-| 3 · step-up | An opt-in method: email link, sign-in or passkey, an image puzzle, or a third-party widget. Always with a non-visual option. | 6,000, halving | Raises the price again; methods tied to an account are hardest to farm |
+| 3 · step-up | Not available yet. A method: email link, sign-in or passkey, an image puzzle, or a third-party widget. Always with a non-visual option. | 6,000, halving | Raises the price again; methods tied to an account are hardest to farm |
 | Throttle | Waits. `429` with `Retry-After`. | Refill only | Sustained heavy use, whoever is behind it |
 
-The default policy serves tiers 0 to 2; tier 3 is opt-in per policy. WCAG 2.2 success criterion 3.3.8 does not allow a cognitive test in an authentication step unless an alternative, a mechanism to help, or one of its narrow exceptions applies,{{c:wcag-338}} so every step-up configuration offers a method that needs no puzzle at all.
+BotRampart serves tiers 0 to 2; tier 3 step-up methods and third-party widgets are [not available yet](#not-yet). WCAG 2.2 success criterion 3.3.8 does not allow a cognitive test in an authentication step unless an alternative, a mechanism to help, or one of its narrow exceptions applies,{{c:wcag-338}} so every step-up configuration will offer a method that needs no puzzle at all.
 
 ## Request economics {#economics}
 
@@ -67,7 +67,7 @@ The [reference implementation](https://github.com/johnmafly/botrampart-site/blob
 
 A design that challenges once per session and then waves the session through has a known flaw: once the challenge is solved, latency rises but throughput does not fall.{{c:anubis-throughput}} Tying each pass to a fixed grant that halves on repeat gives every session a hard daily ceiling instead.
 
-With the default policy, one session can spend at most **35,363** units in a day with tiers 0 to 2, and **47,175** with a step-up method added: a day of refill, the burst, and every grant until a repeat would buy less than 100 units. At 5 units a search that is about 7,000 to 9,400 searches a day. Someone who wants a million searches a day needs more than a hundred sessions, and new sessions are rationed per network.
+With the default policy, one session can spend at most **35,363** units in a day with tiers 0 to 2, and **47,175** once a step-up method is available: a day of refill, the burst, and every grant until a repeat would buy less than 100 units. At 5 units a search that is about 7,000 to 9,400 searches a day. Someone who wants a million searches a day needs more than a hundred sessions, and new sessions are rationed per network.
 
 A challenge is not an economic wall by itself. Solvers charge around $1 to $3 per thousand passes,{{c:solver-prices}} so a paid pass adds a fraction of a cent per thousand searches. Challenges do three jobs: they shut out clients with no JavaScript engine, they produce interaction signals, and they meter credit. The ceiling and the mint buckets do the limiting.
 
@@ -88,16 +88,16 @@ The response to pressure is a price, not a block: a proof-of-work 1.5 to 10 time
 
 Some abuse is invisible one session at a time: a slow scrape spread over thousands of sessions, each under budget. Every five minutes Core merges the counters from your app instances, compares each cohort with its own baseline for that hour of the week, and turns every number into a named band such as `cost_vs_baseline: x6_plus`. Free text is removed: paths become your class names, user agents become a family.
 
-Core then asks a decision model four typed questions about that state: is this automated abuse, how risky is it, what is it most likely for, and which is the least intrusive step that would contain it. The answer never acts directly. It becomes fields such as `ai.attack` and `ai.action` with an expiry, and your rules decide what to do with them. The model can raise a price or lower a cohort's budget; it can never block or allow a client. The default policy runs the model in shadow mode: answers are logged beside what the rules did, so you set thresholds from your own traffic first.
+Core then asks a decision model four typed questions about that state: is this automated abuse, how risky is it, what is it most likely for, and which is the least intrusive step that would contain it. The answer never acts directly. It becomes fields such as `ai.attack` and `ai.action` with an expiry, and the decision log keeps them beside what the rules did. The model runs in shadow mode only: rules that act on its answers are [not available yet](#not-yet), so you can set thresholds from your own traffic before they are. Even then the model could only raise a price or lower a cohort's budget, never block or allow a client.
 
 | What happens | Which loop reacts | Time to effect |
 | --- | --- | --- |
 | One session exceeds its budget | Per request, in the SDK | The same request |
 | One network mints sessions in a burst | Per request | Seconds on one instance; one sync interval across instances |
 | Site-wide spend jumps | A deterministic tripwire, then the five-minute loop | One sync interval, then 5 to 10 minutes |
-| Slow distributed scrape, every session under budget | Five-minute loop | 10 to 15 minutes: two windows must agree |
+| Slow distributed scrape, every session under budget | Five-minute loop, in shadow mode | Logged within 10 to 15 minutes (two windows must agree); acting on it is not available yet |
 | The attack ends | Five-minute loop | 15 minutes to step down a level; 60 at most |
-| You disagree with a mitigation | You, in Slack or the policy file | The next sync |
+| You disagree with a mitigation | You, in the policy file | The next sync |
 
 The [policy and cohort reference](/docs/policy/#cohorts) lists the cohort keys, the state and the directive fields.
 
@@ -114,14 +114,29 @@ curl -H "Authorization: Bearer $BR_CONSOLE_TOKEN" \
   "credits": 3, "cost": 5, "path_class": "search", "ai_answer_id": null }
 ```
 
-An agent with read-only access to the same log answers in Slack, by email or in the console. It uses named, fixed queries before any free-form SQL, attaches the query and rows to every answer, and cannot change anything: it suggests a policy change and a person approves it.
+An agent with read-only access to the same log answers in Slack or in the console. It uses named, fixed queries, attaches the query and rows to every answer, and cannot change anything: a person changes the policy file. Free-form SQL, suggested policy changes and email from the agent are [not available yet](#not-yet).
 
 ## What it does not do {#not}
 
 - **Floods and DDoS.** The request reaches your app before it is refused. Keep your CDN or WAF for volume; BotRampart refuses before your handler runs.
 - **Cached pages and static files.** They never reach your app. The browser SDK still starts a session from a cached page and protects the data APIs behind it.
 - **Headless browsers driven by a patient operator.** Proof-of-work does not stop them. Budgets ration them: they get bounded throughput per session, and sessions are rationed per network.
-- **Native mobile apps and partner APIs.** They carry no cookie and run no JavaScript. Rules pass requests signed with your own API key.
+- **Native mobile apps and partner APIs.** They carry no cookie and run no JavaScript. Rules pass requests signed with your own API key; protecting them as clients is not available.
+
+## Not available yet {#not-yet}
+
+These parts of BotRampart are not available yet. Pages that mention them say so.
+
+- **The Vector log pack.** Edge-only traffic is not metered; the SDK's counters feed the five-minute loop.
+- **Tier 3 step-up methods and third-party challenge widgets.** The ladder stops at the human check.
+- **Editing in the console.** The console is a read-only view; policy lives in `botrampart.policy.yaml`.
+- **Free-form SQL, suggested policy changes and email from the agent.** The agent answers with named queries in Slack and the console.
+- **SDKs other than Node.**
+- **Cloud and its billing, the White-label build and single sign-on** (so the White-label and Enterprise editions too). Community is the edition available today.
+- **A published benchmark site.** The benchmark runs from source ([quickstart](/docs/getting-started/)).
+- **Edge adapters, mobile SDKs and Web Bot Auth.**
+- **Native mobile apps and partner APIs as protected clients.**
+- **The decision model acting live.** It runs in shadow mode: its answers are logged and act on nothing.
 
 ## Glossary {#glossary}
 

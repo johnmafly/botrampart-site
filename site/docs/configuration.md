@@ -13,7 +13,7 @@ lede: Every setting, where it lives and what it does. The policy file has its ow
 | Backend SDK options | Your app, where it mounts the backend SDK | [Backend SDK options](#backend) |
 | Browser SDK options | The script tag and the browser SDK's settings | [Browser SDK options](#browser) |
 | Core settings and secrets | Core's environment and secret store | [Core](#core) |
-| Path classes, budgets, mint limits, rules | `botrampart.policy.yaml`, one per site, in Git or the console | [Policy reference](/docs/policy/) |
+| Path classes, budgets, mint limits, rules | `botrampart.policy.yaml`, one per site, in Git | [Policy reference](/docs/policy/) |
 | Credentials | Your secret store | [Credentials and roles](#credentials) |
 
 ## Backend SDK options {#backend}
@@ -62,7 +62,7 @@ On Cloudflare, Core's configuration is a Wrangler configuration with D1, KV, Dur
 | --- | --- | --- |
 | Instance key ([`instanceKey`](/docs/api/#security-instancekey)) | Each backend SDK deployment | `POST /v1/sync`. Stored with the site secrets, for example `/run/secrets/br_keys`. |
 | Console token ([`consoleToken`](/docs/api/#security-consoletoken)) | Console, agent, CLI | Reading policy and decisions needs a viewer role; publishing a policy needs an admin role. The agent inherits the asking person's role. |
-| Ingest key ([`ingestKey`](/docs/api/#security-ingestkey)) | Vector's HTTP sink | `POST /v1/ingest/rollups`. |
+| Ingest key ([`ingestKey`](/docs/api/#security-ingestkey)) | Vector's HTTP sink | `POST /v1/ingest/rollups`. The Vector log pack is [not available yet](/docs/overview/#not-yet). |
 | Lake reader | The agent | A key scoped read-only to `br/v1/`. |
 
 Routes under `/_br` take no credentials: the session travels in the first-party cookie.

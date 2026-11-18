@@ -22,8 +22,9 @@ info:
     routes are open source under Apache-2.0.
 
     * **Core API**: the service the backend SDK syncs with, the challenge service
-    for tiers 2 and 3, policy and decision lookups for the console, agent and CLI,
-    and the ingest endpoint for Vector.
+    for tier 2 (tier 3 is not available yet), policy and decision lookups for the
+    read-only console, agent and CLI, and the ingest endpoint for Vector (the Vector
+    log pack is not available yet).
 
 
     **Protected routes.** Any route the backend SDK protects can answer with a
@@ -35,9 +36,11 @@ info:
     removes it.
 
 
-    **Defaults.** Tier 3 (`step_up`) methods are opt-in: the default policy serves
-    tiers 0 to 2. The decision model runs in shadow mode by default: directives carry
-    `ai.*` fields, and the shipped default policy only logs them.
+    **Not available yet.** Tier 3 (`step_up`) methods and third-party widgets: Core
+    serves tiers 0 to 2. Rules that act on the decision model's answers: the model
+    runs in shadow mode, directives carry `ai.*` fields, and they are only logged.
+    The Vector log pack behind `ingestRollups`. Editing policy in the console, which
+    is read-only. The schemas below define these parts so the contract is whole.
   license:
     name: Apache-2.0 (SDK-side routes and SDKs)
     identifier: Apache-2.0
@@ -54,14 +57,14 @@ tags:
     description: Instance sync between each backend SDK instance and Core (architecture §12.6).
   - name: "Core: challenges"
     description: >-
-      Core's challenge service for the human check (tier 2) and step-up (tier 3),
+      Core's challenge service for the human check (tier 2) and step-up (tier 3, not available yet),
       and the public keys that verify its attestations (architecture §6.4, 6.5, 12.5).
   - name: "Core: policy"
     description: Versioned policy documents and simulation against recent traffic (architecture §10).
   - name: "Core: decisions"
     description: Recent decisions from Core's hot store, before they land in the lake (architecture §11.1, 12.5).
   - name: "Core: ingest"
-    description: Edge rollups from Vector for the 5-minute loop (architecture §8.3).
+    description: Edge rollups from Vector for the 5-minute loop (architecture §8.3). The Vector log pack that sends them is not available yet.
 servers:
   - url: https://core.internal:8787
     description: >-
@@ -136,7 +139,7 @@ paths:
         backend SDK; for tier 2 or 3, returns the URL of Core's challenge widget.
         Calls Core? Only for tiers 2 and 3; tier 1 keeps minting when Core is down,
         while tiers 2 and 3 cannot be served then and rules that need them fall back
-        to throttle. Tier 3 (`step_up`) is served only when the policy enables it.
+        to throttle. Tier 3 (`step_up`) is not available yet.
       security: []
       parameters:
         - $ref: "#/components/parameters/SessionCookie"
@@ -514,8 +517,8 @@ paths:
       description: >-
         Serves the challenge widget, loaded by the browser in an iframe: a keyboard-
         and screen-reader-accessible checkbox for tier 2 with no puzzle. Tier 3
-        methods (step_up) are opt-in, and every tier 3 configuration
-        must offer at least one non-visual method.
+        methods (step_up) are not available yet; every tier 3 configuration
+        will offer at least one non-visual method.
       security: []
       parameters:
         - $ref: "#/components/parameters/ChallengeMethodPath"
@@ -590,7 +593,7 @@ paths:
                     focus_changes: 0
                     visibility_changes: 0
               thirdParty:
-                summary: Third-party widget token (tier 3, opt-in)
+                summary: Third-party widget token (tier 3, not available yet)
                 value:
                   c: "eyJ0Ijoic3RlcF91cCJ9.c2ln"
                   provider_token: "0.provider-token-example"
@@ -674,7 +677,8 @@ paths:
       tags: ["Core: ingest"]
       summary: Ingest per-minute edge rollups from Vector
       description: >-
-        Receives a copy of Vector's per-minute rollups (by session or network prefix,
+        The Vector log pack that sends these is not available yet. Receives a copy of
+        Vector's per-minute rollups (by session or network prefix,
         path class and status class) for the 5-minute state builder; the lake copy
         goes straight to object storage. Delivery is at-least-once, so Core
         de-duplicates on the group key.
@@ -979,7 +983,7 @@ paths:
         Returns a recent non-allow decision from Core's hot store by the reference the
         visitor was shown (for example `BR-7F3K2Q`), optionally with the state and the
         model answer behind it. Older decisions are queried from the lake. With the
-        default policy the decision model runs in shadow mode, so `ai_answer_id` shows what the model
+        decision model runs in shadow mode, so `ai_answer_id` shows what the model
         said, not what was enforced.
       security:
         - consoleToken: []
@@ -1102,7 +1106,7 @@ components:
       type: http
       scheme: bearer
       description: >-
-        Bearer token for the console, agent and CLI. Role-scoped: reading policy and
+        Bearer token for the read-only console, the agent and the CLI. Role-scoped: reading policy and
         decisions needs a viewer role, publishing a policy an admin role. The agent
         inherits the asking person's role.
     ingestKey:
@@ -1317,12 +1321,10 @@ components:
             - { when: "signals.pow_ms_implausible", add: 1 }
             - { when: "net.mint_pressure", add: 2 }
             - { when: "session.network_changes_1h >= 5", add: 2 }
-            - { when: "ai.attack >= 0.9", add_field: ai.risk_level }
           rules:
             - { id: verified-bots, when: "net.verified_bot in ['search_engine', 'monitoring']", then: allow }
-            - { id: signed-agents, when: "request.web_bot_auth.valid", then: "allow(budget: agent)" }
             - { id: not-a-browser, when: "!ua.is_browser || ua.browser_age_years > 3", then: block }
-            - { id: risk-5, when: "risk.score >= 5", then: "challenge(step_up)" }
+            - { id: risk-5, when: "risk.score >= 5", then: "challenge(human)" }
             - { id: ai-escalation, when: "ai.attack >= 0.9 && ai.confidence >= 0.7 && request.path_class in ['search', 'login']", then: "challenge(human)", mode: log }
             - { id: over-budget, when: "session.credits < request.cost", then: "challenge(next_tier) || throttle" }
             - { id: default, when: "true", then: allow }
@@ -1376,14 +1378,14 @@ components:
       examples: [9f2c4e1ab7d0]
     TierName:
       type: string
-      description: "Challenge tier by name: pow is tier 1, human tier 2, step_up tier 3 (opt-in)."
+      description: "Challenge tier by name: pow is tier 1, human tier 2, step_up tier 3 (not available yet)."
       enum: [pow, human, step_up]
     ChallengeMethod:
       type: string
       description: >-
         Method for tier 2 (`checkbox`) or tier 3. Tier 3 methods (`image_grid`,
         `third_party`, `email_link`, `sign_in`, `passkey`, `private_access_token`)
-        are opt-in per policy; every tier 3 configuration must offer at least one
+        are not available yet; every tier 3 configuration will offer at least one
         non-visual method.
       enum: [checkbox, image_grid, third_party, email_link, sign_in, passkey, private_access_token]
       examples: [checkbox]
@@ -1708,10 +1710,10 @@ components:
             visibility_changes: { type: integer, minimum: 0 }
         provider_token:
           type: string
-          description: Token from a third-party widget (tier 3), verified by Core.
+          description: Token from a third-party widget (tier 3, not available yet), verified by Core.
         code:
           type: string
-          description: One-time code for the email method (tier 3).
+          description: One-time code for the email method (tier 3, not available yet).
 
     HumanVerifyResult:
       type: object
@@ -2118,9 +2120,10 @@ components:
       description: >-
         Fields from loop 2's model answer, published for a cohort or session with an
         expiry of at most 60 minutes. Directives set `ai.*` fields, not actions; policy
-        rules decide what to do with them. The model can raise a tier or lower a
-        budget, never block or allow-list. By default the model runs in shadow mode:
-        directives carry `ai.*` fields but the shipped default policy only logs them.
+        rules decide what to do with them. The model runs in shadow mode: directives
+        carry `ai.*` fields and they are only logged; rules that act on them are not
+        available yet. Even then the model could raise a tier or lower a budget, never
+        block or allow-list.
       required: [id, match, set, expires]
       properties:
         id:
@@ -2210,7 +2213,8 @@ components:
     EdgeRollup:
       type: object
       description: >-
-        One per-minute row from Vector's reduce transform (architecture §8.3), grouped by site,
+        One per-minute row from Vector's reduce transform (architecture §8.3; the log pack
+        is not available yet), grouped by site,
         minute, key, prefix, path class and status class. Raw IPs, paths and the
         cookie never appear.
       required: [site, minute, key, path_class, status_class, n]
@@ -2284,7 +2288,7 @@ components:
     Policy:
       type: object
       description: >-
-        The site's policy file (architecture §10.1), edited in the console or as YAML in Git.
+        The site's policy file (architecture §10.1), kept as YAML in Git; the console shows it read-only.
         Every `when` is CEL text; Core type-checks it and compiles it to a typed
         condition tree (`ConditionTree`), which is what the SDKs evaluate and what
         the sync ships. Rules are first match wins. Fields: request.*, session.*,
@@ -2636,7 +2640,7 @@ components:
         ai_answer_id:
           type: [string, "null"]
           description: >-
-            AnswerV1 behind the directive that applied, if any. By default the model
+            AnswerV1 behind the directive that applied, if any. The model
             runs in shadow mode, so this shows what the model said, not what was enforced.
         directive_id:
           type: [string, "null"]
@@ -2807,7 +2811,7 @@ components:
       description: >-
         br.answer.v1 (architecture §9.2): the decision model's answer to br.questions.v1 for
         one state, with the provider's reply embedded unchanged. Answers become `ai.*`
-        fields in directives, never actions; by default they run in shadow mode.
+        fields in directives, never actions; the model runs in shadow mode.
       required: [schema, answer_id, state_hash, provider, model, questions, asked_at, expires_at, cache, answers]
       properties:
         schema:

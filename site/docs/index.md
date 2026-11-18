@@ -2,7 +2,7 @@
 title: BotRampart user guide
 nav: Contents
 order: 0
-description: The BotRampart user guide: how it works, architecture, features, install, configuration, integrations, the API, SDK and policy reference, self-hosting, security, FAQ and changelog. Every page is also Markdown.
+description: The BotRampart user guide: overview and concepts, architecture, features, install, configuration, integrations, the API, SDK and policy reference, self-hosting, security, FAQ and changelog. Every page is also Markdown.
 lede: Everything about BotRampart in one place: how it works, how it is built, how to run it, and the full API, SDK and policy reference. Every page is also published as Markdown, for people and for agents.
 ---
 
@@ -11,7 +11,7 @@ BotRampart is open-source bot defense that prices requests instead of judging vi
 ## Sections {#sections}
 
 <!-- cards -->
-- [01 Overview and how it works](/docs/overview/): Sessions, tiers, budgets, the daily ceiling, mint buckets, the five-minute loop and what BotRampart does not do.
+- [01 Overview and concepts](/docs/overview/): Sessions, tiers, budgets, the daily ceiling, mint buckets, the five-minute loop and what BotRampart does not do.
 - [02 Design and architecture](/docs/architecture/): Components, diagrams of the request path and the five-minute loop, sync, Core's ports, data layout and the decision-model contract.
 - [03 Features](/docs/features/): Every capability, grouped by what it does for you, and what each edition includes.
 - [04 Install and quickstart](/docs/getting-started/): Run the reference code from source, then wire BotRampart into a Node app in observe mode.

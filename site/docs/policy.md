@@ -8,7 +8,7 @@ lede: One versioned YAML file per site decides what every request costs and what
 
 ## The policy file {#file}
 
-One file per site, `botrampart.policy.yaml`, kept in Git or edited in the console. Core type-checks it, compiles every condition and publishes it as an immutable version; SDKs pick up the new version at their next sync. The schema is [`Policy`](/docs/api/#schema-Policy). This is the example policy from the spec, version 12:
+One file per site, `botrampart.policy.yaml`, kept in Git. The console shows it read-only. Core type-checks it, compiles every condition and publishes it as an immutable version; SDKs pick up the new version at their next sync. The schema is [`Policy`](/docs/api/#schema-Policy). This is the example policy from the spec, version 12:
 
 ```yaml op=putPolicy cap="botrampart.policy.yaml (version 12)"
 version: 12
@@ -27,12 +27,10 @@ risk_score:
   - { when: "signals.pow_ms_implausible", add: 1 }
   - { when: "net.mint_pressure", add: 2 }
   - { when: "session.network_changes_1h >= 5", add: 2 }
-  - { when: "ai.attack >= 0.9", add_field: ai.risk_level }
 rules:
   - { id: verified-bots, when: "net.verified_bot in ['search_engine', 'monitoring']", then: allow }
-  - { id: signed-agents, when: "request.web_bot_auth.valid", then: "allow(budget: agent)" }
   - { id: not-a-browser, when: "!ua.is_browser || ua.browser_age_years > 3", then: block }
-  - { id: risk-5, when: "risk.score >= 5", then: "challenge(step_up)" }
+  - { id: risk-5, when: "risk.score >= 5", then: "challenge(human)" }
   - { id: ai-escalation, when: "ai.attack >= 0.9 && ai.confidence >= 0.7 && request.path_class in ['search', 'login']", then: "challenge(human)", mode: log }
   - { id: over-budget, when: "session.credits < request.cost", then: "challenge(next_tier) || throttle" }
   - { id: default, when: "true", then: allow }
@@ -58,13 +56,13 @@ Settle a response's true cost with [`BR-Cost`](/docs/sdk/#br-cost).
 | `provisional` | 30 | Tier 0 allowance, general paths only. |
 | `grants.pow` | 300 | Credit a passed proof-of-work buys. |
 | `grants.human` | 3000 | Credit a passed human check buys. |
-| `grants.step_up` | 6000 | Credit a passed step-up buys. |
+| `grants.step_up` | 6000 | Credit a passed step-up buys. Step-up methods are [not available yet](/docs/overview/#not-yet). |
 | `grant_decay` | 0.5 | Each repeat pass of a tier within 24 hours buys this fraction of the previous one. |
 | `identified_multiplier` | 3 | Budget multiplier for sessions with an attached login ID. |
 | `account_ceiling_per_hour` | 20000 | Spend summed across all sessions of one login ID. |
 | `max_concurrent` | 6 | In-flight requests per session. |
 
-With these defaults one session can spend at most 35,363 units a day with tiers 0 to 2, and 47,175 with a step-up method added ([why](/docs/overview/#ceiling)).
+With these defaults one session can spend at most 35,363 units a day with tiers 0 to 2, and 47,175 once a step-up method is available ([why](/docs/overview/#ceiling)).
 
 ## Mint {#mint}
 
@@ -81,7 +79,7 @@ When a key is over its limit, Core publishes its combined mint pressure at the n
 
 ## Risk score {#risk-score}
 
-`risk_score` is a visible scorecard from 0 to 10: a list of lines, each with a CEL `when` and either a fixed `add` or `add_field`, which adds the value of a field such as `ai.risk_level`. Rules read the total as `risk.score`.
+`risk_score` is a visible scorecard from 0 to 10: a list of lines, each with a CEL `when` and either a fixed `add` or `add_field`, which adds the value of a field. Rules read the total as `risk.score`. Adding an `ai.*` field, such as `ai.risk_level`, is [not available yet](/docs/overview/#not-yet) while the model runs in shadow mode.
 
 ## Rules {#rules}
 
@@ -98,7 +96,7 @@ Rules are evaluated in order and the first match wins.
 
 | Field | Examples | From |
 | --- | --- | --- |
-| `request.*` | `path_class`, `cost`, `method`, `web_bot_auth.valid` | The request and your path classes |
+| `request.*` | `path_class`, `cost`, `method` | The request and your path classes |
 | `session.*` | `tier`, `age`, `credits`, `identified`, `network_changes_1h`, `debt_ratio` | The cookie and the local budget |
 | `ua.*` | `is_browser`, `family`, `browser_age_years` | User agent, parsed against a bundled release table |
 | `net.*` | `mint_pressure`, `verified_bot`, `country`, `asn_class` | Mint buckets, crawler verification |
@@ -112,7 +110,7 @@ Rules are evaluated in order and the first match wins.
 | --- | --- |
 | `allow` | Serve the request and charge it. `allow(budget: agent)` charges the named budget instead. |
 | `log` | Record the decision and allow. |
-| `challenge(pow \| human \| step_up \| next_tier)` | Answer with a challenge (`403`, `BR-Challenge: v1`). `next_tier` asks for the next tier whose grant is still worth having. |
+| `challenge(pow \| human \| step_up \| next_tier)` | Answer with a challenge (`403`, `BR-Challenge: v1`). `next_tier` asks for the next tier whose grant is still worth having. `step_up` is [not available yet](/docs/overview/#not-yet). |
 | `pow(multiplier)` | Ask for a proof-of-work made harder by the multiplier. |
 | `throttle` | `429` with `Retry-After` until the budget refills. |
 | `block` | Refuse the request. |
@@ -139,7 +137,7 @@ A cohort is a group of sessions the five-minute loop watches as one, keyed by:
 | `session_age` | A band, such as `under_10m` |
 | `path_class` | One of your path classes |
 
-Every five minutes Core builds a state for the whole site and for cohorts that drift from their own baseline for that hour of the week. On BotRampart Cloud the number of cohorts the model watches depends on the plan: Free asks only about the site as a whole, Starter watches 5 cohorts, Growth 20 and Scale 50 ([plans](/own/#cloud)).
+Every five minutes Core builds a state for the whole site and for cohorts that drift from their own baseline for that hour of the week. On BotRampart Cloud, which is [not available yet](/docs/overview/#not-yet), the number of cohorts the model watches will depend on the plan: Free asks only about the site as a whole, Starter watches 5 cohorts, Growth 20 and Scale 50 ([plans](/own/#cloud)).
 
 ## States {#states}
 
@@ -159,7 +157,7 @@ No free-text field a visitor wrote ever appears in a state.
 
 ## Directives {#directives}
 
-A directive ([`Directive`](/docs/api/#schema-Directive)) publishes `ai.*` fields for a cohort or one session, from a model answer or a deterministic tripwire, with an expiry of at most 60 minutes. Directives set fields, never actions; your rules decide what the fields do. With the default policy they are only logged (shadow mode).
+A directive ([`Directive`](/docs/api/#schema-Directive)) publishes `ai.*` fields for a cohort or one session, from a model answer or a deterministic tripwire, with an expiry of at most 60 minutes. Directives set fields, never actions. The model runs in shadow mode: its fields are logged, and rules that act on them are [not available yet](/docs/overview/#not-yet). Run an `ai.*` rule with `mode: log`, as the example does.
 
 | Field | Values |
 | --- | --- |

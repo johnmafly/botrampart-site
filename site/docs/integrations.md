@@ -2,7 +2,7 @@
 title: Integrations
 nav: Integrations
 order: 6
-description: How BotRampart fits with your stack: your app and the SDK routes; Core on Cloudflare Workers, a container, Kubernetes or OpenOrange; R2, S3, MinIO, GCS and Azure Blob; Redis and Valkey; edge logs through Vector; decision-model providers; Slack, email and the console.
+description: How BotRampart fits with your stack: your app and the SDK routes; Core on Cloudflare Workers, a container, Kubernetes or OpenOrange; R2, S3, MinIO, GCS and Azure Blob; Redis and Valkey; decision-model providers; Slack and the console.
 lede: BotRampart sits inside your app and next to the infrastructure you already run. This page lists every system it connects to and how.
 ---
 
@@ -39,7 +39,7 @@ By default each app instance keeps budgets in memory and reconciles spend at eac
 
 - **Log and strip the headers.** Every response through the SDK carries `BR-Sid` and `BR-Decision`. Log both at the edge and strip them before the response leaves; the [nginx example](/docs/configuration/#headers) does both. A path in your logs without `BR-Decision` is a route the SDK does not cover.
 - **Cached pages.** The SDK never sets the cookie on a response marked publicly cacheable, so your CDN keeps caching it; the browser SDK starts the session through `/_br`.
-- **The log pack.** Vector configurations for nginx, ingress-nginx, ALB, CloudFront and Cloudflare logs reduce each minute to rollups by site, key, prefix, path class and status class, and send them to Core for traffic that never reaches the SDK. Raw IPs, paths and the cookie never leave.
+- **The log pack ([not available yet](/docs/overview/#not-yet)).** Vector configurations for nginx, ingress-nginx, ALB, CloudFront and Cloudflare logs will reduce each minute to rollups by site, key, prefix, path class and status class, and send them to Core for traffic that never reaches the SDK. Raw IPs, paths and the cookie never leave.
 
 ```http op=ingestRollups cap="Vector's HTTP sink, one NDJSON line per rollup"
 POST /v1/ingest/rollups
@@ -65,8 +65,8 @@ The state the model sees follows Google's published guidance: numbers are compar
 ## The agent's channels {#agent}
 
 - **Slack.** The agent runs as an app each customer creates in their own workspace from a shipped manifest, over Socket Mode, so no inbound URL is exposed.
-- **Email.** Digests and answers.
-- **The console.** Served by Core.
+- **The console.** Served by Core, read-only.
+- **Email.** Digests and answers by email are [not available yet](/docs/overview/#not-yet).
 - **Your model key.** The agent uses your own model key or a local model, and reads the lake through DuckDB with a read-only key.
 
 ## Traffic that carries no cookie {#no-cookie}

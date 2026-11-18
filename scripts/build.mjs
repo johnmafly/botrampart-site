@@ -85,7 +85,7 @@ function markCurrent(html, route) {
 function scrollRegions(html, route) {
   let heading = "";
   const used = new Map();
-  return html.replace(/<h[1-4][^>]*>([\s\S]*?)<\/h[1-4]>|<pre(?![^>]*tabindex)|<div class="tablewrap"(?![^>]*tabindex)/g, (m, text) => {
+  return html.replace(/<h[1-4][^>]*>([\s\S]*?)<\/h[1-4]>|<pre(?![^>]*tabindex)|<div class="tablewrap[^"]*"(?![^>]*tabindex)/g, (m, text) => {
     if (text !== undefined) {
       heading = text.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
       return m;
