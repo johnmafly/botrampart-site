@@ -1,385 +1,334 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- @head | BotRampart: don't catch bots, charge them | Open-source bot defense that runs inside your app. Every session gets a budget, every path a price, and heavy use pays in work. Nobody is labelled a bot. The receipts stay in your bucket. -->
+    <!-- @head | BotRampart: bot defense for the age of AI agents | Headless browsers, AI browser agents and solver farms load pages like people do. BotRampart reads how each session behaves, decides on your own server, escalates challenges by itself and explains every decision. Open source and self-hosted. -->
+    <link rel="stylesheet" href="/assets/home.css">
   </head>
-  <body class="home">
+  <body class="home home-v3">
     <!-- @header -->
     <main id="main">
-      <section class="hero" aria-labelledby="hero-h">
+      <section class="h3ro" id="threat" aria-labelledby="hero-h">
         <div class="wrap">
-          <div class="hero-top">
-            <div>
-              <p class="label">Open-source bot defense</p>
-              <h1 id="hero-h">Don<span class="ap">’</span>t catch bots. <span class="hot">Charge&nbsp;them.</span></h1>
-            </div>
-            <div class="hero-side">
-              <p class="lede">BotRampart gives every session a budget and every path a price. <b>People browse on the refill and never notice.</b> Scrapers run dry, and every extra page costs them work: a proof-of-work, then a human check, then a wait.</p>
+          <div class="h3ro-top">
+            <p class="label">Open-source bot defense</p>
+            <h1 id="hero-h">The bots have <span class="hot">browsers now.</span></h1>
+            <div class="h3ro-side">
+              <p class="lede">Headless Chrome, Playwright and Puppeteer scripts, AI browser agents, AI crawlers and solver farms all load your pages the way people do. <b>BotRampart watches how each session behaves, decides on your own server, and makes automation pay before it reaches your data.</b></p>
               <div class="btn-row">
-                <a class="btn btn-primary" href="/try/">Run a session <span class="cost" aria-hidden="true">2 min</span></a>
-                <a class="btn btn-ghost" href="/meter/">Read the meter <span class="arrow" aria-hidden="true">→</span></a>
+                <a class="btn btn-primary" href="/build/ai/">Install with your AI agent <span class="arrow" aria-hidden="true">→</span></a>
+                <a class="btn btn-ghost" href="#detect">How it detects</a>
               </div>
             </div>
           </div>
 
-          <figure class="instrument" aria-labelledby="inst-cap">
-            <div class="instrument-in" data-sim>
-              <div class="inst-bar">
+          <figure class="feed" aria-labelledby="feed-cap">
+            <div class="feed-in">
+              <div class="feed-bar">
                 <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
-                <span>default policy v1 <span class="label-long">· one line = 10 seconds</span></span>
-                <span class="clock" data-clock>10:12:00</span>
-                <button type="button" data-replay hidden>Replay</button>
+                <span>decision log<span class="feed-v"> · policy v12</span></span>
+                <span class="feed-tag">Sample data</span>
               </div>
-              <div class="sync" aria-hidden="true">
-                <span class="sync-l">one clock</span>
-                <span class="sync-track" data-sync-track><i data-sync></i></span>
-                <span class="sync-e" data-elapsed>6:10</span>
-              </div>
-              <div class="lanes">
-                <div class="lane" data-lane="person">
-                  <div class="lane-h"><p class="lane-t">Someone shopping for boots</p><span class="who frost">person</span></div>
-                  <p class="lane-sub">a page every 10 seconds, the odd search</p>
-                  <div class="bal"><span>credit</span><b data-bal>283</b></div>
-                  <div class="meter" aria-hidden="true" data-meter><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></div>
-                  <ol class="tape" data-tape>
-                    <li><span>GET /products/42</span><span class="c">−1</span></li>
-                    <li><span>GET /api/search?q=boots</span><span class="c">−5</span></li>
-                    <li><span>reading; credit refills</span><span class="g">+3</span></li>
-                    <li><span>GET /products/77</span><span class="c">−1</span></li>
-                    <li><span>GET /cart</span><span class="c">−1</span></li>
-                    <li><span>reading; credit refills</span><span class="g">+3</span></li>
-                  </ol>
-                  <p class="verdict" data-verdict>No challenge after the invisible first one.</p>
-                </div>
-                <div class="lane" data-lane="script">
-                  <div class="lane-h"><p class="lane-t">A script working through search</p><span class="who ember">script</span></div>
-                  <p class="lane-sub">60 searches every 10 seconds</p>
-                  <div class="bal"><span>credit</span><b data-bal>0</b></div>
-                  <div class="meter hot" aria-hidden="true" data-meter><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-                  <ol class="tape" data-tape>
-                    <li><span>proof-of-work solved</span><span class="g">+300</span></li>
-                    <li><span>60 × GET /api/search</span><span class="c">−300</span></li>
-                    <li><span>out of credit: human check</span><span class="x">403</span></li>
-                    <li><span>passed via paid solver</span><span class="g">+3,000</span></li>
-                    <li><span>fourth pass: grant halves again</span><span class="g">+375</span></li>
-                    <li><span>grants used up: throttled</span><span class="x">429</span></li>
-                  </ol>
-                  <p class="verdict" data-verdict>Throttled: about 4 searches a minute, on the refill.</p>
-                </div>
-              </div>
-              <figcaption class="inst-foot" id="inst-cap">
-                <span>Two sessions, one policy, run live by the reference code this site's tests check.</span>
-                <span>Search costs 5 · refill 20 a minute · grants 300, then 3,000, halving.</span>
-              </figcaption>
+              <div class="feed-head" aria-hidden="true"><span>time</span><span>session</span><span>what the server saw</span><span>risk</span><span>decision</span></div>
+              <ol class="feed-rows" data-feed>
+                <li><span class="t">10:12:08</span><span class="s">BR-6TLW</span><span class="w">verified search engine crawler</span><span class="r">–</span><span class="d ok">allow</span></li>
+                <li><span class="t">10:12:07</span><span class="s">BR-1ZPA</span><span class="w">proof-of-work in 2 ms · third human pass today</span><span class="r">3</span><span class="d slow">throttle 429</span></li>
+                <li><span class="t">10:12:06</span><span class="s">BR-7F3K</span><span class="w">out of budget on search</span><span class="r">2</span><span class="d ask">next tier: human check</span></li>
+                <li><span class="t">10:12:05</span><span class="s">BR-4HJD</span><span class="w">not a browser: no JavaScript, no proof-of-work</span><span class="r">–</span><span class="d no">block</span></li>
+                <li><span class="t">10:12:05</span><span class="s">BR-9Q2X</span><span class="w">automation flag · no input after 30 requests</span><span class="r">6</span><span class="d ask">human check</span></li>
+                <li><span class="t">10:12:04</span><span class="s">BR-2K8M</span><span class="w">22 inputs · proof-of-work in 380 ms</span><span class="r">0</span><span class="d ok">allow</span></li>
+              </ol>
             </div>
+            <figcaption id="feed-cap" class="feed-cap">Each line is one decision, made inside your app before your handler runs. Sample sessions, made up to show the format.</figcaption>
           </figure>
-          <p class="status-line">Every outside figure on this site links to its source.</p>
+
+          <ul class="odds3" aria-label="The threat in four numbers">
+            <li><b>53%</b><span>of the web traffic Thales observed in 2025 was automated.{{c:thales-automated}}</span></li>
+            <li><b>100%</b><span>of reCAPTCHA v2 image challenges solved by published models, in a 2024 study.{{c:recaptcha-solved}}</span></li>
+            <li><b>$1–3</b><span>buys 1,000 solved reCAPTCHA v2 challenges from a solver service.{{c:solver-prices}}</span></li>
+            <li><b>65.3%</b><span>of 21,491 domains in DataDome's 2026 test stopped none of its 10 test bots.{{c:dd-unprotected}}</span></li>
+          </ul>
         </div>
       </section>
 
-      <section class="sec" aria-labelledby="why">
+      <section class="sec" id="detect" aria-labelledby="detect-h">
         <div class="wrap">
           <div class="sec-head rise">
-            <p class="label">The old question</p>
-            <h2 id="why">“Is this a bot?” is a guess you can buy your way past.</h2>
-            <p>Puzzles are solved by machines. Passes are sold by the thousand. IP addresses rent by the gigabyte. A verdict is cheap to fake. A budget still has to be spent.</p>
+            <p class="label">Detection</p>
+            <h2 id="detect-h"><span class="dim">A script can fake a browser.</span> It can<span class="ap">’</span>t fake being bored.</h2>
+            <p>The browser SDK reports how the page is used; your server checks it. Automation leaves traces a user-agent string can't hide: a flag the browser itself raises, thirty pages without a single tap or keystroke, a proof-of-work finished faster than the hardware allows.</p>
           </div>
-          <div class="odds">
-            <div class="odd"><b>53%</b><p>of the web traffic Thales observed in 2025 was automated.{{c:thales-automated}}</p></div>
-            <div class="odd"><b>100%</b><p>of reCAPTCHA v2 image challenges solved by a published model, in a 2024 study.{{c:recaptcha-solved}}</p></div>
-            <div class="odd"><b>$1–3</b><p>per 1,000 solved reCAPTCHA v2 challenges at a solver service.{{c:solver-prices}}</p></div>
-            <div class="odd"><b>65.3%</b><p>of 21,491 domains in DataDome's 2026 test stopped none of its 10 test bots. A vendor's test, made for the vendor's case.{{c:dd-unprotected}}</p></div>
-          </div>
-          <div class="turn">
-            <div class="was">
-              <p class="label">Them</p>
-              <p class="q">Is this a bot?</p>
-              <p>A classifier decides, and you defend the answer. Every false positive is a customer you can't explain. Every pass is a clearance someone can resell.</p>
-            </div>
-            <span class="arrow-x" aria-hidden="true">→</span>
-            <div class="is">
-              <p class="label">BotRampart</p>
-              <p class="q">What has this session spent?</p>
-              <p>Arithmetic decides, and anyone can check it. Nobody is labelled. Everybody is metered.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="sec" id="price" aria-labelledby="price-h">
-        <div class="wrap">
-          <div class="sec-head rise">
-            <p class="label"><span class="act-n">Act I</span> Price</p>
-            <h2 id="price-h">A search costs 5. A product page costs 1. You write the price list.</h2>
-            <p>Every request is priced before your handler runs, inside your app, with no network call. Follow one.</p>
-          </div>
-          <div class="stage-wrap">
-            <div class="stage-col">
-              <div class="stage" data-stage>
-                <div class="panel">
-                  <div class="panel-h"><span>backend SDK · in your app</span><span>session BR-7F3K</span></div>
-                  <div class="req"><span><span class="verb">GET</span>/api/search?q=boots</span><span class="tag">tier 1 · signed out</span></div>
-                  <ol class="pipe">
-                    <li data-row="1"><span><b>Cookie verified</b>offline, signed with your key</span><span class="v">1.79 µs</span></li>
-                    <li data-row="2"><span><b>Path priced</b>/api/search* is “search”</span><span class="v hot">5</span></li>
-                    <li data-row="3"><span><b>Charged</b>to this session's budget</span><span class="v">−5</span></li>
-                    <li data-row="4"><span><b>Rules run</b>yours, in order</span><span class="v">no match</span></li>
-                    <li data-row="5"><span><b>Decided</b>before your handler</span><span class="v">allow</span></li>
-                  </ol>
-                  <div class="stage-bal"><span>balance</span><b data-stage-bal>207</b></div>
-                  <div class="meter" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i data-cell-spent class="burn"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-                  <div class="decision"><span>ALLOW → your handler</span><small>req.br.action</small></div>
-                </div>
+          <div class="detect">
+            <div class="sig-grid">
+              <div class="tile sig">
+                <span class="sig-k">01 · Browser risk signals</span>
+                <h3>What the browser admits</h3>
+                <p>The automation flag browsers expose, the proof-of-work solve time, focus and visibility changes, viewport size class.</p>
+              </div>
+              <div class="tile sig">
+                <span class="sig-k">02 · Abnormal UI behaviour</span>
+                <h3>How the page is used</h3>
+                <p>Counts of pointer, touch and key events and time to first input. No input after 30 requests is a pattern people don't make.</p>
+              </div>
+              <div class="tile sig">
+                <span class="sig-k">03 · Checked server-side</span>
+                <h3>Decided where it can't be tampered with</h3>
+                <p>Signals are scored by your policy inside your app, against a session cookie signed with your key. Verifying it and charging the session took 1.79 µs at the median in our benchmark.{{c:exp-verify}}</p>
+              </div>
+              <div class="tile sig">
+                <span class="sig-k">04 · No fingerprinting</span>
+                <h3>Counts, never identities</h3>
+                <p>No canvas, WebGL or audio fingerprints, font lists, stable device IDs or keystroke content, in any mode.</p>
               </div>
             </div>
-            <div class="steps-col">
-              <div class="st" data-st="1">
-                <p class="k">01 · Who is asking</p>
-                <h3>No lookup. No vendor. No hop.</h3>
-                <p>The session cookie is set by your server, signed with your key and checked in memory. In our benchmark of the reference code that took 1.79 microseconds at the median.{{c:exp-verify}} If Core is down, this still works.</p>
-                <p class="mono-note">One first-party cookie. No device fingerprint, in any mode.</p>
+            <figure class="score" aria-labelledby="score-cap">
+              <div class="score-in">
+                <div class="score-h"><span>session BR-9Q2X</span><span class="feed-tag">Sample data</span></div>
+                <ol class="score-rows">
+                  <li><code>signals.automation_flag</code><span>+4</span></li>
+                  <li><code>signals.no_input_after_30_requests</code><span>+2</span></li>
+                  <li class="off"><code>signals.pow_ms_implausible</code><span>+0</span></li>
+                  <li class="off"><code>session.network_changes_1h &gt;= 5</code><span>+0</span></li>
+                </ol>
+                <div class="score-total"><span>risk.score</span><b>6</b></div>
+                <div class="score-bar" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on hit"></i><i class="on hit"></i><i></i><i></i><i></i><i></i></div>
+                <p class="score-rule"><span>rule risk-5</span><span>risk.score &gt;= 5 → <b>human check</b></span></p>
               </div>
-              <div class="st" data-st="2">
-                <p class="k">02 · What it costs</p>
-                <h3>Paths have prices, not reputations.</h3>
-                <p>Static files are free. A page is 1. Search is 5, a login attempt 10, checkout 20. Those are the defaults; the price list is a file you own, and your app can report the real cost of an expensive response.</p>
-                <p class="mono-note">search: { match: /api/search*, cost: 5, min_tier: 1 }</p>
-              </div>
-              <div class="st" data-st="3">
-                <p class="k">03 · Who pays</p>
-                <h3>The session pays. The refill forgives.</h3>
-                <p>Every session regains 20 units a minute, up to 300, and three times faster once someone signs in. Reading, comparing, checking out: ordinary use spends slower than it refills.</p>
-                <p class="mono-note">212 − 5 = 207. That is the whole calculation.</p>
-              </div>
-              <div class="st" data-st="4">
-                <p class="k">04 · What you decided</p>
-                <h3>Your rules, in your order.</h3>
-                <p>A policy file says what happens when a balance can't pay, when a network mints sessions in a burst, or when the five-minute loop raises a flag. Nothing acts that you didn't write down.</p>
-                <p class="mono-note">over-budget → next challenge · else throttle</p>
-              </div>
-              <div class="st" data-st="5">
-                <p class="k">05 · The answer</p>
-                <h3>Allow, challenge or throttle. Before your code runs.</h3>
-                <p>The decision lands on the request before your handler runs. Anything other than allow is written to your decision log with a reference the visitor can quote to support.</p>
-                <p class="mono-note">req.br = { action: "allow", credits: 207 }</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="sec" id="pay" aria-labelledby="pay-h">
-        <div class="wrap">
-          <div class="sec-head rise">
-            <p class="label"><span class="act-n">Act II</span> Pay</p>
-            <h2 id="pay-h">Out of credit? Pay in work. The next pass buys half as much.</h2>
-            <p>A challenge here isn't a gate you pass once. It's a purchase. It buys credit, never clearance, and each repeat buys less.</p>
-          </div>
-          <div class="ladder">
-            <div class="rung"><span class="t">TIER 1 · INVISIBLE</span><h3>Proof-of-work</h3><p>The browser does a few small sums in the background. Plain HTTP clients can't.</p><span class="buys">+300</span></div>
-            <div class="rung"><span class="t">TIER 2 · ONE TICK</span><h3>Human check</h3><p>A box to tick, scored on how it was ticked. Works with a keyboard and a screen reader.</p><span class="buys">+3,000, halving</span></div>
-            <div class="rung"><span class="t">TIER 3 · NOT AVAILABLE YET</span><h3>Step-up</h3><p>Email link, passkey, sign-in, or a puzzle you choose, always with a way that needs no puzzle. Not available yet: tiers 1 and 2 serve every challenge today.</p><span class="buys">+6,000, halving</span></div>
-            <div class="rung throttle"><span class="t">THE FLOOR</span><h3>Wait</h3><p>When the grants are spent: 429 and Retry-After. The refill still flows, slowly.</p><span class="buys">refill only</span></div>
-          </div>
-
-          <div class="decay">
-            <div>
-              <h3>A resold pass stops being worth reselling.</h3>
-              <p class="muted">One challenge per session with no rate limit behind it adds latency, not limits: throughput doesn't fall.{{c:anubis-throughput}} Here, the first human check buys 3,000 units, the second 1,500, then 750, 375 and 188. Then there is nothing left to buy, and the session waits on the refill.</p>
-              <div class="ceiling">
-                <div><b>35,363</b><span>units a day: the most one session can spend on the default policy</span></div>
-                <div><b>≈7,000</b><span>searches a day per session, at 5 each</span></div>
-              </div>
-              <p class="fine mt-2">Computed by the reference implementation this site runs; a test in the repository checks both numbers.</p>
-            </div>
-            <figure class="chart" aria-labelledby="decay-cap">
-              <div class="bars-v" role="img" aria-label="Credit bought by each pass: proof-of-work 300; human checks 3,000, 1,500, 750, 375 and 188; then throttled.">
-                <div class="bar b1"><span>300</span></div>
-                <div class="bar b2"><span>3,000</span></div>
-                <div class="bar b3"><span>1,500</span></div>
-                <div class="bar b4"><span>750</span></div>
-                <div class="bar b5"><span>375</span></div>
-                <div class="bar b6"><span>188</span></div>
-                <div class="bar x"><span>429</span></div>
-              </div>
-              <div class="bars-x" aria-hidden="true"><span>PoW</span><span>check 1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>wait</span></div>
-              <figcaption class="fine mt-2" id="decay-cap">Credit bought by each pass within 24 hours, default policy.</figcaption>
+              <figcaption id="score-cap" class="feed-cap">How one sample session's score adds up, with the weights from the example policy.</figcaption>
             </figure>
           </div>
         </div>
       </section>
 
-      <section class="sec" id="prove" aria-labelledby="prove-h">
+      <section class="sec" id="autopilot" aria-labelledby="auto-h">
         <div class="wrap">
           <div class="sec-head rise">
-            <p class="label frost"><span class="act-n">Act III</span> Prove</p>
-            <h2 id="prove-h">Every no comes with a receipt.</h2>
-            <p>Each refusal is a rule, a budget or a recorded model answer, written to your bucket with a reference the visitor sees. “Why was I blocked?” becomes a lookup, not an investigation.</p>
+            <p class="label">Autopilot challenges · custom policies</p>
+            <h2 id="auto-h">It escalates by itself. <span class="dim">You decide where the line is.</span></h2>
+            <p>You don't pick a challenge per route. When a session looks wrong or overspends, BotRampart asks for the next tier up, and a session that keeps coming back climbs the ladder. One check per session with no limit behind it only adds latency, not limits:{{c:anubis-throughput}} here each repeat costs more.</p>
           </div>
-          <div class="prove">
-            <div class="receipt" role="img" aria-label="Example decision record BR-7F3K2Q: search, cost 5, balance 3, rule over-budget, policy v12, no model answer in force, action human check.">
-              <h3>BOTRAMPART</h3>
-              <p class="ctr">decision record<br>BR-7F3K2Q · 2026-11-16 10:12:41Z</p>
-              <span class="stamp" aria-hidden="true">LOGGED</span>
-              <dl>
-                <dt>path class</dt><dd>search</dd>
-                <dt>cost</dt><dd>5</dd>
-                <dt>balance</dt><dd>3</dd>
-                <dt>rule</dt><dd>over-budget</dd>
-                <dt>policy</dt><dd>v12</dd>
-                <dt>model answer</dt><dd>none in force</dd>
-                <dt>risk score</dt><dd>1</dd>
-              </dl>
-              <hr class="rule">
-              <div class="total"><span>ACTION</span><span>HUMAN CHECK</span></div>
-              <hr class="rule">
-              <p class="ctr">stored in s3://your-bucket/br/v1/<br>Parquet · readable with DuckDB</p>
-            </div>
-            <div>
-              <div class="chat" data-chat aria-label="Example conversation in Slack">
-                <div class="chat-msg">
-                  <div class="avatar" aria-hidden="true">MK</div>
-                  <div class="chat-body">
-                    <div class="chat-name">Support <span>10:31</span></div>
-                    <p>@BotRampart why was user 4217 challenged at 10:12? They say they were just searching.</p>
-                  </div>
-                </div>
-                <div class="chat-msg">
-                  <div class="avatar bot" aria-hidden="true">BR</div>
-                  <div class="chat-body">
-                    <div class="chat-name">BotRampart <span>10:31</span></div>
-                    <p class="typed">Rule <code>over-budget</code>, policy v12. In the five minutes before, the session spent 1,240 units, 96% of it on search at 5 a call. A signed-in session regains 300 in five minutes. No model answer applied. They passed the check in 4 seconds and carried on.</p>
-                    <p class="chat-cite">query explain_decision · 3 rows · window 10:07–10:12</p>
-                    <div class="chat-actions"><span>Show timeline</span><span>Replay with draft policy</span></div>
-                  </div>
-                </div>
-                <p class="illus">Example record and reply. User 4217 is made up to show the format.</p>
-              </div>
-              <p class="muted mt-2">The agent that answers reads your log with read-only access, attaches the query and the rows, and can't change anything. Policy changes are made by a person, in the policy file.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="sec" id="own" aria-labelledby="own-h">
-        <div class="wrap">
-          <div class="sec-head rise">
-            <p class="label frost"><span class="act-n">Act IV</span> Own</p>
-            <h2 id="own-h">It lives in your app. The receipts live in your bucket.</h2>
-            <p>Most bot defense is a service your traffic passes through. BotRampart is software you run, and the data never leaves.</p>
-          </div>
-          <div class="own-grid">
-            <div class="tile wide">
-              <h3>No hop added</h3>
-              <p>The SDK is a filter in your framework. Your CDN keeps handling floods, as it does today.</p>
-              <div class="flowmap">
-                <svg viewBox="0 0 760 220" role="img" aria-labelledby="fm-t">
-                  <title id="fm-t">Visitor to your CDN to your app, where the SDK decides with no network call, to your handler. Below, Core syncs counters every few seconds and writes to your bucket.</title>
-                  <path id="fm-path" class="w-hot" d="M95 60 H665"/>
-                  <rect class="f-box" x="10" y="32" width="120" height="56" rx="10"/><text class="t-b" x="70" y="58" text-anchor="middle">Visitor</text><text class="t-m" x="70" y="76" text-anchor="middle">browser SDK</text>
-                  <rect class="f-box" x="180" y="32" width="120" height="56" rx="10"/><text class="t-b" x="240" y="58" text-anchor="middle">Your CDN</text><text class="t-m" x="240" y="76" text-anchor="middle">unchanged</text>
-                  <rect class="f-hot" x="350" y="20" width="200" height="80" rx="12"/><text class="t-b" x="450" y="52" text-anchor="middle">Your app + SDK</text><text class="t-m" x="450" y="72" text-anchor="middle">verify · price · charge</text><text class="t-m" x="450" y="88" text-anchor="middle">no network call</text>
-                  <rect class="f-box" x="600" y="32" width="140" height="56" rx="10"/><text class="t-b" x="670" y="58" text-anchor="middle">Your handler</text><text class="t-m" x="670" y="76" text-anchor="middle">req.br</text>
-                  <path class="w-dim" d="M450 100 V150"/>
-                  <rect class="f-box" x="350" y="150" width="200" height="56" rx="10"/><text class="t-b" x="450" y="176" text-anchor="middle">Core</text><text class="t-m" x="450" y="194" text-anchor="middle">sync every 5–10 s</text>
-                  <path class="w-cool" d="M350 178 H300"/>
-                  <rect class="f-cool" x="180" y="150" width="120" height="56" rx="10"/><text class="t-b" x="240" y="176" text-anchor="middle">Your bucket</text><text class="t-m" x="240" y="194" text-anchor="middle">R2 · S3 · MinIO</text>
-                  <circle class="pulse p1" r="5"/><circle class="pulse p2" r="5"/>
-                </svg>
-                <svg class="flowmap-v" viewBox="0 0 320 400" role="img" aria-labelledby="fmv-t">
-                  <title id="fmv-t">The same path, top to bottom: visitor, your CDN, your app with the SDK, your handler. Core beside the app syncs and writes to your bucket.</title>
-                  <path class="w-hot" d="M110 50 V350"/>
-                  <rect class="f-box" x="40" y="14" width="140" height="52" rx="10"/><text class="t-b" x="110" y="38" text-anchor="middle">Visitor</text><text class="t-m" x="110" y="55" text-anchor="middle">browser SDK</text>
-                  <rect class="f-box" x="40" y="96" width="140" height="52" rx="10"/><text class="t-b" x="110" y="120" text-anchor="middle">Your CDN</text><text class="t-m" x="110" y="137" text-anchor="middle">unchanged</text>
-                  <rect class="f-hot" x="20" y="178" width="180" height="78" rx="12"/><text class="t-b" x="110" y="206" text-anchor="middle">Your app + SDK</text><text class="t-m" x="110" y="225" text-anchor="middle">verify · price · charge</text><text class="t-m" x="110" y="242" text-anchor="middle">no network call</text>
-                  <rect class="f-box" x="40" y="300" width="140" height="52" rx="10"/><text class="t-b" x="110" y="324" text-anchor="middle">Your handler</text><text class="t-m" x="110" y="341" text-anchor="middle">req.br</text>
-                  <path class="w-dim" d="M200 217 H226"/>
-                  <rect class="f-box" x="226" y="190" width="88" height="54" rx="10"/><text class="t-b" x="270" y="214" text-anchor="middle">Core</text><text class="t-m" x="270" y="231" text-anchor="middle">sync 5–10 s</text>
-                  <path class="w-cool" d="M270 244 V300"/>
-                  <rect class="f-cool" x="226" y="300" width="88" height="54" rx="10"/><text class="t-b" x="270" y="324" text-anchor="middle">Bucket</text><text class="t-m" x="270" y="341" text-anchor="middle">yours</text>
-                  <circle class="pulse pv1" r="5"/><circle class="pulse pv2" r="5"/>
-                </svg>
-              </div>
-            </div>
-            <div class="tile tall">
-              <h3>Your bucket, open formats</h3>
-              <p>Rollups, decisions and every model answer, as Parquet and JSON. Query them without asking us.</p>
-              <pre class="bucket"><span class="d">br/v1/</span>
-  <span class="d">decisions/</span>
-    <span class="d">date=2026-11-16/</span>
-      <span class="f">part-0007.parquet</span>
-  <span class="d">rollups/5m/</span>
-  <span class="d">answers/</span>
-    <span class="f">2026-11-16T10-10.json</span>
-  <span class="d">policy/</span>
-    <span class="f">v12.yaml</span>
-
-<span class="s">$ duckdb -c "select action,</span>
-<span class="s">  count(*) from 'decisions/**'</span>
-<span class="s">  group by 1"</span></pre>
-            </div>
-            <div class="tile">
-              <h3>Keeps working alone</h3>
-              <p>Cookies are verified offline. If Core is unreachable, tier 1, budgets and your rules carry on with the last policy.</p>
-            </div>
-            <div class="tile">
-              <h3>Nothing to fingerprint</h3>
-              <p>One server-set session cookie, an optional hashed login ID, and the IP only as a network bucket. No canvas, font or audio probing.</p>
-            </div>
-            <div class="tile wide">
-              <h3>Open source, whole</h3>
-              <p>Free to run, all of it. Paid editions sell convenience around it, never a piece of the core.</p>
-              <div class="lic">
-                <div><span>SDKs</span><span>Apache-2.0</span></div>
-                <div><span>Core and the agent</span><span>AGPL-3.0, or a commercial licence</span></div>
-                <div><span>Editions: Community today; paid editions are not available yet</span><span><a href="/own/#editions">Own it →</a></span></div>
-              </div>
-            </div>
-            <div class="tile">
-              <h3>The model can't block anyone</h3>
-              <p>Every five minutes a decision model reads named bands, never what a visitor typed. Its answers run in shadow mode: they are logged and act on nothing. It can't block or allow a client.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="sec" id="fit" aria-labelledby="fit-h">
-        <div class="wrap">
-          <div class="sec-head rise">
-            <p class="label">Straight answer</p>
-            <h2 id="fit-h">If Cloudflare already works for you, keep it.</h2>
-            <p>BotRampart is for teams who can't, or won't, route their traffic through a vendor. Everyone else may already have something good, and often free. <a href="/field/">The field</a> names who to use, and when.</p>
-          </div>
-          <div class="fit">
-            <div>
-              <h3>Built for</h3>
-              <ul>
-                <li>Engineering-led shops, marketplaces, SaaS, travel and ticketing sites with roughly 5 to 200 million requests a month, scrapers or fake sign-ups, and no security team.</li>
-                <li>Teams priced out of enterprise bot management, whose entry plans start in the thousands a month.{{c:dd-entry-price}}</li>
-                <li>Regulated and data-sovereign teams: fintech, health, government suppliers, EU residency.</li>
-                <li>Apps on private networks or behind several CDNs.</li>
+          <ol class="climb" aria-label="Challenge tiers">
+            <li class="tier t0"><span class="tn">Tier 0</span><h3>Provisional</h3><p>First visit. General pages only, on a small allowance.</p></li>
+            <li class="tier t1"><span class="tn">Tier 1</span><h3>Invisible proof-of-work</h3><p>The browser does a few small sums in the background. Plain HTTP clients can't.</p></li>
+            <li class="tier t2"><span class="tn">Tier 2</span><h3>Accessible human check</h3><p>One tick, scored on how it was ticked. Works with a keyboard and a screen reader.</p></li>
+            <li class="tier t3"><span class="tn">Tier 3</span><h3>Step-up</h3><p><span class="tag later">Not available yet</span> Tiers 1 and 2 serve every challenge today.</p></li>
+          </ol>
+          <div class="policy">
+            <div class="policy-copy">
+              <h3>Policies are a file you own</h3>
+              <p>Weights, thresholds and rules live in one YAML file in your repository. Conditions are CEL expressions over request, session and signal fields. Simulate a draft against yesterday's traffic, publish it as a new version, roll it back in one step.</p>
+              <ul class="ticks3">
+                <li><code>challenge(next_tier)</code> is the autopilot: it asks for one tier above what the session holds.</li>
+                <li>Rules run in your order. Nothing acts that you didn't write down.</li>
+                <li>New rules can run in <code>mode: log</code> first and act on nothing.</li>
               </ul>
+              <p><a class="more" href="/docs/policy/">Policy reference <span aria-hidden="true">→</span></a></p>
             </div>
-            <div class="no">
-              <h3>Not for you</h3>
-              <ul>
-                <li>You're happy behind Cloudflare. Its Turnstile challenge is free, with unlimited challenges.{{c:cf-turnstile-free}}</li>
-                <li>You need DDoS protection. Floods belong at the edge; BotRampart refuses requests inside your app.</li>
-                <li>You need native mobile apps or partner APIs metered. BotRampart meters browser sessions.</li>
-              </ul>
+            <div class="policy-code">
+              <p class="code-cap"><span>botrampart.policy.yaml · excerpt of version 12</span></p>
+              <pre tabindex="0" role="region" aria-label="Code: policy file excerpt"><code><span class="k">risk_score:</span>
+  - { when: <span class="s">"signals.automation_flag"</span>, add: 4 }
+  - { when: <span class="s">"signals.no_input_after_30_requests"</span>, add: 2 }
+  - { when: <span class="s">"signals.pow_ms_implausible"</span>, add: 1 }
+<span class="k">rules:</span>
+  - id: not-a-browser
+    when: <span class="s">"!ua.is_browser || ua.browser_age_years &gt; 3"</span>
+    then: block
+  - id: risk-5
+    when: <span class="s">"risk.score &gt;= 5"</span>
+    then: <span class="s">"challenge(human)"</span>
+  - id: over-budget
+    when: <span class="s">"session.credits &lt; request.cost"</span>
+    then: <span class="s">"challenge(next_tier) || throttle"</span>
+  - { id: default, when: <span class="s">"true"</span>, then: allow }</code></pre>
             </div>
           </div>
         </div>
       </section>
 
-
-      <section class="closing" aria-labelledby="close-h">
+      <section class="sec agent-sec" id="agent" aria-labelledby="agent-h">
         <div class="wrap">
-          <h2 id="close-h">Put one session through the meter.</h2>
-          <p class="lede">Four steps, about two minutes, all in your browser. It ends on the first hour BotRampart would have shown you. Nothing is stored or sent.</p>
+          <div class="sec-head rise">
+            <p class="label frost">Security specialist agent</p>
+            <h2 id="agent-h"><span class="dim">A score says what.</span> The agent tells you why.</h2>
+            <p>Every challenge and block carries a reference the visitor can quote. Paste it in Slack or the console, and BotRampart's agent answers from your own decision log, with the query and the rows it read.</p>
+          </div>
+          <div class="agent">
+            <div class="chat" data-chat aria-label="Sample conversation in Slack">
+              <div class="chat-msg">
+                <div class="avatar" aria-hidden="true">MK</div>
+                <div class="chat-body">
+                  <div class="chat-name">Support <span>10:31</span></div>
+                  <p>@BotRampart a customer quotes BR-9Q2X. Why were they challenged at 10:12?</p>
+                </div>
+              </div>
+              <div class="chat-msg">
+                <div class="avatar bot" aria-hidden="true">BR</div>
+                <div class="chat-body">
+                  <div class="chat-name">BotRampart <span>10:31</span></div>
+                  <p class="typed">Rule <code>risk-5</code>, policy v12. The browser reported its automation flag (+4), and the session made 34 requests with no pointer, touch or key input (+2): risk 6. It was asked for the human check and has not passed it. No other session from that network was challenged in the hour.</p>
+                  <p class="chat-cite">query explain_decision · 4 rows · window 10:07–10:12 · policy v12</p>
+                  <div class="chat-actions"><span>Show timeline</span><span>Replay with draft policy</span></div>
+                </div>
+              </div>
+              <p class="illus">Sample conversation. Session BR-9Q2X is made up to show the format.</p>
+            </div>
+            <ul class="agent-facts">
+              <li><b>Read-only, always.</b> It reads your decision log with a key scoped read-only. It can't change a policy, unblock anyone or write anywhere.</li>
+              <li><b>Shows its working.</b> Every answer carries the query, the row count, the time window and the policy version, so anyone can check it.</li>
+              <li><b>Where your team already is.</b> In Slack, as an app you create in your own workspace, and in the console. It uses your model key or a local model.</li>
+              <li><b>Questions it answers.</b> Explain a decision, show a session's timeline, replay a draft policy, report named metrics. Free-form SQL, suggested policy changes and email are not available yet.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec" id="console" aria-labelledby="console-h">
+        <div class="wrap">
+          <div class="sec-head rise">
+            <p class="label frost">The console</p>
+            <h2 id="console-h">See every session it stopped, and why.</h2>
+            <p>Sessions, challenges and blocks for the last 24 hours, spend by path, challenges by tier, and the agent one click away. The console reads the same log in your bucket and changes nothing.</p>
+          </div>
+          <figure class="shot" aria-labelledby="shot-cap">
+            <div class="shot-frame">
+              <div class="shot-bar" aria-hidden="true"><span class="dots"><i></i><i></i><i></i></span><span class="shot-url">console · your-site</span></div>
+              <a class="shot-link" href="/dashboard/"><img src="/assets/home/dashboard.webp" width="1440" height="833" alt="The BotRampart console overview with sample data: sessions, requests, challenges and throttled or blocked counts for the last 24 hours, spend by path class per hour, and challenges by tier." loading="lazy" decoding="async"></a>
+            </div>
+            <figcaption id="shot-cap" class="feed-cap">Sample data. <a href="/dashboard/">Open the console preview</a>.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="sec" id="integrations" aria-labelledby="int-h">
+        <div class="wrap">
+          <div class="sec-head rise">
+            <p class="label">Integrations</p>
+            <h2 id="int-h">Fits where your traffic <span class="dim">already goes.</span></h2>
+            <p>Start with the SDK in your app today. Edge options for teams who would rather not touch application code are listed with their status.</p>
+          </div>
+          <ul class="ints">
+            <li class="tile int live"><span class="st-tag now">Available</span><h3>Node SDK</h3><p>Express, Fastify and Next.js. Decides inside your app, with no network call per request.</p></li>
+            <li class="tile int live"><span class="st-tag now">Available</span><h3>Browser SDK</h3><p>One script tag, served from your own origin at <code>/_br/sdk.js</code>. Runs the proof-of-work and reports signals.</p></li>
+            <li class="tile int live"><span class="st-tag now">Available</span><h3>Core</h3><p>Syncs counters and writes the log. Runs on Cloudflare Workers or as one container.</p></li>
+            <li class="tile int"><span class="st-tag">Not available yet</span><h3>nginx module</h3><p>Decisions in front of any backend, configured in nginx.</p></li>
+            <li class="tile int"><span class="st-tag">Not available yet</span><h3>Cloudflare Worker</h3><p>Runs at Cloudflare's edge in front of your origin.</p></li>
+            <li class="tile int"><span class="st-tag">Not available yet</span><h3>CloudFront Lambda@Edge</h3><p>For sites served through Amazon CloudFront.</p></li>
+          </ul>
+          <div class="int-cta">
+            <a class="tile ai-card" href="/build/ai/">
+              <span class="sig-k">Express install</span>
+              <span class="ai-t">Pick your stack. Get a prompt your AI coding agent can follow.</span>
+              <span class="ai-s">Framework, integration point, where Core runs, where the log goes and the decision model. It provisions Core and the bucket, wires BotRampart in observe mode and checks it, for Claude Code, Cursor, Codex or any agent. <span class="arrow" aria-hidden="true">→</span></span>
+            </a>
+            <p class="int-links"><a href="/build/">Install by hand</a> · <a href="/build/wire/">Wire it in</a></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec" id="benchmark" aria-labelledby="bench-h">
+        <div class="wrap">
+          <div class="sec-head rise">
+            <p class="label">Detection benchmark</p>
+            <h2 id="bench-h"><span class="dim">Every tool. Every vendor.</span> One open test.</h2>
+            <p>We are building a public benchmark: the automation tools people actually use, run against the bot defenses people actually buy, BotRampart included. The open harness and the method are being written now. Every vendor gets a right of reply, and the false-positive rate is published beside the block rate.</p>
+          </div>
+          <div class="tablewrap bench">
+            <table>
+              <caption class="visually-hidden">Detection benchmark grid: automation tools across, vendors down. No cell is measured yet.</caption>
+              <thead>
+                <tr><th scope="col"><span class="visually-hidden">Vendor</span></th><th scope="col">Playwright</th><th scope="col">Puppeteer</th><th scope="col">Selenium</th><th scope="col">undetected-chromedriver</th><th scope="col">curl-impersonate</th><th scope="col">AI browser agents</th></tr>
+              </thead>
+              <tbody>
+                <tr><th scope="row">Cloudflare</th><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td></tr>
+                <tr><th scope="row">DataDome</th><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td></tr>
+                <tr><th scope="row">HUMAN</th><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td></tr>
+                <tr><th scope="row">Akamai</th><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td></tr>
+                <tr><th scope="row">Kasada</th><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td></tr>
+                <tr class="us"><th scope="row">BotRampart</th><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="fine bench-note">No results are published yet. Each cell will show block rate and false-positive rate, measured with the same harness, dated, with the run published.</p>
+        </div>
+      </section>
+
+      <section class="sec addon" id="economics" aria-labelledby="eco-h">
+        <div class="wrap addon-in">
+          <div>
+            <p class="label frost">Add-on · request budgets</p>
+            <h2 id="eco-h">Make heavy use cost more.</h2>
+          </div>
+          <div>
+            <p>Give expensive paths a price, such as a search costing more than a product page. People reading at their own pace never notice. A script hammering search runs out and meets the next challenge tier.</p>
+            <p class="int-links"><a href="/meter/">How budgets work</a> · <a href="/try/">Run a session in your browser</a></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec" id="pricing" aria-labelledby="price-h">
+        <div class="wrap">
+          <div class="sec-head rise">
+            <p class="label">Pricing</p>
+            <h2 id="price-h">All of it is free to run yourself.</h2>
+            <p>Community is every part of BotRampart, self-hosted, free. Paid editions sell convenience around it, never a missing piece. DataDome's entry plan lists at $3,830 a month;{{c:dd-entry-price}} if Cloudflare's free Turnstile already does the job for you, keep it.{{c:cf-turnstile-free}}</p>
+          </div>
+          <div class="plans">
+            <div class="plan free">
+              <span class="plan-k">Self-hosted</span>
+              <h3>Community</h3>
+              <p class="plan-p">Free</p>
+              <p>SDKs, Core, challenge tiers 0 to 2, policies, the agent and the console. Available today.</p>
+            </div>
+            <div class="plan">
+              <span class="plan-k">Self-hosted</span>
+              <h3>White-label</h3>
+              <p class="plan-p">$49<small>/mo per organisation</small></p>
+              <p>Your brand on challenge pages. <span class="tag later">Not available yet</span></p>
+            </div>
+            <div class="plan">
+              <span class="plan-k">Self-hosted</span>
+              <h3>Enterprise</h3>
+              <p class="plan-p">$799+<small>/mo</small></p>
+              <p>Single sign-on and a commercial licence. <span class="tag later">Not available yet</span></p>
+            </div>
+            <div class="plan">
+              <span class="plan-k">Hosted</span>
+              <h3>Cloud</h3>
+              <p class="plan-p">$0<small>to start</small></p>
+              <p class="plan-tiers">Free $0 · Starter $49 · Growth $249 · Scale $999 a month, by protected session. <span class="tag later">Not available yet</span></p>
+            </div>
+          </div>
+          <p class="int-links"><a href="/own/">Editions and prices in full</a></p>
+        </div>
+      </section>
+
+      <section class="sec src-sec" id="source" aria-labelledby="src-h">
+        <div class="wrap">
+          <div class="gh">
+            <div class="gh-card">
+              <div class="gh-top">
+                <svg class="gh-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+                <span class="gh-name">github.com/botrampart</span>
+              </div>
+              <p class="gh-state"><span class="gh-star" aria-hidden="true">★</span> Source not public yet</p>
+              <p class="fine">No star count to show: the repository opens with the first public release.</p>
+            </div>
+            <div class="gh-copy">
+              <p class="label">Open source</p>
+              <h2 id="src-h">Read the code that judges your traffic.</h2>
+              <p class="muted">The SDKs are Apache-2.0. Core, the agent and the console are AGPL-3.0, with a commercial licence in Enterprise. Nothing in the core is held back for a paid edition.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="closing" id="start" aria-labelledby="close-h">
+        <div class="wrap">
+          <h2 id="close-h">Put BotRampart in front of the bots.</h2>
+          <p class="lede">Pick your stack and hand the install to your AI coding agent, or sign up and look around the console with sample data.</p>
           <div class="btn-row">
-            <a class="btn btn-primary" href="/try/">Run a session <span class="arrow" aria-hidden="true">→</span></a>
-            <a class="btn btn-ghost" href="/build/">Start building</a>
+            <a class="btn btn-primary" href="/build/ai/">Install with your AI agent <span class="arrow" aria-hidden="true">→</span></a>
+            <a class="btn btn-ghost" href="/signup/">Sign up</a>
           </div>
           <!-- @sources -->
         </div>

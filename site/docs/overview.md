@@ -8,7 +8,7 @@ lede: BotRampart asks what a session has spent, not whether it is a bot. Every s
 
 ## What BotRampart is {#what}
 
-BotRampart is open-source bot defense that runs inside your app. A backend SDK in your process verifies a first-party session cookie in memory, charges each request the price of its path, applies your policy and decides before your handler runs. A browser SDK, served from your own origin, solves a small proof-of-work in the background and runs challenges when a session needs more credit. Core, a separate service on Cloudflare Workers or in one container, issues human checks, syncs counters across your app instances, stores policy and runs a five-minute loop over the whole site. Every non-allow decision lands in a decision log in your own bucket.
+BotRampart is open-source bot defense against AI crawlers, AI agents and browser automation, and it runs inside your app. A backend SDK in your process verifies a first-party session cookie in memory, charges each request the price of its path, applies your policy and decides before your handler runs. A browser SDK, served from your own origin, solves a small proof-of-work in the background and runs challenges when a session needs more credit. Core, a separate service on Cloudflare Workers or in one container, issues human checks, syncs counters across your app instances, stores policy and runs a five-minute loop over the whole site. Every non-allow decision lands in a decision log in your own bucket.
 
 The SDKs are Apache-2.0. Core, the agent and the console are AGPL-3.0, with a commercial licence in the Enterprise edition, which is [not available yet](#not-yet). The [architecture](/docs/architecture/) page shows each part and what crosses each boundary.
 
@@ -133,10 +133,11 @@ These parts of BotRampart are not available yet. Pages that mention them say so.
 - **Free-form SQL, suggested policy changes and email from the agent.** The agent answers with named queries in Slack and the console.
 - **SDKs other than Node.**
 - **Cloud and its billing, the White-label build and single sign-on** (so the White-label and Enterprise editions too). Community is the edition available today.
-- **A published benchmark site.** The benchmark runs from source ([quickstart](/docs/getting-started/)).
-- **Edge adapters, mobile SDKs and Web Bot Auth.**
+- **Published bot-detection benchmark results.** The benchmark will test bot-management products, BotRampart included, against popular automation tools; its harness and method are being written. The cookie-verification benchmark runs from source ([quickstart](/docs/getting-started/)).
+- **Edge adapters: the nginx module, the Cloudflare Worker and CloudFront (Lambda@Edge),** for an install with no code change in your app ([integration points](/docs/integrations/#integration-points)). **Mobile SDKs and Web Bot Auth** too.
 - **Native mobile apps and partner APIs as protected clients.**
 - **The decision model acting live.** It runs in shadow mode: its answers are logged and act on nothing.
+- **Accounts.** [Sign up](/signup/), [sign in](/signin/) and the [dashboard](/dashboard/) are a preview with sample data: no account is created and nothing is sent.
 
 ## Glossary {#glossary}
 

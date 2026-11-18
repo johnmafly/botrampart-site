@@ -25,8 +25,9 @@ const NON_GOALS = [
   ["free-form SQL, policy suggestions and email from the agent", /Free-form SQL, suggested policy changes and email from the agent/],
   ["SDKs other than Node", /SDKs other than Node/],
   ["Cloud billing, white-label and SSO", /Cloud and its billing, the White-label build and single sign-on/],
-  ["a published benchmark site", /published benchmark site/],
-  ["edge adapters, mobile SDKs and Web Bot Auth", /Edge adapters, mobile SDKs and Web Bot Auth/],
+  ["published benchmark results", /Published bot-detection benchmark results/],
+  ["edge adapters", /Edge adapters: the nginx module, the Cloudflare Worker and CloudFront/],
+  ["mobile SDKs and Web Bot Auth", /Mobile SDKs and Web Bot Auth/],
   ["mobile apps and partner APIs as protected clients", /Native mobile apps and partner APIs as protected clients/],
   ["the decision model acting live", /decision model acting live/],
 ];
@@ -41,8 +42,10 @@ test("the overview lists every intake non-goal under Not available yet", () => {
 
 // Pages that name a non-goal feature must also say it is not available yet.
 const ROUTES = ["", "meter", "own", "field", "docs/overview", "docs/features", "docs/architecture", "docs/integrations",
-  "docs/configuration", "docs/self-hosting", "docs/policy", "docs/security", "docs/faq"];
-const MARKERS = [/Vector log pack|log pack/i, /step-up/i, /White-label/, /suggest(ed)? policy change/i, /free-form SQL/i];
+  "docs/configuration", "docs/self-hosting", "docs/policy", "docs/security", "docs/faq",
+  "build", "build/wire", "build/ai", "dashboard", "signup", "signin"];
+const MARKERS = [/Vector log pack|log pack/i, /step-up/i, /White-label/, /suggest(ed)? policy change/i, /free-form SQL/i,
+  /nginx module/i, /Cloudflare Worker/i, /CloudFront/, /benchmark/i];
 test("every page that names a non-goal feature says it is not available yet", () => {
   for (const r of ROUTES) {
     const t = text(page(r).split("<!-- @sources")[0].replace(/<section[^>]*class="[^"]*sources[\s\S]*$/, ""));
@@ -73,4 +76,10 @@ test("/own/ billing copy does not promise bots are never billed", () => {
   const t = text(page("own"));
   assert.doesNotMatch(t, /never for bots|bots are never billed|bots that never pass are never billed/i);
   assert.match(t, /headless browser that solves the proof-of-work does count as a session/);
+});
+
+// The backend SDK stays light: the pages that describe it say it keeps no aggregated visitor metrics.
+test("the SDK pages say the SDK keeps no aggregated visitor metrics", () => {
+  for (const r of ["build", "build/wire"]) assert.match(text(page(r)), /keeps no aggregated visitor metrics/, `/${r}/`);
+  assert.match(readFileSync(join(root, "site", "docs", "sdk.md"), "utf8"), /keeps no aggregated visitor metrics/);
 });

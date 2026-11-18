@@ -597,7 +597,7 @@ export function buildDocsText({ out, docs, claims, assets, sha }) {
   const section = (p) => `- [${p.meta.title}](${SITE_URL}${p.md}): ${p.meta.description}`;
   const llms = `# BotRampart
 
-> Open-source bot defense that prices requests instead of judging visitors. Every session holds credit, every path has a cost, and a challenge buys credit, never a clearance. This file indexes the user guide; every page is also published as Markdown.
+> Open-source bot defense for a web where bots drive real browsers: browser risk signals and on-page behaviour, tiered challenges and your own policies, decided on your server. Request economics is an add-on. This file indexes the user guide; every page is also published as Markdown.
 
 The guide covers BotRampart's design and architecture, features, install and configuration, integrations, the HTTP API (generated from the OpenAPI spec, version ${spec.info.version}), the SDKs, the policy file and cohorts, self-hosting, the security model, an FAQ and the changelog. The whole guide as one file: [llms-full.txt](${SITE_URL}/llms-full.txt).
 
