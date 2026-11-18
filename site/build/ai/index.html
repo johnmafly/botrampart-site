@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- @head | Build: express install with your AI coding agent | Pick your framework, integration point, Core host, bucket and decision model, and copy one prompt for Claude Code, Cursor, Codex or any coding agent: provision Core and the bucket, wire BotRampart in observe mode, verify, stop before enforce. -->
+    <link rel="stylesheet" href="/assets/build.css">
+  </head>
+  <body>
+    <!-- @header -->
+    <main id="main">
+      <div class="page-head">
+        <div class="wrap">
+          <p class="label"><a class="crumb" href="/build/">Build</a> · 04 · express install</p>
+          <h1>Hand the install to your agent.</h1>
+          <p class="lede">Pick your stack. Copy one prompt. Your coding agent provisions Core and the bucket, wires BotRampart in <b>observe mode</b>, checks that it works and stops before anything is enforced. You review every change.</p>
+        </div>
+      </div>
+      <div class="wrap ai-grid">
+        <form class="ai-form" data-ai-form novalidate aria-labelledby="pick">
+          <h2 id="pick" class="ai-h">Your stack</h2>
+          <p class="ai-jump"><a href="#prompt-h">Skip to your prompt</a></p>
+          <noscript><p class="callout ai-nojs">Without JavaScript the prompt on this page is the one for the preselected choices: Express, the in-app Node SDK, Core on Cloudflare Workers, R2, decision model off, any coding agent.</p></noscript>
+
+          <fieldset class="field">
+            <legend><span class="ai-n">1</span> App framework</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="framework" value="express" checked><span>Express<small class="ok">Available</small></span></label>
+              <label class="choice"><input type="radio" name="framework" value="fastify"><span>Fastify<small class="ok">Available</small></span></label>
+              <label class="choice"><input type="radio" name="framework" value="next"><span>Next.js<small class="ok">Available</small></span></label>
+              <label class="choice is-later"><input type="radio" name="framework" value="django"><span>Django<small>Not available yet</small></span></label>
+              <label class="choice is-later"><input type="radio" name="framework" value="rails"><span>Rails<small>Not available yet</small></span></label>
+              <label class="choice is-later"><input type="radio" name="framework" value="laravel"><span>Laravel<small>Not available yet</small></span></label>
+              <label class="choice is-later"><input type="radio" name="framework" value="spring"><span>Spring<small>Not available yet</small></span></label>
+              <label class="choice is-later"><input type="radio" name="framework" value="go"><span>Go<small>Not available yet</small></span></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="field">
+            <legend><span class="ai-n">2</span> Integration point</legend>
+            <p class="hint">Where BotRampart checks requests. <a href="/build/#options">How each option works</a>.</p>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="integration" value="sdk" checked><span>In-app SDK<small class="ok">Available · Node</small></span></label>
+              <label class="choice is-later"><input type="radio" name="integration" value="nginx"><span>nginx module<small class="sub">nginx or ingress-nginx</small><small>Not available yet</small></span></label>
+              <label class="choice is-later"><input type="radio" name="integration" value="worker"><span>Cloudflare Worker<small class="sub">In your account</small><small>Not available yet</small></span></label>
+              <label class="choice is-later"><input type="radio" name="integration" value="cloudfront"><span>CloudFront<small class="sub">Lambda@Edge</small><small>Not available yet</small></span></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="field">
+            <legend><span class="ai-n">3</span> Where Core runs</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="core" value="workers" checked><span>Cloudflare Workers<small>Your Cloudflare account</small></span></label>
+              <label class="choice"><input type="radio" name="core" value="docker"><span>Docker<small>One container, any Linux host</small></span></label>
+              <label class="choice"><input type="radio" name="core" value="kubernetes"><span>Kubernetes<small>Plain manifests</small></span></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="field">
+            <legend><span class="ai-n">4</span> Bucket for the decision log</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="bucket" value="r2" checked><span>Cloudflare R2</span></label>
+              <label class="choice"><input type="radio" name="bucket" value="s3"><span>Amazon S3</span></label>
+              <label class="choice"><input type="radio" name="bucket" value="minio"><span>MinIO</span></label>
+              <label class="choice"><input type="radio" name="bucket" value="gcs"><span>Google Cloud Storage</span></label>
+              <label class="choice"><input type="radio" name="bucket" value="azure"><span>Azure Blob</span></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="field">
+            <legend><span class="ai-n">5</span> Decision model</legend>
+            <p class="hint">The five-minute loop. It runs in shadow mode: its answers are logged and act on nothing.</p>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="model" value="off" checked><span>Off<small>Everything else works</small></span></label>
+              <label class="choice"><input type="radio" name="model" value="gemini"><span>Gemini<small>Gemini Decision 1</small></span></label>
+              <label class="choice"><input type="radio" name="model" value="local"><span>Self-hosted<small>Nothing leaves your network</small></span></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="field">
+            <legend><span class="ai-n">6</span> Your coding agent</legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="agent" value="claude"><span>Claude Code</span></label>
+              <label class="choice"><input type="radio" name="agent" value="cursor"><span>Cursor</span></label>
+              <label class="choice"><input type="radio" name="agent" value="codex"><span>Codex</span></label>
+              <label class="choice"><input type="radio" name="agent" value="generic" checked><span>Any agent</span></label>
+            </div>
+          </fieldset>
+        </form>
+
+        <section class="ai-out" aria-labelledby="prompt-h">
+          <div class="ai-out-head">
+            <h2 id="prompt-h" class="ai-h">Your install prompt</h2>
+            <button type="button" class="btn btn-primary ai-copy" data-ai-copy hidden>Copy prompt</button>
+          </div>
+          <p class="fine ai-summary" data-ai-summary>Every choice is available. The prompt stops where BotRampart's packages are needed, because they are not published yet.</p>
+          <p class="ai-status" data-ai-status role="status" aria-live="polite"></p>
+          <pre class="ai-prompt" tabindex="0" role="region" aria-label="Code: your install prompt"><code data-ai-prompt># Install BotRampart in observe mode
+
+You are an AI coding agent working in the repository of my web app. Set up BotRampart in observe mode: it decides and logs every request and blocks nothing. Work one step at a time, show me each change before you make it, ask before you create or change anything in a cloud account, and stop wherever this prompt says STOP.
+
+## What BotRampart is
+
+- Open-source, self-hosted bot defense. It runs in my app and my own cloud accounts; no vendor proxy sits in the request path and no traffic goes to a BotRampart server.
+- The backend SDK runs in front of my handlers. It sets one first-party session cookie, `__br_s` (HttpOnly, signed with my site keys), serves its browser script and challenge routes under `/_br` on my own origin, charges each request to the session's budget, and answers with a challenge (403) or a throttle (429), marked `BR-Challenge: v1`, when the budget runs out. It sets `BR-Sid` and `BR-Decision` on every response.
+- Core is one small service the SDK syncs with every 5 to 10 seconds: challenges, policy, counters. It writes the decision log to my own bucket (the lake).
+- Reference: the docs at https://botrampart.agenthatch.ai/docs/ and the HTTP contract at https://botrampart.agenthatch.ai/spec/openapi.yaml. Use only the routes, headers, settings and secret names defined there. Do not invent API names, options or package names.
+
+## My choices
+
+- App framework: Express
+- Integration: Node backend SDK, in the app
+- Core runs on: Cloudflare Workers
+- Bucket for the decision log: Cloudflare R2
+- Decision model: Off
+
+## Before you start
+
+- BotRampart's packages (the Node backend SDK and Core) are not published to npm or to a container registry yet. When a step needs them, STOP and tell me: "BotRampart's packages are not published yet, so I stopped here." Never guess a package name, image or install command, never copy BotRampart's code in from elsewhere, and never write your own stand-in for the SDK or Core.
+- Secrets go in my secret store, by name. Never print a secret, never commit one, never ask me to paste one into this chat.
+
+## Step 1. Provision the bucket
+
+- Create a private R2 bucket for BotRampart in my Cloudflare account, for example `acme-botrampart`.
+- Create an R2 API token scoped to that bucket only, with object read and write. It becomes the secret `lake_writer`.
+- Set `BR_LAKE_URL` to `s3://&lt;bucket&gt;/br/v1/`.
+
+## Step 2. Prepare Core's configuration
+
+- Core runs on Cloudflare Workers in my own Cloudflare account (the Workers Paid plan). Its configuration is a Wrangler configuration with D1 for configuration, KV as a read cache, SQLite-backed Durable Objects (one shard per site), R2, Queues and a Cron Trigger.
+- Write that Wrangler configuration for me to review. Set `BR_LAKE_URL` and `BR_DECISION_PROVIDER` as variables; put `br_keys`, `lake_writer` and any model key in Wrangler secrets, never in the configuration file.
+- Create the secret `br_keys`: the site keys, HMAC keys that sign session tokens and proof-of-work puzzles. Generate them with a cryptographically secure random generator, locally, and store them only in my secret store. The backend SDK reads the same keys through its `secretsFile` setting.
+- `lake_writer` is the bucket credential from step 1.
+- Set `BR_DECISION_PROVIDER=off`. The five-minute decision loop stays off; everything else works.
+
+## Step 3. Get the packages
+
+- Check the docs at https://botrampart.agenthatch.ai/docs/getting-started/ for a published package or image. Today there is none: STOP here and tell me that BotRampart's packages are not published yet, with a summary of what you prepared in steps 1 and 2.
+- Continue with step 4 only when I tell you the packages are available, and install exactly what the docs name.
+
+## Step 4. Wire it in, in observe mode
+
+- Mount the backend SDK at the root of the Express app, ahead of every route, so every route gets a path class by default.
+- Settings: `site` (my site ID), `secretsFile` (the path where `br_keys` is mounted, for example `/run/secrets/br_keys`), `core` (Core's URL), `mode: "observe"`. Leave `store` at `"memory"` and `onCoreDown` at `"static"` unless I say otherwise. See https://botrampart.agenthatch.ai/docs/configuration/#backend.
+- Add the browser script to the HTML layout or template every page uses: `&lt;script src="/_br/sdk.js" data-site="&lt;site ID&gt;" async&gt;&lt;/script&gt;`. It is served from my own origin by the backend SDK.
+- If my edge (nginx, a CDN, a load balancer) writes access logs, log `BR-Sid` and `BR-Decision` there and strip both before the response leaves. Never log the `__br_s` cookie.
+- Do not change `mode` to `"enforce"`.
+
+## Step 5. Verify
+
+- Request `/_br/sdk.js` on my app: it answers 200 with JavaScript.
+- Request any page and read the response headers at the app, before my edge strips them: `BR-Sid` and `BR-Decision` are present. In observe mode nothing is refused.
+- Open a page in a browser, then open `/_br/status` in the same tab: it returns JSON with `tier` 0 on a first visit and `tier` 1 a moment later, once the proof-of-work has run.
+- Within the hour, decision log objects appear under `BR_LAKE_URL`.
+- Take one decision reference from the log (it looks like `BR-7F3K2Q`) and look it up with getDecision: `GET &lt;core&gt;/v1/decisions/&lt;ref&gt;` with `Authorization: Bearer $BR_CONSOLE_TOKEN` (a viewer-role console token from my secret store; do not print it). It returns the rule, policy version, cost and credits behind that decision.
+
+## Step 6. Stop before enforce
+
+- Do not switch to enforce mode and do not publish a policy. Enforcing is my decision, after I have watched the decision log and replayed a policy with simulatePolicy (`POST &lt;core&gt;/v1/policy/simulate`).
+- Report: what you changed and where, which secrets I still need to set (by name), the `BR-Decision` values you saw, and anything you stopped at.</code></pre>
+          <h3 class="ai-h3">Where to paste it</h3>
+          <ul class="ai-where">
+            <li><b>Claude Code:</b> start it in your app's repository and paste the prompt as your first message.</li>
+            <li><b>Cursor:</b> open the repository and paste it into the agent chat.</li>
+            <li><b>Codex:</b> start it in your app's repository and paste the prompt.</li>
+            <li><b>Any other agent:</b> give it access to the repository and paste the prompt.</li>
+          </ul>
+          <p class="fine">The prompt is built in this page from your choices; nothing is stored or sent. It contains no install commands: BotRampart's packages are not published yet, so it tells your agent to stop and tell you at that step. Prefer to do it by hand? <a href="/build/#observe">Start in observe mode</a>.</p>
+        </section>
+      </div>
+    </main>
+    <!-- @footer -->
+    <script type="module" src="/assets/ai-install.js"></script>
+  </body>
+</html>

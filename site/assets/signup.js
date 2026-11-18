@@ -34,34 +34,53 @@ const answers = () => {
   const d = new FormData(form);
   return {
     site: (d.get("site") || "").trim() || "your site",
-    framework: d.get("framework"), volume: +d.get("volume"), abuse: d.getAll("abuse"),
+    framework: d.get("framework"), integration: d.get("integration") || "sdk", volume: +d.get("volume"), abuse: d.getAll("abuse"),
     core: d.get("core"), lake: d.get("lake"), model: d.get("model"),
   };
 };
 
+// Integration points. Only the in-app Node SDK is available; the edge adapters can be picked and
+// are marked not available yet, and the session continues with the SDK.
+const INTEGRATIONS = {
+  sdk: { label: "Node backend SDK, in your app", available: true },
+  nginx: { label: "nginx module", available: false },
+  worker: { label: "Cloudflare Worker in your account", available: false },
+  cloudfront: { label: "CloudFront (Lambda@Edge) in your account", available: false },
+};
+
 function renderInstall() {
   const a = answers();
-  const coreLabel = { cloudflare: "Cloudflare", docker: "Docker on a Linux host", kubernetes: "Kubernetes" }[a.core];
-  const files = { cloudflare: "wrangler.jsonc, a Deploy to Cloudflare button", docker: "docker-compose.yml", kubernetes: "core.yaml, a Deployment and Service" }[a.core];
+  const integ = INTEGRATIONS[a.integration] ?? INTEGRATIONS.sdk;
+  const fw = a.framework === "other" ? "Express" : a.framework;
+  const coreLabel = { cloudflare: "Cloudflare Workers, your account", docker: "One container on a Linux host", kubernetes: "Kubernetes, plain manifests" }[a.core];
+  const files = { cloudflare: "a Wrangler configuration", docker: "a compose file", kubernetes: "a Deployment and a Service" }[a.core];
   out("init").textContent = [
-    `? Where will Core run?      ${coreLabel}`,
-    `? Object storage?           ${a.lake}`,
-    `? App framework?            ${a.framework === "other" ? "Express (closest available)" : a.framework}`,
-    `? Decision loop?            ${{ off: "off", gemini: "Gemini Decision 1", local: "self-hosted model" }[a.model]}`,
-    `✓ wrote ${files}, botrampart.policy.yaml`,
-    "✓ generated site keys into ./secrets (never sent anywhere)",
-    "Next: add two lines to your app and one script tag.",
+    `Integration      ${integ.available ? integ.label : `${integ.label}: not available yet, using the Node backend SDK`}`,
+    `App framework    ${a.framework === "other" ? "not available yet for your framework, showing Express" : a.framework}`,
+    `Core             ${coreLabel} (${files})`,
+    `Decision log     ${a.lake} bucket, in your account`,
+    `Decision loop    ${{ off: "off", gemini: "Gemini Decision 1, shadow mode", local: "self-hosted model, shadow mode" }[a.model]}`,
+    `Secrets          br_keys, lake_writer (in your secret store)`,
   ].join("\n");
   const core = a.core === "cloudflare" ? "https://core.your-account.workers.dev" : "http://localhost:8787";
-  const fw = a.framework === "Fastify" ? "fastify" : a.framework === "Next.js" ? "next" : "express";
-  const code = {
-    express: `import { botrampart } from "@botrampart/node";\n\nconst br = botrampart({ site: "site_123", secretsFile: "./secrets/br_keys",\n  core: "${core}", mode: "observe" });\napp.use(br.express());`,
-    fastify: `import { botrampart } from "@botrampart/node";\n\nconst br = botrampart({ site: "site_123", secretsFile: "./secrets/br_keys",\n  core: "${core}", mode: "observe" });\nawait app.register(br.fastify());`,
-    next: `// middleware.ts\nimport { botrampart } from "@botrampart/node/next";\n\nexport default botrampart({ site: "site_123", secretsFile: "./secrets/br_keys",\n  core: "${core}", mode: "observe" });`,
-  }[fw];
-  out("code").textContent = code;
-  out("file").textContent = fw === "next" ? "middleware.ts · Next.js" : `server.js · ${a.framework === "other" ? "Express" : a.framework}`;
-  out("other").hidden = a.framework !== "other";
+  const where = fw === "Next.js" ? "in front of every route the app serves" : "at the app's root, ahead of your routes";
+  out("code").textContent = [
+    `# mounted ${where}`,
+    `site         "site_123"`,
+    `secretsFile  "./secrets/br_keys"`,
+    `core         "${core}"`,
+    `mode         "observe"   # log, enforce nothing`,
+    "",
+    "# serves on your origin: GET /_br/sdk.js, GET /_br/challenge, POST /_br/redeem,",
+    "#                        POST /_br/signals, GET /_br/status",
+    "# sets on every response: BR-Sid, BR-Decision",
+  ].join("\n");
+  out("file").textContent = `Backend SDK settings · ${fw}`;
+  const notes = [];
+  if (!integ.available) notes.push(`The ${integ.label.replace(/ \(.*\)| in your account/g, "")} integration is not available yet. This session continues with the Node backend SDK inside your app, which works today.`);
+  if (a.framework === "other") notes.push("An SDK for your framework is not available yet: the backend SDK covers Express, Fastify and Next.js. The rest of this session shows the Express setup.");
+  out("other").textContent = notes.join(" ");
+  out("other").hidden = notes.length === 0;
 }
 
 // Deterministic pseudo-random numbers, so the same answers give the same hour.

@@ -11,7 +11,7 @@ lede: Each component, where it runs and what crosses each boundary. The per-requ
 | Component | Does | Runs | Licence |
 | --- | --- | --- | --- |
 | Browser SDK `@botrampart/browser` | Solves proof-of-work in a Web Worker, collects interaction counts, renders challenges, retries a request after one. Size budget: 15 kB compressed, no dependencies. | Visitor's browser, served from your origin | Apache-2.0 |
-| Backend SDK | Issues and verifies the session token, keeps budgets and mint buckets, evaluates policy, mounts `/_br`, syncs with Core. | Inside your app process | Apache-2.0 |
+| Backend SDK | Issues and verifies the session token, keeps each live session's budget, evaluates policy, mounts `/_br`, sends counters to Core. Keeps no aggregated visitor metrics. | Inside your app process | Apache-2.0 |
 | Core | Challenge service, sync API, hot rollups, replay cache, policy store, state builder, decision client. | Cloudflare Workers, or one container | AGPL-3.0 |
 | Lake | Rollups, decisions, challenges, states, answers, directives, policy versions. | Your R2, S3, MinIO, GCS or Azure Blob | Open formats |
 | Agent | Explains decisions and answers named metrics in Slack and the console. Reports by email and suggested policy changes are [not available yet](/docs/overview/#not-yet). | One container in your infrastructure | AGPL-3.0 |
@@ -24,6 +24,7 @@ lede: Each component, where it runs and what crosses each boundary. The per-requ
 ## Design principles {#principles}
 
 - **No network call per request.** The backend SDK verifies the signed cookie and charges the budget in memory. Core is never in the request path.
+- **A light SDK.** The backend SDK holds only what the next request needs: each live session's budget and a short buffer of counters, which it sends to Core at each sync and then drops. It keeps no aggregated visitor metrics, baselines or history, so its memory and CPU stay flat as traffic grows. Rollups, baselines and cohorts are built in Core; history lives in your bucket.
 - **Your data stays yours.** Logs, decisions and model answers go to your bucket in open formats. Core holds only hot counters and policy.
 - **Price, do not judge.** No component labels a client a bot. Rules turn spend, tier and signals into a price: more work, a human check or a wait.
 - **The model never holds the gate.** The decision model's answers become expiring fields. It runs in shadow mode: rules that act on them are [not available yet](/docs/overview/#not-yet).

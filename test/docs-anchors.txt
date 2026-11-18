@@ -259,3 +259,6 @@
 /docs/getting-started/#to-policy
 /docs/getting-started/#to-self-hosting
 /docs/overview/#not-yet
+/docs/features/#detection
+/docs/integrations/#integration-points
+/docs/sdk/#keeps

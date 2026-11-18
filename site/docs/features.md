@@ -2,13 +2,20 @@
 title: Features
 nav: Features
 order: 3
-description: Every BotRampart capability, grouped by what it does for you: sessions and tiers, budgets, mint buckets, policy, the five-minute loop, explanations, the agent, console, CLI, privacy controls, editions, and what is not available yet.
+description: Every BotRampart capability, grouped by what it does for you: detection, sessions and tiers, budgets, mint buckets, policy, the five-minute loop, explanations, the agent, console, CLI, privacy controls, editions, and what is not available yet.
 lede: What BotRampart does, grouped by the job it does for you. Each feature links to the reference that defines it.
 ---
+
+## Detection {#detection}
+
+- **Browser risk signals.** The browser SDK reports the automation flag, interaction counts and how long the proof-of-work took; the server checks them and the policy reads them as `signals.*` fields, such as `signals.automation_flag`. [Signals](/docs/sdk/#signals).
+- **Abnormal behaviour.** A session that makes 30 requests with no input, solves a proof-of-work implausibly fast, changes network often or spends far beyond its budget raises its risk score. [Risk score](/docs/policy/#risk-score).
+- **No fingerprinting.** No canvas, WebGL or audio fingerprints, font lists or stable device identifiers, in any mode. [Data kept](/docs/security/#data).
 
 ## Sessions and challenges {#sessions}
 
 - **One first-party session cookie.** `__br_s`, set `HttpOnly` by your server and signed with your site key. A 30-minute token renewed on use, inside a session of at most seven days. No device fingerprint. [Token reference](/docs/architecture/#token).
+- **Automatic escalation.** A session that runs out of credit is asked for the next tier whose grant is still worth having (`challenge(next_tier)`), so challenges climb on their own and stop as soon as a person passes one. [Actions](/docs/policy/#actions).
 - **A challenge ladder.** Tier 0 (provisional), tier 1 (invisible proof-of-work), and tier 2 (a human check that works with a keyboard and a screen reader). Tier 3 step-up methods (email link, sign-in or passkey, an image puzzle, or a third-party widget) are [not available yet](/docs/overview/#not-yet). [Tiers](/docs/overview/#session).
 - **Memory-hard proof-of-work.** 16 to 50 small puzzles solved in a Web Worker: PBKDF2 through the browser's native crypto, Argon2id through WebAssembly where memory allows, plain SHA-256 as fallback. Difficulty is set by the server from risk, never from what the client says. [`PowChallenge`](/docs/api/#schema-PowChallenge).
 - **Automatic retry.** The browser SDK wraps `fetch` and `XMLHttpRequest`: when a response is a challenge, it runs the challenge and retries the request once. [Browser SDK](/docs/sdk/#browser).

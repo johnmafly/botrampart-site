@@ -6,6 +6,19 @@ description: How BotRampart fits with your stack: your app and the SDK routes; C
 lede: BotRampart sits inside your app and next to the infrastructure you already run. This page lists every system it connects to and how.
 ---
 
+## Integration points {#integration-points}
+
+BotRampart runs where you choose in your own infrastructure, never behind a vendor proxy. Each option verifies the same `__br_s` cookie and speaks the same [SDK routes](/docs/sdk/#routes) and headers.
+
+| Integration point | Where it runs | Code change in your app | Status |
+| --- | --- | --- | --- |
+| Node backend SDK (Express, Fastify, Next.js) | Inside your app process | Yes: mount the SDK | Available |
+| nginx module, including ingress-nginx | Your nginx, in front of your app | None | [not available yet](/docs/overview/#not-yet) |
+| Cloudflare Worker | Your own Cloudflare account, in front of your origin | None | [not available yet](/docs/overview/#not-yet) |
+| CloudFront (Lambda@Edge) | Your own AWS account, in front of your origin | None | [not available yet](/docs/overview/#not-yet) |
+
+The [express AI install](/build/ai/) writes an instruction prompt for your coding agent for the stack you pick.
+
 ## Your app {#frameworks}
 
 The backend SDK runs inside your Node app, in front of your handlers, with the [settings](/docs/configuration/#backend) in Configuration. Whatever the framework, the integration is the same on the wire, and the [API reference](/docs/api/) defines all of it:
@@ -16,7 +29,7 @@ The backend SDK runs inside your Node app, in front of your handlers, with the [
 | Answers a protected route with a challenge (403) or a throttle (429), marked `BR-Challenge: v1` | [`ChallengeRequired`](/docs/api/#response-challengerequired), [`Throttled`](/docs/api/#response-throttled) |
 | Sets `BR-Sid` and `BR-Decision` on every response that passes through it | [Response headers](/docs/sdk/#headers) |
 | Reads and removes `BR-Cost` from your response | [`BR-Cost`](/docs/sdk/#br-cost) |
-| Syncs counters with Core every 5 to 10 seconds | [`syncInstance`](/docs/api/#op-syncInstance) |
+| Sends counters to Core every 5 to 10 seconds and keeps no aggregated metrics | [`syncInstance`](/docs/api/#op-syncInstance) |
 
 ## Where Core runs {#hosting}
 

@@ -1,7 +1,8 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- @head | Run a session: BotRampart in your browser | Four steps in your browser: your site, where it runs, the install, and the first hour BotRampart would have shown you. Nothing is stored or sent. -->
+    <!-- @head | Run a session: BotRampart in your browser | Four steps in your browser: your site and how it plugs in, where it runs, the install, and the first hour BotRampart would have shown you. Nothing is stored or sent. -->
+    <link rel="stylesheet" href="/assets/build.css">
   </head>
   <body>
     <!-- @header -->
@@ -33,7 +34,17 @@
                 <label class="choice"><input type="radio" name="framework" value="Express" checked><span>Express</span></label>
                 <label class="choice"><input type="radio" name="framework" value="Fastify"><span>Fastify</span></label>
                 <label class="choice"><input type="radio" name="framework" value="Next.js"><span>Next.js</span></label>
-                <label class="choice"><input type="radio" name="framework" value="other"><span>Something else<small>The SDK covers Express, Fastify and Next.js</small></span></label>
+                <label class="choice is-later"><input type="radio" name="framework" value="other"><span>Something else<small>Not available yet: the SDK is Node only</small></span></label>
+              </div>
+            </fieldset>
+            <fieldset class="field">
+              <legend>Where BotRampart checks requests</legend>
+              <p class="hint">Every option runs in your own infrastructure or cloud account. <a href="/build/#options">How each works</a>.</p>
+              <div class="choices">
+                <label class="choice"><input type="radio" name="integration" value="sdk" checked><span>In-app SDK<small>Available · Node</small></span></label>
+                <label class="choice is-later"><input type="radio" name="integration" value="nginx"><span>nginx module<small>Not available yet</small></span></label>
+                <label class="choice is-later"><input type="radio" name="integration" value="worker"><span>Cloudflare Worker<small>Not available yet</small></span></label>
+                <label class="choice is-later"><input type="radio" name="integration" value="cloudfront"><span>CloudFront<small>Not available yet</small></span></label>
               </div>
             </fieldset>
             <fieldset class="field">
@@ -60,7 +71,7 @@
 
           <section class="step" data-step="2" aria-labelledby="s2" hidden>
             <h2 id="s2" tabindex="-1">Where it runs</h2>
-            <p class="muted">BotRampart's SDK runs inside your app. Core, the small service it syncs with, runs wherever you choose.</p>
+            <p class="muted">Core, the small service BotRampart syncs with, runs wherever you choose, in your own account. The decision log goes to your own bucket.</p>
             <fieldset class="field">
               <legend>Core</legend>
               <div class="choices">
@@ -74,7 +85,9 @@
               <div class="choices">
                 <label class="choice"><input type="radio" name="lake" value="R2" checked><span>Cloudflare R2</span></label>
                 <label class="choice"><input type="radio" name="lake" value="S3"><span>Amazon S3</span></label>
-                <label class="choice"><input type="radio" name="lake" value="MinIO"><span>MinIO<small>Bundled</small></span></label>
+                <label class="choice"><input type="radio" name="lake" value="MinIO"><span>MinIO</span></label>
+                <label class="choice"><input type="radio" name="lake" value="Google Cloud Storage"><span>Google Cloud Storage</span></label>
+                <label class="choice"><input type="radio" name="lake" value="Azure Blob"><span>Azure Blob</span></label>
               </div>
             </fieldset>
             <fieldset class="field">
@@ -90,14 +103,15 @@
 
           <section class="step" data-step="3" aria-labelledby="s3" hidden>
             <h2 id="s3" tabindex="-1">Your install</h2>
-            <p class="muted">This is what the generator would write for your answers. Two lines in your app, one script tag, and BotRampart starts in observe mode: it decides and logs every request, and enforces nothing.</p>
+            <p class="muted">Your setup, from your answers. The SDK mounted in your app, one script tag, and BotRampart starts in observe mode: it decides and logs every request, and enforces nothing.</p>
+            <p class="callout try-note" data-out="other" hidden></p>
             <p class="code-cap"><span>Your answers</span></p>
             <pre><code data-out="init"></code></pre>
-            <p class="code-cap"><span data-out="file">server.js</span><a href="/spec/openapi.yaml">syncInstance</a></p>
+            <p class="code-cap"><span data-out="file">Backend SDK settings · Express</span><a href="/spec/openapi.yaml">syncInstance</a></p>
             <pre><code data-op="syncInstance" data-out="code"></code></pre>
             <p class="code-cap"><span>Your page template</span><a href="/spec/openapi.yaml">getSdkScript</a></p>
             <pre><code data-op="getSdkScript">&lt;script src="/_br/sdk.js" data-site="site_123" async&gt;&lt;/script&gt;</code></pre>
-            <p class="fine" data-out="other" hidden>The backend SDK covers Express, Fastify and Next.js. The rest of this session shows the Express setup.</p>
+            <p class="fine">Want your coding agent to do this for real? <a href="/build/ai/">Generate an install prompt</a>.</p>
             <div class="step-actions"><button type="button" class="btn btn-ghost" data-back>Back</button><button type="button" class="btn btn-primary" data-next>Start observe mode</button></div>
           </section>
 

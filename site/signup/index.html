@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- @head | Sign up: BotRampart console preview | Sign up for the BotRampart console. A preview: accounts are not available yet, so nothing is created or sent; open the console with sample data instead. -->
+    <link rel="stylesheet" href="/assets/app.css">
+  </head>
+  <body>
+    <!-- @header -->
+    <main id="main" class="auth">
+      <div class="auth-grid wrap">
+        <div class="auth-card">
+          <p class="pill sample-pill">Preview · no account is created</p>
+          <h1>Create your console</h1>
+          <p class="auth-lede">One console per organisation: your sites, their decisions and the security agent in one place.</p>
+
+          <form class="auth-form" data-auth="signup" aria-describedby="signup-note">
+            <div class="af">
+              <label for="su-email">Work email</label>
+              <input id="su-email" type="email" autocomplete="email" required maxlength="120" spellcheck="false">
+            </div>
+            <div class="af">
+              <label for="su-org">Organisation</label>
+              <input id="su-org" type="text" autocomplete="organization" required maxlength="80">
+            </div>
+            <div class="af">
+              <label for="su-domain">Site domain</label>
+              <input id="su-domain" type="text" inputmode="url" autocomplete="off" required maxlength="120" spellcheck="false" aria-describedby="su-domain-h">
+              <p class="af-hint" id="su-domain-h">The site you want to protect, such as shop.example.com.</p>
+            </div>
+            <button type="submit" class="btn btn-primary auth-submit">Create console</button>
+          </form>
+
+          <p class="auth-note" id="signup-note" role="note">This page is a preview. Accounts are not available yet, so submitting creates no account and sends nothing: the form has no destination and your answers never leave this page. <a href="/dashboard/">Open the dashboard with sample data</a>.</p>
+
+          <section class="auth-done" data-auth-done data-signup-final aria-labelledby="su-done-h" hidden>
+            <h2 id="su-done-h" tabindex="-1">No account was created</h2>
+            <p>Nothing was sent or stored: accounts are not available yet. <span data-echo></span></p>
+            <p>The console below runs on sample data, so you can see what you would get.</p>
+            <div class="btn-row">
+              <a class="btn btn-primary" href="/dashboard/">Open the dashboard with sample data</a>
+              <a class="btn btn-ghost" href="/docs/getting-started/">Install it yourself</a>
+            </div>
+          </section>
+
+          <p class="auth-alt">Already have an account? <a href="/signin/">Sign in</a></p>
+        </div>
+
+        <aside class="auth-side" aria-label="What the console shows">
+          <p class="side-kicker">Inside the console</p>
+          <ul class="auth-points">
+            <li><b>Every decision, explained.</b> A reference on each challenge or block, and a read-only security agent that answers why, with the query and rows it used.</li>
+            <li><b>Challenges by tier.</b> Provisional, invisible proof-of-work and one accessible human check, escalating on their own.</li>
+            <li><b>Risk signals, not fingerprints.</b> Automation flags, sessions with no input, implausible proof-of-work timing.</li>
+            <li><b>Your log, your bucket.</b> The console reads the decision log you own.</li>
+          </ul>
+          <a class="auth-shot" href="/dashboard/"><span>See it with sample data</span><span aria-hidden="true">→</span></a>
+        </aside>
+      </div>
+    </main>
+    <!-- @footer -->
+    <script src="/assets/auth.js" defer></script>
+  </body>
+</html>

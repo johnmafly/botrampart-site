@@ -122,6 +122,9 @@ hr { border: 0; height: 6px; margin: 3rem 0; background: repeating-linear-gradie
 .cta-pill .chip { font: 600 .72rem/1 var(--f-mono); padding: .32rem .45rem; border-radius: 999px; background: var(--ink-0); color: var(--amber); transition: background-color .2s, color .2s; }
 .cta-pill:hover { box-shadow: 0 0 0 4px rgb(255 197 107 / .18), 0 10px 30px -10px var(--glow-ember); }
 .cta-pill:hover .chip { background: var(--ember); color: var(--ink-0); }
+.top-actions { display: flex; align-items: center; gap: .4rem; }
+.signin { text-decoration: none; padding: .5rem .8rem; border-radius: 999px; font: 500 .93rem/1 var(--f-text); color: var(--bone-2); transition: color .2s, background-color .2s; }
+.signin:hover { color: var(--bone); background: var(--ink-2); }
 /* Reading meter: the page you are reading drains a budget, cell by cell. */
 .readmeter { position: absolute; left: 0; right: 0; bottom: -1px; height: 3px; pointer-events: none; }
 .readmeter::before { content: ""; position: absolute; inset: 0; transform-origin: 0 50%; transform: scaleX(0);
@@ -136,6 +139,7 @@ hr { border: 0; height: 6px; margin: 3rem 0; background: repeating-linear-gradie
   .nav a[aria-current] { border-color: var(--ember); }
   .nav a[aria-current]::after { display: none; }
   .cta-pill { font-size: .86rem; padding: .48rem .5rem .48rem .85rem; }
+  .signin { font-size: .86rem; padding: .45rem .6rem; }
   html { scroll-padding-top: 7.5rem; }
   main { padding-top: 2.9rem; }
 }

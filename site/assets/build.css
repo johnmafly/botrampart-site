@@ -1,0 +1,91 @@
+/* Build pages: integration options (/build/), wiring (/build/wire/) and the express AI install (/build/ai/).
+   Uses the design tokens from site.css. Motion only inside prefers-reduced-motion: no-preference. */
+
+/* ---------- /build/: integration options ---------- */
+.build-ctas { margin-top: 2rem; }
+.prose .opts { list-style: none; padding: 0; margin: 2rem 0 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.prose .opts > li { margin: 0; }
+.opt { position: relative; display: flex; flex-direction: column; border-radius: var(--r); padding: 1.4rem 1.4rem 1.2rem; border: 1px solid var(--line); background: var(--ink-1); }
+.opt.is-live { border-color: rgb(143 227 207 / .45); background: radial-gradient(120% 80% at 0% 0%, rgb(143 227 207 / .09), transparent 60%), var(--ink-1); }
+.opt.is-later { border-style: dashed; border-color: var(--line-2); background: var(--ink-0); }
+.opt-status { margin: 0 0 .9rem; }
+.opt h3 { margin: 0 0 .25rem; font-size: 1.45rem; }
+.prose .opt .opt-sub { margin: 0 0 1rem; font-size: .76rem; font: 400 .76rem/1.4 var(--f-mono); color: var(--bone-3); }
+.prose .opt p { font-size: .94rem; }
+.opt > p:last-child { margin-bottom: 0; }
+.opt-link { margin-top: auto; padding-top: .4rem; font-weight: 600; }
+.opt-link a { color: var(--frost); }
+.opt-path { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem; margin: 0 0 1rem; font: 500 .68rem/1 var(--f-mono); letter-spacing: .02em; }
+.prose .opt .opt-path { font-size: .68rem; }
+.opt-path span { white-space: nowrap; padding: .36rem .45rem; border-radius: 6px; border: 1px solid var(--line-2); color: var(--bone-2); background: var(--ink-0); }
+.opt-path span.here { color: var(--ink-0); background: var(--frost); border-color: transparent; font-weight: 600; }
+.opt.is-later .opt-path span.here { color: var(--bone); background: transparent; border: 1px dashed var(--bone-3); }
+.opt-path i { font-style: normal; color: var(--bone-3); }
+@media (max-width: 700px) { .prose .opts { grid-template-columns: 1fr; } }
+
+.ai-teaser { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; margin: 2.5rem 0 1rem; padding: 1.5rem; border-radius: 18px; border: 1px solid var(--line-2);
+  background: radial-gradient(100% 140% at 100% 0%, rgb(255 91 46 / .12), transparent 60%), var(--ink-1); }
+.ai-teaser h3 { margin: .6rem 0 .5rem; font-size: 1.6rem; }
+.prose .ai-teaser p:last-child { margin: 0; font-size: .95rem; }
+.ai-teaser .btn { flex: none; }
+@media (max-width: 760px) { .ai-teaser { flex-direction: column; align-items: flex-start; } }
+
+/* Four next-step cards on /build/ */
+.prose .cards .card .label { margin-bottom: .6rem; }
+
+/* ---------- /build/wire/ ---------- */
+.fw-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; margin: 0 0 1.5rem; }
+.fw-grid > div { border-radius: 12px; border: 1px solid var(--line); background: var(--ink-1); padding: 1rem 1.1rem; }
+.prose .fw-grid p { margin: 0; font-size: .9rem; }
+.prose .fw-grid .fw-name { font: 600 .74rem/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--frost); margin-bottom: .5rem; }
+@media (max-width: 700px) { .fw-grid { grid-template-columns: 1fr; } }
+
+/* ---------- /build/ai/: express AI install ---------- */
+.label .crumb { color: inherit; text-decoration: none; border-bottom: 1px solid var(--line-2); }
+.label .crumb:hover { color: var(--bone); border-bottom-color: var(--bone-3); }
+.ai-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(2rem, 1rem + 3vw, 4rem); padding-block: 3rem 6rem; align-items: start; }
+.ai-h { font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.2rem); margin-bottom: 0; }
+.ai-form > .ai-h { display: flex; align-items: center; min-height: 3rem; margin-bottom: .8rem; }
+.ai-form .field { margin-bottom: 2rem; }
+.ai-form legend { display: flex; align-items: center; gap: .6rem; }
+.ai-n { display: inline-grid; place-items: center; width: 1.6rem; height: 1.6rem; border-radius: 6px; background: var(--ink-3); color: var(--bone); font: 700 .78rem/1 var(--f-mono); }
+.ai-form .choices { grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); }
+.ai-form .choice small.ok { color: var(--frost); }
+.ai-form .choice.is-later span { border-style: dashed; color: var(--bone-2); }
+.ai-form .choice.is-later small { color: var(--amber); }
+.ai-form .choice.is-later small.sub { color: var(--bone-3); }
+.ai-jump { display: none; margin: -.4rem 0 1.6rem; font: 500 .8rem/1.4 var(--f-mono); }
+.ai-jump a { color: var(--frost); }
+.ai-form .hint a { color: var(--bone-2); }
+.ai-nojs { margin: 0 0 2rem; }
+
+.ai-out { position: sticky; top: 5.5rem; min-width: 0; }
+.ai-out-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: .8rem; min-height: 3rem; }
+.ai-out-head .ai-h { margin: 0; }
+.ai-copy[hidden] { display: none; }
+.ai-copy.is-done { --bg: var(--frost); }
+.ai-summary { margin: 0 0 .3rem; }
+.ai-status { min-height: 1.4em; margin: 0 0 .6rem; font: 500 .8rem/1.4 var(--f-mono); color: var(--frost); }
+.ai-prompt { max-height: min(62vh, 44rem); overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .76rem; line-height: 1.6; color: var(--bone-2);
+  border-color: var(--line-2); box-shadow: inset 3px 0 var(--ember); }
+.ai-h3 { font-size: 1.2rem; margin-top: 2rem; }
+.ai-where { list-style: none; padding: 0; margin: 0 0 1.5rem; font-size: .93rem; color: var(--bone-2); }
+.ai-where li { padding: .55rem 0; border-top: 1px dashed var(--line-2); }
+.ai-where b { color: var(--bone); }
+@media (max-width: 960px) {
+  .ai-grid { grid-template-columns: 1fr; }
+  .ai-out { position: static; }
+  .ai-jump { display: block; }
+  .ai-prompt { max-height: 70vh; }
+}
+
+/* ---------- /try/: integration choices ---------- */
+.choice.is-later span { border-style: dashed; }
+.choice.is-later small { color: var(--amber); }
+.try-note { margin: 1rem 0 0; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .opt { transition: border-color .25s, transform .3s var(--ease); }
+  .opt.is-live:hover { transform: translateY(-2px); border-color: var(--frost); }
+  .ai-copy.is-done { transition: background-color .2s; }
+}

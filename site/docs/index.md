@@ -6,7 +6,7 @@ description: The BotRampart user guide: overview and concepts, architecture, fea
 lede: Everything about BotRampart in one place: how it works, how it is built, how to run it, and the full API, SDK and policy reference. Every page is also published as Markdown, for people and for agents.
 ---
 
-BotRampart is open-source bot defense that prices requests instead of judging visitors. Every session holds credit, every path has a cost, and a challenge buys credit, never a clearance. It runs inside your app, keeps its records in your own bucket, and explains every decision it makes.
+BotRampart is open-source bot defense for a web where bots drive real browsers. Its browser script collects risk signals and how each session behaves on the page; your server reads them, picks a challenge tier and applies the policies you write. It runs inside your app, keeps its records in your own bucket, and explains every decision it makes. Request economics is an add-on on top: each path has a cost, so a session that keeps spending has to keep proving itself.
 
 ## Sections {#sections}
 

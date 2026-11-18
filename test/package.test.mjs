@@ -99,12 +99,22 @@ test("the comparison names at least three vendors, is dated and says where they 
   assert.ok((html.match(/is the better choice/g) || []).length >= 4, "says where vendors are the better choice");
 });
 
-test("home page tells the story in four acts and keeps the live instrument's static fallback", () => {
+test("home page leads with the threat and keeps every section, its static log and its honest labels", () => {
   const home = pages.find((p) => p.name === "index.html").html;
-  for (const act of ["Act I", "Act II", "Act III", "Act IV"]) assert.ok(home.includes(act), act);
-  assert.match(home, /data-sim/);
-  assert.match(home, /class="sync"[\s\S]*?data-sync-track[\s\S]*?data-elapsed/, "both lanes share one time rail");
-  assert.ok((home.match(/<ol class="tape" data-tape>[\s\S]*?<\/ol>/g) || []).every((t) => (t.match(/<li>/g) || []).length >= 4), "tapes are written into the HTML");
+  const ids = ["threat", "detect", "autopilot", "agent", "console", "integrations", "benchmark", "economics", "pricing", "source", "start"];
+  let at = -1;
+  for (const id of ids) {
+    const i = home.indexOf(`id="${id}"`);
+    assert.ok(i > at, `#${id} is present and in order`);
+    at = i;
+  }
+  const feed = home.match(/<ol[^>]*data-feed[^>]*>[\s\S]*?<\/ol>/)?.[0] || "";
+  assert.ok((feed.match(/<li\b/g) || []).length >= 4, "the decision log is written into the HTML");
+  const bench = home.split('id="benchmark"')[1].split("<section")[0];
+  assert.equal((bench.match(/not measured yet/gi) || []).length >= 36, true, "every benchmark cell reads not measured yet");
+  assert.doesNotMatch(bench, /\b\d{1,3}(\.\d+)?\s?%/, "no benchmark result is shown");
+  assert.match(home.split('id="source"')[1].split("<section")[0], /Source not public yet/);
+  for (const href of ["/meter/", "/field/", "/own/", "/build/", "/try/"]) assert.ok(home.includes(`href="${href}`), href);
 });
 
 test("pricing shows every edition's price and keeps Community free", () => {

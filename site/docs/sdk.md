@@ -21,6 +21,10 @@ Every SDK evaluates the policy's compiled [condition trees](/docs/api/#schema-Co
 
 The backend SDK sits in your process in front of your handlers. Its settings are in [Configuration](/docs/configuration/#backend).
 
+### What it keeps {#keeps}
+
+The backend SDK is kept light so it never slows your app: it holds each live session's budget and a short buffer of counters that it sends to Core with [`syncInstance`](/docs/api/#op-syncInstance) every 5 to 10 seconds, then drops. It keeps no aggregated visitor metrics, baselines or history; Core builds those, and the decision log lives in your bucket.
+
 ### Routes the backend SDK mounts {#routes}
 
 | Route | Operation | Called by |

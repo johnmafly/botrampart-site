@@ -538,10 +538,12 @@ claims:
   # source_title: "CNIL: Questions-réponses, cookies et autres traceurs (Q17)"
   # French original (Q17, anti-robot / CAPTCHA). CNIL adds consent is needed if the CAPTCHA also
   # serves other purposes (it names reCAPTCHA).
+  # The CNIL FAQ answered 503 "Maintenance" on 2026-11-18, so the claim cites the Wayback snapshot of
+  # 1 October 2026 (question 17). Quote matched the snapshot's text after whitespace normalisation.
   - id: "cnil-antibot"
     claim: "CNIL says anti-robot (CAPTCHA) systems whose sole purpose is securing the site or its authentication need no consent."
     where: ["/build/wire/", "/docs/configuration/", "/docs/faq/", "/docs/security/"]
-    source_url: "https://www.cnil.fr/fr/cookies-et-autres-traceurs/regles/cookies/FAQ"
+    source_url: "https://web.archive.org/web/20261001072158/https://www.cnil.fr/fr/cookies-et-autres-traceurs/regles/cookies/FAQ"
     quote: "Lorsque ces solutions ont pour seule finalité la sécurisation du site ou d’un mécanisme d’authentification au bénéfice des utilisateurs, le consentement des utilisateurs n’est pas nécessaire."
     checked: "2026-11-18"
   # source_title: "Cloudflare Turnstile docs: Validate the token"
