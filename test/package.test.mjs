@@ -3,8 +3,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
-import { join, relative } from "node:path";
-import { readClaims } from "../scripts/claims.mjs";
+import { join, relative, sep } from "node:path";
+import { readClaims, citedRoutes, SCHEMA_FIELDS } from "../scripts/claims.mjs";
 import { DEFAULT_POLICY, newSession, charge, pass, dailyCeiling } from "../site/assets/economics.mjs";
 
 const root = new URL("..", import.meta.url).pathname;
@@ -54,17 +54,27 @@ test("the five docs sections exist and the index links them", () => {
   }
 });
 
-test("claims.yaml: every claim is complete, sourced over https, quoted and dated", () => {
+test("claims.yaml: every claim follows the greenhouse claims schema, sourced over https, quoted and dated", () => {
   const claims = readClaims(join(root, "claims.yaml"));
   assert.ok(claims.length >= 20);
   const ids = new Set();
   for (const c of claims) {
     assert.ok(c.id && !ids.has(c.id), `unique id ${c.id}`);
+    assert.match(c.id, /^[A-Za-z0-9][A-Za-z0-9_.-]*$/, `${c.id}: id pattern`);
     ids.add(c.id);
-    for (const k of ["claim", "source_title", "source_url", "quote", "checked", "status"]) assert.ok(c[k], `${c.id}: ${k}`);
+    assert.deepEqual(Object.keys(c).sort(), [...SCHEMA_FIELDS].sort(), `${c.id}: exactly the schema fields`);
+    for (const k of ["claim", "source_url", "quote", "checked"]) assert.ok(c[k], `${c.id}: ${k}`);
+    assert.ok(c.source_title, `${c.id}: source_title comment for the link text`);
+    assert.ok(Array.isArray(c.where) && c.where.length >= 1, `${c.id}: where`);
     assert.match(c.source_url, /^https:\/\//, `${c.id}: https source`);
     assert.match(c.checked, /^\d{4}-\d{2}-\d{2}$/, `${c.id}: checked date`);
-    assert.ok(["verified", "corrected"].includes(c.status), `${c.id}: status`);
+  }
+});
+
+test("claims.yaml: each claim's where lists exactly the routes that cite it", () => {
+  const cited = citedRoutes(join(root, "site"), { readdirSync, statSync, join, relative, sep });
+  for (const c of readClaims(join(root, "claims.yaml"))) {
+    assert.deepEqual(c.where, cited.get(c.id), `${c.id}: where (run npm run claims:where)`);
   }
 });
 
@@ -139,6 +149,30 @@ test("signup is a client-side preview: no form action, ends on a preview notice"
   assert.deepEqual(steps, [1, 2, 3, 4]);
   const last = html.slice(html.indexOf('data-step="4"'));
   assert.match(last, /This was a preview\./, "the last screen carries the notice");
+  const finals = [...html.matchAll(/<section[^>]*\bdata-signup-final\b[^>]*>/g)].map((m) => m[0]);
+  assert.equal(finals.length, 1, "exactly one [data-signup-final] screen");
+  assert.match(finals[0], /data-step="4"/, "[data-signup-final] marks the last step");
+});
+
+test("no placeholder or unfinished-page text on any page", () => {
+  // Mirrors greenhouse check's placeholder gate (visible text and title).
+  const patterns = [/\blorem\b/i, /\bTODO\b/, /\bTBD\b/, /\[placeholder\]/i, /\bcoming soon\b/i, /\bcoming in package v\d/i];
+  for (const { name, html } of pages) {
+    const text = html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<!--[\s\S]*?-->/g, " ").replace(/<[^>]+>/g, " ");
+    for (const re of patterns) assert.doesNotMatch(text, re, `${name}: placeholder text ${re}`);
+  }
+});
+
+test("code blocks and wide tables are keyboard-scrollable, labelled regions", () => {
+  for (const { name, html } of pages) {
+    const labels = [...html.matchAll(/role="region" aria-label="([^"]+)"/g)].map((m) => m[1]);
+    assert.equal(new Set(labels).size, labels.length, `${name}: region labels repeat`);
+    for (const [tag] of html.matchAll(/<pre\b[^>]*>|<div class="tablewrap"[^>]*>/g)) {
+      assert.match(tag, /tabindex="0"/, `${name}: ${tag} is not focusable`);
+      assert.match(tag, /role="region"/, `${name}: ${tag} is not a region`);
+      assert.match(tag, /aria-label="(Code|Table): [^"]+"/, `${name}: ${tag} has no label`);
+    }
+  }
 });
 
 test("non-goals are not presented as available", () => {

@@ -50,7 +50,7 @@ function cite(html, route) {
       `<p class="fine">Every figure from someone else on this page, with the words it rests on. Checked on the date shown; the full ledger is <a href="https://github.com/johnmafly/botrampart-site/blob/main/claims.yaml">claims.yaml</a>.</p><ol class="sources">` +
       order.map((id, i) => {
         const c = claims.get(id);
-        return `<li id="src-${i + 1}"><a href="${esc(c.source_url)}" rel="noopener">${esc(c.source_title)}</a>. <q>${esc(c.quote)}</q> <span class="muted">Checked ${esc(c.checked)}.</span></li>`;
+        return `<li id="src-${i + 1}"><a href="${esc(c.source_url)}" rel="noopener">${esc(c.source_title || new URL(c.source_url).hostname)}</a>. <q>${esc(c.quote)}</q> <span class="muted">Checked ${esc(c.checked)}.</span></li>`;
       }).join("") + `</ol></section>`
     : "";
   if (order.length && !html.includes("<!-- @sources -->")) throw new Error(`${route}: cites claims but has no sources marker`);
@@ -77,6 +77,28 @@ function markCurrent(html, route) {
   });
 }
 
+// Code blocks and wide tables scroll sideways on small screens. Make each a labelled, focusable
+// region so keyboard users can scroll it (axe: scrollable-region-focusable). The label is the
+// nearest heading above it.
+function scrollRegions(html, route) {
+  let heading = "";
+  const used = new Map();
+  return html.replace(/<h[1-4][^>]*>([\s\S]*?)<\/h[1-4]>|<pre(?![^>]*tabindex)|<div class="tablewrap"(?![^>]*tabindex)/g, (m, text) => {
+    if (text !== undefined) {
+      heading = text.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
+      return m;
+    }
+    if (!heading) throw new Error(`${route}: scrollable region without a heading above it`);
+    // Labels must be unique per page (axe: landmark-unique), so a second block under the same
+    // heading gets "(2)", and so on.
+    const base = `${m.startsWith("<pre") ? "Code" : "Table"}: ${heading}`;
+    const n = (used.get(base) ?? 0) + 1;
+    used.set(base, n);
+    const label = n === 1 ? base : `${base} (${n})`;
+    return `${m} tabindex="0" role="region" aria-label="${esc(label)}"`;
+  });
+}
+
 function render(file) {
   const route = routeOf(file);
   let html = readFileSync(file, "utf8");
@@ -86,6 +108,7 @@ function render(file) {
     html = html.replace(`<!-- @${name} -->`, markCurrent(partial(name), route));
   }
   html = cite(html, route);
+  html = scrollRegions(html, route);
   if (/<!-- @/.test(html)) throw new Error(`${route}: unreplaced marker`);
   writeFileSync(file, html);
 }
