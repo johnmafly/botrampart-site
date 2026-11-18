@@ -23,7 +23,7 @@
           <p>BotRampart asks a different question: what has this session spent? Every session holds credit. Every path has a cost. Ordinary use refills faster than it spends; heavy use runs out and has to earn more by passing a challenge, and each repeat earns less. A pass buys credit, never a clearance.</p>
           <p>Nobody is labelled a bot, so there is no verdict to dispute. Anyone can check the arithmetic, so every decision can be explained.</p>
 
-          <h2 id="session">A session's life</h2>
+          <h2 id="session">A session<span class="ap">’</span>s life</h2>
           <p>Identity is one first-party cookie, <code>__br_s</code>, set by your own server with <code>HttpOnly</code> and signed with your site key. It carries a random session ID, its tier and its expiry; no device fingerprint. The token lives 30 minutes and is renewed while in use, inside a session of at most seven days, so a revoked session stops working within half an hour even on an app instance that missed a sync. That lifetime follows Cloudflare's own guidance for its clearance cookie, 30 minutes by default and 15 to 45 recommended.{{c:cf-passage}}</p>
           <p>Because your server sets the cookie, page scripts cannot read it, and Safari's rule that deletes script-written cookies after seven days without interaction does not apply to it.{{c:webkit-7day}}</p>
           <div class="tablewrap">
