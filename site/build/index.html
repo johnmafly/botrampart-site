@@ -29,28 +29,21 @@
             <li>
               <h3 id="init">Generate the install</h3>
               <p>The generator asks four questions and writes plain files you can read and commit. It generates your site keys locally and sends them nowhere.</p>
-              <pre><code class="language-shell">$ npx botrampart init
-? Where will Core run?      Cloudflare | Docker on a Linux host | Kubernetes
+              <p class="code-cap"><span>The four questions</span></p>
+              <pre><code>? Where will Core run?      Cloudflare | Docker on a Linux host | Kubernetes
 ? Object storage?           R2 | S3 | MinIO (bundled)
 ? Where are access logs?    nginx | ingress-nginx | ALB | none yet
 ? App framework?            Express | Fastify | Next.js
 <span class="s">✓</span> wrote docker-compose.yml, botrampart.policy.yaml
-<span class="s">✓</span> generated site keys into ./secrets (never sent anywhere)
-Next: add two lines to your app and one script tag. Then run `br doctor`.</code></pre>
+<span class="s">✓</span> generated site keys into ./secrets (never sent anywhere)</code></pre>
               <p>On Cloudflare it writes a Wrangler configuration and a deploy button instead of a compose file. Kubernetes gets plain manifests.</p>
             </li>
             <li>
               <h3 id="core">Start Core</h3>
-              <pre><code class="language-yaml"><span class="d"># docker-compose.yml, as generated (abridged)</span>
-services:
-  core:
-    image: ghcr.io/botrampart/core:1
-    ports: ["8787:8787"]
-    environment:
-      BR_LAKE_URL: s3://acme-botrampart/br/v1/
-      BR_DECISION_PROVIDER: off        <span class="d"># or gemini, openai, a self-hosted model</span>
-    secrets: [br_keys, lake_writer]</code></pre>
-              <pre><code class="language-shell">$ docker compose up -d core</code></pre>
+              <p>Core is one small service. It reads where the lake is and which decision model to use from its environment, and its keys from the secrets the generator wrote.</p>
+              <p class="code-cap"><span>Core's environment</span></p>
+              <pre><code>BR_LAKE_URL=s3://acme-botrampart/br/v1/
+BR_DECISION_PROVIDER=off        <span class="d"># or gemini, openai, a self-hosted model</span></code></pre>
             </li>
             <li>
               <h3 id="sdk">Add the backend SDK, in observe mode</h3>
@@ -76,12 +69,6 @@ app.use(br.express());             <span class="d">// mounts /_br/*, verifies, c
             </li>
             <li>
               <h3 id="doctor">Check the install</h3>
-              <p class="code-cap"><span>Terminal · checks Core, the script route and the lake</span><a href="/spec/openapi.yaml">getSdkScript</a></p>
-              <pre><code data-op="getSdkScript">$ npx br doctor
-<span class="s">✓</span> Core reachable, policy v1 synced to 1 instance
-<span class="s">✓</span> /_br/sdk.js served from your origin
-<span class="s">✓</span> lake writable: s3://acme-botrampart/br/v1/
-<span class="k">!</span> 3 paths in recent responses carry no BotRampart header: /healthz, /legacy/export, /feed.xml</code></pre>
               <p>Open your site and ask the SDK what the browser holds. A first visit is tier 0; a moment later the proof-of-work has run in the background and the session is tier 1.</p>
               <p class="code-cap"><span>In the browser, from your own origin</span><a href="/spec/openapi.yaml">getSessionStatus</a></p>
               <pre><code data-op="getSessionStatus">await fetch("/_br/status").then((r) =&gt; r.json());

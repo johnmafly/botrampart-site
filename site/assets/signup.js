@@ -44,14 +44,13 @@ function renderInstall() {
   const coreLabel = { cloudflare: "Cloudflare", docker: "Docker on a Linux host", kubernetes: "Kubernetes" }[a.core];
   const files = { cloudflare: "wrangler.jsonc, a Deploy to Cloudflare button", docker: "docker-compose.yml", kubernetes: "core.yaml, a Deployment and Service" }[a.core];
   out("init").textContent = [
-    "$ npx botrampart init",
     `? Where will Core run?      ${coreLabel}`,
     `? Object storage?           ${a.lake}`,
     `? App framework?            ${a.framework === "other" ? "Express (closest available)" : a.framework}`,
     `? Decision loop?            ${{ off: "off", gemini: "Gemini Decision 1", local: "self-hosted model" }[a.model]}`,
     `✓ wrote ${files}, botrampart.policy.yaml`,
     "✓ generated site keys into ./secrets (never sent anywhere)",
-    "Next: add two lines to your app and one script tag. Then run `br doctor`.",
+    "Next: add two lines to your app and one script tag.",
   ].join("\n");
   const core = a.core === "cloudflare" ? "https://core.your-account.workers.dev" : "http://localhost:8787";
   const fw = a.framework === "Fastify" ? "fastify" : a.framework === "Next.js" ? "next" : "express";
