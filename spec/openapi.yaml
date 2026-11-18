@@ -2253,7 +2253,7 @@ components:
           minimum: 0
         br_decision:
           type: string
-          description: BR-Decision as logged; empty means the route has no SDK coverage (`br doctor`).
+          description: BR-Decision as logged; empty means the route has no SDK coverage.
         ja4_family:
           type: [string, "null"]
           description: TLS fingerprint family, when the edge logs it.
