@@ -1,16 +1,12 @@
 # Package v1 URLs, kept working after the v2 information architecture (greenhouse.yaml content:).
-/docs                       /build/         301
-/docs/                      /build/         301
+# /docs/ is the user guide (site/docs/*.md), so /docs, /docs/, /docs/getting-started/ and
+# /docs/architecture/ are served pages now; the other v1 deep URLs still redirect.
 /docs/how-it-works          /meter/         301
 /docs/how-it-works/         /meter/         301
 /docs/comparison            /field/         301
 /docs/comparison/           /field/         301
-/docs/getting-started       /build/         301
-/docs/getting-started/      /build/         301
-/docs/integration           /build/wire/    301
-/docs/integration/          /build/wire/    301
-/docs/architecture          /build/inside/  301
-/docs/architecture/         /build/inside/  301
+/docs/integration           /docs/integrations/  301
+/docs/integration/          /docs/integrations/  301
 /pricing                    /own/           301
 /pricing/                   /own/           301
 /signup                     /try/           301

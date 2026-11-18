@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 330" width="960" height="330" font-family="'BR Text', system-ui, -apple-system, 'Segoe UI', sans-serif">
+  <title>The five-minute loop</title>
+  <rect x="0" y="0" width="960" height="330" rx="14" fill="#0c0b0a"/>
+  <g fill="#12110f" stroke="#3b3732" stroke-width="1.5">
+    <rect x="10" y="30" width="170" height="118" rx="12" stroke="#ff5b2e"/>
+    <rect x="201" y="30" width="170" height="118" rx="12" stroke="#8fe3cf"/>
+    <rect x="392" y="30" width="170" height="118" rx="12" stroke="#8fe3cf"/>
+    <rect x="583" y="30" width="170" height="118" rx="12"/>
+    <rect x="774" y="30" width="170" height="118" rx="12" stroke="#ffc56b"/>
+  </g>
+  <g fill="#efe8da" font-size="16" font-weight="600">
+    <text x="26" y="58">App instances</text>
+    <text x="217" y="58">Core merges</text>
+    <text x="408" y="58">State</text>
+    <text x="599" y="58">Decision model</text>
+    <text x="790" y="58">Directives</text>
+  </g>
+  <g fill="#bdb5a6" font-size="12.5">
+    <text x="26" y="84">counters per session</text>
+    <text x="26" y="104">and path class, sent</text>
+    <text x="26" y="124">every 5 to 10 s</text>
+    <text x="217" y="84">per cohort, against</text>
+    <text x="217" y="104">its own baseline for</text>
+    <text x="217" y="124">that hour of the week</text>
+    <text x="408" y="84">br.state.v1: named</text>
+    <text x="408" y="104">bands only, no text</text>
+    <text x="408" y="124">a visitor wrote</text>
+    <text x="599" y="84">four typed questions:</text>
+    <text x="599" y="104">attack, risk level,</text>
+    <text x="599" y="124">intent, least step</text>
+    <text x="790" y="84">ai.* fields with an</text>
+    <text x="790" y="104">expiry of 60 minutes</text>
+    <text x="790" y="124">at most</text>
+  </g>
+  <g stroke="#948b7c" stroke-width="1.6" fill="none">
+    <path d="M180 89 H195"/>
+    <path d="M371 89 H386"/>
+    <path d="M562 89 H577"/>
+    <path d="M753 89 H768"/>
+    <path d="M859 148 V214 H95 V154"/>
+  </g>
+  <g fill="#948b7c">
+    <path d="M201 89 l-8 -5 v10 z"/>
+    <path d="M392 89 l-8 -5 v10 z"/>
+    <path d="M583 89 l-8 -5 v10 z"/>
+    <path d="M774 89 l-8 -5 v10 z"/>
+    <path d="M95 148 l-5 8 h10 z"/>
+  </g>
+  <g fill="#948b7c" font-family="'BR Mono', ui-monospace, Menlo, monospace" font-size="12">
+    <text x="477" y="236" text-anchor="middle">next sync: policy, directives, revocations, mint pressure</text>
+  </g>
+  <g fill="#bdb5a6" font-size="13">
+    <text x="26" y="276">Your rules decide what an ai.* field does. The default policy only logs them (shadow mode).</text>
+    <text x="26" y="300">Escalate when two windows agree; step down after three calm windows. Answers are cached for an hour on a hash of the bands.</text>
+  </g>
+</svg>

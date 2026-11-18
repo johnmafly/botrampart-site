@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 300" width="960" height="300" font-family="'BR Text', system-ui, -apple-system, 'Segoe UI', sans-serif">
+  <title>The request path inside your app</title>
+  <rect x="0" y="0" width="960" height="300" rx="14" fill="#0c0b0a"/>
+  <g fill="#12110f" stroke="#3b3732" stroke-width="1.5">
+    <rect x="10" y="30" width="170" height="96" rx="12"/>
+    <rect x="201" y="30" width="170" height="96" rx="12" stroke="#ff5b2e"/>
+    <rect x="392" y="30" width="170" height="96" rx="12" stroke="#ff5b2e"/>
+    <rect x="583" y="30" width="170" height="96" rx="12" stroke="#ff5b2e"/>
+    <rect x="774" y="30" width="170" height="96" rx="12" stroke="#ff5b2e"/>
+    <rect x="10" y="196" width="221" height="80" rx="12" stroke="#8fe3cf"/>
+    <rect x="251" y="196" width="221" height="80" rx="12" stroke="#ffc56b"/>
+    <rect x="492" y="196" width="221" height="80" rx="12" stroke="#ffc56b"/>
+    <rect x="733" y="196" width="211" height="80" rx="12" stroke="#ff5b2e"/>
+  </g>
+  <g fill="#efe8da" font-size="16" font-weight="600">
+    <text x="26" y="58">1 Request</text>
+    <text x="217" y="58">2 Verify</text>
+    <text x="408" y="58">3 Price</text>
+    <text x="599" y="58">4 Charge</text>
+    <text x="790" y="58">5 Decide</text>
+    <text x="26" y="224" fill="#8fe3cf">allow</text>
+    <text x="267" y="224" fill="#ffc56b">challenge</text>
+    <text x="508" y="224" fill="#ffc56b">throttle</text>
+    <text x="749" y="224" fill="#ff8a3d">block</text>
+  </g>
+  <g fill="#bdb5a6" font-size="12.5">
+    <text x="26" y="84">browser to your app</text>
+    <text x="26" y="106">with the __br_s cookie</text>
+    <text x="217" y="84">HMAC-SHA256 check,</text>
+    <text x="217" y="106">in memory, no network</text>
+    <text x="408" y="84">path to path class,</text>
+    <text x="408" y="106">class to cost in units</text>
+    <text x="599" y="84">refill, then spend;</text>
+    <text x="599" y="106">BR-Cost trues it up</text>
+    <text x="790" y="84">your rules, in order;</text>
+    <text x="790" y="106">first match wins</text>
+    <text x="26" y="250">your handler runs</text>
+    <text x="267" y="250">403 with BR-Challenge: v1</text>
+    <text x="508" y="250">429 with Retry-After</text>
+    <text x="749" y="250">refused before the handler</text>
+  </g>
+  <g stroke="#948b7c" stroke-width="1.6" fill="none">
+    <path d="M180 78 H195"/>
+    <path d="M371 78 H386"/>
+    <path d="M562 78 H577"/>
+    <path d="M753 78 H768"/>
+    <path d="M859 126 V160 H120.5 M120.5 160 V190 M361.5 160 V190 M602.5 160 V190 M838.5 160 V190"/>
+  </g>
+  <g fill="#948b7c">
+    <path d="M201 78 l-8 -5 v10 z"/>
+    <path d="M392 78 l-8 -5 v10 z"/>
+    <path d="M583 78 l-8 -5 v10 z"/>
+    <path d="M774 78 l-8 -5 v10 z"/>
+    <path d="M120.5 196 l-5 -8 h10 z"/>
+    <path d="M361.5 196 l-5 -8 h10 z"/>
+    <path d="M602.5 196 l-5 -8 h10 z"/>
+    <path d="M838.5 196 l-5 -8 h10 z"/>
+  </g>
+</svg>

@@ -37,7 +37,7 @@ claims:
   # Quote matched fetched text exactly (after whitespace collapse).
   - id: "recaptcha-solved"
     claim: "Researchers solved 100% of reCAPTCHA v2 image challenges with published models."
-    where: ["/", "/meter/"]
+    where: ["/", "/docs/overview/", "/meter/"]
     source_url: "https://arxiv.org/abs/2409.08831"
     quote: "Our main result is that we can solve 100% of the captchas, while previous work only solved 68-71%."
     checked: "2026-11-18"
@@ -48,7 +48,7 @@ claims:
   # (after whitespace collapse).
   - id: "solver-prices"
     claim: "Solver services sell reCAPTCHA v2 solves for about $1 to $3 per 1,000."
-    where: ["/", "/meter/"]
+    where: ["/", "/docs/faq/", "/docs/overview/", "/meter/"]
     source_url: "https://2captcha.com/pricing"
     quote: "$1 — $2.99"
     checked: "2026-11-18"
@@ -69,7 +69,7 @@ claims:
   # (after whitespace collapse).
   - id: "anubis-throughput"
     claim: "With one challenge per session and no rate limit, increasing latency does not decrease throughput."
-    where: ["/", "/meter/"]
+    where: ["/", "/docs/overview/", "/meter/"]
     source_url: "https://hackerdude.tech/vault/Anubis/"
     quote: "would need to wait around half a second to connect to a site, after that it can continue hammering the server with the same throughput as it would otherwise INCREASING LATENCY DOES NOT DECREASE THROUGHPUT"
     checked: "2026-11-18"
@@ -78,7 +78,7 @@ claims:
   # facts checked 7 November 2026. Quote matched fetched text exactly (after whitespace collapse).
   - id: "proxy-prices"
     claim: "Published residential proxy prices run from about $1 to $7.35 per GB at the smallest amount each provider sells (about $0.78 to $5.51 per GB at the largest)."
-    where: ["/meter/"]
+    where: ["/docs/overview/", "/meter/"]
     source_url: "https://zenproxy.io/learn/residential-proxy-prices"
     quote: "published residential prices run from $0.99 to $7.35 per GB at the smallest amount each one sells, and from $0.78 to $5.51 per GB at their largest listed amounts up to 1 TB"
     checked: "2026-11-18"
@@ -87,7 +87,7 @@ claims:
   # window'. Quote matched fetched text exactly (after whitespace collapse).
   - id: "ipinfo-rotation"
     claim: "Across 170M residential proxy IPs, 60% were seen only once in 90 days."
-    where: ["/meter/"]
+    where: ["/docs/overview/", "/meter/"]
     source_url: "https://hackernoon.com/the-residential-proxy-problem-shared-infrastructure-and-rapid-rotation"
     quote: "60% of residential proxy IPs are only observed once in a 90-day window (32% for IPv4, 87% for IPv6)."
     checked: "2026-11-18"
@@ -112,7 +112,7 @@ claims:
   # Quote matched fetched text exactly (after whitespace collapse).
   - id: "cf-passage"
     claim: "Cloudflare's clearance lasts 30 minutes by default and its docs recommend 15 to 45 minutes."
-    where: ["/meter/"]
+    where: ["/docs/overview/", "/meter/"]
     source_url: "https://developers.cloudflare.com/cloudflare-challenges/challenge-types/challenge-pages/challenge-passage/"
     quote: "By default, the cf_clearance cookie has a lifetime of 30 minutes. Cloudflare recommends a setting between 15 and 45 minutes."
     checked: "2026-11-18"
@@ -132,7 +132,7 @@ claims:
   # text exactly (after whitespace collapse).
   - id: "webkit-7day"
     claim: "Safari's tracking prevention deletes script-written cookies and storage after 7 days without user interaction with the site."
-    where: ["/meter/"]
+    where: ["/docs/overview/", "/meter/"]
     source_url: "https://webkit.org/tracking-prevention/"
     quote: "ITP deletes all cookies created in JavaScript and all other script-writeable storage after 7 days of no user interaction with the website."
     checked: "2026-11-18"
@@ -141,7 +141,7 @@ claims:
   # collapse).
   - id: "gd-launch"
     claim: "Google launched the Gemini Decisions API (Gemini Decision 1) on 11 November 2026."
-    where: ["/meter/"]
+    where: ["/docs/integrations/", "/meter/"]
     source_url: "https://blog.google/innovation-and-ai/technology/developers-tools/gemini-decisions-api/"
     quote: "Today, we’re introducing the Gemini Decisions API, a new endpoint for fast, closed-set decisions powered by our new Gemini Decision 1 model (gemini-decision-1)"
     checked: "2026-11-18"
@@ -152,7 +152,7 @@ claims:
   # exactly (after whitespace collapse).
   - id: "gd-guide-code"
     claim: "Google's guidance for the Decisions API: compare numbers, dates and durations in code and pass a named bucket."
-    where: ["/meter/"]
+    where: ["/docs/integrations/", "/meter/"]
     source_url: "https://ai.google.dev/gemini-api/docs/decisions-api"
     quote: "Compare numbers, dates, and durations in code, then pass the result or a named bucket in the input."
     checked: "2026-11-18"
@@ -161,7 +161,7 @@ claims:
   # gd-guide-code. Quote matched fetched text exactly (after whitespace collapse).
   - id: "gd-guide-untrusted"
     claim: "Google's guidance says to treat input as untrusted."
-    where: ["/meter/"]
+    where: ["/docs/integrations/", "/meter/"]
     source_url: "https://ai.google.dev/gemini-api/docs/decisions-api"
     quote: "Treat input as untrusted. User-supplied text can argue for its own classification."
     checked: "2026-11-18"
@@ -171,7 +171,7 @@ claims:
   # original URL's. Quote matched fetched text exactly (after whitespace collapse).
   - id: "gd-price"
     claim: "Gemini Decision 1 bills $0.10 per million input tokens with no output charge."
-    where: ["/meter/", "/own/"]
+    where: ["/docs/integrations/", "/docs/self-hosting/", "/meter/", "/own/"]
     source_url: "https://blog.google/innovation-and-ai/technology/developers-tools/gemini-decisions-api/"
     quote: "at $0.10 per 1M input tokens with zero output tokens billed"
     checked: "2026-11-18"
@@ -180,7 +180,7 @@ claims:
   # the expected point value'. Quote matched fetched text exactly (after whitespace collapse).
   - id: "gh-graphql"
     claim: "GitHub's GraphQL API gives each user 5,000 points an hour and prices queries by calculated cost."
-    where: ["/meter/"]
+    where: ["/docs/overview/", "/meter/"]
     source_url: "https://docs.github.com/en/graphql/overview/rate-limits-and-query-limits-for-the-graphql-api"
     quote: "For users: 5,000 points per hour per user."
     checked: "2026-11-18"
@@ -188,7 +188,7 @@ claims:
   # Quote matched fetched text exactly (after whitespace collapse).
   - id: "shopify-cost"
     claim: "Shopify rate-limits its GraphQL Admin API by calculated query cost."
-    where: ["/meter/"]
+    where: ["/docs/overview/", "/meter/"]
     source_url: "https://shopify.dev/docs/apps/build/apis/graphql-admin/rate-limits"
     quote: "Calls to the GraphQL Admin API are limited based on calculated query cost, which means you should consider the cost of requests over time rather than the number of requests."
     checked: "2026-11-18"
@@ -197,7 +197,7 @@ claims:
   # Limiting.' Quote matched fetched text exactly (after whitespace collapse).
   - id: "cf-rl-complexity"
     claim: "Cloudflare's complexity-based rate limiting reads a score the origin returns in a response header."
-    where: ["/meter/"]
+    where: ["/docs/overview/", "/meter/"]
     source_url: "https://developers.cloudflare.com/waf/rate-limiting-rules/parameters/"
     quote: "Name of HTTP header in the response, set by the origin server, with the score for the current request. Applies to complexity-based rate limiting."
     checked: "2026-11-18"
@@ -207,7 +207,7 @@ claims:
   # Quote matched fetched text exactly (after whitespace collapse).
   - id: "wcag-338"
     claim: "WCAG 2.2 success criterion 3.3.8 forbids a cognitive function test in any authentication step unless that step offers an alternative method, a mechanism to assist, or the test is object recognition or identifying the user's own content."
-    where: ["/meter/"]
+    where: ["/docs/overview/", "/docs/security/", "/meter/"]
     source_url: "https://www.w3.org/WAI/WCAG22/Understanding/accessible-authentication-minimum"
     quote: "A cognitive function test (such as remembering a password or solving a puzzle) is not required for any step in an authentication process unless that step provides at least one of the following:"
     checked: "2026-11-18"
@@ -216,7 +216,7 @@ claims:
   # matched fetched text exactly (after whitespace collapse).
   - id: "loginject"
     claim: "Injected log entries steered LLM log analysis up to 88.2% of the time in a 2026 study."
-    where: ["/meter/"]
+    where: ["/docs/security/", "/meter/"]
     source_url: "https://www.usenix.org/system/files/usenixsecurity26-karanjai.pdf"
     quote: "Our findings reveal an up to 88.2% attack success rate (83.4% average across models)"
     checked: "2026-11-18"
@@ -224,7 +224,7 @@ claims:
   # Published June 25, 2024. Quote matched fetched text exactly (after whitespace collapse).
   - id: "polyfill"
     claim: "In 2024 the Polyfill.io CDN served malware to more than 100,000 sites after a change of owner."
-    where: ["/build/", "/build/inside/"]
+    where: ["/build/", "/build/inside/", "/docs/getting-started/", "/docs/security/"]
     source_url: "https://sansec.io/research/polyfill-supply-chain-attack"
     quote: "The new Chinese owner of the popular Polyfill JS project injects malware into more than 100 thousand sites."
     checked: "2026-11-18"
@@ -233,7 +233,7 @@ claims:
   # million'. Quote matched fetched text exactly (after whitespace collapse).
   - id: "cf-workers-price"
     claim: "Cloudflare Workers Paid is $5 a month with 10 million requests included."
-    where: ["/build/", "/build/inside/", "/own/"]
+    where: ["/build/", "/build/inside/", "/docs/architecture/", "/docs/getting-started/", "/docs/integrations/", "/docs/self-hosting/", "/own/"]
     source_url: "https://developers.cloudflare.com/workers/platform/pricing/"
     quote: "minimum charge of $5 USD per month for an account"
     checked: "2026-11-18"
@@ -242,7 +242,7 @@ claims:
   # fetched text exactly (after whitespace collapse).
   - id: "r2-price"
     claim: "Cloudflare R2 storage costs $0.015 per GB-month with free egress."
-    where: ["/build/inside/", "/own/"]
+    where: ["/build/inside/", "/docs/integrations/", "/docs/self-hosting/", "/own/"]
     source_url: "https://developers.cloudflare.com/r2/pricing/"
     quote: "There are no charges for egress bandwidth for any storage class."
     checked: "2026-11-18"
@@ -251,7 +251,7 @@ claims:
   # subset' vs 'Stock Node.js'. Quote matched fetched text exactly (after whitespace collapse).
   - id: "oo-exists"
     claim: "OpenOrange, from Rivet, is Apache-2.0 and runs Cloudflare Workers projects on Node.js in other clouds."
-    where: ["/build/inside/"]
+    where: ["/build/inside/", "/docs/architecture/", "/docs/integrations/"]
     source_url: "https://github.com/rivet-dev/open-orange"
     quote: "Run Cloudflare Workers anywhere: AWS, Google Cloud, Azure, or your own servers."
     checked: "2026-11-18"
@@ -450,13 +450,13 @@ claims:
     quote: "Anubis is a Web AI Firewall Utility that weighs the soul of your connection using one or more challenges in order to protect upstream resources from scraper bots."
     checked: "2026-11-18"
   # source_title: "GitHub REST API: repos/TecharoHQ/anubis"
-  # 24,235 stars at fetch on 2026-11-18 (unauthenticated API call); repo page shows 24.2k; licence
-  # spdx_id MIT, 826 forks.
-  - id: "anubis-stars"
-    claim: "Anubis had more than 24,000 GitHub stars in November 2026."
+  # Replaced the star count (anubis-stars): a live count drifts between fetches (24,235, then
+  # 24,243 on 2026-11-18), so the quote stopped matching. created_at never changes.
+  - id: "anubis-created"
+    claim: "Anubis's GitHub repository was created in March 2025."
     where: ["/field/"]
     source_url: "https://api.github.com/repos/TecharoHQ/anubis"
-    quote: "\"stargazers_count\": 24235,"
+    quote: "\"created_at\": \"2025-03-17T17:35:28Z\","
     checked: "2026-11-18"
   # source_title: "Techaro: Pricing (markdown version)"
   # Corrected. pricing.md (the page's own markdown alternate, last_updated 2026-09-18) also says
@@ -539,7 +539,7 @@ claims:
   # serves other purposes (it names reCAPTCHA).
   - id: "cnil-antibot"
     claim: "CNIL says anti-robot (CAPTCHA) systems whose sole purpose is securing the site or its authentication need no consent."
-    where: ["/build/wire/"]
+    where: ["/build/wire/", "/docs/configuration/", "/docs/faq/", "/docs/security/"]
     source_url: "https://www.cnil.fr/fr/cookies-et-autres-traceurs/regles/cookies/FAQ"
     quote: "Lorsque ces solutions ont pour seule finalité la sécurisation du site ou d’un mécanisme d’authentification au bénéfice des utilisateurs, le consentement des utilisateurs n’est pas nécessaire."
     checked: "2026-11-18"
@@ -549,7 +549,7 @@ claims:
   # so 'single-use' was softened. Quote matched after whitespace normalisation only.
   - id: "ts-single-use"
     claim: "Turnstile tokens are valid for 300 seconds and intended for single use; reuse detection is eventually consistent."
-    where: ["/build/inside/"]
+    where: ["/build/inside/", "/docs/architecture/"]
     source_url: "https://developers.cloudflare.com/turnstile/get-started/server-side-validation/"
     quote: "Each token is valid for 300 seconds (5 minutes) after generation. Tokens are intended for single use."
     checked: "2026-11-18"
@@ -560,7 +560,7 @@ claims:
   # after whitespace normalisation only.
   - id: "dd-protapi"
     claim: "DataDome's integration sends request metadata to its Protection API, which returns allow or challenge; if the X-DataDomeResponse header is missing, the module fails open and treats the request as allowed."
-    where: ["/build/inside/", "/field/"]
+    where: ["/build/inside/", "/docs/architecture/", "/field/"]
     source_url: "https://docs.datadome.co/reference/validate-request"
     quote: "Fail-open Header missing Ignore it Treat the request as allowed (200) to avoid blocking legitimate traffic due to system errors."
     checked: "2026-11-18"
@@ -570,7 +570,7 @@ claims:
   # normalisation only.
   - id: "botid-undeclared"
     claim: "Vercel BotID requires protected routes to be declared in the client configuration; checkBotId() fails on routes not added there."
-    where: ["/build/inside/"]
+    where: ["/build/inside/", "/docs/architecture/"]
     source_url: "https://vercel.com/docs/botid/get-started"
     quote: "Not adding the protected route to <BotIdClient /> will result in checkBotId() failing."
     checked: "2026-11-18"
@@ -580,7 +580,7 @@ claims:
   # the Risk API timeout, which passes the request on timeout (fail-open).
   - id: "human-timeout"
     claim: "HUMAN's Akamai EdgeWorker enforcer decrypts the HUMAN Sensor's risk cookie with a cookie secret, and waits up to PX_S2S_TIMEOUT (default 1000 ms) for the Risk API before timing out and passing the request."
-    where: ["/build/inside/"]
+    where: ["/build/inside/", "/docs/architecture/"]
     source_url: "https://docs.humansecurity.com/applications/akamai-edgeworker/v4/configuration"
     quote: "The total time in milliseconds that the Enforcer will wait for the Risk API request to return before timing out and passing the request."
     checked: "2026-11-18"
@@ -589,7 +589,7 @@ claims:
   # not a shipped SDK; leaves out rule evaluation and framework overhead.
   - id: "exp-verify"
     claim: "In our benchmark of the reference code (Node 25, Apple M4 Pro), verifying the signed session cookie and charging the budget took 1.79 microseconds at the median and 2.58 at the 99th percentile."
-    where: ["/", "/build/inside/"]
+    where: ["/", "/build/inside/", "/docs/architecture/", "/docs/faq/", "/docs/getting-started/"]
     source_url: "https://github.com/johnmafly/botrampart-site/blob/main/experiments/verify-bench.json"
     quote: "\"verify_p99_us\": 2.58,"
     checked: "2026-11-18"

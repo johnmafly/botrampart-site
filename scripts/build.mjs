@@ -11,6 +11,7 @@
 // numbered link to its source, and fails on an unknown id. <!-- @sources --> lists the page's
 // sources with the verbatim quote and the date each was checked.
 import { readClaims } from "./claims.mjs";
+import { buildDocsHtml, buildDocsText } from "./docs.mjs";
 import { appendFileSync, cpSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
@@ -108,6 +109,16 @@ function toc(html, route) {
   return html.replace("<!-- @toc -->", `<nav class="docnav" aria-label="On this page"><p class="docnav-title">On this page</p><ol>${items.join("")}</ol><p class="docnav-spec">Build it: <a href="/build/">start in observe mode</a></p></nav>`);
 }
 
+// Cloudflare's email obfuscation rewrites any address in page text (the spec's
+// ops@example.com examples on /docs/api/) into a /cdn-cgi/l/email-protection link
+// plus an injected, unfingerprinted decode script. Its documented opt-out is the
+// email_off comment pair, so wrap every address in text (never inside a tag).
+const EMAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}/g;
+function emailOff(html) {
+  return html.replace(/(^|>)([^<]+)/g, (m, gt, text) =>
+    gt + text.replace(EMAIL, (addr) => `<!--email_off-->${addr}<!--/email_off-->`));
+}
+
 function render(file) {
   const route = routeOf(file);
   let html = readFileSync(file, "utf8");
@@ -120,6 +131,7 @@ function render(file) {
   html = cite(html, route);
   html = scrollRegions(html, route);
   if (/<!-- @/.test(html)) throw new Error(`${route}: unreplaced marker`);
+  html = emailOff(html);
   writeFileSync(file, html);
 }
 
@@ -130,6 +142,8 @@ const walk = (dir) => readdirSync(dir).flatMap((name) => {
 
 rmSync(out, { recursive: true, force: true });
 cpSync(src, out, { recursive: true, filter: (p) => !p.startsWith(partials) });
+// The user guide: site/docs/*.md become /docs/<page>/ HTML pages here (scripts/docs.mjs).
+const docs = buildDocsHtml({ out, root });
 for (const file of walk(out)) if (file.endsWith(".html")) render(file);
 
 // Fingerprint every same-origin asset (CSS, JS, modules, fonts, SVG): /assets/site.css becomes
@@ -180,6 +194,9 @@ function fingerprint() {
   return renamed;
 }
 const assets = fingerprint();
+
+// The guide as Markdown (/docs/<page>.md), /llms.txt and /llms-full.txt, with fingerprinted asset URLs.
+buildDocsText({ out, docs, claims, assets, sha });
 
 // Copy the build spec so docs can link to it.
 mkdirSync(join(out, "spec"), { recursive: true });
