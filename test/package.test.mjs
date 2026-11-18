@@ -270,3 +270,14 @@ test("assets are fingerprinted: no page, stylesheet or module loads an unversion
   }
   assert.doesNotMatch(headers, /^\/assets\/\S*\*/m, "no wildcard asset rule (it would also cover unversioned files)");
 });
+
+test("email addresses in page text sit inside email_off, so Cloudflare injects no /cdn-cgi/ link or script", () => {
+  let wrapped = 0;
+  for (const { name, html } of pages) {
+    wrapped += (html.match(/<!--email_off-->/g) || []).length;
+    const text = html.replace(/<!--email_off-->[\s\S]*?<!--\/email_off-->/g, "").replace(/<[^>]*>/g, " ");
+    const bare = text.match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}/);
+    assert.equal(bare, null, `${name}: bare address ${bare && bare[0]}`);
+  }
+  assert.ok(wrapped > 0, "the API reference renders the spec's example addresses wrapped");
+});

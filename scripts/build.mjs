@@ -109,6 +109,16 @@ function toc(html, route) {
   return html.replace("<!-- @toc -->", `<nav class="docnav" aria-label="On this page"><p class="docnav-title">On this page</p><ol>${items.join("")}</ol><p class="docnav-spec">Build it: <a href="/build/">start in observe mode</a></p></nav>`);
 }
 
+// Cloudflare's email obfuscation rewrites any address in page text (the spec's
+// ops@example.com examples on /docs/api/) into a /cdn-cgi/l/email-protection link
+// plus an injected, unfingerprinted decode script. Its documented opt-out is the
+// email_off comment pair, so wrap every address in text (never inside a tag).
+const EMAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}/g;
+function emailOff(html) {
+  return html.replace(/(^|>)([^<]+)/g, (m, gt, text) =>
+    gt + text.replace(EMAIL, (addr) => `<!--email_off-->${addr}<!--/email_off-->`));
+}
+
 function render(file) {
   const route = routeOf(file);
   let html = readFileSync(file, "utf8");
@@ -121,6 +131,7 @@ function render(file) {
   html = cite(html, route);
   html = scrollRegions(html, route);
   if (/<!-- @/.test(html)) throw new Error(`${route}: unreplaced marker`);
+  html = emailOff(html);
   writeFileSync(file, html);
 }
 
