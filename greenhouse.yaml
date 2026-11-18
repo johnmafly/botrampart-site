@@ -19,12 +19,14 @@ content:
 
 # Cost model (pricing gate): every tier on /own/ with its price and what it costs us to serve,
 # per month in USD. Generated from costs/model.mjs by `npm run cost-model`; the tests fail when
-# this block, the site's prices or the workings drift apart.
+# this block, the site's prices or the workings drift apart. Format: docs/package-contract.md
+# (Cost model) in johnmafly/greenhouse. pricing_page is all of /own/: the self-hosted editions
+# are under #editions and the Cloud plans under #cloud, and the gate reads only inside an anchor.
 cost_model:
   currency: USD
   period: month
   workings: "costs/model.mjs"
-  pricing_page: "/own/#editions"
+  pricing_page: "/own/"
   tiers:
     - name: "Community"
       edition: "Community"
