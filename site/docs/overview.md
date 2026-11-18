@@ -1,5 +1,5 @@
 ---
-title: Overview and how it works
+title: Overview and concepts
 nav: Overview
 order: 1
 description: What BotRampart is, and how it works: sessions, tiers, path costs, budgets, the daily ceiling, mint buckets, the five-minute loop and explained decisions.
