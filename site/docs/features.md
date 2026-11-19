@@ -2,7 +2,7 @@
 title: Features
 nav: Features
 order: 3
-description: Every BotRampart capability, grouped by what it does for you: detection, sessions and tiers, budgets, mint buckets, policy, the five-minute loop, explanations, the agent, console, CLI, privacy controls, editions, and what is not available yet.
+description: Every BotRampart capability, grouped by what it does for you: detection, sessions and tiers, budgets, mint buckets, policy, the five-minute loop, explanations, the agent, console, CLI, privacy controls, editions, and what is coming next.
 lede: What BotRampart does, grouped by the job it does for you. Each feature links to the reference that defines it.
 ---
 
@@ -16,7 +16,7 @@ lede: What BotRampart does, grouped by the job it does for you. Each feature lin
 
 - **One first-party session cookie.** `__br_s`, set `HttpOnly` by your server and signed with your site key. A 30-minute token renewed on use, inside a session of at most seven days. No device fingerprint. [Token reference](/docs/architecture/#token).
 - **Automatic escalation.** A session that runs out of credit is asked for the next tier whose grant is still worth having (`challenge(next_tier)`), so challenges climb on their own and stop as soon as a person passes one. [Actions](/docs/policy/#actions).
-- **A challenge ladder.** Tier 0 (provisional), tier 1 (invisible proof-of-work), and tier 2 (a human check that works with a keyboard and a screen reader). Tier 3 step-up methods (email link, sign-in or passkey, an image puzzle, or a third-party widget) are [not available yet](/docs/overview/#not-yet). [Tiers](/docs/overview/#session).
+- **A challenge ladder.** Tier 0 (provisional), tier 1 (invisible proof-of-work), and tier 2 (a human check that works with a keyboard and a screen reader). Tier 3 step-up methods (email link, sign-in or passkey, an image puzzle, or a third-party widget) are [coming next](/docs/overview/#next). [Tiers](/docs/overview/#session).
 - **Memory-hard proof-of-work.** 16 to 50 small puzzles solved in a Web Worker: PBKDF2 through the browser's native crypto, Argon2id through WebAssembly where memory allows, plain SHA-256 as fallback. Difficulty is set by the server from risk, never from what the client says. [`PowChallenge`](/docs/api/#schema-PowChallenge).
 - **Automatic retry.** The browser SDK wraps `fetch` and `XMLHttpRequest`: when a response is a challenge, it runs the challenge and retries the request once. [Browser SDK](/docs/sdk/#browser).
 
@@ -40,14 +40,14 @@ lede: What BotRampart does, grouped by the job it does for you. Each feature lin
 ## Site-wide defense {#site-wide}
 
 - **The five-minute loop.** Core compares each cohort with its own baseline for that hour of the week and asks a decision model four typed questions about named bands. [The loop](/docs/architecture/#loop).
-- **Shadow mode.** Model answers are logged beside what the rules did. Rules that act on them are [not available yet](/docs/overview/#not-yet). [Directives](/docs/policy/#directives).
+- **Shadow mode.** Model answers are logged beside what the rules did. Rules that act on them are [coming next](/docs/overview/#next). [Directives](/docs/policy/#directives).
 - **A deterministic tripwire.** A site-wide jump in spend publishes a directive within one sync interval, before the next window.
-- **Edge coverage.** The Vector log pack, for traffic that never reaches the SDK, is [not available yet](/docs/overview/#not-yet). Core's [`ingestRollups`](/docs/api/#op-ingestRollups) is the call it will use.
+- **Edge coverage.** The Vector log pack, for traffic that never reaches the SDK, is [coming next](/docs/overview/#next). Core's [`ingestRollups`](/docs/api/#op-ingestRollups) is the call it will use.
 
 ## Explanations and operations {#explain}
 
 - **A reference on every refusal.** Each non-allow decision gets a reference such as `BR-7F3K2Q`, shown to the visitor and logged with the rule, policy version, budget, cost and model answer. [`getDecision`](/docs/api/#op-getDecision).
-- **The agent.** Explains decisions, shows a session's timeline, replays a policy, and answers named metrics, in Slack and the console. Free-form SQL, suggested policy changes and email are [not available yet](/docs/overview/#not-yet). [The agent](/docs/architecture/#agent).
+- **The agent.** Explains decisions, shows a session's timeline, replays a policy, and answers named metrics, in Slack and the console. Free-form SQL, suggested policy changes and email are [coming next](/docs/overview/#next). [The agent](/docs/architecture/#agent).
 - **The console.** A read-only view of policy, path costs, live budgets, decision search, keys and an audit log, served by Core.
 - **The CLI.** `br` generates install files, checks an install, replays a session against a policy and rotates keys.
 - **Access-log headers.** `BR-Sid` and `BR-Decision` on every response for your edge to log and strip. [Headers](/docs/api/#headers).
@@ -63,8 +63,8 @@ lede: What BotRampart does, grouped by the job it does for you. Each feature lin
 | Edition | Runs | What it adds |
 | --- | --- | --- |
 | Community | Self-hosted | Available today. Every part there is: SDKs, Core, challenge tiers 0 to 2, budgets, the decision loop, the agent, the console. "Protected by BotRampart" on challenge pages. Free. |
-| White-label | Self-hosted | [not available yet](/docs/overview/#not-yet). The official signed build with the mark removed, your own theme on challenge pages, a private issue tracker, a licence file that works offline. |
-| Enterprise | Self-hosted | [not available yet](/docs/overview/#not-yet). White-label plus single sign-on, roles and audit export, multi-site high-availability Core, support with a response time, and a commercial licence in place of AGPL. |
-| Cloud | Hosted | [not available yet](/docs/overview/#not-yet). Core and the agent run for you on Cloudflare; the SDKs still run in your app, with no proxy. Billed by protected session; blocked and failed traffic is never billed. |
+| White-label | Self-hosted | [coming next](/docs/overview/#next). The official signed build with the mark removed, your own theme on challenge pages, a private issue tracker, a licence file that works offline. |
+| Enterprise | Self-hosted | [coming next](/docs/overview/#next). White-label plus single sign-on, roles and audit export, multi-site high-availability Core, support with a response time, and a commercial licence in place of AGPL. |
+| Cloud | Hosted | [coming next](/docs/overview/#next). Core and the agent run for you on Cloudflare; the SDKs still run in your app, with no proxy. Billed by protected session; blocked and failed traffic is never billed. |
 
-A feature that reaches Community stays there, and Community builds with the commercial directory deleted. Prices for every edition, including those not available yet, are on [Own it](/own/#editions).
+A feature that reaches Community stays there, and Community builds with the commercial directory deleted. Prices for every edition, including those coming next, are on [Own it](/own/#editions).

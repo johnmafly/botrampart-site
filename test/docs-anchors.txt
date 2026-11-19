@@ -258,7 +258,7 @@
 /docs/getting-started/#to-sdk
 /docs/getting-started/#to-policy
 /docs/getting-started/#to-self-hosting
-/docs/overview/#not-yet
+/docs/overview/#next
 /docs/features/#detection
 /docs/integrations/#integration-points
 /docs/sdk/#keeps

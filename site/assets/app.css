@@ -8,6 +8,7 @@
 .pill.sample-pill { color: var(--amber); border-color: rgb(255 197 107 / .35); background: rgb(255 197 107 / .07); }
 .pill.sample-pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 8px var(--amber); }
 .pill.ro { color: var(--bone-2); border-style: dashed; }
+.pill.next { color: var(--ember-2); border-color: rgb(255 91 46 / .45); background: rgb(255 91 46 / .08); }
 .pill.a-ok { color: var(--frost); border-color: rgb(143 227 207 / .35); background: rgb(143 227 207 / .07); }
 .pill.a-challenge { color: var(--amber); border-color: rgb(255 197 107 / .35); background: rgb(255 197 107 / .07); }
 .pill.a-throttle { color: var(--ember-2); border-color: rgb(255 138 61 / .35); background: rgb(255 138 61 / .07); }
@@ -222,12 +223,10 @@ button.ref[aria-pressed="true"] { color: var(--ember-2); text-decoration-color: 
 /* ---------- Benchmark ---------- */
 .bench-h { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1rem; margin-bottom: 1rem; }
 .bench-h p:last-child { margin: 0; flex: 1 1 26rem; font-size: .86rem; color: var(--bone-2); }
-.bench-grid th[scope="col"] { white-space: normal; min-width: 6.5rem; vertical-align: bottom; text-transform: none; letter-spacing: 0; font-size: .74rem; color: var(--bone-2); }
-.bench-grid th[scope="col"]:first-child { color: var(--bone-3); }
+.bench-grid th[scope="col"] { white-space: normal; vertical-align: bottom; text-transform: none; letter-spacing: 0; font-size: .74rem; color: var(--bone-3); }
 .bench-grid tbody th { white-space: nowrap; }
-.bench-grid tbody tr:first-child th { color: var(--ember-2); }
-.bench-grid td.nm { text-align: center; color: var(--bone-3); background-image: repeating-linear-gradient(135deg, rgb(239 232 218 / .025) 0 6px, transparent 6px 12px); }
-.bench-grid td { border-left: 1px solid var(--line); }
+.bench-grid td.hit { color: var(--ember-2); font-weight: 600; }
+.bench-grid td.fp { color: var(--frost); font-weight: 600; }
 
 /* ---------- Settings ---------- */
 .set-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: .9rem; align-items: start; }

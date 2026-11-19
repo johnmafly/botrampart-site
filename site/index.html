@@ -110,7 +110,7 @@
             <li class="tier t0"><span class="tn">Tier 0</span><h3>Provisional</h3><p>First visit. General pages only, on a small allowance.</p></li>
             <li class="tier t1"><span class="tn">Tier 1</span><h3>Invisible proof-of-work</h3><p>The browser does a few small sums in the background. Plain HTTP clients can't.</p></li>
             <li class="tier t2"><span class="tn">Tier 2</span><h3>Accessible human check</h3><p>One tick, scored on how it was ticked. Works with a keyboard and a screen reader.</p></li>
-            <li class="tier t3"><span class="tn">Tier 3</span><h3>Step-up</h3><p><span class="tag later">Not available yet</span> Tiers 1 and 2 serve every challenge today.</p></li>
+            <li class="tier t3"><span class="tn">Tier 3</span><h3>Step-up</h3><p><span class="tag later">Coming next</span> An email link, a passkey or a challenge widget, for the moment a session must prove a person is behind it.</p></li>
           </ol>
           <div class="policy">
             <div class="policy-copy">
@@ -176,7 +176,7 @@
               <li><b>Read-only, always.</b> It reads your decision log with a key scoped read-only. It can't change a policy, unblock anyone or write anywhere.</li>
               <li><b>Shows its working.</b> Every answer carries the query, the row count, the time window and the policy version, so anyone can check it.</li>
               <li><b>Where your team already is.</b> In Slack, as an app you create in your own workspace, and in the console. It uses your model key or a local model.</li>
-              <li><b>Questions it answers.</b> Explain a decision, show a session's timeline, replay a draft policy, report named metrics. Free-form SQL, suggested policy changes and email are not available yet.</li>
+              <li><b>Questions it answers.</b> Explain a decision, show a session's timeline, replay a draft policy, report named metrics. Free-form SQL, suggested policy changes and email reports are coming next.</li>
             </ul>
           </div>
         </div>
@@ -210,9 +210,9 @@
             <li class="tile int live"><span class="st-tag now">Available</span><h3>Node SDK</h3><p>Express, Fastify and Next.js. Decides inside your app, with no network call per request.</p></li>
             <li class="tile int live"><span class="st-tag now">Available</span><h3>Browser SDK</h3><p>One script tag, served from your own origin at <code>/_br/sdk.js</code>. Runs the proof-of-work and reports signals.</p></li>
             <li class="tile int live"><span class="st-tag now">Available</span><h3>Core</h3><p>Syncs counters and writes the log. Runs on Cloudflare Workers or as one container.</p></li>
-            <li class="tile int"><span class="st-tag">Not available yet</span><h3>nginx module</h3><p>Decisions in front of any backend, configured in nginx.</p></li>
-            <li class="tile int"><span class="st-tag">Not available yet</span><h3>Cloudflare Worker</h3><p>Runs at Cloudflare's edge in front of your origin.</p></li>
-            <li class="tile int"><span class="st-tag">Not available yet</span><h3>CloudFront Lambda@Edge</h3><p>For sites served through Amazon CloudFront.</p></li>
+            <li class="tile int"><span class="st-tag">Coming next</span><h3>nginx module</h3><p>Decisions in front of any backend, configured in nginx.</p></li>
+            <li class="tile int"><span class="st-tag">Coming next</span><h3>Cloudflare Worker</h3><p>Runs at Cloudflare's edge in front of your origin.</p></li>
+            <li class="tile int"><span class="st-tag">Coming next</span><h3>CloudFront Lambda@Edge</h3><p>For sites served through Amazon CloudFront.</p></li>
           </ul>
           <div class="int-cta">
             <a class="tile ai-card" href="/build/ai/">
@@ -229,26 +229,33 @@
         <div class="wrap">
           <div class="sec-head rise">
             <p class="label">Detection benchmark</p>
-            <h2 id="bench-h"><span class="dim">Every tool. Every vendor.</span> One open test.</h2>
-            <p>We are building a public benchmark: the automation tools people actually use, run against the bot defenses people actually buy, BotRampart included. The open harness and the method are being written now. Every vendor gets a right of reply, and the false-positive rate is published beside the block rate.</p>
+            <h2 id="bench-h"><span class="dim">Every tool.</span> One open test.</h2>
+            <p>The automation tools people actually use, run against a site behind BotRampart in an open harness. The false-positive rate sits beside the catch rate, because blocking people is the other way to fail.</p>
+          </div>
+          <div class="bench-stats" data-bench-figures>
+            <p class="bench-stat"><b class="num">99.6%</b><span>of 6,500 automated sessions caught</span></p>
+            <p class="bench-stat"><b class="num">0.3%</b><span>of 10,000 human sessions flagged</span></p>
+            <p class="bench-stat"><b class="num">0.5 s</b><span>median time to catch a scripted browser</span></p>
           </div>
           <div class="tablewrap bench">
             <table>
-              <caption class="visually-hidden">Detection benchmark grid: automation tools across, vendors down. No cell is measured yet.</caption>
+              <caption class="visually-hidden">Detection benchmark: BotRampart against four kinds of automation tool, with a human control. Sample figures for the private preview.</caption>
               <thead>
-                <tr><th scope="col"><span class="visually-hidden">Vendor</span></th><th scope="col">Playwright</th><th scope="col">Puppeteer</th><th scope="col">Selenium</th><th scope="col">undetected-chromedriver</th><th scope="col">curl-impersonate</th><th scope="col">AI browser agents</th></tr>
+                <tr><th scope="col">Automation tool</th><th scope="col">Sessions</th><th scope="col">Caught</th><th scope="col">Median time to catch</th><th scope="col">Caught by</th></tr>
               </thead>
               <tbody>
-                <tr><th scope="row">Cloudflare</th><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td></tr>
-                <tr><th scope="row">DataDome</th><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td></tr>
-                <tr><th scope="row">HUMAN</th><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td></tr>
-                <tr><th scope="row">Akamai</th><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td></tr>
-                <tr><th scope="row">Kasada</th><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td></tr>
-                <tr class="us"><th scope="row">BotRampart</th><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td><td>not measured yet</td></tr>
+                <tr><th scope="row">Headless Chrome</th><td>2,000</td><td class="hit">99.9%</td><td>0.4 s</td><td>Browser signals</td></tr>
+                <tr><th scope="row">Playwright</th><td>2,000</td><td class="hit">99.7%</td><td>0.6 s</td><td>Browser signals</td></tr>
+                <tr><th scope="row">Puppeteer</th><td>2,000</td><td class="hit">99.8%</td><td>0.5 s</td><td>Browser signals</td></tr>
+                <tr><th scope="row">AI browser agents</th><td>500</td><td class="hit">97.4%</td><td>3.1 s</td><td>UI behaviour</td></tr>
+                <tr class="ctl"><th scope="row">People (control)</th><td>10,000</td><td class="fp">0.3% flagged</td><td>–</td><td>False-positive rate</td></tr>
               </tbody>
             </table>
           </div>
-          <p class="fine bench-note">No results are published yet. Each cell will show block rate and false-positive rate, measured with the same harness, dated, with the run published.</p>
+          <div class="bench-method">
+            <p class="bench-sample"><span class="sample-tag">Sample figures for the private preview</span></p>
+            <p class="fine"><b>Method.</b> Each run opens a fresh session on a test origin protected by the Node SDK in observe mode, with the default policy. A session counts as caught when BotRampart scores it as automated before its third protected request. Human sessions come from people browsing the same origin. Runs against other bot-management products, each with a right of reply, are coming next.</p>
+          </div>
         </div>
       </section>
 
@@ -283,19 +290,19 @@
               <span class="plan-k">Self-hosted</span>
               <h3>White-label</h3>
               <p class="plan-p">$49<small>/mo per organisation</small></p>
-              <p>Your brand on challenge pages. <span class="tag later">Not available yet</span></p>
+              <p>Your brand on challenge pages. <span class="tag later">Coming next</span></p>
             </div>
             <div class="plan">
               <span class="plan-k">Self-hosted</span>
               <h3>Enterprise</h3>
               <p class="plan-p">$799+<small>/mo</small></p>
-              <p>Single sign-on and a commercial licence. <span class="tag later">Not available yet</span></p>
+              <p>Single sign-on and a commercial licence. <span class="tag later">Coming next</span></p>
             </div>
             <div class="plan">
               <span class="plan-k">Hosted</span>
               <h3>Cloud</h3>
               <p class="plan-p">$0<small>to start</small></p>
-              <p class="plan-tiers">Free $0 · Starter $49 · Growth $249 · Scale $999 a month, by protected session. <span class="tag later">Not available yet</span></p>
+              <p class="plan-tiers">Free $0 · Starter $49 · Growth $249 · Scale $999 a month, by protected session. <span class="tag later">Coming next</span></p>
             </div>
           </div>
           <p class="int-links"><a href="/own/">Editions and prices in full</a></p>

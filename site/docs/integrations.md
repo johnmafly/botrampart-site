@@ -13,9 +13,9 @@ BotRampart runs where you choose in your own infrastructure, never behind a vend
 | Integration point | Where it runs | Code change in your app | Status |
 | --- | --- | --- | --- |
 | Node backend SDK (Express, Fastify, Next.js) | Inside your app process | Yes: mount the SDK | Available |
-| nginx module, including ingress-nginx | Your nginx, in front of your app | None | [not available yet](/docs/overview/#not-yet) |
-| Cloudflare Worker | Your own Cloudflare account, in front of your origin | None | [not available yet](/docs/overview/#not-yet) |
-| CloudFront (Lambda@Edge) | Your own AWS account, in front of your origin | None | [not available yet](/docs/overview/#not-yet) |
+| nginx module, including ingress-nginx | Your nginx, in front of your app | None | [coming next](/docs/overview/#next) |
+| Cloudflare Worker | Your own Cloudflare account, in front of your origin | None | [coming next](/docs/overview/#next) |
+| CloudFront (Lambda@Edge) | Your own AWS account, in front of your origin | None | [coming next](/docs/overview/#next) |
 
 The [express AI install](/build/ai/) writes an instruction prompt for your coding agent for the stack you pick.
 
@@ -52,9 +52,9 @@ By default each app instance keeps budgets in memory and reconciles spend at eac
 
 - **Log and strip the headers.** Every response through the SDK carries `BR-Sid` and `BR-Decision`. Log both at the edge and strip them before the response leaves; the [nginx example](/docs/configuration/#headers) does both. A path in your logs without `BR-Decision` is a route the SDK does not cover.
 - **Cached pages.** The SDK never sets the cookie on a response marked publicly cacheable, so your CDN keeps caching it; the browser SDK starts the session through `/_br`.
-- **The log pack ([not available yet](/docs/overview/#not-yet)).** Vector configurations for nginx, ingress-nginx, ALB, CloudFront and Cloudflare logs will reduce each minute to rollups by site, key, prefix, path class and status class, and send them to Core for traffic that never reaches the SDK. Raw IPs, paths and the cookie never leave.
+- **The log pack ([coming next](/docs/overview/#next)).** Vector configurations for nginx, ingress-nginx, ALB, CloudFront and Cloudflare logs will reduce each minute to rollups by site, key, prefix, path class and status class, and send them to Core for traffic that never reaches the SDK. Raw IPs, paths and the cookie never leave.
 
-```http op=ingestRollups cap="One NDJSON line per rollup, the shape the log pack will send (not available yet)"
+```http op=ingestRollups cap="One NDJSON line per rollup, the shape the log pack will send (coming next)"
 POST /v1/ingest/rollups
 Authorization: Bearer <ingest key>
 Content-Type: application/x-ndjson
@@ -79,7 +79,7 @@ The state the model sees follows Google's published guidance: numbers are compar
 
 - **Slack.** The agent runs as an app each customer creates in their own workspace from a shipped manifest, over Socket Mode, so no inbound URL is exposed.
 - **The console.** Served by Core, read-only.
-- **Email.** Digests and answers by email are [not available yet](/docs/overview/#not-yet).
+- **Email.** Digests and answers by email are [coming next](/docs/overview/#next).
 - **Your model key.** The agent uses your own model key or a local model, and reads the lake through DuckDB with a read-only key.
 
 ## Traffic that carries no cookie {#no-cookie}

@@ -7,7 +7,7 @@
 .prose .opts > li { margin: 0; }
 .opt { position: relative; display: flex; flex-direction: column; border-radius: var(--r); padding: 1.4rem 1.4rem 1.2rem; border: 1px solid var(--line); background: var(--ink-1); }
 .opt.is-live { border-color: rgb(143 227 207 / .45); background: radial-gradient(120% 80% at 0% 0%, rgb(143 227 207 / .09), transparent 60%), var(--ink-1); }
-.opt.is-later { border-style: dashed; border-color: var(--line-2); background: var(--ink-0); }
+.opt.is-later { border-style: dashed; border-color: rgb(255 91 46 / .3); background: radial-gradient(120% 80% at 100% 0%, rgb(255 91 46 / .06), transparent 60%), var(--ink-0); }
 .opt-status { margin: 0 0 .9rem; }
 .opt h3 { margin: 0 0 .25rem; font-size: 1.45rem; }
 .prose .opt .opt-sub { margin: 0 0 1rem; font-size: .76rem; font: 400 .76rem/1.4 var(--f-mono); color: var(--bone-3); }

@@ -62,7 +62,7 @@ On Cloudflare, Core's configuration is a Wrangler configuration with D1, KV, Dur
 | --- | --- | --- |
 | Instance key ([`instanceKey`](/docs/api/#security-instancekey)) | Each backend SDK deployment | `POST /v1/sync`. Stored with the site secrets, for example `/run/secrets/br_keys`. |
 | Console token ([`consoleToken`](/docs/api/#security-consoletoken)) | Console, agent, CLI | Reading policy and decisions needs a viewer role; publishing a policy needs an admin role. The agent inherits the asking person's role. |
-| Ingest key ([`ingestKey`](/docs/api/#security-ingestkey)) | Vector's HTTP sink | `POST /v1/ingest/rollups`. The Vector log pack is [not available yet](/docs/overview/#not-yet). |
+| Ingest key ([`ingestKey`](/docs/api/#security-ingestkey)) | Vector's HTTP sink | `POST /v1/ingest/rollups`. The Vector log pack is [coming next](/docs/overview/#next). |
 | Lake reader | The agent | A key scoped read-only to `br/v1/`. |
 
 Routes under `/_br` take no credentials: the session travels in the first-party cookie.

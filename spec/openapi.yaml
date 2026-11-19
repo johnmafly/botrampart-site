@@ -22,9 +22,9 @@ info:
     routes are open source under Apache-2.0.
 
     * **Core API**: the service the backend SDK syncs with, the challenge service
-    for tier 2 (tier 3 is not available yet), policy and decision lookups for the
+    for tier 2 (tier 3 is coming next), policy and decision lookups for the
     read-only console, agent and CLI, and the ingest endpoint for Vector (the Vector
-    log pack is not available yet).
+    log pack is coming next).
 
 
     **Protected routes.** Any route the backend SDK protects can answer with a
@@ -36,7 +36,7 @@ info:
     removes it.
 
 
-    **Not available yet.** Tier 3 (`step_up`) methods and third-party widgets: Core
+    **Coming next.** Tier 3 (`step_up`) methods and third-party widgets: Core
     serves tiers 0 to 2. Rules that act on the decision model's answers: the model
     runs in shadow mode, directives carry `ai.*` fields, and they are only logged.
     The Vector log pack behind `ingestRollups`. Editing policy in the console, which
@@ -57,14 +57,14 @@ tags:
     description: Instance sync between each backend SDK instance and Core (architecture §12.6).
   - name: "Core: challenges"
     description: >-
-      Core's challenge service for the human check (tier 2) and step-up (tier 3, not available yet),
+      Core's challenge service for the human check (tier 2) and step-up (tier 3, coming next),
       and the public keys that verify its attestations (architecture §6.4, 6.5, 12.5).
   - name: "Core: policy"
     description: Versioned policy documents and simulation against recent traffic (architecture §10).
   - name: "Core: decisions"
     description: Recent decisions from Core's hot store, before they land in the lake (architecture §11.1, 12.5).
   - name: "Core: ingest"
-    description: Edge rollups from Vector for the 5-minute loop (architecture §8.3). The Vector log pack that sends them is not available yet.
+    description: Edge rollups from Vector for the 5-minute loop (architecture §8.3). The Vector log pack that sends them is coming next.
 servers:
   - url: https://core.internal:8787
     description: >-
@@ -139,7 +139,7 @@ paths:
         backend SDK; for tier 2 or 3, returns the URL of Core's challenge widget.
         Calls Core? Only for tiers 2 and 3; tier 1 keeps minting when Core is down,
         while tiers 2 and 3 cannot be served then and rules that need them fall back
-        to throttle. Tier 3 (`step_up`) is not available yet.
+        to throttle. Tier 3 (`step_up`) is coming next.
       security: []
       parameters:
         - $ref: "#/components/parameters/SessionCookie"
@@ -517,7 +517,7 @@ paths:
       description: >-
         Serves the challenge widget, loaded by the browser in an iframe: a keyboard-
         and screen-reader-accessible checkbox for tier 2 with no puzzle. Tier 3
-        methods (step_up) are not available yet; every tier 3 configuration
+        methods (step_up) are coming next; every tier 3 configuration
         will offer at least one non-visual method.
       security: []
       parameters:
@@ -593,7 +593,7 @@ paths:
                     focus_changes: 0
                     visibility_changes: 0
               thirdParty:
-                summary: Third-party widget token (tier 3, not available yet)
+                summary: Third-party widget token (tier 3, coming next)
                 value:
                   c: "eyJ0Ijoic3RlcF91cCJ9.c2ln"
                   provider_token: "0.provider-token-example"
@@ -677,7 +677,7 @@ paths:
       tags: ["Core: ingest"]
       summary: Ingest per-minute edge rollups from Vector
       description: >-
-        The Vector log pack that sends these is not available yet. Receives a copy of
+        The Vector log pack that sends these is coming next. Receives a copy of
         Vector's per-minute rollups (by session or network prefix,
         path class and status class) for the 5-minute state builder; the lake copy
         goes straight to object storage. Delivery is at-least-once, so Core
@@ -1378,14 +1378,14 @@ components:
       examples: [9f2c4e1ab7d0]
     TierName:
       type: string
-      description: "Challenge tier by name: pow is tier 1, human tier 2, step_up tier 3 (not available yet)."
+      description: "Challenge tier by name: pow is tier 1, human tier 2, step_up tier 3 (coming next)."
       enum: [pow, human, step_up]
     ChallengeMethod:
       type: string
       description: >-
         Method for tier 2 (`checkbox`) or tier 3. Tier 3 methods (`image_grid`,
         `third_party`, `email_link`, `sign_in`, `passkey`, `private_access_token`)
-        are not available yet; every tier 3 configuration will offer at least one
+        are coming next; every tier 3 configuration will offer at least one
         non-visual method.
       enum: [checkbox, image_grid, third_party, email_link, sign_in, passkey, private_access_token]
       examples: [checkbox]
@@ -1710,10 +1710,10 @@ components:
             visibility_changes: { type: integer, minimum: 0 }
         provider_token:
           type: string
-          description: Token from a third-party widget (tier 3, not available yet), verified by Core.
+          description: Token from a third-party widget (tier 3, coming next), verified by Core.
         code:
           type: string
-          description: One-time code for the email method (tier 3, not available yet).
+          description: One-time code for the email method (tier 3, coming next).
 
     HumanVerifyResult:
       type: object
@@ -2121,8 +2121,8 @@ components:
         Fields from loop 2's model answer, published for a cohort or session with an
         expiry of at most 60 minutes. Directives set `ai.*` fields, not actions; policy
         rules decide what to do with them. The model runs in shadow mode: directives
-        carry `ai.*` fields and they are only logged; rules that act on them are not
-        available yet. Even then the model could raise a tier or lower a budget, never
+        carry `ai.*` fields and they are only logged; rules that act on them are coming
+        next. Even then the model could raise a tier or lower a budget, never
         block or allow-list.
       required: [id, match, set, expires]
       properties:
@@ -2214,7 +2214,7 @@ components:
       type: object
       description: >-
         One per-minute row from Vector's reduce transform (architecture §8.3; the log pack
-        is not available yet), grouped by site,
+        is coming next), grouped by site,
         minute, key, prefix, path class and status class. Raw IPs, paths and the
         cookie never appear.
       required: [site, minute, key, path_class, status_class, n]

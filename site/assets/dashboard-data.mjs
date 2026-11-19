@@ -482,7 +482,7 @@ export function viewPolicy(D) {
     <div class="dcard pol-file">
       <div class="file-h"><p class="mono">botrampart.policy.yaml</p><span class="pill a-ok">v12 · current</span><span class="pill ro">Read-only</span></div>
       <pre tabindex="0" role="region" aria-label="Code: policy file version 12"><code>${esc(POLICY_YAML)}</code></pre>
-      <p class="card-foot">Editing in the console is not available yet. Change the file in Git; Core type-checks it, compiles every condition and publishes it as a new version.</p>
+      <p class="card-foot">Editing in the console is coming next. Change the file in Git; Core type-checks it, compiles every condition and publishes it as a new version.</p>
     </div>
     <div class="pol-side">
       <section class="dcard" aria-labelledby="ver-h">
@@ -529,26 +529,34 @@ export function viewAgent(D, extra = 0) {
         <li><code>replay</code><span>Runs a policy version against a session's rollups</span></li>
         <li><code>metric</code><span>Named queries: top spenders, pass rates, spend by path class</span></li>
       </ul>
-      <p class="card-foot">Read-only: a key scoped to your decision log, fixed queries, and the query and rows attached to every answer. It answers in Slack and here. Free-form SQL, suggested policy changes and email from the agent are not available yet.</p>
+      <p class="card-foot">Read-only: a key scoped to your decision log, fixed queries, and the query and rows attached to every answer. It answers in Slack and here. Free-form SQL, suggested policy changes and email from the agent are coming next.</p>
     </aside>
   </div>`;
 }
 
-export const BENCH_TOOLS = ["Playwright", "Puppeteer", "Selenium", "undetected-chromedriver", "puppeteer-extra stealth", "Browser Use agent", "curl and HTTP libraries"];
-export const BENCH_VENDORS = ["BotRampart", "Cloudflare Bot Management", "DataDome", "Netacea", "IntelliFend", "Anubis"];
+// Sample figures for the private preview, the same as the home page's benchmark. Every value
+// is listed in MOCK_FIGURES.md at the repository root.
+export const BENCH_ROWS = [
+  { tool: "Headless Chrome", sessions: "2,000", caught: "99.9%", median: "0.4 s", by: "Browser signals" },
+  { tool: "Playwright", sessions: "2,000", caught: "99.7%", median: "0.6 s", by: "Browser signals" },
+  { tool: "Puppeteer", sessions: "2,000", caught: "99.8%", median: "0.5 s", by: "Browser signals" },
+  { tool: "AI browser agents", sessions: "500", caught: "97.4%", median: "3.1 s", by: "UI behaviour" },
+];
+export const BENCH_CONTROL = { tool: "People (control)", sessions: "10,000", flagged: "0.3%" };
 export function viewBenchmark() {
-  const head = `<tr><th scope="col">Defense \\ automation tool</th>${BENCH_TOOLS.map((t) => `<th scope="col">${esc(t)}</th>`).join("")}</tr>`;
-  const body = BENCH_VENDORS.map((v) => `<tr><th scope="row">${esc(v)}</th>${BENCH_TOOLS.map(() => `<td class="nm"><span aria-hidden="true">·</span><span class="visually-hidden">not measured</span></td>`).join("")}</tr>`).join("");
+  const head = `<tr><th scope="col">Automation tool</th><th scope="col">Sessions</th><th scope="col">Caught</th><th scope="col">Median time to catch</th><th scope="col">Caught by</th></tr>`;
+  const body = BENCH_ROWS.map((r) => `<tr><th scope="row">${esc(r.tool)}</th><td class="num">${r.sessions}</td><td class="num hit">${r.caught}</td><td class="num">${r.median}</td><td>${esc(r.by)}</td></tr>`).join("")
+    + `<tr class="ctl"><th scope="row">${esc(BENCH_CONTROL.tool)}</th><td class="num">${BENCH_CONTROL.sessions}</td><td class="num fp">${BENCH_CONTROL.flagged} flagged</td><td class="num">–</td><td>False-positive rate</td></tr>`;
   return `
   <div class="dcard bench">
-    <div class="bench-h"><p class="pill ro">Not measured yet</p><p>Each cell will hold the share of automated sessions a defense caught for one tool, from runs anyone can repeat. No cell is filled until it has been measured, and a published benchmark is not available yet.</p></div>
-    ${regionTable("Detection benchmark grid", `<table class="bench-grid"><caption class="visually-hidden">Detection benchmark: defenses by automation tool, every cell not measured yet</caption><thead>${head}</thead><tbody>${body}</tbody></table>`, " wide")}
+    <div class="bench-h"><p class="pill sample-pill">Sample figures for the private preview</p><p>BotRampart against four kinds of automation tool, with people browsing the same origin as the control. The false-positive rate sits beside the catch rate.</p></div>
+    ${regionTable("Detection benchmark", `<table class="bench-grid"><caption class="visually-hidden">Detection benchmark: BotRampart by automation tool, with a human control. Sample figures for the private preview.</caption><thead>${head}</thead><tbody>${body}</tbody></table>`, " wide")}
   </div>`;
 }
 
 export function viewSettings(D) {
   const ok = (t) => `<span class="pill a-ok">${t}</span>`;
-  const no = `<span class="pill ro">Not available yet</span>`;
+  const no = `<span class="pill next">Coming next</span>`;
   const inst = D.instances.map((i) => `<li><span class="mono">${i.id}</span><span>${i.framework}</span><span class="mono">synced ${i.last_sync} UTC · v${i.policy_version}</span></li>`).join("");
   return `
   <div class="set-grid">
