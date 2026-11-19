@@ -91,7 +91,7 @@
 }
 
 /* Express product page */
-.express-head .btn-row { margin-top: 2rem; }
+
 .ex-cards { list-style: none; padding: 0; margin: 3rem 0 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
 .ex-cards li { border: 1px solid var(--line); border-radius: var(--r); background: var(--ink-1); padding: 1.4rem; }
 .ex-cards h3 { margin: .7rem 0 .5rem; font-size: 1.1rem; }
