@@ -594,3 +594,54 @@
   .vd { top: auto; bottom: .45rem; translate: none; padding: .32rem .6rem; font-size: .7rem; }
   .gl-lane .vd { right: .5rem; }
 }
+
+/* ---------- First screen on a phone (2026-11-19, #29): one menu button, one-line pill, larger headline,
+   one main button, no capability links, console higher. Every rule below sits under 560px or hides a
+   phone-only element, so the desktop first screen is unchanged. ---------- */
+.m-menu, .news-t-s { display: none; }
+@media (max-width: 560px) {
+  html { scroll-padding-top: 4.6rem; }
+  /* Header: logo, Get a demo and a Menu button; the six menu pills move into the menu. */
+  .home .top-row { flex-wrap: nowrap; gap: .5rem; }
+  .home .nav, .home .stars { display: none; }
+  .home .cta-pill .chip { display: none; }
+  .home .cta-pill { padding: .55rem .85rem; }
+  .m-menu { display: block; }
+  .m-menu > summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: .4rem; min-height: 2.5rem; padding: 0 .75rem; border: 1px solid var(--line-2); border-radius: 999px; color: var(--bone); font: 500 .86rem/1 var(--f-text); }
+  .m-menu > summary::-webkit-details-marker { display: none; }
+  .m-menu > summary:hover, .m-menu[open] > summary { background: var(--ink-2); border-color: var(--bone-2); }
+  .m-menu > summary:focus-visible { outline: 2px solid var(--bone); outline-offset: 2px; }
+  .pm-i { width: 1rem; height: 1rem; stroke: currentColor; stroke-width: 1.8; fill: none; stroke-linecap: round; }
+  .m-menu[open] .pm-i path { d: path("M5 5l10 10M15 5L5 15"); }
+  .pm-panel { position: absolute; left: 0; right: 0; top: 100%; z-index: 60; max-height: calc(100dvh - 3.6rem); overflow-y: auto; display: grid; grid-template-columns: 1fr 1fr; gap: .15rem .5rem; padding: .6rem var(--gut) 1.2rem; background: var(--ink-1); border-bottom: 1px solid var(--line-2); box-shadow: 0 30px 60px -20px rgb(0 0 0 / .9); }
+  .pm-group, .pm-more { grid-column: 1 / -1; }
+  .pm-h { margin: .6rem 0 .2rem; font: 500 .72rem/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--bone-2); }
+  .pm-list { display: grid; grid-template-columns: 1fr 1fr; gap: .15rem .5rem; }
+  .pm-panel a { display: block; min-height: 2.75rem; padding: .6rem .5rem; border-radius: 10px; text-decoration: none; color: var(--bone); font: 500 .93rem/1.2 var(--f-text); }
+  .pm-panel a:hover { background: var(--ink-2); }
+  .pm-panel a:focus-visible { outline: 2px solid var(--bone); outline-offset: -2px; }
+  .pm-panel a b { display: block; font-weight: 520; }
+  .pm-panel a span { display: block; margin-top: .15rem; font-size: .78rem; line-height: 1.3; color: var(--bone-2); }
+  .pm-more { display: flex; gap: .5rem; margin-top: .4rem; padding-top: .5rem; border-top: 1px solid var(--line); }
+  .pm-more a { flex: 1; color: var(--bone-2); }
+
+  /* First screen: the header is one row now, so the headline needs no clearance for a second menu row. */
+  .fs { padding-top: 1.25rem; padding-bottom: 2rem; }
+  .fs-news { align-items: center; margin-bottom: 1.6rem; }
+  .news-pill { border-radius: 999px; white-space: nowrap; padding-right: .7rem; }
+  .news-t { display: none; }
+  .news-t-s { display: inline; }
+  /* Pause motion: a small corner icon at the end of the pill row (target 28 x 28 px). */
+  .fs .motion-btn { width: 1.75rem; height: 1.75rem; min-height: 0; border-color: var(--line); color: var(--bone-2); }
+  .fs .motion-btn svg { width: .75rem; height: .75rem; }
+  .fs h1.roll-h { font-size: clamp(2rem, 9.2vw, 2.15rem); line-height: 1.14; margin-bottom: 1.25rem; }
+  .fs-sub-more { display: none; }
+  .fs-sub { margin-bottom: 1.4rem; }
+  .fs-actions { flex-direction: column; align-items: stretch; gap: .35rem; }
+  .fs-actions .btn-primary { justify-content: center; min-height: 3rem; }
+  .fs-actions .fs-docs { display: none; }
+  .fs-actions [data-copy-agent-prompt] { align-self: center; min-height: 2.75rem; padding: 0 .5rem; border: 0; background: none; color: var(--bone-2); font: 500 .93rem/1 var(--f-text); text-decoration: underline; text-decoration-color: var(--line-2); text-underline-offset: .3em; }
+  .fs-actions [data-copy-agent-prompt]:hover { color: var(--bone); }
+  .fs-caps { display: none; }
+  .fs-console { margin-top: 1.4rem; }
+}

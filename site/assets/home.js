@@ -155,3 +155,14 @@ if (gateEl && !reduce && "IntersectionObserver" in window) {
     else if ("live" in gateEl.dataset) gateEl.dataset.off = "";
   }, { threshold: 0.35 }).observe(gateEl.querySelector(".gate-stage"));
 }
+
+/* ---------- 7. The phone menu closes on a link tap or Escape. ---------- */
+// It is a <details>, so it opens and closes without JavaScript; this only tidies up after a same-page
+// link (Benchmark) and lets Escape close it and return focus to the Menu button.
+const phoneMenu = document.querySelector("[data-phone-menu]");
+if (phoneMenu) {
+  phoneMenu.addEventListener("click", (e) => { if (e.target.closest("a")) phoneMenu.open = false; });
+  phoneMenu.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && phoneMenu.open) { phoneMenu.open = false; phoneMenu.querySelector("summary").focus(); }
+  });
+}

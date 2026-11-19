@@ -56,8 +56,10 @@ test("the New pill links to the docs line that backs it", () => {
   const pill = firstScreen.match(/<a class="news-pill" href="([^"]+)">([\s\S]*?)<\/a>/);
   assert.ok(pill, "pill on the first screen");
   assert.equal(pill[1], "/docs/changelog/#d2026-11-19");
-  const claim = text(pill[2]).match(/^New (.+) Changelog →$/)?.[1];
+  const claim = text(pill[2].replace(/<span class="news-t-s">[\s\S]*?<\/span>/, "")).match(/^New (.+) Changelog →$/)?.[1];
   assert.equal(claim, "Edge adapters protect an app with no code change");
+  // On a phone the pill shows a one-line short form of the same claim (#29).
+  assert.equal(text(pill[2].match(/<span class="news-t-s">([\s\S]*?)<\/span>/)?.[1] ?? ""), "Edge adapters, no code change");
   const log = readFileSync(join(dist, "docs", "changelog", "index.html"), "utf8");
   const day = log.slice(log.indexOf('id="d2026-11-19"'));
   assert.ok(day.length > 0, "the anchor exists");
