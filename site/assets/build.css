@@ -1,4 +1,4 @@
-/* Build pages: integration options (/build/), wiring (/build/wire/) and the express AI install (/build/ai/).
+/* Build pages: integration options (/build/), wiring (/build/wire/) and Express, the one-prompt install (/express/ and the home section).
    Uses the design tokens from site.css. Motion only inside prefers-reduced-motion: no-preference. */
 
 /* ---------- /build/: integration options ---------- */
@@ -6,8 +6,8 @@
 .prose .opts { list-style: none; padding: 0; margin: 2rem 0 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .prose .opts > li { margin: 0; }
 .opt { position: relative; display: flex; flex-direction: column; border-radius: var(--r); padding: 1.4rem 1.4rem 1.2rem; border: 1px solid var(--line); background: var(--ink-1); }
-.opt.is-live { border-color: rgb(143 227 207 / .45); background: radial-gradient(120% 80% at 0% 0%, rgb(143 227 207 / .09), transparent 60%), var(--ink-1); }
-.opt.is-later { border-style: dashed; border-color: rgb(255 91 46 / .3); background: radial-gradient(120% 80% at 100% 0%, rgb(255 91 46 / .06), transparent 60%), var(--ink-0); }
+.opt.is-live { border-color: rgb(70 244 136 / .45); background: radial-gradient(120% 80% at 0% 0%, rgb(70 244 136 / .09), transparent 60%), var(--ink-1); }
+.opt.is-later { border-style: dashed; border-color: rgb(250 123 106 / .3); background: radial-gradient(120% 80% at 100% 0%, rgb(250 123 106 / .06), transparent 60%), var(--ink-0); }
 .opt-status { margin: 0 0 .9rem; }
 .opt h3 { margin: 0 0 .25rem; font-size: 1.45rem; }
 .prose .opt .opt-sub { margin: 0 0 1rem; font-size: .76rem; font: 400 .76rem/1.4 var(--f-mono); color: var(--bone-3); }
@@ -24,7 +24,7 @@
 @media (max-width: 700px) { .prose .opts { grid-template-columns: 1fr; } }
 
 .ai-teaser { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; margin: 2.5rem 0 1rem; padding: 1.5rem; border-radius: 18px; border: 1px solid var(--line-2);
-  background: radial-gradient(100% 140% at 100% 0%, rgb(255 91 46 / .12), transparent 60%), var(--ink-1); }
+  background: radial-gradient(100% 140% at 100% 0%, rgb(250 123 106 / .12), transparent 60%), var(--ink-1); }
 .ai-teaser h3 { margin: .6rem 0 .5rem; font-size: 1.6rem; }
 .prose .ai-teaser p:last-child { margin: 0; font-size: .95rem; }
 .ai-teaser .btn { flex: none; }
@@ -40,7 +40,7 @@
 .prose .fw-grid .fw-name { font: 600 .74rem/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--frost); margin-bottom: .5rem; }
 @media (max-width: 700px) { .fw-grid { grid-template-columns: 1fr; } }
 
-/* ---------- /build/ai/: express AI install ---------- */
+/* ---------- Express (/express/ and the home page's Express section): the stack picker ---------- */
 .label .crumb { color: inherit; text-decoration: none; border-bottom: 1px solid var(--line-2); }
 .label .crumb:hover { color: var(--bone); border-bottom-color: var(--bone-3); }
 .ai-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(2rem, 1rem + 3vw, 4rem); padding-block: 3rem 6rem; align-items: start; }
@@ -63,11 +63,11 @@
 .ai-out-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: .8rem; min-height: 3rem; }
 .ai-out-head .ai-h { margin: 0; }
 .ai-copy[hidden] { display: none; }
-.ai-copy.is-done { --bg: var(--frost); }
+.ai-copy.is-done { --bg: var(--allow); --fg: var(--ink-0); }
 .ai-summary { margin: 0 0 .3rem; }
 .ai-status { min-height: 1.4em; margin: 0 0 .6rem; font: 500 .8rem/1.4 var(--f-mono); color: var(--frost); }
 .ai-prompt { max-height: min(62vh, 44rem); overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .76rem; line-height: 1.6; color: var(--bone-2);
-  border-color: var(--line-2); box-shadow: inset 3px 0 var(--ember); }
+  border-color: var(--line-2); box-shadow: none; }
 .ai-h3 { font-size: 1.2rem; margin-top: 2rem; }
 .ai-where { list-style: none; padding: 0; margin: 0 0 1.5rem; font-size: .93rem; color: var(--bone-2); }
 .ai-where li { padding: .55rem 0; border-top: 1px dashed var(--line-2); }
@@ -89,3 +89,31 @@
   .opt.is-live:hover { transform: translateY(-2px); border-color: var(--frost); }
   .ai-copy.is-done { transition: background-color .2s; }
 }
+
+/* Express product page */
+.express-head .btn-row { margin-top: 2rem; }
+.ex-cards { list-style: none; padding: 0; margin: 3rem 0 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+.ex-cards li { border: 1px solid var(--line); border-radius: var(--r); background: var(--ink-1); padding: 1.4rem; }
+.ex-cards h3 { margin: .7rem 0 .5rem; font-size: 1.1rem; }
+.ex-cards p { margin: 0; color: var(--bone-2); font-size: .95rem; }
+.ex-k { font: 400 .72rem/1 var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--bone-2); }
+.ex-steps { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.ex-steps li { background: var(--ink-1); padding: 1.5rem; }
+.ex-steps h3 { margin: .8rem 0 .4rem; font-size: 1.1rem; }
+.ex-steps p { margin: 0; color: var(--bone-2); font-size: .95rem; }
+.ex-n { font: 400 .74rem/1 var(--f-mono); color: var(--bone-2); }
+@media (max-width: 980px) { .ex-cards { grid-template-columns: 1fr 1fr; } .ex-steps { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .ex-cards, .ex-steps { grid-template-columns: 1fr; } }
+.ai-form .choice small { color: var(--bone-2); }
+.ai-form .choices { grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); }
+/* Home: the picker as the section's screen */
+.ex-home { border: 1px solid var(--line-2); border-radius: 24px; background: var(--ink-1); overflow: hidden; }
+.ex-home .ex-bar { display: flex; align-items: center; gap: 1rem; padding: .85rem 1.2rem; border-bottom: 1px solid var(--line); font: 400 .78rem/1 var(--f-mono); color: var(--bone-2); }
+.ex-home .ai-grid { padding: 1.5rem; gap: 1.5rem; }
+.ex-home .ai-form .field { margin-bottom: 1.2rem; }
+.ex-home .ai-form legend { font-size: .95rem; }
+.ex-home .ai-form .choices { grid-template-columns: repeat(auto-fill, minmax(8.2rem, 1fr)); gap: .4rem; }
+.ex-home .ai-form .choice span { padding: .6rem .75rem; font-size: .92rem; }
+.ex-home .ai-out { position: static; }
+.ex-home .ai-prompt { max-height: 26rem; }
+.ex-home .ai-h { font-size: 1.15rem; }

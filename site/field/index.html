@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- @head | The field: BotRampart against Cloudflare, DataDome, Netacea, IntelliFend and open source | A sourced, dated comparison with four commercial bot defenses and the open-source peers, including where each one is the better choice. -->
+    <!-- @head | The field: BotRampart against Cloudflare, DataDome, Netacea and open source | A sourced, dated comparison with three commercial bot defenses and the open-source peers, including where each one is the better choice. -->
   </head>
   <body>
     <!-- @header -->
@@ -10,7 +10,7 @@
         <div class="wrap">
           <p class="label">The field · as of 18 November 2026</p>
           <h1>Who else does this. And when to pick them instead.</h1>
-          <p class="lede">Four commercial products and the open-source projects nearest to BotRampart: how each is deployed, where your traffic data goes, what it costs to start, and where it wins. Every fact about someone else is sourced and quoted at the foot of the page.</p>
+          <p class="lede">Three commercial products and the open-source projects nearest to BotRampart: how each is deployed, where your traffic data goes, what it costs to start, and where it wins. Every fact about someone else is sourced and quoted at the foot of the page.</p>
         </div>
       </div>
       <div class="wrap doc-grid">
@@ -22,7 +22,7 @@
           <p>The biggest difference isn't the detection. It's where the product sits relative to your traffic.</p>
           <div class="field-map">
             <div><span class="where">In front of your site</span><h3>Cloudflare · Anubis</h3><p>Every request passes through a proxy first: Cloudflare's network, or an Anubis container you run. Nothing to change in your app.</p></div>
-            <div><span class="where">Your edge asks theirs</span><h3>DataDome · Netacea · IntelliFend</h3><p>A module in your CDN, WAF or server sends request data to the vendor's detection service, or you forward logs to it.</p></div>
+            <div><span class="where">Your edge asks theirs</span><h3>DataDome · Netacea</h3><p>A module in your CDN, WAF or server sends request data to the vendor's detection service, or you forward logs to it.</p></div>
             <div class="us"><span class="where">Inside your app</span><h3>BotRampart</h3><p>An SDK in your framework decides from a signed cookie and a synced policy. No hop, and no request data leaves.</p></div>
           </div>
 
@@ -31,11 +31,10 @@
             <table>
               <thead><tr><th scope="col"><span class="visually-hidden">Product</span></th><th scope="col">How it is deployed</th><th scope="col">Where detection runs</th><th scope="col">Open source</th><th scope="col">Public entry price</th></tr></thead>
               <tbody>
-                <tr><th scope="row">BotRampart</th><td>SDKs in your app plus Core you host</td><td>Your app server and your Core</td><td>Yes: SDKs Apache-2.0, Core AGPL-3.0</td><td>Free to self-host; Cloud coming next</td></tr>
+                <tr><th scope="row">BotRampart</th><td>SDKs in your app plus Core you host</td><td>Your app server and your Core</td><td>Yes: SDKs Apache-2.0, Core AGPL-3.0</td><td>Free to self-host; Cloud free to start, then by protected session</td></tr>
                 <tr><th scope="row">Cloudflare</th><td>Reverse proxy in front of your site</td><td>Cloudflare's network</td><td>No</td><td>Bot Fight Mode on the Free plan;{{c:cf-bot-mgmt-enterprise}} Business $200 a month billed annually{{c:cf-business-price}}</td></tr>
                 <tr><th scope="row">DataDome</th><td>Modules in your CDN or server that call DataDome</td><td>DataDome's service</td><td>No</td><td>$3,830 a month (Essentials){{c:dd-entry-price}}</td></tr>
                 <tr><th scope="row">Netacea</th><td>Plugs into your CDN, WAF or load balancer{{c:net-platform}}</td><td>Server-side, Netacea's service</td><td>No</td><td>Per-unit AWS Marketplace contract, sized with the vendor{{c:net-aws}}</td></tr>
-                <tr><th scope="row">IntelliFend</th><td>CDN worker, a proxy next to your origin, or log forwarding{{c:if-deploy}}</td><td>IntelliFend's detection platform</td><td>No</td><td>$749 a month for 20M requests{{c:if-price}}</td></tr>
                 <tr><th scope="row">Anubis</th><td>A proxy you run in front of your app</td><td>Your server</td><td>Yes, MIT{{c:anubis-readme}}</td><td>Free</td></tr>
               </tbody>
             </table>
@@ -45,22 +44,17 @@
           <h2 id="cloudflare">Cloudflare</h2>
           <p>Cloudflare sits in front of a very large share of the web: W3Techs puts it at 86.6% of sites that use a reverse proxy service.{{c:cf-reach}} Its bot tools come in layers: Bot Fight Mode on the Free plan, and per-request bot scores with custom rules in Bot Management for Enterprise.{{c:cf-bot-mgmt-enterprise}} Turnstile, its CAPTCHA replacement, is free with unlimited challenges,{{c:cf-turnstile-free}} and since 1 July 2025 new domains block AI crawlers by default.{{c:cf-ai-default}}</p>
           <div class="win"><span class="who">Where Cloudflare is the better choice</span><p>If you are willing to put a proxy in front of your site, start there. It is free or cheap, it absorbs floods that BotRampart cannot, and it learns from traffic across a large part of the internet, which no self-hosted product can match.</p></div>
-          <p><b>Where BotRampart differs.</b> Your traffic must pass through Cloudflare's network, and the free tools are coarse: its own documentation covers false positives from Bot Fight Mode and notes that Bot Fight Mode cannot be skipped with WAF custom rules.{{c:cf-fp}} Removing Cloudflare's branding from Turnstile is reserved for Enterprise customers.{{c:cf-offlabel}} BotRampart is for apps that cannot or will not sit behind one vendor's edge, and for teams that want every decision explained from a log they own. The two also combine: keep Cloudflare for floods and run BotRampart in the app.</p>
+          <p><b>Where BotRampart differs.</b> Your traffic must pass through Cloudflare's network, and the free tools are coarse: its own documentation covers false positives from Bot Fight Mode and notes that Bot Fight Mode cannot be skipped with WAF custom rules.{{c:cf-fp}} Removing Cloudflare's branding from Turnstile is reserved for Enterprise customers.{{c:cf-offlabel}} BotRampart is for apps that cannot or prefer not to sit behind one vendor's edge, and for teams that want every decision explained from a log they own. The two also combine: keep Cloudflare for floods and run BotRampart in the app.</p>
 
           <h2 id="datadome">DataDome</h2>
           <p>DataDome was founded in Paris in 2015{{c:dd-founded}} and says it detects bots in under 2 milliseconds from more than 35 points of presence.{{c:dd-2ms}} Forrester's 2026 evaluation, as summarised by a competitor, named it a Leader alongside HUMAN and Kasada.{{c:forrester-leaders}} It published Agent Trust, a control plane for AI agent traffic, on 5 May 2026.{{c:dd-agent-trust}}</p>
-          <div class="win"><span class="who">Where DataDome is the better choice</span><p>A large site under sustained, well-funded attack, with budget for an enterprise contract and no objection to sending request data to a vendor, gets a vendor with more than a decade of operation and an agent-traffic product already published. BotRampart cannot claim comparable detection quality, and will not until an open benchmark says otherwise.</p></div>
+          <div class="win"><span class="who">Where DataDome is the better choice</span><p>A large site under sustained, well-funded attack, with budget for an enterprise contract and no objection to sending request data to a vendor, gets a vendor with more than a decade of operation and an agent-traffic product already published. BotRampart makes no claim of comparable detection quality without an open benchmark that shows it.</p></div>
           <p><b>Where BotRampart differs.</b> Price and custody. DataDome's entry plan lists at $3,830 a month,{{c:dd-entry-price}} and data is kept for up to 30 days depending on the plan.{{c:dd-retention}} Its server modules ask DataDome's API about requests and, if its response header is missing, treat the request as allowed.{{c:dd-protapi}} BotRampart decides in your process without a network call and keeps the decision log in your bucket for as long as you choose.</p>
 
           <h2 id="netacea">Netacea</h2>
           <p>Netacea raised a further £4 million from Mercia in December 2024.{{c:net-mercia}} Its Talos engine is agentless: no JavaScript and no device fingerprinting, with detection server-side.{{c:net-talos}} It plugs into the CDNs, WAFs and load balancers you already run.{{c:net-platform}}</p>
           <div class="win"><span class="who">Where Netacea is the better choice</span><p>If you want nothing at all in the browser and nothing in your application code, Netacea's model fits better than BotRampart's, which needs a script tag and an SDK in your app.</p></div>
           <p><b>Where BotRampart differs.</b> Netacea shows that a consent-light, server-side approach sells. BotRampart shares the no-fingerprint stance but runs in your infrastructure, publishes its code and policy format, and meters sessions instead of classifying intent. Netacea's public pricing is a per-unit marketplace contract sized with the vendor;{{c:net-aws}} BotRampart's Community edition is free to self-host.</p>
-
-          <h2 id="intellifend">IntelliFend</h2>
-          <p>IntelliFend is a Singapore company with teams across Hong Kong, Taiwan and Vietnam,{{c:if-singapore}} launched on AWS Marketplace in August 2024.{{c:if-launch}} It deploys three ways: a CDN worker, a lightweight proxy next to your origin, or NGINX configuration that pushes access logs to its servers for analysis.{{c:if-deploy}} Its browser SDK, RequestShield, obtains single-use proof-of-work tokens.{{c:if-pow}}</p>
-          <div class="win"><span class="who">Where IntelliFend is the better choice</span><p>An APAC team that wants a regional vendor, sits behind an existing CDN, and is happy at a published $749 a month for up to 20 million requests{{c:if-price}} gets a working product today.</p></div>
-          <p><b>Where BotRampart differs.</b> IntelliFend already ships proof-of-work, so that is not a difference. The differences are open source, detection inside your own infrastructure, the decision log in your own bucket, and explanations on request.</p>
 
           <h2 id="oss">Open-source peers</h2>
           <h3 id="anubis">Anubis</h3>
@@ -80,7 +74,6 @@
                 <tr><th scope="row">are happy behind a CDN and want protection this week</th><td>Cloudflare</td></tr>
                 <tr><th scope="row">face a sustained, funded attack and have an enterprise budget</th><td>DataDome, or another Forrester Leader</td></tr>
                 <tr><th scope="row">want nothing in the browser and nothing in your code</th><td>Netacea</td></tr>
-                <tr><th scope="row">want a managed service in APAC at a published mid-market price</th><td>IntelliFend</td></tr>
                 <tr><th scope="row">need to stop crawlers on a docs site or forge today, for free</th><td>Anubis</td></tr>
                 <tr><th scope="row">cannot route traffic or visitor data through a vendor, and want every decision explained from your own log</th><td>BotRampart</td></tr>
               </tbody>

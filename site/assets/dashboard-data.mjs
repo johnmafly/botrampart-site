@@ -480,9 +480,9 @@ export function viewPolicy(D) {
   return `
   <div class="pol-layout">
     <div class="dcard pol-file">
-      <div class="file-h"><p class="mono">botrampart.policy.yaml</p><span class="pill a-ok">v12 · current</span><span class="pill ro">Read-only</span></div>
+      <div class="file-h"><p class="mono">botrampart.policy.yaml</p><span class="pill a-ok">v12 · current</span><span class="pill ro">Editable</span></div>
       <pre tabindex="0" role="region" aria-label="Code: policy file version 12"><code>${esc(POLICY_YAML)}</code></pre>
-      <p class="card-foot">Editing in the console is coming next. Change the file in Git; Core type-checks it, compiles every condition and publishes it as a new version.</p>
+      <p class="card-foot">Edit it here or in Git. Core type-checks the file, compiles every condition, replays it against yesterday's traffic and publishes it as a new version once a second person approves.</p>
     </div>
     <div class="pol-side">
       <section class="dcard" aria-labelledby="ver-h">
@@ -529,7 +529,7 @@ export function viewAgent(D, extra = 0) {
         <li><code>replay</code><span>Runs a policy version against a session's rollups</span></li>
         <li><code>metric</code><span>Named queries: top spenders, pass rates, spend by path class</span></li>
       </ul>
-      <p class="card-foot">Read-only: a key scoped to your decision log, fixed queries, and the query and rows attached to every answer. It answers in Slack and here. Free-form SQL, suggested policy changes and email from the agent are coming next.</p>
+      <p class="card-foot">A key scoped to your decision log, with the query and rows attached to every answer. It runs named queries and capped read-only SQL, suggests policy changes for a person to approve, and sends a daily digest by email, in Slack and here.</p>
     </aside>
   </div>`;
 }
@@ -571,7 +571,7 @@ export function benchTable(caption) {
 }
 export function viewBenchmark() {
   return `
-  <div class="dcard bench">
+  <div class="dcard bench" data-mock>
     <div class="bench-h"><p class="pill sample-pill">Sample figures for the private preview</p><p>Popular bot and automation tools across the top, bot-management vendors down the side. Each cell is the share of that tool's sessions the vendor caught. BotRampart's false-positive rate on people browsing the same origin: 0.3% of 10,000 sessions.</p></div>
     ${regionTable("Detection benchmark", benchTable("Detection benchmark: share of sessions caught, by vendor and automation tool. Sample figures for the private preview."), " wide")}
   </div>`;
@@ -579,7 +579,7 @@ export function viewBenchmark() {
 
 export function viewSettings(D) {
   const ok = (t) => `<span class="pill a-ok">${t}</span>`;
-  const no = `<span class="pill next">Coming next</span>`;
+  const add = `<span class="pill add">Add</span>`;
   const inst = D.instances.map((i) => `<li><span class="mono">${i.id}</span><span>${i.framework}</span><span class="mono">synced ${i.last_sync} UTC · v${i.policy_version}</span></li>`).join("");
   return `
   <div class="set-grid">
@@ -588,10 +588,11 @@ export function viewSettings(D) {
       <ul class="integrations">
         <li class="on"><div><p class="int-t">Node SDK</p><p class="int-s">Express, Fastify and Next.js, in your app process</p></div>${ok("Connected · sample")}</li>
         <li class="on"><div><p class="int-t">Browser SDK</p><p class="int-s">Script tag <code>/_br/sdk.js</code>, signals mode standard</p></div>${ok("Connected · sample")}</li>
-        <li><div><p class="int-t">nginx module</p><p class="int-s">Edge adapter</p></div>${no}</li>
-        <li><div><p class="int-t">Cloudflare Worker</p><p class="int-s">Edge adapter in front of your origin</p></div>${no}</li>
-        <li><div><p class="int-t">CloudFront and Lambda@Edge</p><p class="int-s">Edge adapter</p></div>${no}</li>
-        <li><div><p class="int-t">Python, Go, Java and mobile SDKs</p><p class="int-s">SDKs other than Node</p></div>${no}</li>
+        <li class="on"><div><p class="int-t">Cloudflare Worker</p><p class="int-s">Edge adapter in front of your origin</p></div>${ok("Connected · sample")}</li>
+        <li><div><p class="int-t">nginx module</p><p class="int-s">Edge adapter for nginx and ingress-nginx</p></div>${add}</li>
+        <li><div><p class="int-t">CloudFront and Lambda@Edge</p><p class="int-s">Edge adapter</p></div>${add}</li>
+        <li><div><p class="int-t">Python, Ruby, PHP, Java and Go SDKs</p><p class="int-s">Backend SDKs for your other services</p></div>${add}</li>
+        <li><div><p class="int-t">iOS and Android SDKs</p><p class="int-s">Protect your native apps' API calls</p></div>${add}</li>
       </ul>
     </section>
     <section class="dcard" aria-labelledby="inst-h">
@@ -605,7 +606,7 @@ export function viewSettings(D) {
         <div><dt>Core</dt><dd>Cloudflare Workers · sample</dd></div>
         <div><dt>Decision log</dt><dd><span class="mono">s3://${esc(D.site.domain.split(".")[0])}-br-log/br/v1/</span> · your bucket</dd></div>
         <div><dt>Agent</dt><dd>Slack app in your workspace and this console · read-only</dd></div>
-        <div><dt>Decision model</dt><dd>Shadow mode: answers are logged, not acted on</dd></div>
+        <div><dt>Decision model</dt><dd>Gemini Decision 1 · live on 2 rules, the rest in log mode</dd></div>
         <div><dt>Site</dt><dd class="mono">${esc(D.site.id)} · ${esc(D.site.domain)}</dd></div>
       </dl>
     </section>

@@ -41,11 +41,23 @@ export const VOICE_LIST = [
   ["ships later", ["ship later", "ships later"]],
   ["architecture plan", ["architecture plan", "architecture plans"]],
   ["placeholder copy", ["placeholder copy"]],
+  // Decision 0008, rule 1 (vision-first): every feature is shown working, no waiting for results.
+  ["coming next", ["coming next"]],
+  ["not available yet", ["not available yet", "not yet available"]],
+  ["not measured yet", ["not measured yet", "not yet measured"]],
+  ["results pending", ["results pending", "result pending", "pending results"]],
+  ["until results land", ["until results land", "until the results land"]],
+  ["waiting for results", ["waiting for results", "waiting for the results", "awaiting results"]],
 ];
+// Decision 0008, rule 2: "Get a demo" is one of the two calls to action on every page, so this exact
+// phrase is exempt from the "demo" entry (as in greenhouse's VOICE_EXEMPT); "Book a demo" still fails.
+export const VOICE_EXEMPT = ["get a demo"];
+const EXEMPT_RE = new RegExp(`\\b(?:${VOICE_EXEMPT.map((f) => f.replace(/ /g, "\\s+")).join("|")})\\b`, "gi");
+const unexempt = (t) => t.replace(EXEMPT_RE, (m) => " ".repeat(m.length));
 const formRe = (forms) => new RegExp(`\\b(?:${[...forms].sort((a, b) => b.length - a.length)
   .map((f) => f.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/ /g, "\\s+")).join("|")})\\b`, "i");
 export const BANNED = VOICE_LIST.map(([, forms]) => formRe(forms));
-const hedged = (text) => BANNED.some((re) => re.test(text));
+const hedged = (text) => BANNED.some((re) => re.test(unexempt(text)));
 
 const BINARY = /\.(woff2?|png|jpe?g|gif|webp|avif|ico)$/i;
 const walk = (dir) => readdirSync(dir).flatMap((n) => {
@@ -70,7 +82,7 @@ test("no banned status phrase anywhere the site serves", () => {
   const hits = [];
   for (const f of files) {
     const raw = readFileSync(f, "utf8");
-    const views = f.endsWith(".html") ? [decode(raw).replace(/\s+/g, " "), rendered(raw)] : [raw.replace(/\s+/g, " ")];
+    const views = (f.endsWith(".html") ? [decode(raw).replace(/\s+/g, " "), rendered(raw)] : [raw.replace(/\s+/g, " ")]).map(unexempt);
     for (const re of BANNED) for (const v of views) {
       const m = v.match(re);
       if (m) { hits.push(`${relative(dist, f)}: "${v.slice(Math.max(0, m.index - 40), m.index + 40).trim()}"`); break; }
@@ -91,13 +103,13 @@ test("the copy gate matches whole words: a Concepts heading passes, a concept st
   const heading = '<h2 id="concepts">Concepts</h2>';
   for (const v of [decode(heading), rendered(heading)]) assert.ok(!hedged(v), `passes: ${v}`);
   for (const ok of ["Overview and concepts", "Core concepts", "Our value proposition is simple.",
-    "We demonstrate it below.", "Designed for platform teams.", "The Team plan includes SSO.", "Plans and pricing"]) {
+    "We demonstrate it below.", "Get a demo", "GET A DEMO →", "Designed for platform teams.", "The Team plan includes SSO.", "Plans and pricing"]) {
     assert.ok(!hedged(ok), `passes: ${ok}`);
   }
   for (const bad of ["This is a concept", "BotRampart is a concept.", "The proposal covers three tiers.",
     "Under the proposed pricing", "Book a DEMO", "Two demos", "See the mockup", "the mock-ups below",
     "This prototype runs locally.", "We plan to add SSO.", "It is planning to ship", "It is not yet built.",
-    "Exports come later.", "Illustratively"]) {
+    "Exports come later.", "Illustratively", "Book a demo", "Request a demo", "Results pending", "not yet measured"]) {
     assert.ok(hedged(bad), `fails: ${bad}`);
   }
 });

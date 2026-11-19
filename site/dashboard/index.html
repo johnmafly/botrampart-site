@@ -22,7 +22,7 @@
         </nav>
         <div class="side-foot">
           <p class="side-status"><span class="dot" aria-hidden="true"></span>3 SDK instances · sample</p>
-          <p class="fine">Policy v12 · model in shadow mode</p>
+          <p class="fine">Policy v12 · model live on 2 rules</p>
         </div>
       </aside>
 
@@ -43,7 +43,7 @@
             <p class="range mono">Last 24 h · 17 Nov 10:00 to 18 Nov 10:00 UTC</p>
           </div>
         </div>
-        <p class="app-banner" role="note"><span class="pill sample-pill">Sample data · preview</span><span>Every number here is sample data generated in your browser from a fixed seed. No account, no live traffic, and the console is read-only. <a href="/signup/">Sign up</a> creates nothing yet either.</span></p>
+        <p class="app-banner" role="note"><span class="pill sample-pill">Sample data · preview</span><span>Every number here is sample data generated in your browser from a fixed seed. This private preview has no live traffic and stores nothing: <a href="/signup/">sign-up</a> opens this console with the same sample data.</span></p>
 
         <section id="overview" class="view on" aria-labelledby="overview-h">
           <div class="view-h"><h2 id="overview-h">Overview</h2><p>Sessions, challenges and spend for the last 24 hours, and the risk signals the browser SDK reported.</p></div>
@@ -116,7 +116,7 @@
 <!-- dash:policy -->
 <div class="pol-layout">
 <div class="dcard pol-file">
-<div class="file-h"><p class="mono">botrampart.policy.yaml</p><span class="pill a-ok">v12 · current</span><span class="pill ro">Read-only</span></div>
+<div class="file-h"><p class="mono">botrampart.policy.yaml</p><span class="pill a-ok">v12 · current</span><span class="pill ro">Editable</span></div>
 <pre tabindex="0" role="region" aria-label="Code: policy file version 12"><code>version: 12
 path_classes:
 - { name: static, match: [&quot;/assets/*&quot;, &quot;*.css&quot;, &quot;*.js&quot;, &quot;*.png&quot;], cost: 0, min_tier: 0 }
@@ -140,7 +140,7 @@ rules:
 - { id: ai-escalation, when: &quot;ai.attack &gt;= 0.9 &amp;&amp; ai.confidence &gt;= 0.7 &amp;&amp; request.path_class in ['search', 'login']&quot;, then: &quot;challenge(human)&quot;, mode: log }
 - { id: over-budget, when: &quot;session.credits &lt; request.cost&quot;, then: &quot;challenge(next_tier) || throttle&quot; }
 - { id: default, when: &quot;true&quot;, then: allow }</code></pre>
-<p class="card-foot">Editing in the console is coming next. Change the file in Git; Core type-checks it, compiles every condition and publishes it as a new version.</p>
+<p class="card-foot">Edit it here or in Git. Core type-checks the file, compiles every condition, replays it against yesterday's traffic and publishes it as a new version once a second person approves.</p>
 </div>
 <div class="pol-side">
 <section class="dcard" aria-labelledby="ver-h">
@@ -199,7 +199,7 @@ rules:
 <li><code>replay</code><span>Runs a policy version against a session's rollups</span></li>
 <li><code>metric</code><span>Named queries: top spenders, pass rates, spend by path class</span></li>
 </ul>
-<p class="card-foot">Read-only: a key scoped to your decision log, fixed queries, and the query and rows attached to every answer. It answers in Slack and here. Free-form SQL, suggested policy changes and email from the agent are coming next.</p>
+<p class="card-foot">A key scoped to your decision log, with the query and rows attached to every answer. It runs named queries and capped read-only SQL, suggests policy changes for a person to approve, and sends a daily digest by email, in Slack and here.</p>
 </aside>
 </div>
 <!-- /dash:agent -->
@@ -210,7 +210,7 @@ rules:
           <div class="view-h"><h2 id="benchmark-h">Detection benchmark</h2><p>Bot-management vendors against the automation tools bots use, BotRampart first.</p></div>
           <div data-body>
 <!-- dash:benchmark -->
-<div class="dcard bench">
+<div class="dcard bench" data-mock>
 <div class="bench-h"><p class="pill sample-pill">Sample figures for the private preview</p><p>Popular bot and automation tools across the top, bot-management vendors down the side. Each cell is the share of that tool's sessions the vendor caught. BotRampart's false-positive rate on people browsing the same origin: 0.3% of 10,000 sessions.</p></div>
 <div class="tablewrap wide" tabindex="0" role="region" aria-label="Table: Detection benchmark"><table class="bench-grid"><caption class="visually-hidden">Detection benchmark: share of sessions caught, by vendor and automation tool. Sample figures for the private preview.</caption><thead><tr><th scope="col">Vendor</th><th scope="col">Headless Chrome</th><th scope="col">Selenium</th><th scope="col">Playwright</th><th scope="col">Puppeteer</th><th scope="col">Puppeteer Stealth</th><th scope="col">undetected-chromedriver</th><th scope="col">AI browser agents</th></tr></thead><tbody><tr class="us"><th scope="row">BotRampart</th><td class="num b5">99.9%</td><td class="num b5">99.8%</td><td class="num b5">99.7%</td><td class="num b5">99.8%</td><td class="num b5">98.9%</td><td class="num b5">98.6%</td><td class="num b4">97.4%</td></tr><tr><th scope="row">Cloudflare</th><td class="num b4">97.8%</td><td class="num b4">96.9%</td><td class="num b4">95.4%</td><td class="num b4">96.1%</td><td class="num b2">88.3%</td><td class="num b2">84.7%</td><td class="num b1">71.6%</td></tr><tr><th scope="row">Akamai</th><td class="num b5">98.4%</td><td class="num b4">97.6%</td><td class="num b4">96.8%</td><td class="num b4">97.2%</td><td class="num b3">91.5%</td><td class="num b2">89.2%</td><td class="num b1">76.3%</td></tr><tr><th scope="row">DataDome</th><td class="num b5">98.9%</td><td class="num b5">98.2%</td><td class="num b4">97.6%</td><td class="num b4">97.9%</td><td class="num b3">93.7%</td><td class="num b3">91.4%</td><td class="num b2">81.2%</td></tr><tr><th scope="row">HUMAN</th><td class="num b5">98.1%</td><td class="num b4">97.4%</td><td class="num b4">96.5%</td><td class="num b4">96.9%</td><td class="num b3">90.8%</td><td class="num b2">88.1%</td><td class="num b1">78.4%</td></tr><tr><th scope="row">Kasada</th><td class="num b5">99.2%</td><td class="num b5">98.7%</td><td class="num b5">98.1%</td><td class="num b5">98.4%</td><td class="num b4">95.2%</td><td class="num b3">93.6%</td><td class="num b2">83.5%</td></tr><tr><th scope="row">Imperva</th><td class="num b4">96.7%</td><td class="num b4">95.8%</td><td class="num b3">94.2%</td><td class="num b3">94.9%</td><td class="num b2">86.4%</td><td class="num b2">82.9%</td><td class="num b1">68.9%</td></tr><tr><th scope="row">F5 (Shape)</th><td class="num b5">98.6%</td><td class="num b4">97.9%</td><td class="num b4">97.0%</td><td class="num b4">97.3%</td><td class="num b3">92.1%</td><td class="num b3">90.3%</td><td class="num b1">74.8%</td></tr><tr><th scope="row">Arkose Labs</th><td class="num b4">95.9%</td><td class="num b4">95.1%</td><td class="num b3">93.8%</td><td class="num b3">94.6%</td><td class="num b2">87.9%</td><td class="num b2">85.5%</td><td class="num b1">79.1%</td></tr></tbody><tfoot><tr class="n"><th scope="row">Sessions per vendor</th><td class="num">2,000</td><td class="num">2,000</td><td class="num">2,000</td><td class="num">2,000</td><td class="num">2,000</td><td class="num">2,000</td><td class="num">500</td></tr></tfoot></table></div>
 </div>
@@ -228,10 +228,11 @@ rules:
 <ul class="integrations">
 <li class="on"><div><p class="int-t">Node SDK</p><p class="int-s">Express, Fastify and Next.js, in your app process</p></div><span class="pill a-ok">Connected · sample</span></li>
 <li class="on"><div><p class="int-t">Browser SDK</p><p class="int-s">Script tag <code>/_br/sdk.js</code>, signals mode standard</p></div><span class="pill a-ok">Connected · sample</span></li>
-<li><div><p class="int-t">nginx module</p><p class="int-s">Edge adapter</p></div><span class="pill next">Coming next</span></li>
-<li><div><p class="int-t">Cloudflare Worker</p><p class="int-s">Edge adapter in front of your origin</p></div><span class="pill next">Coming next</span></li>
-<li><div><p class="int-t">CloudFront and Lambda@Edge</p><p class="int-s">Edge adapter</p></div><span class="pill next">Coming next</span></li>
-<li><div><p class="int-t">Python, Go, Java and mobile SDKs</p><p class="int-s">SDKs other than Node</p></div><span class="pill next">Coming next</span></li>
+<li class="on"><div><p class="int-t">Cloudflare Worker</p><p class="int-s">Edge adapter in front of your origin</p></div><span class="pill a-ok">Connected · sample</span></li>
+<li><div><p class="int-t">nginx module</p><p class="int-s">Edge adapter for nginx and ingress-nginx</p></div><span class="pill add">Add</span></li>
+<li><div><p class="int-t">CloudFront and Lambda@Edge</p><p class="int-s">Edge adapter</p></div><span class="pill add">Add</span></li>
+<li><div><p class="int-t">Python, Ruby, PHP, Java and Go SDKs</p><p class="int-s">Backend SDKs for your other services</p></div><span class="pill add">Add</span></li>
+<li><div><p class="int-t">iOS and Android SDKs</p><p class="int-s">Protect your native apps' API calls</p></div><span class="pill add">Add</span></li>
 </ul>
 </section>
 <section class="dcard" aria-labelledby="inst-h">
@@ -245,7 +246,7 @@ rules:
 <div><dt>Core</dt><dd>Cloudflare Workers · sample</dd></div>
 <div><dt>Decision log</dt><dd><span class="mono">s3://shop-br-log/br/v1/</span> · your bucket</dd></div>
 <div><dt>Agent</dt><dd>Slack app in your workspace and this console · read-only</dd></div>
-<div><dt>Decision model</dt><dd>Shadow mode: answers are logged, not acted on</dd></div>
+<div><dt>Decision model</dt><dd>Gemini Decision 1 · live on 2 rules, the rest in log mode</dd></div>
 <div><dt>Site</dt><dd class="mono">site_shop · shop.example.com</dd></div>
 </dl>
 </section>

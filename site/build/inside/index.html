@@ -25,6 +25,8 @@
               <tbody>
                 <tr><th scope="row">Browser SDK <code>@botrampart/browser</code></th><td>Solves proof-of-work in a Web Worker, collects interaction counts, renders challenges, retries a request after one. Size budget: 15 kB compressed, no dependencies.</td><td>Visitor's browser, served from your origin</td><td>Apache-2.0</td></tr>
                 <tr><th scope="row">Backend SDK</th><td>Issues and verifies the session token, keeps budgets and mint buckets, evaluates policy, mounts <code>/_br</code>, syncs with Core.</td><td>Inside your app process</td><td>Apache-2.0</td></tr>
+                <tr><th scope="row">Edge adapters</th><td>The backend SDK's checks in front of your app: an nginx module (ingress-nginx too), a Cloudflare Worker and a CloudFront Lambda@Edge function.</td><td>Your nginx, your Cloudflare account or your AWS account</td><td>Apache-2.0</td></tr>
+                <tr><th scope="row">Mobile SDKs</th><td>Hold the session in native iOS and Android apps and answer challenges natively.</td><td>Inside your mobile app</td><td>Apache-2.0</td></tr>
                 <tr><th scope="row">Core</th><td>Challenge service, sync API, hot rollups, replay cache, policy store, state builder, decision client.</td><td>Cloudflare Workers, or one container</td><td>AGPL-3.0, commercial licence available</td></tr>
                 <tr><th scope="row">Lake</th><td>Rollups, decisions, challenges, states, answers, directives, policy versions.</td><td>Your R2, S3, MinIO, GCS or Azure Blob</td><td>Open formats</td></tr>
                 <tr><th scope="row">Agent</th><td>Explains decisions, sends reports, suggests policy changes for a person to approve. Slack, email, console.</td><td>One container in your infrastructure</td><td>AGPL-3.0</td></tr>
@@ -37,7 +39,7 @@
           <p>Core is AGPL-3.0 because it runs as a separate service, so copyleft rarely touches your code, while a provider that hosts a modified Core must publish its changes.</p>
 
           <h2 id="path">The request path</h2>
-          <p>Requests travel browser, edge, app server exactly as today. The backend SDK is a framework filter in your process; vendors ship the same thing as a "server-side module". What BotRampart avoids is the network call per request that most of them make:</p>
+          <p>Requests travel browser, edge, app server exactly as before. The backend SDK is a framework filter in your process; vendors ship the same thing as a "server-side module". What BotRampart avoids is the network call per request that most of them make:</p>
           <div class="tablewrap">
             <table>
               <thead><tr><th scope="col">Product</th><th scope="col">Server-side check</th><th scope="col">Documented failure behaviour</th></tr></thead>
@@ -137,7 +139,7 @@ Authorization: Bearer &lt;instance key&gt;
             <li><b>Hysteresis.</b> Escalate when two windows agree; step down after three calm windows.</li>
             <li><b>Cache.</b> <code>sha256(site | scope | policy_version | questions_version | model | bands)</code>, one hour. A changed band is a new question.</li>
             <li><b>Providers.</b> One interface, <code>decide(input, questions) → answers</code>: Gemini Decision 1 by default in the cloud, or a self-hosted model so nothing leaves the network.</li>
-            <li><b>Shadow by default.</b> The shipped policy logs model answers and acts on none of them.</li>
+            <li><b>Live or shadow.</b> Rules act on model answers live; a rule set to <code>log</code> runs in shadow mode while you set thresholds.</li>
           </ul>
 
           <h2 id="agent">The agent</h2>
@@ -150,7 +152,7 @@ Authorization: Bearer &lt;instance key&gt;
                 <tr><th scope="row"><code>replay</code></th><td>Runs a policy version against a session's rollups</td><td>Same evaluator as the SDKs</td></tr>
                 <tr><th scope="row"><code>metric</code></th><td>Named queries: top spenders, pass rates, spend by path class</td><td>Curated list</td></tr>
                 <tr><th scope="row"><code>sql</code></th><td>Read-only SQL for the rest</td><td>One SELECT, row, size and time caps</td></tr>
-                <tr><th scope="row"><code>suggest_policy_change</code></th><td>A pending diff with a reason and a simulation</td><td>A named person approves; separate credential</td></tr>
+                <tr><th scope="row"><code>suggest_policy_change</code></th><td>A policy diff with a reason and a simulation</td><td>A named person approves; separate credential</td></tr>
               </tbody>
             </table>
           </div>

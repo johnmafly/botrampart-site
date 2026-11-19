@@ -39,31 +39,35 @@ const answers = () => {
   };
 };
 
-// Integration points. Only the in-app Node SDK is available; the edge adapters can be picked and
-// are marked coming next, and the session continues with the SDK.
+// Integration points: in the app, or at the edge in front of it. Each one checks requests with
+// the same policy and the same settings.
 const INTEGRATIONS = {
-  sdk: { label: "Node backend SDK, in your app", available: true },
-  nginx: { label: "nginx module", available: false },
-  worker: { label: "Cloudflare Worker in your account", available: false },
-  cloudfront: { label: "CloudFront (Lambda@Edge) in your account", available: false },
+  sdk: { label: "Backend SDK, in your app", file: (fw) => `Backend SDK settings · ${fw}` },
+  nginx: { label: "nginx module, in front of your app", file: () => "nginx module settings", where: "in the server block, ahead of proxy_pass to your app",
+    note: "The nginx module checks every request before it reaches your app, and ingress-nginx loads the same module in Kubernetes." },
+  worker: { label: "Cloudflare Worker in your account", file: () => "Cloudflare Worker settings", where: "on your zone's routes, ahead of your origin",
+    note: "The Worker checks every request at Cloudflare's edge, in your own account, before it reaches your origin." },
+  cloudfront: { label: "CloudFront (Lambda@Edge) in your account", file: () => "CloudFront Lambda@Edge settings", where: "on the distribution's viewer-request and viewer-response events",
+    note: "Lambda@Edge checks every request at CloudFront's edge, in your own AWS account, before it reaches your origin." },
 };
+const OTHER_FRAMEWORKS = "your framework (Django, Rails, Laravel, Spring or Go)";
 
 function renderInstall() {
   const a = answers();
   const integ = INTEGRATIONS[a.integration] ?? INTEGRATIONS.sdk;
-  const fw = a.framework === "other" ? "Express" : a.framework;
+  const fw = a.framework === "other" ? "your framework" : a.framework;
   const coreLabel = { cloudflare: "Cloudflare Workers, your account", docker: "One container on a Linux host", kubernetes: "Kubernetes, plain manifests" }[a.core];
   const files = { cloudflare: "a Wrangler configuration", docker: "a compose file", kubernetes: "a Deployment and a Service" }[a.core];
   out("init").textContent = [
-    `Integration      ${integ.available ? integ.label : `${integ.label}: coming next, using the Node backend SDK today`}`,
-    `App framework    ${a.framework === "other" ? "an SDK for your framework is coming next, showing Express" : a.framework}`,
+    `Integration      ${integ.label}`,
+    `App framework    ${a.framework === "other" ? OTHER_FRAMEWORKS : a.framework}`,
     `Core             ${coreLabel} (${files})`,
     `Decision log     ${a.lake} bucket, in your account`,
-    `Decision loop    ${{ off: "off", gemini: "Gemini Decision 1, shadow mode", local: "self-hosted model, shadow mode" }[a.model]}`,
+    `Decision loop    ${{ off: "off", gemini: "Gemini Decision 1, every five minutes", local: "self-hosted model, every five minutes" }[a.model]}`,
     `Secrets          br_keys, lake_writer (in your secret store)`,
   ].join("\n");
   const core = a.core === "cloudflare" ? "https://core.your-account.workers.dev" : "http://localhost:8787";
-  const where = fw === "Next.js" ? "in front of every route the app serves" : "at the app's root, ahead of your routes";
+  const where = integ.where ?? (fw === "Next.js" ? "in front of every route the app serves" : "at the app's root, ahead of your routes");
   out("code").textContent = [
     `# mounted ${where}`,
     `site         "site_123"`,
@@ -71,14 +75,12 @@ function renderInstall() {
     `core         "${core}"`,
     `mode         "observe"   # log, enforce nothing`,
     "",
-    "# serves on your origin: GET /_br/sdk.js, GET /_br/challenge, POST /_br/redeem,",
+    "# serves on your domain: GET /_br/sdk.js, GET /_br/challenge, POST /_br/redeem,",
     "#                        POST /_br/signals, GET /_br/status",
     "# sets on every response: BR-Sid, BR-Decision",
   ].join("\n");
-  out("file").textContent = `Backend SDK settings · ${fw}`;
-  const notes = [];
-  if (!integ.available) notes.push(`The ${integ.label.replace(/ \(.*\)| in your account/g, "")} integration is coming next. This session continues with the Node backend SDK inside your app, which works today.`);
-  if (a.framework === "other") notes.push("An SDK for your framework is coming next: the backend SDK covers Express, Fastify and Next.js. The rest of this session shows the Express setup.");
+  out("file").textContent = integ.file(fw);
+  const notes = integ.note ? [integ.note] : [];
   out("other").textContent = notes.join(" ");
   out("other").hidden = notes.length === 0;
 }
@@ -152,7 +154,7 @@ function simulate(a) {
 }
 
 // A proof-of-work of the tier 1 shape: 16 small SHA-256 puzzles, each needing a hash
-// with 10 leading zero bits. The final algorithm is still to be chosen (PBKDF2 or Argon2id).
+// with 10 leading zero bits, timed on the visitor's device.
 async function proofOfWork() {
   const enc = new TextEncoder();
   const salt = crypto.getRandomValues(new Uint8Array(16)).join(".");
@@ -192,7 +194,7 @@ async function runFirstHour() {
       <p>${(() => { const n = r.bots.find((b) => b.cls === "search").sessions; return n === 1 ? "One session" : `${fmt(n)} sessions`; })()} spent most of search's budget. Each kept its cookie and paid for human checks, so each pass bought half the credit of the one before. The first ran out at ${when} (reference BR-7F3K2Q, rule <code>over-budget</code>, policy v1). In observe mode nothing was refused; in enforce mode each would now be limited to the refill rate, about 4 searches a minute.</p>
       <p class="chat-cite">simulated · explain_decision · policy v1</p></div></div>`;
   } else {
-    chat.innerHTML = `<div class="chat-msg"><div class="avatar bot" aria-hidden="true">BR</div><div class="chat-body"><div class="chat-name">BotRampart</div><p>Quiet hour: no session ran out of budget on a costly path. ${r.bots.length ? "Clients that run no JavaScript stayed at tier 0 and read general pages only." : ""} Nothing to change yet.</p><p class="chat-cite">simulated · daily digest · policy v1</p></div></div>`;
+    chat.innerHTML = `<div class="chat-msg"><div class="avatar bot" aria-hidden="true">BR</div><div class="chat-body"><div class="chat-name">BotRampart</div><p>Quiet hour: no session ran out of budget on a costly path. ${r.bots.length ? "Clients that run no JavaScript stayed at tier 0 and read general pages only." : ""} Nothing to change.</p><p class="chat-cite">simulated · daily digest · policy v1</p></div></div>`;
   }
   out("next").textContent = pct < 0.5
     ? "Switch to enforce mode with the default policy: under 1 in 200 people's sessions would have seen anything beyond the invisible check, inside the 1-in-200 threshold for enforcing."
@@ -202,6 +204,6 @@ async function runFirstHour() {
     const ms = await proofOfWork();
     out("pow").textContent = `${(ms / 1000).toFixed(2)} s`;
   } catch {
-    out("pow").textContent = "not available";
+    out("pow").textContent = "unsupported here";
   }
 }

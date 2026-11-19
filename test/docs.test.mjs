@@ -22,9 +22,9 @@ const spec = parseYaml(specText);
 const pages = listPages(join(root, "site", "docs"));
 const html = (route) => readFileSync(join(dist, route, "index.html"), "utf8");
 const text = (path) => readFileSync(join(dist, path), "utf8");
-const SECTIONS = ["overview", "architecture", "features", "getting-started", "configuration", "integrations", "api", "sdk", "policy", "self-hosting", "security", "faq", "changelog"];
+const SECTIONS = ["overview", "architecture", "features", "getting-started", "configuration", "integrations", "express", "api", "sdk", "policy", "self-hosting", "security", "faq", "changelog"];
 
-test("the guide has a landing page and all thirteen sections, in order", () => {
+test("the guide has a landing page, the thirteen required sections and Express, in order", () => {
   assert.deepEqual(pages.map((p) => p.slug), ["index", ...SECTIONS]);
   for (const p of pages) {
     assert.ok(existsSync(join(dist, p.route, "index.html")), `${p.route} is built`);
@@ -45,7 +45,7 @@ test("every docs page links to its Markdown, and the Markdown is the page's text
     // Card headings are list links in the Markdown: the card's link is there instead.
     const cards = new Map([...page.matchAll(/<a class="card" href="([^"]+)">(?:<p class="label">[^<]*<\/p>)?<h3 id="([^"]+)">/g)].map((m) => [m[2], m[1]]));
     for (const [, id] of page.matchAll(/<h[2-4] id="([^"]+)"/g)) {
-      if (id === "sources-h") continue;
+      if (id === "sources-h" || id === "cta-band-h") continue; // site chrome: sources list and the shared CTA band
       if (cards.has(id)) {
         assert.ok(md.includes(`](${cards.get(id)})`), `${p.md}: card link ${cards.get(id)}`);
         continue;

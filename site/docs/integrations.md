@@ -2,7 +2,7 @@
 title: Integrations
 nav: Integrations
 order: 6
-description: How BotRampart fits with your stack: your app and the SDK routes; Core on Cloudflare Workers, a container, Kubernetes or OpenOrange; R2, S3, MinIO, GCS and Azure Blob; Redis and Valkey; decision-model providers; Slack and the console.
+description: How BotRampart fits with your stack: backend SDKs for six languages, edge adapters for nginx, Cloudflare and CloudFront, mobile apps, the SDK routes; Core on Cloudflare Workers, a container, Kubernetes or OpenOrange; R2, S3, MinIO, GCS and Azure Blob; Redis and Valkey; decision-model providers; the Vector log pack; Slack, email and the console.
 lede: BotRampart sits inside your app and next to the infrastructure you already run. This page lists every system it connects to and how.
 ---
 
@@ -10,18 +10,24 @@ lede: BotRampart sits inside your app and next to the infrastructure you already
 
 BotRampart runs where you choose in your own infrastructure, never behind a vendor proxy. Each option verifies the same `__br_s` cookie and speaks the same [SDK routes](/docs/sdk/#routes) and headers.
 
-| Integration point | Where it runs | Code change in your app | Status |
-| --- | --- | --- | --- |
-| Node backend SDK (Express, Fastify, Next.js) | Inside your app process | Yes: mount the SDK | Available |
-| nginx module, including ingress-nginx | Your nginx, in front of your app | None | [coming next](/docs/overview/#next) |
-| Cloudflare Worker | Your own Cloudflare account, in front of your origin | None | [coming next](/docs/overview/#next) |
-| CloudFront (Lambda@Edge) | Your own AWS account, in front of your origin | None | [coming next](/docs/overview/#next) |
+| Integration point | Where it runs | Code change in your app |
+| --- | --- | --- |
+| Node backend SDK (Express, Fastify, Next.js) | Inside your app process | Mount the SDK |
+| Python backend SDK (Django) | Inside your app process | Add the middleware |
+| Go backend SDK (`net/http`) | Inside your app process | Wrap your handler |
+| Java backend SDK (Spring) | Inside your app process | Register the filter |
+| Ruby backend SDK (Rails) | Inside your app process | Add the Rack middleware |
+| PHP backend SDK (Laravel) | Inside your app process | Add the middleware |
+| nginx module, including ingress-nginx | Your nginx, in front of your app | None |
+| Cloudflare Worker | Your own Cloudflare account, in front of your origin | None |
+| CloudFront (Lambda@Edge) | Your own AWS account, in front of your origin | None |
+| iOS and Android SDKs | Inside your mobile app | Add the SDK |
 
-The [express AI install](/build/ai/) writes an instruction prompt for your coding agent for the stack you pick.
+An edge adapter verifies the cookie, charges the budget, applies your policy and serves `/_br` before the request reaches your origin, and syncs with Core like any app instance. [Express](/docs/express/) installs any of them with one AI prompt: pick your stack on [Express](/express/) and your coding agent does the wiring, from a backend SDK to an edge adapter.
 
 ## Your app {#frameworks}
 
-The backend SDK runs inside your Node app, in front of your handlers, with the [settings](/docs/configuration/#backend) in Configuration. Whatever the framework, the integration is the same on the wire, and the [API reference](/docs/api/) defines all of it:
+The backend SDK runs inside your app, in front of your handlers, with the [settings](/docs/configuration/#backend) in Configuration. Whatever the framework, the integration is the same on the wire, and the [API reference](/docs/api/) defines all of it:
 
 | The SDK | Spec |
 | --- | --- |
@@ -52,9 +58,9 @@ By default each app instance keeps budgets in memory and reconciles spend at eac
 
 - **Log and strip the headers.** Every response through the SDK carries `BR-Sid` and `BR-Decision`. Log both at the edge and strip them before the response leaves; the [nginx example](/docs/configuration/#headers) does both. A path in your logs without `BR-Decision` is a route the SDK does not cover.
 - **Cached pages.** The SDK never sets the cookie on a response marked publicly cacheable, so your CDN keeps caching it; the browser SDK starts the session through `/_br`.
-- **The log pack ([coming next](/docs/overview/#next)).** Vector configurations for nginx, ingress-nginx, ALB, CloudFront and Cloudflare logs will reduce each minute to rollups by site, key, prefix, path class and status class, and send them to Core for traffic that never reaches the SDK. Raw IPs, paths and the cookie never leave.
+- **The log pack.** Vector configurations for nginx, ingress-nginx, ALB, CloudFront and Cloudflare logs reduce each minute to rollups by site, key, prefix, path class and status class, and send them to Core, so the five-minute loop sees traffic that never reaches the SDK. Raw IPs, paths and the cookie never leave.
 
-```http op=ingestRollups cap="One NDJSON line per rollup, the shape the log pack will send (coming next)"
+```http op=ingestRollups cap="One NDJSON line per rollup, as the log pack sends it"
 POST /v1/ingest/rollups
 Authorization: Bearer <ingest key>
 Content-Type: application/x-ndjson
@@ -78,15 +84,17 @@ The state the model sees follows Google's published guidance: numbers are compar
 ## The agent's channels {#agent}
 
 - **Slack.** The agent runs as an app each customer creates in their own workspace from a shipped manifest, over Socket Mode, so no inbound URL is exposed.
-- **The console.** Served by Core, read-only.
-- **Email.** Digests and answers by email are [coming next](/docs/overview/#next).
+- **The console.** Served by Core: ask the agent beside the decision search and the policy editor.
+- **Email.** Scheduled digests of spend, pass rates and refusals, and answers to questions sent to the agent's address.
 - **Your model key.** The agent uses your own model key or a local model, and reads the lake through DuckDB with a read-only key.
 
 ## Traffic that carries no cookie {#no-cookie}
 
 | Situation | What to do |
 | --- | --- |
-| Webhooks, partner APIs, native mobile apps | Add a rule that allows requests authenticated by your own API key or signature before the over-budget rule. |
+| Native mobile apps | The [mobile SDKs](/docs/sdk/#mobile) carry the session token in a header and pass challenges in the app, so the app spends a budget like a browser does. |
+| Partner APIs and AI agents | Agents that sign their requests with Web Bot Auth are verified against their published keys; give a known agent its own budget with `allow(budget: agent)`. Partners with your own API key or signature get a rule before the over-budget rule. |
+| Webhooks | Add a rule that allows requests authenticated by your own signature before the over-budget rule. |
 | Search engines and monitoring | The default policy allows verified crawlers: `net.verified_bot in ['search_engine', 'monitoring']`. |
 | WebSockets and streams | Verified at the upgrade, charged by connection time, re-verified on a timer. |
 | An API on another origin | Set the cookie `Domain` for sibling subdomains, or send the token in a header for cross-origin calls. |

@@ -395,51 +395,6 @@ claims:
     source_url: "https://aws.amazon.com/marketplace/pp/prodview-m5evvjhsgddok"
     quote: "Cost/12 months Bot Protection Bot Protect API $0.001"
     checked: "2026-11-18"
-  # source_title: "IntelliFend: homepage"
-  # intellifend.com redirects to intellifend.ai; source_url updated to the final URL.
-  - id: "if-singapore"
-    claim: "IntelliFend is a Singapore company with teams across Hong Kong, Taiwan and Vietnam."
-    where: ["/field/"]
-    source_url: "https://intellifend.ai/"
-    quote: "Singapore HQ with teams across Hong Kong, Taiwan, Vietnam"
-    checked: "2026-11-18"
-  # source_title: "Media OutReach Newswire: Innovenx unveils IntelliFend on AWS Marketplace"
-  # Release dated 19 August 2024 (issuer Innovenx).
-  - id: "if-launch"
-    claim: "IntelliFend launched on AWS Marketplace in August 2024."
-    where: ["/field/"]
-    source_url: "https://www.media-outreach.com/news/singapore/2024/08/19/319916/innovenx-unveils-revolutionary-bot-management-solution-intellifend-with-minimal-false-positives-on-aws-marketplace/"
-    quote: "proudly announces the launch of its advanced bot management product, IntelliFend, on the AWS Marketplace"
-    checked: "2026-11-18"
-  # source_title: "AWS Marketplace: IntelliFend Bot Management"
-  # Table cells, whitespace normalised. Same table lists Lite 50M $1,849.00 and Lite 100M $3,649.00.
-  # Quote matched after whitespace normalisation only.
-  - id: "if-price"
-    claim: "IntelliFend lists $749 a month for 20 million requests on AWS Marketplace."
-    where: ["/field/", "/own/"]
-    source_url: "https://aws.amazon.com/marketplace/pp/prodview-cwjogytst2fsw"
-    quote: "Lite 20M Up to 20M requests per month $749.00"
-    checked: "2026-11-18"
-  # source_title: "IntelliFend docs: Getting Started"
-  # Corrected. Reworded to the docs' three modes. Also: 'traffic logs are collected by a
-  # worker/Lambda within the CDN itself' and 'The Manual mode uses NGINX config to push the access
-  # logs to the IntelliFend server for traffic analysis.' 'Runs in IntelliFend's cloud' is not
-  # stated verbatim; the docs say 'detection platform' / 'IntelliFend server'.
-  - id: "if-deploy"
-    claim: "IntelliFend deploys as a CDN worker (Interceptor mode), a lightweight proxy next to the origin that forwards requests to IntelliFend's detection platform, or NGINX config that pushes access logs to the IntelliFend server for analysis."
-    where: ["/field/"]
-    source_url: "https://docs.intellifend.com/"
-    quote: "We built a lightweight proxy that can be deployed next to your origin to forward request URLs and headers to the IntelliFend intelligent detection platform."
-    checked: "2026-11-18"
-  # source_title: "jsDelivr: @intellifend/requestshieldjs 2.0.0 README"
-  # 'issues' read as 'obtains' to match the README; meaning unchanged. README also: 'Tokens are
-  # short-lived and single-use.'
-  - id: "if-pow"
-    claim: "IntelliFend's RequestShield SDK obtains single-use proof-of-work tokens."
-    where: ["/field/"]
-    source_url: "https://cdn.jsdelivr.net/npm/@intellifend/requestshieldjs@2.0.0/README.md"
-    quote: "The RequestShield Browser SDK obtains single-use proof-of-work tokens"
-    checked: "2026-11-18"
   # source_title: "GitHub: TecharoHQ/anubis README"
   # Corrected. README does not say 'proxy' or 'proof-of-work'; reworded to its 'Web AI Firewall
   # Utility ... one or more challenges'. Repo page shows 'MIT license'. Techaro's pricing.md

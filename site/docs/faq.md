@@ -1,7 +1,7 @@
 ---
 title: FAQ
 nav: FAQ
-order: 12
+order: 13
 description: Short answers to the questions engineers ask first about BotRampart: CAPTCHAs, fingerprinting, latency, Core outages, DDoS, search engines, consent, licences, pricing and how to verify the numbers.
 lede: Short answers, each linked to the page that explains it in full.
 ---
@@ -30,9 +30,9 @@ Your site keeps working. The backend SDK keeps verifying tokens, counting budget
 
 No. A request reaches your app before BotRampart refuses it, so keep your CDN or WAF for volume. BotRampart refuses before your handler runs, which protects the expensive work behind it. See [What it does not do](/docs/overview/#not).
 
-## Will search engines and monitors still reach my site? {#crawlers}
+## Do search engines and monitors still reach my site? {#crawlers}
 
-Yes. The example policy allows verified crawlers with a rule on `net.verified_bot`, and you can allow partner APIs, webhooks and native apps by their own API key or signature. See [Traffic that carries no cookie](/docs/integrations/#no-cookie).
+Yes. The example policy allows verified crawlers with a rule on `net.verified_bot`, agents that sign with Web Bot Auth are verified against their published keys, and the mobile SDKs give your native apps a session of their own. See [Traffic that carries no cookie](/docs/integrations/#no-cookie).
 
 ## What about people behind a shared address? {#shared-ip}
 
@@ -44,7 +44,7 @@ It can, and solvers charge around $1 to $3 per thousand passes.{{c:solver-prices
 
 ## Does the AI model block anyone? {#model}
 
-No. The decision model answers typed questions about named bands and its answers become expiring fields. It runs in shadow mode: the answers are logged and act on nothing, and rules that act on them are [coming next](/docs/overview/#next). See [Directives](/docs/policy/#directives).
+No. The decision model answers typed questions about named bands and its answers become expiring fields. Your rules act on those fields, so the model can raise a price or lower a budget, never block or allow. See [Directives](/docs/policy/#directives).
 
 ## Do I need consent for the cookie? {#consent}
 
@@ -52,7 +52,7 @@ For EU sites, run `signals: "minimal"` or `"off"` and document the cookie as a s
 
 ## Which languages are supported? {#languages}
 
-Node: Express, Fastify and Next.js, plus the browser SDK. The wire contract is the [OpenAPI spec](/docs/api/), and the policy's compiled condition trees are evaluated by one small interpreter checked by one conformance suite.
+Backend SDKs for Node (Express, Fastify, Next.js), Python (Django), Go, Java (Spring), Ruby (Rails) and PHP (Laravel); edge adapters for nginx, Cloudflare Workers and CloudFront; mobile SDKs for iOS and Android; and the browser SDK. See [Integration points](/docs/integrations/#integration-points). The wire contract is the [OpenAPI spec](/docs/api/), and the policy's compiled condition trees are evaluated by one small interpreter checked by one conformance suite.
 
 ## What does it cost? {#cost}
 
@@ -60,11 +60,11 @@ The Community edition is free and includes every part. Paid editions sell conven
 
 ## What licence is it under? {#licence}
 
-The SDKs and the CLI are Apache-2.0. Core, the agent and the console are AGPL-3.0. A commercial licence comes with the Enterprise edition, which is [coming next](/docs/overview/#next). See [Licences](/docs/architecture/#licences).
+The SDKs and the CLI are Apache-2.0. Core, the agent and the console are AGPL-3.0. A commercial licence comes with the [Enterprise edition](/own/#editions). See [Licences](/docs/architecture/#licences).
 
 ## How does it compare with Cloudflare, DataDome or Anubis? {#compare}
 
-[The field](/field/) compares BotRampart with Cloudflare, DataDome, Netacea, IntelliFend and Anubis, dated and sourced, and says where each is the better choice.
+[The field](/field/) compares BotRampart with Cloudflare, DataDome, Netacea and Anubis, dated and sourced, and says where each is the better choice.
 
 ## How do I check the numbers on this site? {#receipts}
 

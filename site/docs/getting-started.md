@@ -43,7 +43,7 @@ console.log(dailyCeiling());                   // most one session spends in a d
 
 ## What your app needs {#need}
 
-- A Node app on Express, Fastify or Next.js.
+- An app on Node, Python, Go, Java, Ruby or PHP, or an nginx, Cloudflare or CloudFront edge in front of it. This quickstart uses Node on Express, Fastify or Next.js; [Integrations](/docs/integrations/#integration-points) covers the others, and [Express](/docs/express/) installs BotRampart on your stack with one AI prompt.
 - Somewhere to run Core: a Cloudflare account (Workers Paid starts at $5 a month{{c:cf-workers-price}}) or any host that runs one container. Recommended: 256 MB of memory. No database server.
 - An S3-compatible bucket: Cloudflare R2, Amazon S3 or MinIO.
 - Optional: a key for a decision-model provider, or a self-hosted model. Without one, the five-minute loop is off and everything else works.
@@ -104,7 +104,7 @@ curl -X POST "http://localhost:8787/v1/policy/simulate" \
 
 ## 6. Enforce tier 1 {#enforce}
 
-Switch `mode` to `"enforce"` with the default policy. Ordinary browsing stays inside the refill rate and sees nothing. Clients that cannot run JavaScript keep reading general pages on their 30-unit allowance and are asked for a proof-of-work on costly paths. Keep the five-minute loop in shadow until its answers match what you would have done.
+Switch `mode` to `"enforce"` with the default policy. Ordinary browsing stays inside the refill rate and sees nothing. Clients that cannot run JavaScript keep reading general pages on their 30-unit allowance and are asked for a proof-of-work on costly paths. Keep `ai.*` rules in `log` mode until their decisions match what you would have done, then let them enforce.
 
 ## Next {#next}
 
