@@ -187,6 +187,28 @@
 .bench td.hit { color: var(--ember-2); font-weight: 600; font-size: 1rem; }
 .bench tr.ctl th, .bench tr.ctl td { border-bottom: 0; }
 .bench td.fp { color: var(--frost); font-weight: 600; }
+/* Benchmark grid: vendors down the side, tools across the top. BotRampart's row leads in ember;
+   each cell carries a heat band (b5 highest) so the grid reads at a glance. */
+.bench thead th { white-space: normal; vertical-align: bottom; min-width: 6.2rem; }
+.bench thead th:first-child, .bench tbody th, .bench tfoot th { position: sticky; left: 0; z-index: 1; background: var(--ink-1); }
+.bench td { text-align: right; font-variant-numeric: tabular-nums; }
+.bench td.b5 { color: var(--bone); background: rgb(143 227 207 / .10); }
+.bench td.b4 { color: var(--bone); background: rgb(143 227 207 / .05); }
+.bench td.b3 { color: var(--bone-2); }
+.bench td.b2 { color: var(--amber); background: rgb(255 197 107 / .05); }
+.bench td.b1 { color: var(--amber); background: rgb(255 197 107 / .10); }
+.bench tr.us th, .bench tr.us td { color: var(--ember-2); font-weight: 650; background: color-mix(in srgb, var(--ember) 9%, var(--ink-1)); border-bottom-color: rgb(255 91 46 / .35); }
+.bench tr.us th { box-shadow: inset 3px 0 0 var(--ember); }
+.bench tfoot th, .bench tfoot td { border-bottom: 0; padding-top: .8rem; padding-bottom: .9rem; font: 400 .74rem/1.3 var(--f-mono); color: var(--bone-3); }
+.bench tfoot th { text-align: left; white-space: normal; }
+.bench table { table-layout: fixed; min-width: 56rem; }
+.bench thead th:first-child { width: 11.5rem; }
+@media (max-width: 760px) {
+  .bench table { min-width: 46rem; }
+  .bench thead th:first-child { width: 8.4rem; }
+  .bench tbody th, .bench tfoot th { padding-left: .8rem; padding-right: .6rem; }
+  .bench td, .bench thead th { padding-left: .5rem; padding-right: .7rem; }
+}
 .bench-method { display: flex; flex-wrap: wrap; align-items: baseline; gap: .6rem 1.2rem; margin-top: 1rem; }
 .bench-method .fine { margin: 0; flex: 1 1 30rem; max-width: 60rem; }
 .bench-sample { margin: 0; }

@@ -113,9 +113,67 @@ test("home page leads with the threat and keeps every section, its static log an
   const bench = home.split('id="benchmark"')[1].split("<section")[0];
   assert.doesNotMatch(bench, /not measured|to be measured|pending|no results/i, "the benchmark reads finished");
   assert.match(bench, /Sample figures for the private preview/, "the sample-figures note sits in the benchmark section");
-  for (const v of ["Cloudflare", "DataDome", "HUMAN", "Akamai", "Kasada", "Netacea"]) assert.ok(!bench.includes(v), `no figures for ${v}`);
   assert.match(home.split('id="source"')[1].split("<section")[0], /Source not public yet/);
   for (const href of ["/meter/", "/field/", "/own/", "/build/", "/try/"]) assert.ok(home.includes(`href="${href}`), href);
+});
+
+// Named-vendor figures are sample figures for the private preview (MOCK_FIGURES.md). They may
+// appear only inside the benchmark grids on / and /dashboard/, each beside the sample note and
+// each listed in MOCK_FIGURES.md. Anywhere else a vendor name and a percentage share a block of
+// text only as a sourced claim (a data-claim citation, or the source list it points to).
+const VENDOR = /\b(Cloudflare|Akamai|DataDome|HUMAN|Kasada|Imperva|F5|Arkose(?: Labs)?|Netacea|Shape Security)\b/;
+const PCT = /\d(?:[\d.,]*\d)?\s?%/;
+const SAMPLE_NOTE = "Sample figures for the private preview";
+const benchBlocks = () => {
+  const home = pages.find((p) => p.name === "index.html").html;
+  const dash = pages.find((p) => p.name === join("dashboard", "index.html")).html;
+  return {
+    "index.html": home.split('id="benchmark"')[1].split("<section")[0],
+    [join("dashboard", "index.html")]: dash.split("<!-- dash:benchmark -->")[1].split("<!-- /dash:benchmark -->")[0],
+  };
+};
+// The grid itself: the one table in each benchmark block.
+const gridOf = (block) => block.match(/<table\b[\s\S]*?<\/table>/)[0];
+const textBlocks = (name, body) => {
+  if (!name.endsWith(".html")) return body.split("\n");
+  return body.replace(/<(script|style)\b[\s\S]*?<\/\1>/g, "")
+    .split(/(?=<(?:p|li|tr|h[1-6]|dd|dt|figcaption|caption|blockquote|td|th)\b)|<\/(?:p|li|tr|h[1-6]|dd|dt|figcaption|caption|blockquote|td|th)>/);
+};
+
+test("named-vendor figures appear only in the benchmark grids, beside the sample note, and each is in MOCK_FIGURES.md", () => {
+  const blocks = benchBlocks();
+  const mock = readFileSync(join(root, "MOCK_FIGURES.md"), "utf8");
+  for (const [name, block] of Object.entries(blocks)) {
+    assert.match(block, new RegExp(`class="[^"]*(?:sample-tag|sample-pill)[^"]*">${SAMPLE_NOTE}<`), `${name}: the benchmark block shows "${SAMPLE_NOTE}" beside the grid`);
+    const tools = [...block.matchAll(/<th scope="col">([^<]+)<\/th>/g)].map((m) => m[1]).slice(1);
+    assert.ok(tools.length >= 4, `${name}: the grid has tool columns`);
+    const rows = [...block.matchAll(/<tr[^>]*><th scope="row">([^<]+)<\/th>([\s\S]*?)<\/tr>/g)];
+    let cells = 0;
+    for (const [, vendor, tds] of rows) {
+      const vals = [...tds.matchAll(/<td[^>]*>([^<]+)<\/td>/g)].map((m) => m[1].trim());
+      assert.equal(vals.length, tools.length, `${name}: row ${vendor} has a cell for every tool`);
+      vals.forEach((v, i) => {
+        cells++;
+        const what = vendor === "Sessions per vendor" ? `| ${v} | sessions per vendor: ${tools[i].replace(/&amp;/g, "&")} |` : `| ${v} | ${vendor.replace(/&amp;/g, "&")} catching ${tools[i].replace(/&amp;/g, "&")} |`;
+        assert.ok(mock.includes(what), `${name}: ${vendor} / ${tools[i]} = ${v} is listed in MOCK_FIGURES.md`);
+      });
+    }
+    assert.ok(cells >= 40, `${name}: the grid's cells were read (${cells})`);
+    for (const [, n] of block.matchAll(/<b class="num">([^<]+)<\/b>/g)) assert.ok(mock.includes(`| ${n} |`), `${name}: headline ${n} is listed in MOCK_FIGURES.md`);
+  }
+  const served = walk(dist, "").filter((f) => /\.(html|txt|md|ya?ml|json|m?js|xml)$/.test(f));
+  assert.ok(served.length > 20, "served files were read");
+  for (const f of served) {
+    const name = relative(dist, f);
+    let body = readFileSync(f, "utf8");
+    if (blocks[name]) body = body.replace(gridOf(blocks[name]), "");
+    for (const b of textBlocks(name, body)) {
+      const text = b.replace(/<[^>]+>/g, " ");
+      if (!VENDOR.test(text) || !PCT.test(text)) continue;
+      const sourced = /data-claim="/.test(b) || /^<li id="src-\d+"/.test(b.trim());
+      assert.ok(sourced, `${name}: a vendor figure outside the benchmark grid must be a sourced claim: ${text.replace(/\s+/g, " ").trim().slice(0, 140)}`);
+    }
+  }
 });
 
 test("pricing shows every edition's price and keeps Community free", () => {
