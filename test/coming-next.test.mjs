@@ -1,6 +1,8 @@
 // Intake non-goals (portfolio/botrampart/intake.yaml in johnmafly/greenhouse) never read as shipping.
-// The overview lists every one under "Not available yet", every served page that names one says
-// so, the paid editions carry the mark, and the example policy uses none of them.
+// The overview lists every one under "Coming next", every served page that names one marks it as
+// coming next, the paid editions carry the mark, and the example policy uses none of them. No served
+// file says "not available yet": the site shows what comes next as part of the product, not a warning.
+import { readdirSync } from "node:fs";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
@@ -15,7 +17,7 @@ if (!existsSync(join(dist, "index.html"))) {
 const page = (route) => readFileSync(join(dist, route, "index.html"), "utf8");
 const text = (html) => html.replace(/<script[\s\S]*?<\/script>/g, " ").replace(/<[^>]+>/g, " ")
   .replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/\s+/g, " ");
-const NOT_YET = /not available yet/i;
+const NEXT = /coming next/i;
 
 // One entry per intake non-goal: a pattern for it in the overview's list.
 const NON_GOALS = [
@@ -32,35 +34,35 @@ const NON_GOALS = [
   ["the decision model acting live", /decision model acting live/],
 ];
 
-test("the overview lists every intake non-goal under Not available yet", () => {
+test("the overview lists every intake non-goal under Coming next", () => {
   const html = page("docs/overview");
-  const section = html.split('id="not-yet"')[1];
-  assert.ok(section, "/docs/overview/ has #not-yet");
+  const section = html.split('id="next"')[1];
+  assert.ok(section, "/docs/overview/ has #next");
   const body = text(section.split(/<h2\b/)[0]);
   for (const [name, re] of NON_GOALS) assert.match(body, re, name);
 });
 
-// Pages that name a non-goal feature must also say it is not available yet.
+// Pages that name a non-goal feature must also mark it as coming next.
 const ROUTES = ["", "meter", "own", "field", "docs/overview", "docs/features", "docs/architecture", "docs/integrations",
   "docs/configuration", "docs/self-hosting", "docs/policy", "docs/security", "docs/faq",
   "build", "build/wire", "build/ai", "dashboard", "signup", "signin"];
 const MARKERS = [/Vector log pack|log pack/i, /step-up/i, /White-label/, /suggest(ed)? policy change/i, /free-form SQL/i,
   /nginx module/i, /Cloudflare Worker/i, /CloudFront/, /benchmark/i];
-test("every page that names a non-goal feature says it is not available yet", () => {
+test("every page that names a non-goal feature marks it as coming next", () => {
   for (const r of ROUTES) {
     const t = text(page(r).split("<!-- @sources")[0].replace(/<section[^>]*class="[^"]*sources[\s\S]*$/, ""));
-    for (const m of MARKERS) if (m.test(t)) assert.match(t, NOT_YET, `/${r}/ names ${m} without "not available yet"`);
+    for (const m of MARKERS) if (m.test(t)) assert.match(t, NEXT, `/${r}/ names ${m} without "coming next"`);
   }
 });
 
-test("each paid edition on /own/ is marked not available yet; Community is not", () => {
+test("each paid edition on /own/ is marked coming next; Community is not", () => {
   const html = page("own");
   for (const name of ["White-label", "Enterprise", "Cloud"]) {
     const card = html.match(new RegExp(`<h3>${name}</h3>[\\s\\S]*?</div>`))?.[0];
-    assert.ok(card && NOT_YET.test(card), `${name} card is marked`);
+    assert.ok(card && NEXT.test(card), `${name} card is marked`);
   }
   const community = html.match(/<h3>Community<\/h3>[\s\S]*?<\/div>/)[0];
-  assert.doesNotMatch(community, NOT_YET);
+  assert.doesNotMatch(community, NEXT);
 });
 
 test("the example policy uses no non-goal: no Web Bot Auth rule, no step-up challenge", () => {
@@ -82,4 +84,12 @@ test("/own/ billing copy does not promise bots are never billed", () => {
 test("the SDK pages say the SDK keeps no aggregated visitor metrics", () => {
   for (const r of ["build", "build/wire"]) assert.match(text(page(r)), /keeps no aggregated visitor metrics/, `/${r}/`);
   assert.match(readFileSync(join(root, "site", "docs", "sdk.md"), "utf8"), /keeps no aggregated visitor metrics/);
+});
+
+// The owner's call: no served file carries "not available yet" or "unavailable" as a feature label.
+test("no served file says not available yet or not measured yet", () => {
+  const walk = (d) => readdirSync(d, { withFileTypes: true }).flatMap((e) => e.isDirectory() ? walk(join(d, e.name)) : [join(d, e.name)]);
+  for (const f of walk(dist).filter((f) => /\.(html|md|txt|js|mjs|css|svg|json|yaml|xml)$/.test(f))) {
+    assert.doesNotMatch(readFileSync(f, "utf8"), /not available yet|not measured yet/i, f.slice(dist.length));
+  }
 });

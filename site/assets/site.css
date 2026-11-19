@@ -508,7 +508,7 @@ h1 .ap, h2 .ap { letter-spacing: 0; margin-inline: .035em .02em; }
 .callout.cost { background: rgb(255 91 46 / .06); border-color: rgb(255 91 46 / .3); }
 .tag { display: inline-block; font: 500 .66rem/1 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; padding: .28rem .45rem; border-radius: 5px; vertical-align: .15em; white-space: nowrap; }
 .tag.mvp { color: var(--frost); background: rgb(143 227 207 / .1); border: 1px solid rgb(143 227 207 / .3); }
-.tag.later { color: var(--bone-3); background: var(--ink-2); border: 1px solid var(--line-2); }
+.tag.later { color: var(--ember-2); background: rgb(255 91 46 / .1); border: 1px solid rgb(255 91 46 / .38); }
 
 /* Code */
 pre { margin: 0 0 1.5rem; padding: 1.1rem 1.2rem; border-radius: 12px; background: #090807; border: 1px solid var(--line); overflow-x: auto; line-height: 1.6; font-size: .8rem; color: var(--bone); tab-size: 2; }

@@ -14,12 +14,12 @@ lede: Each component, where it runs and what crosses each boundary. The per-requ
 | Backend SDK | Issues and verifies the session token, keeps each live session's budget, evaluates policy, mounts `/_br`, sends counters to Core. Keeps no aggregated visitor metrics. | Inside your app process | Apache-2.0 |
 | Core | Challenge service, sync API, hot rollups, replay cache, policy store, state builder, decision client. | Cloudflare Workers, or one container | AGPL-3.0 |
 | Lake | Rollups, decisions, challenges, states, answers, directives, policy versions. | Your R2, S3, MinIO, GCS or Azure Blob | Open formats |
-| Agent | Explains decisions and answers named metrics in Slack and the console. Reports by email and suggested policy changes are [not available yet](/docs/overview/#not-yet). | One container in your infrastructure | AGPL-3.0 |
+| Agent | Explains decisions and answers named metrics in Slack and the console. Reports by email and suggested policy changes are [coming next](/docs/overview/#next). | One container in your infrastructure | AGPL-3.0 |
 | Console | A read-only view of policy, path costs, live budgets, decision search, keys and the audit log. Policy is edited in its file. | Static app served by Core | AGPL-3.0 |
 | CLI `br` | Generates install files, checks an install, replays a session against a policy, rotates keys. | Your machine or CI | Apache-2.0 |
-| Log pack | [Not available yet](/docs/overview/#not-yet). Vector configurations for nginx, ingress-nginx, ALB, CloudFront and Cloudflare logs; cohort rollups for traffic that never reaches the SDK. | Vector in your infrastructure | Apache-2.0 |
+| Log pack | [Coming next](/docs/overview/#next). Vector configurations for nginx, ingress-nginx, ALB, CloudFront and Cloudflare logs; cohort rollups for traffic that never reaches the SDK. | Vector in your infrastructure | Apache-2.0 |
 
-![BotRampart system overview: the browser SDK talks to the backend SDK in your app over normal requests and the /_br routes; the backend SDK syncs with Core every 5 to 10 seconds; Core writes to the lake in your bucket and asks a decision model every five minutes; Vector edge rollups to Core are not available yet; the agent reads the lake read-only.](/assets/docs/system.svg "System overview. Solid lines are always on; the edge is optional, and the Vector log pack is not available yet.")
+![BotRampart system overview: the browser SDK talks to the backend SDK in your app over normal requests and the /_br routes; the backend SDK syncs with Core every 5 to 10 seconds; Core writes to the lake in your bucket and asks a decision model every five minutes; Vector edge rollups to Core are coming next; the agent reads the lake read-only.](/assets/docs/system.svg "System overview. Solid lines are always on; the edge is optional, and the Vector log pack is coming next.")
 
 ## Design principles {#principles}
 
@@ -27,7 +27,7 @@ lede: Each component, where it runs and what crosses each boundary. The per-requ
 - **A light SDK.** The backend SDK holds only what the next request needs: each live session's budget and a short buffer of counters, which it sends to Core at each sync and then drops. It keeps no aggregated visitor metrics, baselines or history, so its memory and CPU stay flat as traffic grows. Rollups, baselines and cohorts are built in Core; history lives in your bucket.
 - **Your data stays yours.** Logs, decisions and model answers go to your bucket in open formats. Core holds only hot counters and policy.
 - **Price, do not judge.** No component labels a client a bot. Rules turn spend, tier and signals into a price: more work, a human check or a wait.
-- **The model never holds the gate.** The decision model's answers become expiring fields. It runs in shadow mode: rules that act on them are [not available yet](/docs/overview/#not-yet).
+- **The model never holds the gate.** The decision model's answers become expiring fields. It runs in shadow mode: rules that act on them are [coming next](/docs/overview/#next).
 - **Fail predictably.** If Core is down, the SDK keeps enforcing the last synced policy. If the SDK itself errors, each route fails open or closed as you choose.
 
 ## The request path {#request-path}
@@ -151,7 +151,7 @@ Core sends the bands of a `br.state.v1` state as text with four typed questions,
 - **Hysteresis.** Escalate when two windows agree; step down after three calm windows.
 - **Cache.** `sha256(site | scope | policy_version | questions_version | model | bands)`, one hour. A changed band is a new question.
 - **Providers.** One interface, `decide(input, questions) → answers`: Gemini Decision 1 by default in the cloud, or a self-hosted model so nothing leaves the network.
-- **Shadow mode only.** The model's answers are logged and act on nothing; rules that act on them are [not available yet](/docs/overview/#not-yet).
+- **Shadow mode only.** The model's answers are logged and act on nothing; rules that act on them are [coming next](/docs/overview/#next).
 
 The full schemas are [`StateV1`](/docs/api/#schema-StateV1) and [`AnswerV1`](/docs/api/#schema-AnswerV1).
 
@@ -163,14 +163,14 @@ The full schemas are [`StateV1`](/docs/api/#schema-StateV1) and [`AnswerV1`](/do
 | `session_timeline` | Minute-by-minute spend, tiers and challenges for one session | Fixed query |
 | `replay` | Runs a policy version against a session's rollups | Same evaluator as the SDKs |
 | `metric` | Named queries: top spenders, pass rates, spend by path class | Curated list |
-| `sql` | [Not available yet](/docs/overview/#not-yet). Read-only SQL for the rest | One SELECT, row, size and time caps |
-| `suggest_policy_change` | [Not available yet](/docs/overview/#not-yet). A pending diff with a reason and a simulation | A named person approves; separate credential |
+| `sql` | [Coming next](/docs/overview/#next). Read-only SQL for the rest | One SELECT, row, size and time caps |
+| `suggest_policy_change` | [Coming next](/docs/overview/#next). A pending diff with a reason and a simulation | A named person approves; separate credential |
 
 The agent reads the lake through DuckDB with a key scoped read-only to `br/v1/`, uses your own model key or a local model, inherits the asking person's role, and attaches the query, row count, window, policy version and answer ID to every answer. In Slack it runs as an app each customer creates in their own workspace from a shipped manifest, over Socket Mode, so no inbound URL is exposed.
 
 ## Licences {#licences}
 
-The SDKs and the CLI are Apache-2.0, and so will the log pack be. Core, the agent and the console are AGPL-3.0: Core runs as a separate service, so copyleft rarely touches your code, while a provider that hosts a modified Core must publish its changes. A commercial licence in place of AGPL is part of the [Enterprise edition](/own/#editions), which is [not available yet](/docs/overview/#not-yet).
+The SDKs and the CLI are Apache-2.0, and so will the log pack be. Core, the agent and the console are AGPL-3.0: Core runs as a separate service, so copyleft rarely touches your code, while a provider that hosts a modified Core must publish its changes. A commercial licence in place of AGPL is part of the [Enterprise edition](/own/#editions), which is [coming next](/docs/overview/#next).
 
 ## Measured {#measured}
 

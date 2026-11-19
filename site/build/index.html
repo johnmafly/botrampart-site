@@ -35,28 +35,28 @@
               <p class="opt-link"><a href="/build/wire/">Wire it in</a></p>
             </li>
             <li class="opt is-later">
-              <p class="opt-status"><span class="tag later">Not available yet</span></p>
+              <p class="opt-status"><span class="tag later">Coming next</span></p>
               <h3 id="opt-nginx">nginx module</h3>
               <p class="opt-sub">nginx · ingress-nginx on Kubernetes</p>
               <p class="opt-path" aria-label="Request path: visitor, then your nginx with BotRampart, then your app"><span>Visitor</span><i aria-hidden="true">→</i><span class="here">nginx</span><i aria-hidden="true">→</i><span>Your app</span></p>
               <p>Runs in the nginx you already operate, in front of your app. It verifies the <code>__br_s</code> cookie before nginx proxies the request, so it covers apps in any language without touching their code.</p>
             </li>
             <li class="opt is-later">
-              <p class="opt-status"><span class="tag later">Not available yet</span></p>
+              <p class="opt-status"><span class="tag later">Coming next</span></p>
               <h3 id="opt-worker">Cloudflare Worker</h3>
               <p class="opt-sub">In your own Cloudflare account</p>
               <p class="opt-path" aria-label="Request path: visitor, then a Worker in your Cloudflare account, then your origin"><span>Visitor</span><i aria-hidden="true">→</i><span class="here">Worker</span><i aria-hidden="true">→</i><span>Origin</span></p>
               <p>A Worker you deploy on the routes in front of your origin, in your Cloudflare account. It verifies the <code>__br_s</code> cookie at the edge; requests never pass through a BotRampart server.</p>
             </li>
             <li class="opt is-later">
-              <p class="opt-status"><span class="tag later">Not available yet</span></p>
+              <p class="opt-status"><span class="tag later">Coming next</span></p>
               <h3 id="opt-cloudfront">CloudFront</h3>
               <p class="opt-sub">Lambda@Edge, in your own AWS account</p>
               <p class="opt-path" aria-label="Request path: visitor, then a Lambda@Edge function in your AWS account, then your origin"><span>Visitor</span><i aria-hidden="true">→</i><span class="here">Lambda@Edge</span><i aria-hidden="true">→</i><span>Origin</span></p>
               <p>A function on your distribution's viewer requests, in your AWS account. It verifies the <code>__br_s</code> cookie before CloudFront reaches your origin, with no vendor proxy in between.</p>
             </li>
           </ul>
-          <p class="fine">Edge adapters, SDKs other than Node and mobile SDKs are <a href="/docs/overview/#not-yet">not available yet</a>. Until then, put the Node SDK in the app that serves your costly routes.</p>
+          <p class="fine">Edge adapters, SDKs other than Node and mobile SDKs are <a href="/docs/overview/#next">coming next</a>. Today, put the Node SDK in the app that serves your costly routes.</p>
 
           <div class="ai-teaser">
             <div>

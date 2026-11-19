@@ -28,7 +28,7 @@ lede: What BotRampart trusts, what it signs, what it keeps, and which threats re
 ## Challenges and attestations {#challenges}
 
 - **Proof-of-work** ([`PowChallenge`](/docs/api/#schema-PowChallenge)) is issued by the backend SDK and signed with the site secret, expires in 120 seconds, is bound to the network prefix and browser family, and its salt is single-use in a replay cache. Difficulty comes from the server's view of risk and mint pressure, never from the client.
-- **Human checks** are scored by Core (step-up methods are [not available yet](/docs/overview/#not-yet)), which returns an Ed25519-signed attestation the backend SDK verifies with Core's public keys ([`getKeys`](/docs/api/#op-getKeys)); the browser redeems it at `/_br/redeem`.
+- **Human checks** are scored by Core (step-up methods are [coming next](/docs/overview/#next)), which returns an Ed25519-signed attestation the backend SDK verifies with Core's public keys ([`getKeys`](/docs/api/#op-getKeys)); the browser redeems it at `/_br/redeem`.
 - **Accessibility.** The human check works with a keyboard and a screen reader, and every step-up configuration will offer at least one method that needs no puzzle. WCAG 2.2 success criterion 3.3.8 does not allow a cognitive test in an authentication step without an alternative or a mechanism to help.{{c:wcag-338}}
 
 ## Data kept, and never collected {#data}
@@ -48,9 +48,9 @@ For EU sites, run the browser SDK with `signals: "minimal"` or `"off"` and docum
 ## The decision model and the agent {#model-agent}
 
 - **Closed inputs.** The model sees named bands and enums only: no identifiers and no text a visitor wrote. Paths become your class names and user agents a browser family.
-- **Fields, not verdicts.** Answers become `ai.*` fields with an expiry of at most 60 minutes. The model runs in shadow mode: its fields are logged and act on nothing, and rules that act on them are [not available yet](/docs/overview/#not-yet). Even then it could raise a tier or lower a budget, never block or allow; rules hold the gate.
+- **Fields, not verdicts.** Answers become `ai.*` fields with an expiry of at most 60 minutes. The model runs in shadow mode: its fields are logged and act on nothing, and rules that act on them are [coming next](/docs/overview/#next). Even then it could raise a tier or lower a budget, never block or allow; rules hold the gate.
 - **Clamped baselines.** Baselines are clamped so traffic cannot walk them up quickly.
-- **A read-only agent.** It queries the lake with a read-only key, uses fixed, named queries, attaches the query and rows to every answer, and cannot change anything. Free-form SQL and suggested policy changes are [not available yet](/docs/overview/#not-yet).
+- **A read-only agent.** It queries the lake with a read-only key, uses fixed, named queries, attaches the query and rows to every answer, and cannot change anything. Free-form SQL and suggested policy changes are [coming next](/docs/overview/#next).
 
 That separation matters because stored log text can carry instructions aimed at a model: injected log entries steered LLM log analysis up to 88.2% of the time in one 2026 study.{{c:loginject}}
 

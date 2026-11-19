@@ -19,6 +19,7 @@ against its package contract (`docs/package-contract.md` there).
 | `test/` | Contract checks (routes, one `h1`, `lang`, noindex, placeholders, links, `greenhouse.json`) and package checks (`data-op` against the spec, claims coverage, economics numbers, no tracking or storage, signup is a preview). |
 | `spec/openapi.yaml` | Build spec that docs code samples are checked against. |
 | `claims.yaml` | Every public factual claim, with source and verbatim quote. |
+| [`MOCK_FIGURES.md`](MOCK_FIGURES.md) | Every sample benchmark figure on the site, with its value, page, selector and source line, to swap for measured ones before the site is shown outside. |
 | `greenhouse.yaml` | Greenhouse manifest: slug, build command, output, production branch. |
 | `STATE.md` | Decisions, open findings, next steps, spend. |
 

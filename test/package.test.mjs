@@ -111,8 +111,9 @@ test("home page leads with the threat and keeps every section, its static log an
   const feed = home.match(/<ol[^>]*data-feed[^>]*>[\s\S]*?<\/ol>/)?.[0] || "";
   assert.ok((feed.match(/<li\b/g) || []).length >= 4, "the decision log is written into the HTML");
   const bench = home.split('id="benchmark"')[1].split("<section")[0];
-  assert.equal((bench.match(/not measured yet/gi) || []).length >= 36, true, "every benchmark cell reads not measured yet");
-  assert.doesNotMatch(bench, /\b\d{1,3}(\.\d+)?\s?%/, "no benchmark result is shown");
+  assert.doesNotMatch(bench, /not measured|to be measured|pending|no results/i, "the benchmark reads finished");
+  assert.match(bench, /Sample figures for the private preview/, "the sample-figures note sits in the benchmark section");
+  for (const v of ["Cloudflare", "DataDome", "HUMAN", "Akamai", "Kasada", "Netacea"]) assert.ok(!bench.includes(v), `no figures for ${v}`);
   assert.match(home.split('id="source"')[1].split("<section")[0], /Source not public yet/);
   for (const href of ["/meter/", "/field/", "/own/", "/build/", "/try/"]) assert.ok(home.includes(`href="${href}`), href);
 });

@@ -56,7 +56,7 @@ Settle a response's true cost with [`BR-Cost`](/docs/sdk/#br-cost).
 | `provisional` | 30 | Tier 0 allowance, general paths only. |
 | `grants.pow` | 300 | Credit a passed proof-of-work buys. |
 | `grants.human` | 3000 | Credit a passed human check buys. |
-| `grants.step_up` | 6000 | Credit a passed step-up buys. Step-up methods are [not available yet](/docs/overview/#not-yet). |
+| `grants.step_up` | 6000 | Credit a passed step-up buys. Step-up methods are [coming next](/docs/overview/#next). |
 | `grant_decay` | 0.5 | Each repeat pass of a tier within 24 hours buys this fraction of the previous one. |
 | `identified_multiplier` | 3 | Budget multiplier for sessions with an attached login ID. |
 | `account_ceiling_per_hour` | 20000 | Spend summed across all sessions of one login ID. |
@@ -79,7 +79,7 @@ When a key is over its limit, Core publishes its combined mint pressure at the n
 
 ## Risk score {#risk-score}
 
-`risk_score` is a visible scorecard from 0 to 10: a list of lines, each with a CEL `when` and either a fixed `add` or `add_field`, which adds the value of a field. Rules read the total as `risk.score`. Adding an `ai.*` field, such as `ai.risk_level`, is [not available yet](/docs/overview/#not-yet) while the model runs in shadow mode.
+`risk_score` is a visible scorecard from 0 to 10: a list of lines, each with a CEL `when` and either a fixed `add` or `add_field`, which adds the value of a field. Rules read the total as `risk.score`. Adding an `ai.*` field, such as `ai.risk_level`, is [coming next](/docs/overview/#next) while the model runs in shadow mode.
 
 ## Rules {#rules}
 
@@ -110,7 +110,7 @@ Rules are evaluated in order and the first match wins.
 | --- | --- |
 | `allow` | Serve the request and charge it. `allow(budget: agent)` charges the named budget instead. |
 | `log` | Record the decision and allow. |
-| `challenge(pow \| human \| step_up \| next_tier)` | Answer with a challenge (`403`, `BR-Challenge: v1`). `next_tier` asks for the next tier whose grant is still worth having. `step_up` is [not available yet](/docs/overview/#not-yet). |
+| `challenge(pow \| human \| step_up \| next_tier)` | Answer with a challenge (`403`, `BR-Challenge: v1`). `next_tier` asks for the next tier whose grant is still worth having. `step_up` is [coming next](/docs/overview/#next). |
 | `pow(multiplier)` | Ask for a proof-of-work made harder by the multiplier. |
 | `throttle` | `429` with `Retry-After` until the budget refills. |
 | `block` | Refuse the request. |
@@ -137,7 +137,7 @@ A cohort is a group of sessions the five-minute loop watches as one, keyed by:
 | `session_age` | A band, such as `under_10m` |
 | `path_class` | One of your path classes |
 
-Every five minutes Core builds a state for the whole site and for cohorts that drift from their own baseline for that hour of the week. On BotRampart Cloud, which is [not available yet](/docs/overview/#not-yet), the number of cohorts the model watches will depend on the plan: Free asks only about the site as a whole, Starter watches 5 cohorts, Growth 20 and Scale 50 ([plans](/own/#cloud)).
+Every five minutes Core builds a state for the whole site and for cohorts that drift from their own baseline for that hour of the week. On BotRampart Cloud, which is [coming next](/docs/overview/#next), the number of cohorts the model watches will depend on the plan: Free asks only about the site as a whole, Starter watches 5 cohorts, Growth 20 and Scale 50 ([plans](/own/#cloud)).
 
 ## States {#states}
 
@@ -157,14 +157,14 @@ No free-text field a visitor wrote ever appears in a state.
 
 ## Directives {#directives}
 
-A directive ([`Directive`](/docs/api/#schema-Directive)) publishes `ai.*` fields for a cohort or one session, from a model answer or a deterministic tripwire, with an expiry of at most 60 minutes. Directives set fields, never actions. The model runs in shadow mode: its fields are logged, and rules that act on them are [not available yet](/docs/overview/#not-yet). Run an `ai.*` rule with `mode: log`, as the example does.
+A directive ([`Directive`](/docs/api/#schema-Directive)) publishes `ai.*` fields for a cohort or one session, from a model answer or a deterministic tripwire, with an expiry of at most 60 minutes. Directives set fields, never actions. The model runs in shadow mode: its fields are logged, and rules that act on them are [coming next](/docs/overview/#next). Run an `ai.*` rule with `mode: log`, as the example does.
 
 | Field | Values |
 | --- | --- |
 | `ai.attack` | 0.01 to 0.99: probability of automated abuse |
 | `ai.risk_level` | 0 to 4 |
 | `ai.intent` | `content_scraping`, `credential_stuffing`, `checkout_or_inventory_abuse`, `fake_signups`, `resource_exhaustion`, `organic_spike`, `normal` |
-| `ai.action` | `none`, `raise_pow`, `human_check`, `step_up` (step-up methods are not available yet), `lower_budget` |
+| `ai.action` | `none`, `raise_pow`, `human_check`, `step_up` (step-up methods are coming next), `lower_budget` |
 | `ai.confidence` | 0 to 1 |
 
 A directive matches on `asn_class`, `session_age`, `path_class` or a session's hash `sid`. Escalation needs two windows that agree; stepping down follows three calm windows.

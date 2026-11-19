@@ -40,7 +40,7 @@ const answers = () => {
 };
 
 // Integration points. Only the in-app Node SDK is available; the edge adapters can be picked and
-// are marked not available yet, and the session continues with the SDK.
+// are marked coming next, and the session continues with the SDK.
 const INTEGRATIONS = {
   sdk: { label: "Node backend SDK, in your app", available: true },
   nginx: { label: "nginx module", available: false },
@@ -55,8 +55,8 @@ function renderInstall() {
   const coreLabel = { cloudflare: "Cloudflare Workers, your account", docker: "One container on a Linux host", kubernetes: "Kubernetes, plain manifests" }[a.core];
   const files = { cloudflare: "a Wrangler configuration", docker: "a compose file", kubernetes: "a Deployment and a Service" }[a.core];
   out("init").textContent = [
-    `Integration      ${integ.available ? integ.label : `${integ.label}: not available yet, using the Node backend SDK`}`,
-    `App framework    ${a.framework === "other" ? "not available yet for your framework, showing Express" : a.framework}`,
+    `Integration      ${integ.available ? integ.label : `${integ.label}: coming next, using the Node backend SDK today`}`,
+    `App framework    ${a.framework === "other" ? "an SDK for your framework is coming next, showing Express" : a.framework}`,
     `Core             ${coreLabel} (${files})`,
     `Decision log     ${a.lake} bucket, in your account`,
     `Decision loop    ${{ off: "off", gemini: "Gemini Decision 1, shadow mode", local: "self-hosted model, shadow mode" }[a.model]}`,
@@ -77,8 +77,8 @@ function renderInstall() {
   ].join("\n");
   out("file").textContent = `Backend SDK settings · ${fw}`;
   const notes = [];
-  if (!integ.available) notes.push(`The ${integ.label.replace(/ \(.*\)| in your account/g, "")} integration is not available yet. This session continues with the Node backend SDK inside your app, which works today.`);
-  if (a.framework === "other") notes.push("An SDK for your framework is not available yet: the backend SDK covers Express, Fastify and Next.js. The rest of this session shows the Express setup.");
+  if (!integ.available) notes.push(`The ${integ.label.replace(/ \(.*\)| in your account/g, "")} integration is coming next. This session continues with the Node backend SDK inside your app, which works today.`);
+  if (a.framework === "other") notes.push("An SDK for your framework is coming next: the backend SDK covers Express, Fastify and Next.js. The rest of this session shows the Express setup.");
   out("other").textContent = notes.join(" ");
   out("other").hidden = notes.length === 0;
 }

@@ -152,7 +152,7 @@ export function buildPrompt(choice = {}) {
   p("## My choices", "");
   list([
     `App framework: ${fw.label}${fw.available ? "" : " (no BotRampart SDK yet)"}`,
-    `Integration: ${integ.label}${integ.available ? "" : " (not available yet)"}`,
+    `Integration: ${integ.label}${integ.available ? "" : " (coming next, not in today's release)"}`,
     `Core runs on: ${core.label}`,
     `Bucket for the decision log: ${bucket.label}`,
     `Decision model: ${model.label}`,
@@ -166,9 +166,9 @@ export function buildPrompt(choice = {}) {
   ]);
   const blockers = [];
   if (!fw.available) blockers.push(`There is no BotRampart SDK for ${fw.label} yet: the backend SDK is Node only (Express, Fastify, Next.js). Do not port it and do not implement the protocol yourself. STOP after step 2 and tell me so.`);
-  if (!integ.available) blockers.push(`The ${integ.short} integration is not available yet. Do not build one. ${fw.available ? `Use the Node backend SDK inside my ${fw.label} app instead in step 4, and tell me you did.` : "STOP after step 2 and tell me so."}`);
+  if (!integ.available) blockers.push(`The ${integ.short} integration is coming next and is not in today's release. Do not build one. ${fw.available ? `Use the Node backend SDK inside my ${fw.label} app instead in step 4, and tell me you did.` : "STOP after step 2 and tell me so."}`);
   if (c.core === "workers" && c.bucket !== "r2") blockers.push(`On Cloudflare Workers, Core writes its lake to R2. I chose ${bucket.label}: confirm with me which one to use before step 1.`);
-  if (blockers.length) { p("", "Not available yet, for my choices:", ""); list(blockers); }
+  if (blockers.length) { p("", "Coming next, not in today's release, for my choices:", ""); list(blockers); }
   p("");
 
   p("## Step 1. Provision the bucket", "");
@@ -238,7 +238,7 @@ if (typeof document !== "undefined") {
       if (summary) {
         const off = ["framework", "integration"].map((k) => find(k, c[k])).filter((o) => !o.available).map((o) => o.short ?? o.label);
         summary.textContent = off.length
-          ? `${off.join(" and ")}: not available yet. The prompt says so and tells your agent where to stop.`
+          ? `${off.join(" and ")}: coming next. The prompt says so and tells your agent where to stop.`
           : "Every choice is available. The prompt stops where BotRampart's packages are needed, because they are not published yet.";
       }
       if (status) status.textContent = "";

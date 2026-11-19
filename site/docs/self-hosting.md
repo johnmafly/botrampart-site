@@ -14,7 +14,7 @@ lede: Every part of BotRampart runs on your own infrastructure under the Communi
 | Core | Cloudflare Workers, one container, Kubernetes, or OpenOrange in your own cloud account | Configuration, keys and policy versions; hot rollups, baselines, replay cache and mint counters |
 | Lake | Your bucket: R2, S3, MinIO, GCS or Azure Blob | Everything durable: rollups, decisions, challenges, states, answers, directives, policy versions |
 | Agent | One container | None; it reads the lake |
-| Log pack | Vector, next to your edge ([not available yet](/docs/overview/#not-yet)) | None |
+| Log pack | Vector, next to your edge ([coming next](/docs/overview/#next)) | None |
 
 Core is never in the request path, so its availability bounds what can escalate, not what can be served. The [architecture](/docs/architecture/#core) page maps each of Core's ports to its Cloudflare and container backends.
 
@@ -53,14 +53,14 @@ States, answers and directives are kept as JSON and Parquet beside them, and eve
 2. **Simulate.** Replay any policy change against the last 24 hours with [`simulatePolicy`](/docs/api/#op-simulatePolicy). Check `signed_in_affected` before every publish.
 3. **Enforce tier 1.** Switch to `mode: "enforce"` with the default policy. Ordinary browsing stays inside the refill rate and sees nothing.
 4. **Stage new rules.** Give a new rule `mode: log` for a week before it enforces.
-5. **Watch the model in shadow mode.** Compare its logged answers with what you would have done. Letting a rule act on an `ai.*` field is [not available yet](/docs/overview/#not-yet).
+5. **Watch the model in shadow mode.** Compare its logged answers with what you would have done. Letting a rule act on an `ai.*` field is [coming next](/docs/overview/#next).
 
 ## Changing policy safely {#changes}
 
 - Every publish creates an immutable version with who published and who approved it, and SDKs pick it up at the next sync.
 - Publishing names the version it was based on and fails with `409` if someone published in between.
 - Roll back by publishing the previous version.
-- The agent cannot change policy. Suggested changes from the agent are [not available yet](/docs/overview/#not-yet).
+- The agent cannot change policy. Suggested changes from the agent are [coming next](/docs/overview/#next).
 
 ## Keys {#keys}
 
@@ -71,7 +71,7 @@ Site keys sign session tokens and puzzles. Each token carries a key id, two keys
 - **Every response carries `BR-Decision`.** Log it at the edge. A path in your access logs without it is a route the SDK does not cover.
 - **Look up any refusal** by the reference the visitor quotes, with [`getDecision`](/docs/api/#op-getDecision) or the agent's `explain_decision`.
 - **Ask the agent** in Slack or the console for named metrics such as top spenders and pass rates.
-- **Edge-only traffic** is not metered: the Vector log pack that would send it to [`ingestRollups`](/docs/api/#op-ingestRollups) is [not available yet](/docs/overview/#not-yet).
+- **Edge-only traffic** is not metered: the Vector log pack that would send it to [`ingestRollups`](/docs/api/#op-ingestRollups) is [coming next](/docs/overview/#next).
 
 ## Failure behaviour {#failure}
 

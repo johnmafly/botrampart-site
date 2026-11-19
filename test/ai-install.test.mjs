@@ -1,7 +1,7 @@
 // Express AI install (/build/ai/): the prompt in the page's HTML (read without JavaScript) is the one
 // ai-install.js builds for the preselected choices, and every prompt it can build stays honest:
 // no registry install command, the packages named as not published yet, and every option that is
-// not available yet said to be so.
+// coming next said to be so.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
@@ -30,12 +30,12 @@ test("the page's default prompt is the one ai-install.js builds for the preselec
   assert.match(html, /<pre[^>]*tabindex="0" role="region" aria-label="Code: [^"]+"[^>]*><code data-ai-prompt>/);
 });
 
-test("every option in the form is in OPTIONS, and the ones not available yet are marked", () => {
+test("every option in the form is in OPTIONS, and the ones coming next are marked", () => {
   for (const [name, opts] of Object.entries(OPTIONS)) {
     for (const o of opts) {
       const label = html.match(new RegExp(`<label class="choice[^"]*"><input type="radio" name="${name}" value="${o.value}"[^>]*><span>([\\s\\S]*?)</span></label>`));
       assert.ok(label, `${name}=${o.value} is in the form`);
-      assert.equal(/Not available yet/.test(label[1]), !o.available, `${name}=${o.value} marked as ${o.available ? "available" : "not available yet"}`);
+      assert.equal(/Coming next/.test(label[1]), !o.available, `${name}=${o.value} marked as ${o.available ? "available" : "coming next"}`);
     }
   }
 });
@@ -53,7 +53,7 @@ test("every prompt it can build: no install command, packages not published, una
       assert.match(p, /Do not switch to enforce mode/);
       for (const name of ["BR_LAKE_URL", "BR_DECISION_PROVIDER", "br_keys", "lake_writer", "BR-Decision", "getDecision"]) assert.ok(p.includes(name), `${name} in prompt`);
       for (const k of ["framework", "integration"]) {
-        if (!OPTIONS[k].find((o) => o.value === choice[k]).available) assert.match(p, /not available yet|no BotRampart SDK/i, `${k}=${choice[k]} said to be unavailable`);
+        if (!OPTIONS[k].find((o) => o.value === choice[k]).available) assert.match(p, /coming next|no BotRampart SDK/i, `${k}=${choice[k]} said to be unavailable`);
       }
       return;
     }
