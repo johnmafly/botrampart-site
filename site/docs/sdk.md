@@ -1,10 +1,35 @@
 ---
 title: SDK reference
 nav: SDK reference
-order: 9
+group: Reference
+order: 14
 description: What BotRampart's SDKs expose (backend SDKs for Node, Python, Go, Java, Ruby and PHP, the edge adapters, the mobile SDKs and the browser SDK), as spec/openapi.yaml defines it: the routes the backend SDK mounts under /_br, the headers it sets and reads, br.identify, and the browser SDK served at /_br/sdk.js with br.status(), autoRetry, challenges and signals.
 lede: The SDK surface the API spec defines, each part linked to its HTTP exchange in the API reference. Everything the SDKs do on the wire is in the spec, so you can also integrate over HTTP directly.
 ---
+
+The SDKs are how BotRampart runs in your app, at your edge, in your mobile app and in the browser. This page lists what each one exposes on the wire, linked to the matching operation in the API reference.
+
+## When to use {#when-to-use}
+
+- You are mounting the backend SDK and want to know which routes it adds under `/_br`.
+- You handle challenge responses yourself instead of using `autoRetry`.
+- You set `BR-Cost` or attach a login ID with `br.identify`.
+- You are choosing the browser SDK's signal mode.
+
+## Quickstart {#quickstart}
+
+1. Mount the backend SDK in front of your handlers, in observe mode, with the [settings](/docs/configuration/#backend) in Configuration.
+2. Add the [script tag](#script-tag) to your layout.
+3. Log and strip `BR-Sid` and `BR-Decision` at your edge.
+
+Then ask the browser SDK for the session's tier:
+
+```js op=getSessionStatus title="In the browser"
+const { tier, expiresAt } = await br.status();
+```
+
+> [!TIP]
+> With `autoRetry` on, the browser SDK runs a challenge and retries the request once, so most apps never handle a `403` themselves.
 
 ## Packages {#packages}
 
@@ -146,3 +171,13 @@ The iOS and Android SDKs protect your native app's calls to your API with the sa
 - **Solves the proof-of-work natively.** The same signed puzzle from [`getChallenge`](/docs/api/#op-getChallenge), solved off the main thread and redeemed at [`/_br/redeem`](/docs/api/#op-redeemChallenge).
 - **Presents challenges in the app.** A human check or step-up method opens in a native sheet, and the original call retries once, like `autoRetry` in the browser.
 - **Reports the same signals.** The `standard`, `minimal` and `off` modes collect the same counts and never collect device identifiers.
+
+## Where to go next {#where-next}
+
+| Goal | Page |
+| --- | --- |
+| Set every option for each SDK | [Configuration](/docs/configuration/#backend) |
+| Read the HTTP exchange behind each route | [API reference](/docs/api/) |
+| Write rules on `signals.*` fields | [Policy reference](/docs/policy/#fields) |
+| Pick a backend SDK, an edge adapter or a mobile SDK | [Choose an integration](/docs/choose/) |
+| Wire the SDK into your app | [Wire it in](/docs/wire/) |

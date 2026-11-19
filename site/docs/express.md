@@ -1,10 +1,31 @@
 ---
 title: Express
 nav: Express
-order: 7
+group: Get started
+order: 2
 description: Express installs BotRampart with one AI prompt. Pick your framework, where your app runs, your CDN or edge and your cloud; Express writes a prompt that has your coding agent install the SDK, provision Core and the decision log as Terraform, Pulumi or a CLI script, wire the edge and verify it, in observe mode.
 lede: Pick your stack, copy one prompt, and your coding agent installs BotRampart and provisions what it runs on. You approve the plan; nothing is enforced until you say so.
 ---
+
+Express is the fastest way to install BotRampart: you pick your stack, copy one prompt, and your coding agent installs, provisions and checks everything in observe mode. This page explains what the prompt asks the agent to do and the rails it keeps.
+
+## When to use {#when-to-use}
+
+- You use Claude Code, Cursor, Codex or another coding agent and want it to do the install.
+- You want Core and the decision-log bucket provisioned in your own cloud account as Terraform, Pulumi or a CLI script.
+- You run a CDN or edge in front of your app and want its adapter wired on the same site keys.
+- You want to know what the agent changes before you approve its plan.
+
+## Quickstart {#quickstart}
+
+1. Open [Express](/express/) and pick your framework, where your app runs, your CDN or edge and your cloud.
+2. Copy the prompt and paste it into your coding agent at the root of your app's repository.
+3. Approve the provisioning plan when the agent shows it.
+4. Read the agent's report: what changed, what it provisioned and which secrets you still set.
+5. Watch the decision log in observe mode, replay a policy with [`simulatePolicy`](/docs/api/#op-simulatePolicy), then decide when to enforce.
+
+> [!NOTE]
+> The prompt never switches to enforce mode and never publishes a policy. Enforcing stays your decision, after a replay.
 
 ## What Express does {#what}
 
@@ -49,4 +70,14 @@ Serverless runtimes (Vercel, AWS Lambda, Cloud Run) get a shared Redis or Valkey
 
 ## Privacy {#privacy}
 
-The prompt is built in your browser from your choices. Nothing is stored or sent, and the page sets no cookies.
+The prompt is built in your browser from your choices. Your choices are never stored or sent, and the page sets no cookies.
+
+## Where to go next {#where-next}
+
+| Goal | Page |
+| --- | --- |
+| Wire the install by hand instead | [Install and quickstart](/docs/getting-started/) |
+| See every option the agent sets | [Configuration](/docs/configuration/#backend) |
+| Keep budgets exact on serverless runtimes | [Shared budgets](/docs/integrations/#store) |
+| Replay a policy before you enforce | [Policy reference](/docs/policy/#publishing) |
+| Compare a backend SDK, an edge adapter and a mobile SDK | [Choose an integration](/docs/choose/) |

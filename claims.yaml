@@ -225,7 +225,7 @@ claims:
   # Published June 25, 2024. Quote matched fetched text exactly (after whitespace collapse).
   - id: "polyfill"
     claim: "In 2024 the Polyfill.io CDN served malware to more than 100,000 sites after a change of owner."
-    where: ["/build/", "/build/inside/", "/docs/getting-started/", "/docs/security/"]
+    where: ["/docs/choose/", "/docs/getting-started/", "/docs/inside/", "/docs/security/"]
     source_url: "https://sansec.io/research/polyfill-supply-chain-attack"
     quote: "The new Chinese owner of the popular Polyfill JS project injects malware into more than 100 thousand sites."
     checked: "2026-11-18"
@@ -234,7 +234,7 @@ claims:
   # million'. Quote matched fetched text exactly (after whitespace collapse).
   - id: "cf-workers-price"
     claim: "Cloudflare Workers Paid is $5 a month with 10 million requests included."
-    where: ["/build/", "/build/inside/", "/docs/architecture/", "/docs/getting-started/", "/docs/integrations/", "/docs/self-hosting/", "/own/"]
+    where: ["/docs/architecture/", "/docs/choose/", "/docs/getting-started/", "/docs/inside/", "/docs/integrations/", "/docs/self-hosting/", "/own/"]
     source_url: "https://developers.cloudflare.com/workers/platform/pricing/"
     quote: "minimum charge of $5 USD per month for an account"
     checked: "2026-11-18"
@@ -243,7 +243,7 @@ claims:
   # fetched text exactly (after whitespace collapse).
   - id: "r2-price"
     claim: "Cloudflare R2 storage costs $0.015 per GB-month with free egress."
-    where: ["/build/inside/", "/docs/integrations/", "/docs/self-hosting/", "/own/"]
+    where: ["/docs/inside/", "/docs/integrations/", "/docs/self-hosting/", "/own/"]
     source_url: "https://developers.cloudflare.com/r2/pricing/"
     quote: "There are no charges for egress bandwidth for any storage class."
     checked: "2026-11-18"
@@ -252,7 +252,7 @@ claims:
   # subset' vs 'Stock Node.js'. Quote matched fetched text exactly (after whitespace collapse).
   - id: "oo-exists"
     claim: "OpenOrange, from Rivet, is Apache-2.0 and runs Cloudflare Workers projects on Node.js in other clouds."
-    where: ["/build/inside/", "/docs/architecture/", "/docs/integrations/"]
+    where: ["/docs/architecture/", "/docs/inside/", "/docs/integrations/"]
     source_url: "https://github.com/rivet-dev/open-orange"
     quote: "Run Cloudflare Workers anywhere: AWS, Google Cloud, Azure, or your own servers."
     checked: "2026-11-18"
@@ -497,7 +497,7 @@ claims:
   # 1 October 2026 (question 17). Quote matched the snapshot's text after whitespace normalisation.
   - id: "cnil-antibot"
     claim: "CNIL says anti-robot (CAPTCHA) systems whose sole purpose is securing the site or its authentication need no consent."
-    where: ["/build/wire/", "/docs/configuration/", "/docs/faq/", "/docs/security/"]
+    where: ["/docs/configuration/", "/docs/faq/", "/docs/security/", "/docs/wire/"]
     source_url: "https://web.archive.org/web/20261001072158/https://www.cnil.fr/fr/cookies-et-autres-traceurs/regles/cookies/FAQ"
     quote: "Lorsque ces solutions ont pour seule finalité la sécurisation du site ou d’un mécanisme d’authentification au bénéfice des utilisateurs, le consentement des utilisateurs n’est pas nécessaire."
     checked: "2026-11-18"
@@ -507,7 +507,7 @@ claims:
   # so 'single-use' was softened. Quote matched after whitespace normalisation only.
   - id: "ts-single-use"
     claim: "Turnstile tokens are valid for 300 seconds and intended for single use; reuse detection is eventually consistent."
-    where: ["/build/inside/", "/docs/architecture/"]
+    where: ["/docs/architecture/", "/docs/inside/"]
     source_url: "https://developers.cloudflare.com/turnstile/get-started/server-side-validation/"
     quote: "Each token is valid for 300 seconds (5 minutes) after generation. Tokens are intended for single use."
     checked: "2026-11-18"
@@ -518,7 +518,7 @@ claims:
   # after whitespace normalisation only.
   - id: "dd-protapi"
     claim: "DataDome's integration sends request metadata to its Protection API, which returns allow or challenge; if the X-DataDomeResponse header is missing, the module fails open and treats the request as allowed."
-    where: ["/build/inside/", "/docs/architecture/", "/field/"]
+    where: ["/docs/architecture/", "/docs/inside/", "/field/"]
     source_url: "https://docs.datadome.co/reference/validate-request"
     quote: "Fail-open Header missing Ignore it Treat the request as allowed (200) to avoid blocking legitimate traffic due to system errors."
     checked: "2026-11-18"
@@ -528,7 +528,7 @@ claims:
   # normalisation only.
   - id: "botid-undeclared"
     claim: "Vercel BotID requires protected routes to be declared in the client configuration; checkBotId() fails on routes not added there."
-    where: ["/build/inside/", "/docs/architecture/"]
+    where: ["/docs/architecture/", "/docs/inside/"]
     source_url: "https://vercel.com/docs/botid/get-started"
     quote: "Not adding the protected route to <BotIdClient /> will result in checkBotId() failing."
     checked: "2026-11-18"
@@ -538,7 +538,7 @@ claims:
   # the Risk API timeout, which passes the request on timeout (fail-open).
   - id: "human-timeout"
     claim: "HUMAN's Akamai EdgeWorker enforcer decrypts the HUMAN Sensor's risk cookie with a cookie secret, and waits up to PX_S2S_TIMEOUT (default 1000 ms) for the Risk API before timing out and passing the request."
-    where: ["/build/inside/", "/docs/architecture/"]
+    where: ["/docs/architecture/", "/docs/inside/"]
     source_url: "https://docs.humansecurity.com/applications/akamai-edgeworker/v4/configuration"
     quote: "The total time in milliseconds that the Enforcer will wait for the Risk API request to return before timing out and passing the request."
     checked: "2026-11-18"
@@ -547,7 +547,7 @@ claims:
   # not a shipped SDK; leaves out rule evaluation and framework overhead.
   - id: "exp-verify"
     claim: "In our benchmark of the reference code (Node 25, Apple M4 Pro), verifying the signed session cookie and charging the budget took 1.79 microseconds at the median and 2.58 at the 99th percentile."
-    where: ["/", "/build/inside/", "/docs/architecture/", "/docs/faq/", "/docs/getting-started/"]
+    where: ["/", "/docs/architecture/", "/docs/faq/", "/docs/getting-started/", "/docs/inside/"]
     source_url: "https://github.com/johnmafly/botrampart-site/blob/main/experiments/verify-bench.json"
     quote: "\"verify_p99_us\": 2.58,"
     checked: "2026-11-18"

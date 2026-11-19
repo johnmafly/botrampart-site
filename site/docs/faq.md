@@ -1,10 +1,23 @@
 ---
 title: FAQ
 nav: FAQ
-order: 13
+group: More
+order: 16
 description: Short answers to the questions engineers ask first about BotRampart: CAPTCHAs, fingerprinting, latency, Core outages, DDoS, search engines, consent, licences, pricing and how to verify the numbers.
 lede: Short answers, each linked to the page that explains it in full.
 ---
+
+These are the questions engineers ask first about BotRampart. Each answer is short and links to the page that explains it in full.
+
+## When to use {#when-to-use}
+
+- You are evaluating BotRampart and want quick answers before reading the concepts pages.
+- You are answering a teammate's question and need the page to send them.
+
+## Quickstart {#quickstart}
+
+1. Find the question below.
+2. Follow its link to the full explanation.
 
 ## Is this a CAPTCHA? {#captcha}
 
@@ -69,3 +82,12 @@ The SDKs and the CLI are Apache-2.0. Core, the agent and the console are AGPL-3.
 ## How do I check the numbers on this site? {#receipts}
 
 Every outside figure carries a numbered source with the quoted words it rests on, and the full ledger is [claims.yaml](https://github.com/johnmafly/botrampart-site/blob/main/claims.yaml). The budget numbers come from the [reference implementation](https://github.com/johnmafly/botrampart-site/blob/main/site/assets/economics.mjs), and a test checks them.
+
+## Where to go next {#where-next}
+
+| Goal | Page |
+| --- | --- |
+| Learn how BotRampart decides | [Overview and concepts](/docs/overview/) |
+| Install it in observe mode | [Install and quickstart](/docs/getting-started/) |
+| Check what data is kept | [Security model](/docs/security/#data) |
+| Compare editions | [Features](/docs/features/#editions) |

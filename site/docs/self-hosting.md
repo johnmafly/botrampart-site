@@ -1,10 +1,30 @@
 ---
 title: Self-hosting and operations
 nav: Self-hosting
+group: Operate
 order: 11
 description: Running BotRampart yourself: where Core runs, sizing and what it costs, the lake and its retention, rolling out from observe to enforce, publishing policy safely, key rotation, monitoring coverage and failure behaviour.
 lede: Every part of BotRampart runs on your own infrastructure under the Community edition. This page is the operator's view: what to run, what it costs, and how to change it safely.
 ---
+
+Self-hosting means you run Core, the lake and the agent; the SDKs already run in your app. This page covers what that takes, what it costs, and how to roll out and change policy safely.
+
+## When to use {#when-to-use}
+
+- You are moving from a first install to production.
+- You need a sizing and cost estimate for Core.
+- You are planning the rollout from observe to enforce.
+- You are on call and need the failure behaviour.
+
+## Quickstart {#quickstart}
+
+1. Run Core on Cloudflare Workers or in one container with 256 MB of memory.
+2. Point `BR_LAKE_URL` at your bucket.
+3. Deploy the backend SDK in observe mode and read the decision log for a day.
+4. Simulate, then enforce tier 1 with the default policy, as [Rolling out](#rollout) describes.
+
+> [!TIP]
+> Roll back a policy by publishing the previous version. SDKs pick it up at the next sync, 5 to 10 seconds later.
 
 ## What you run {#what}
 
@@ -84,3 +104,13 @@ Site keys sign session tokens and puzzles. Each token carries a key id, two keys
 | No decision model configured | The five-minute loop is off; everything else works. |
 | SDK error or missing configuration | Fail mode per route: open for content, closed for login, sign-up and checkout. |
 | An instance misses syncs | Revoked sessions still stop within 30 minutes, when their token expires. In-memory budgets reconcile at the next sync. |
+
+## Where to go next {#where-next}
+
+| Goal | Page |
+| --- | --- |
+| Set every Core setting and secret | [Configuration](/docs/configuration/#core) |
+| Map Core's ports to your platform | [Design and architecture](/docs/architecture/#core) |
+| Review threats and controls | [Security model](/docs/security/#threats) |
+| Publish and roll back policy | [Policy reference](/docs/policy/#publishing) |
+| Send edge rollups to Core | [Integrations](/docs/integrations/#edge) |

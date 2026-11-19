@@ -42,7 +42,7 @@ test("/own/ billing copy does not promise bots are never billed", () => {
 
 // The backend SDK stays light: the pages that describe it say it keeps no aggregated visitor metrics.
 test("the SDK pages say the SDK keeps no aggregated visitor metrics", () => {
-  for (const r of ["build", "build/wire"]) assert.match(text(page(r)), /keeps no aggregated visitor metrics/, `/${r}/`);
+  for (const r of ["docs/choose", "docs/wire"]) assert.match(text(page(r)), /keeps no aggregated visitor metrics/, `/${r}/`);
   assert.match(readFileSync(join(root, "site", "docs", "sdk.md"), "utf8"), /keeps no aggregated visitor metrics/);
 });
 

@@ -52,13 +52,13 @@ test("code samples that call the product carry data-op", () => {
   }
 });
 
-test("the Build chapters link each other and the meter, and the header reaches every content page", () => {
-  const start = pages.find((p) => p.name === "build/index.html").html;
-  for (const href of ["/build/", "/build/wire/", "/build/inside/", "/spec/openapi.yaml", "/meter/"]) {
-    assert.ok(start.includes(`href="${href}"`), `build nav links ${href}`);
+test("the integration chapters (formerly /build/) sit together in the docs sidebar, and the header reaches every content page", () => {
+  const start = pages.find((p) => p.name === "docs/choose/index.html").html;
+  for (const href of ["/docs/choose/", "/docs/wire/", "/docs/inside/", "/spec/openapi.yaml", "/meter/"]) {
+    assert.ok(start.includes(`href="${href}"`), `the choose page links ${href}`);
   }
   const home = pages.find((p) => p.name === "index.html").html;
-  for (const href of ["/meter/", "/field/", "/own/", "/build/", "/try/"]) assert.ok(home.includes(`href="${href}"`), `home links ${href}`);
+  for (const href of ["/meter/", "/field/", "/own/", "/docs/choose/", "/try/"]) assert.ok(home.includes(`href="${href}"`), `home links ${href}`);
 });
 
 test("claims.yaml: every claim follows the greenhouse claims schema, sourced over https, quoted and dated", () => {
@@ -113,11 +113,12 @@ test("home page leads with the threat and keeps every section, its static log an
   const bench = home.split('id="benchmark"')[1].split("<section")[0];
   assert.doesNotMatch(bench, /not measured|to be measured|pending|no results/i, "the benchmark reads finished");
   assert.match(bench, /Sample figures for the private preview/, "the sample-figures note sits in the benchmark section");
-  // Open source is shown by its licences; the home page invents no repository URL or star count.
+  // Open source is shown by its licences; the source section invents no repository URL or star count
+  // (the owner-approved sample star count sits in the top bar, marked data-mock: MOCK_FIGURES.md).
   const source = home.split('id="source"')[1].split("<section")[0];
   assert.match(source, /Apache-2\.0/);
   assert.doesNotMatch(source, /github\.com\/botrampart|★|\bstars?\b/i);
-  for (const href of ["/meter/", "/field/", "/own/", "/build/", "/try/"]) assert.ok(home.includes(`href="${href}`), href);
+  for (const href of ["/meter/", "/field/", "/own/", "/docs/choose/", "/try/"]) assert.ok(home.includes(`href="${href}`), href);
 });
 
 // Named-vendor figures are sample figures for the private preview (MOCK_FIGURES.md). They may
@@ -222,8 +223,27 @@ test("no tracking: no external scripts, styles, fonts or images", () => {
   for (const f of walk(join(dist, "assets"), ".js").concat(walk(join(dist, "assets"), ".mjs"), walk(join(dist, "assets"), ".css"))) {
     const src = readFileSync(f, "utf8");
     assert.doesNotMatch(src, /import\(["']https?:|from ["']https?:|\.src\s*=\s*["']https?:/, `${relative(dist, f)}: loads external code`);
-    assert.doesNotMatch(src, /\bfetch\(|XMLHttpRequest|sendBeacon|localStorage|sessionStorage|indexedDB|document\.cookie|WebSocket/, `${relative(dist, f)}: network or storage API`);
+    // The docs reader tools are the one exception, and a narrow one (docs rebuild, 2026-11-19):
+    // docs.js reads two same-origin files (the search index and a page's own Markdown for "Copy
+    // page"), and docs.js and theme.js keep two display preferences in localStorage (light or dark,
+    // and the last code tab picked). Nothing is sent anywhere; no cookie, beacon, socket or other
+    // storage is used by any file.
+    const name = relative(dist, f).replace(/\.[0-9a-f]{10}\./, ".");
+    let rest = src;
+    if (name === join("assets", "docs.js")) {
+      const calls = [...src.matchAll(/\bfetch\(([^)]*)\)/g)].map((m) => m[1]);
+      assert.deepEqual(calls.sort(), ["\"/docs/search-index.json\"", "btn.dataset.copyMd"].sort(), "docs.js fetches only the search index and the page's Markdown");
+      rest = rest.replace(/\bfetch\("\/docs\/search-index\.json"\)|\bfetch\(btn\.dataset\.copyMd\)/g, "");
+    }
+    if (name === join("assets", "docs.js") || name === join("assets", "theme.js")) {
+      for (const [, key] of src.matchAll(/localStorage\.(?:getItem|setItem)\(([^,)]+)/g)) assert.match(key, /^(?:"br-theme"|tabKey\(group)$/, `${name}: localStorage key ${key}`);
+      assert.match(src, /const tabKey = \(group\) => `br-tab:\$\{group\}`;|^(?![\s\S]*tabKey)/, `${name}: tab preference key`);
+      rest = rest.replace(/localStorage\.(?:getItem|setItem)\((?:"br-theme"|tabKey\(group\))/g, "");
+    }
+    assert.doesNotMatch(rest, /\bfetch\(|XMLHttpRequest|sendBeacon|localStorage|sessionStorage|indexedDB|document\.cookie|WebSocket/, `${relative(dist, f)}: network or storage API`);
   }
+  // Every "Copy page" button reads the page's own Markdown twin.
+  for (const { name, html } of pages) for (const [, md] of html.matchAll(/data-copy-md="([^"]+)"/g)) assert.match(md, /^\/docs\/[a-z-]+\.md$/, `${name}: Copy page reads ${md}`);
 });
 
 test("signup runs client-side: no form action, ends on a notice that nothing was stored and no account exists", () => {
@@ -268,7 +288,7 @@ test("no purchase calls to action, and no invented import names in the wiring sa
       assert.doesNotMatch(text.replace(/<[^>]+>/g, " "), /\b(buy|purchase|subscribe|checkout|free trial|start (a |your )?trial|upgrade)\b/i, `${name}: purchase call to action`);
     }
   }
-  const integration = pages.find((p) => p.name === "build/wire/index.html").html;
+  const integration = pages.find((p) => p.name === "docs/wire/index.html").html;
   assert.doesNotMatch(integration, /from botrampart|@BotProtect/, "no Python or Java samples presented as available");
 });
 

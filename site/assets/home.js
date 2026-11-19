@@ -57,3 +57,29 @@ if (chat && !reduce && "IntersectionObserver" in window) {
     io.observe(chat);
   }
 }
+
+/* ---------- 3. "Copy agent prompt" in the first screen. ---------- */
+// Without JavaScript it is a link to the Express section. With it, it copies the prompt for the
+// picker's current choices (the defaults until the reader changes them), says so, and scrolls to
+// Express so the reader can change the picks.
+const agentBtn = document.querySelector("[data-copy-agent-prompt]");
+const agentStatus = document.querySelector("[data-copy-agent-status]");
+if (agentBtn) {
+  agentBtn.addEventListener("click", async (e) => {
+    const prompt = document.querySelector("[data-ai-prompt]")?.textContent ?? "";
+    if (!prompt) return;
+    e.preventDefault();
+    let ok = false;
+    try { await navigator.clipboard.writeText(prompt); ok = true; } catch { ok = false; }
+    const label = agentBtn.textContent;
+    agentBtn.textContent = ok ? "Copied" : "Copy agent prompt";
+    agentBtn.dataset.state = ok ? "copied" : "";
+    if (agentStatus) agentStatus.textContent = ok ? "Copied the install prompt for the default stack. Change the picks below." : "Your browser blocked copying. The prompt is in the Express section below.";
+    setTimeout(() => { agentBtn.textContent = label; delete agentBtn.dataset.state; }, 2400);
+    const target = document.getElementById("express");
+    if (target) {
+      history.pushState(null, "", "#express");
+      setTimeout(() => target.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" }), ok ? 500 : 0);
+    }
+  });
+}

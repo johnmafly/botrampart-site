@@ -1,10 +1,35 @@
 ---
 title: Policy and cohort reference
 nav: Policy and cohorts
-order: 10
+group: Reference
+order: 15
 description: The BotRampart policy file field by field (path classes, budget, mint, risk score, rules), the CEL fields and actions rules use, publishing, simulation and rollback, and the cohorts, states and directives of the five-minute loop.
 lede: One versioned YAML file per site decides what every request costs and what happens when a session cannot pay. This page defines every key in it, every field a rule can read, and the cohorts the five-minute loop watches.
 ---
+
+The policy file is where you decide what BotRampart does. This page defines every key, field and action in it, and how a change is simulated, published and rolled back.
+
+## When to use {#when-to-use}
+
+- You are changing path costs, budgets or mint limits.
+- You are writing a rule, or staging one in `log` mode.
+- You want to replay a policy against the last 24 hours of traffic before you publish.
+- You are writing rules on the five-minute loop's `ai.*` fields.
+
+## Quickstart {#quickstart}
+
+1. Read the version Core enforces now, or start from the [example policy](#file), and keep it as `botrampart.policy.yaml` in Git.
+2. Change a path class's cost, or add a rule with `mode: log`.
+3. Replay it with [`simulatePolicy`](/docs/api/#op-simulatePolicy) and check `signed_in_affected`.
+4. Publish with [`putPolicy`](/docs/api/#op-putPolicy), naming the `base_version` you started from.
+
+```shell op=getPolicy title="Read the version Core enforces now"
+curl -H "Authorization: Bearer $BR_CONSOLE_TOKEN" -H "Accept: application/yaml" \
+  "https://core.internal:8787/v1/policy"
+```
+
+> [!TIP]
+> Rules are evaluated in order and the first match wins. Put allow rules for verified crawlers, partners and webhooks before the over-budget rule.
 
 ## The policy file {#file}
 
@@ -170,3 +195,13 @@ A directive ([`Directive`](/docs/api/#schema-Directive)) publishes `ai.*` fields
 | `ai.confidence` | 0 to 1 |
 
 A directive matches on `asn_class`, `session_age`, `path_class` or a session's hash `sid`. Escalation needs two windows that agree; stepping down follows three calm windows.
+
+## Where to go next {#where-next}
+
+| Goal | Page |
+| --- | --- |
+| See the budget arithmetic | [Overview](/docs/overview/#economics) |
+| Read the schema of every key | [Policy schema](/docs/api/#schema-Policy) |
+| Roll out from observe to enforce | [Self-hosting](/docs/self-hosting/#rollout) |
+| See what the five-minute loop sends to the model | [Design and architecture](/docs/architecture/#decision-model) |
+| Let a known agent through on its own budget | [Integrations](/docs/integrations/#no-cookie) |

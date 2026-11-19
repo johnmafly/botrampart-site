@@ -194,3 +194,20 @@ The console tile layered over the home page's decision log is console sample dat
 
 - **Console sample data.** The rest of the console preview (`/dashboard/`) is generated from a fixed seed in `site/assets/dashboard-data.mjs` and labelled "Sample data" on the page. It is not listed figure by figure here.
 - **The comparison page** (`/field/`) cites public sources for every vendor claim through `claims.yaml`. It has no benchmark figures.
+
+## First screen and top bar (2026-11-19)
+
+The home page's first-screen console and the GitHub star count in the top bar of every page are sample figures too. The console sits in `figure.fs-console[data-mock]` with the sample note in its caption; the star badge is `a.stars[data-mock]` in `site/_partials/header.html`, with the note in its accessible name and in the footer. There is no public repository yet, so the badge links to the licences card at `/#source`, not to GitHub (STATE.md).
+
+| Page | Figure | What it stands for | Selector | Source file:line |
+| --- | --- | --- | --- | --- |
+| `/` | 52,640 sessions | sessions today, all verdicts (26,105 + 12,380 + 8,270 + 5,885) | `.fs-sum` (1st) | [site/index.html:34](site/index.html#L34) |
+| `/` | 26,105 human, allowed | human sessions allowed today | `.fs-sum .v-allow` | [site/index.html:35](site/index.html#L35) |
+| `/` | 12,380 blocked | sessions blocked today | `.fs-sum .v-block` | [site/index.html:36](site/index.html#L36) |
+| `/` | 8,270 challenged | sessions challenged today | `.fs-sum .v-challenge` | [site/index.html:37](site/index.html#L37) |
+| `/` | 5,885 rate-limited | sessions rate-limited today | `.fs-sum .v-rate` | [site/index.html:38](site/index.html#L38) |
+| `/` | 22 inputs, proof-of-work in 380 ms | the human row | `.fs-rows li` (1st) | [site/index.html:41](site/index.html#L41) |
+| `/` | 40 product pages in a minute | the scraper row | `.fs-rows li` (2nd) | [site/index.html:42](site/index.html#L42) |
+| `/` | no input after 30 requests | the headless browser row | `.fs-rows li` (3rd) | [site/index.html:42](site/index.html#L42) |
+| `/` | rate-limited 429 | the AI agent row's verdict (HTTP status) | `.fs-rows li` (4th) | [site/index.html:44](site/index.html#L44) |
+| `/`, `/dashboard/`, `/docs/`, `/docs/api/`, `/docs/architecture/`, `/docs/changelog/`, `/docs/choose/`, `/docs/configuration/`, `/docs/express/`, `/docs/faq/`, `/docs/features/`, `/docs/getting-started/`, `/docs/inside/`, `/docs/integrations/`, `/docs/overview/`, `/docs/policy/`, `/docs/sdk/`, `/docs/security/`, `/docs/self-hosting/`, `/docs/wire/`, `/express/`, `/field/`, `/meter/`, `/own/`, `/signin/`, `/signup/`, `/solutions/`, `/solutions/accounts/`, `/solutions/commerce/`, `/solutions/publishers/`, `/solutions/saas/`, `/try/` | 2.4k GitHub stars | GitHub stars, every page's top bar | `.top-actions a.stars` | [site/_partials/header.html:36](site/_partials/header.html#L36) |

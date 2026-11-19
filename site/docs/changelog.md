@@ -1,10 +1,23 @@
 ---
 title: Changelog
 nav: Changelog
-order: 14
+group: More
+order: 17
 description: Dated changes to BotRampart's site, user guide and OpenAPI spec, each linked to the pull request that made it.
 lede: Every change to this site, the guide and the spec, newest first. Each entry links to the merged pull request, where the diff and its checks are.
 ---
+
+Changes are listed newest first, with the spec versions on top.
+
+## When to use {#when-to-use}
+
+- You want to know what changed since you last read the docs.
+- You are checking which spec version a change shipped in.
+
+## Quickstart {#quickstart}
+
+1. Check [Spec versions](#spec-versions) for the current version of the wire contract.
+2. Read the dated entries below, and open a linked pull request for its diff and checks.
 
 ## Spec versions {#spec-versions}
 
@@ -44,3 +57,12 @@ The current spec is [spec/openapi.yaml](/spec/openapi.yaml); the [API reference]
 - **Site redesign.** New identity, motion and copy, and a story-shaped structure: the meter, the field, own it, build and run a session ([#4](https://github.com/johnmafly/botrampart-site/pull/4)).
 - **Claims ledger.** `claims.yaml` follows the Greenhouse claims schema, with fixes for scrollable regions and the signup flow's last screen ([#3](https://github.com/johnmafly/botrampart-site/pull/3), [#2](https://github.com/johnmafly/botrampart-site/pull/2)).
 - **First site.** Pages, engineering chapters, pricing, the signup flow, the OpenAPI spec and the claims ledger ([#1](https://github.com/johnmafly/botrampart-site/pull/1)).
+
+## Where to go next {#where-next}
+
+| Goal | Page |
+| --- | --- |
+| Read the current spec | [API reference](/docs/api/) |
+| See what each feature does | [Features](/docs/features/) |
+| Install the current version | [Install and quickstart](/docs/getting-started/) |
+| Read the conventions the docs follow | [Introduction](/docs/#conventions) |

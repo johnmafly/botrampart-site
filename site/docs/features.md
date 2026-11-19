@@ -1,10 +1,28 @@
 ---
 title: Features
 nav: Features
-order: 3
+group: Concepts
+order: 6
 description: Every BotRampart capability, grouped by what it does for you: detection, sessions and tiers, budgets, mint buckets, policy, the five-minute loop, explanations, the agent, console, CLI, install options, privacy controls and editions.
 lede: What BotRampart does, grouped by the job it does for you. Each feature links to the reference that defines it.
 ---
+
+Each feature below says what it does and links to the reference that defines it. Use the page as a checklist when you compare BotRampart with what you run today.
+
+## When to use {#when-to-use}
+
+- You are evaluating BotRampart and want every capability on one page.
+- You need the reference page behind a feature someone mentioned.
+- You are deciding which edition you need.
+
+## Quickstart {#quickstart}
+
+1. Skim the section for the job you need done: detection, budgets, policy, site-wide defense, operations or privacy.
+2. Follow the link at the end of a feature to its reference.
+3. Check [Editions](#editions) for what each edition adds.
+
+> [!NOTE]
+> The Community edition includes every feature on this page. The paid editions add the mark removal, single sign-on, support and hosting listed in the editions table.
 
 ## Detection {#detection}
 
@@ -77,3 +95,13 @@ lede: What BotRampart does, grouped by the job it does for you. Each feature lin
 | Cloud | Hosted | Core and the agent run for you on Cloudflare; the SDKs still run in your app, with no proxy. Billed by protected session; blocked and failed traffic is never billed. |
 
 A feature that reaches Community stays there, and Community builds with the commercial directory deleted. Prices for every edition are on [Own it](/own/#editions).
+
+## Where to go next {#where-next}
+
+| Goal | Page |
+| --- | --- |
+| See how the features fit together | [Overview and concepts](/docs/overview/) |
+| Install in observe mode | [Install and quickstart](/docs/getting-started/) |
+| Read the policy that drives every feature | [Policy reference](/docs/policy/) |
+| Check the data each feature keeps | [Security model](/docs/security/#data) |
+| Find the integration for your stack | [Integrations](/docs/integrations/#integration-points) |
