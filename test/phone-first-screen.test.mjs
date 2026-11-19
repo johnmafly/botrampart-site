@@ -65,6 +65,11 @@ test("phone pause control: a corner icon of at least 24 x 24 px that still pause
   }
   assert.match(page.slice(page.indexOf('id="top"'), page.indexOf('id="gate"')), /<button type="button" class="motion-btn" data-motion-toggle hidden>/, "hidden until JavaScript runs without reduced motion");
   assert.match(js, /if \(!reduce\) for \(const b of toggles\)/, "shown only without reduced motion");
+  assert.match(css, /\.motion-btn\[hidden\] \{ display: none; \}/, "the hidden attribute wins over display: inline-flex");
+  const hiddenAt = css.indexOf(".motion-btn[hidden]");
+  for (const m of css.matchAll(/(^|\n)\s*([^{}\n]*\.motion-btn[^{}]*)\{([^}]*)\}/g)) {
+    if (/display:\s*(?!none)/.test(m[3]) && !/\[hidden\]|\[data-paused\]|svg|\.mb-/.test(m[2])) assert.ok(m.index < hiddenAt, `"${m[2].trim()}" sets display after the [hidden] rule`);
+  }
 });
 
 test("phone headline: larger, still one-cell slots so the fixed words never move", () => {
