@@ -229,32 +229,39 @@
         <div class="wrap">
           <div class="sec-head rise">
             <p class="label">Detection benchmark</p>
-            <h2 id="bench-h"><span class="dim">Every tool.</span> One open test.</h2>
-            <p>The automation tools people actually use, run against a site behind BotRampart in an open harness. The false-positive rate sits beside the catch rate, because blocking people is the other way to fail.</p>
+            <h2 id="bench-h"><span class="dim">Every tool. Every vendor.</span> One open test.</h2>
+            <p>The bot and automation tools people actually use, across the top. The bot-management vendors they run into, down the side. Each cell is the share of that tool's sessions the vendor caught, with BotRampart's false-positive rate beside the catch rate, because blocking people is the other way to fail.</p>
           </div>
           <div class="bench-stats" data-bench-figures>
-            <p class="bench-stat"><b class="num">99.6%</b><span>of 6,500 automated sessions caught</span></p>
+            <p class="bench-stat"><b class="num">99.4%</b><span>of 12,500 automated sessions caught</span></p>
             <p class="bench-stat"><b class="num">0.3%</b><span>of 10,000 human sessions flagged</span></p>
-            <p class="bench-stat"><b class="num">0.5 s</b><span>median time to catch a scripted browser</span></p>
+            <p class="bench-stat"><b class="num">+13.9 pts</b><span>over the next vendor on AI browser agents</span></p>
           </div>
-          <div class="tablewrap bench">
+          <div class="tablewrap bench" tabindex="0" role="region" aria-label="Table: Detection benchmark">
             <table>
-              <caption class="visually-hidden">Detection benchmark: BotRampart against four kinds of automation tool, with a human control. Sample figures for the private preview.</caption>
+              <caption class="visually-hidden">Detection benchmark: share of sessions caught, by vendor and automation tool. Sample figures for the private preview.</caption>
               <thead>
-                <tr><th scope="col">Automation tool</th><th scope="col">Sessions</th><th scope="col">Caught</th><th scope="col">Median time to catch</th><th scope="col">Caught by</th></tr>
+                <tr><th scope="col">Vendor</th><th scope="col">Headless Chrome</th><th scope="col">Selenium</th><th scope="col">Playwright</th><th scope="col">Puppeteer</th><th scope="col">Puppeteer Stealth</th><th scope="col">undetected-chromedriver</th><th scope="col">AI browser agents</th></tr>
               </thead>
               <tbody>
-                <tr><th scope="row">Headless Chrome</th><td>2,000</td><td class="hit">99.9%</td><td>0.4 s</td><td>Browser signals</td></tr>
-                <tr><th scope="row">Playwright</th><td>2,000</td><td class="hit">99.7%</td><td>0.6 s</td><td>Browser signals</td></tr>
-                <tr><th scope="row">Puppeteer</th><td>2,000</td><td class="hit">99.8%</td><td>0.5 s</td><td>Browser signals</td></tr>
-                <tr><th scope="row">AI browser agents</th><td>500</td><td class="hit">97.4%</td><td>3.1 s</td><td>UI behaviour</td></tr>
-                <tr class="ctl"><th scope="row">People (control)</th><td>10,000</td><td class="fp">0.3% flagged</td><td>–</td><td>False-positive rate</td></tr>
+                <tr class="us"><th scope="row">BotRampart</th><td class="b5">99.9%</td><td class="b5">99.8%</td><td class="b5">99.7%</td><td class="b5">99.8%</td><td class="b5">98.9%</td><td class="b5">98.6%</td><td class="b4">97.4%</td></tr>
+                <tr><th scope="row">Cloudflare</th><td class="b4">97.8%</td><td class="b4">96.9%</td><td class="b4">95.4%</td><td class="b4">96.1%</td><td class="b2">88.3%</td><td class="b2">84.7%</td><td class="b1">71.6%</td></tr>
+                <tr><th scope="row">Akamai</th><td class="b5">98.4%</td><td class="b4">97.6%</td><td class="b4">96.8%</td><td class="b4">97.2%</td><td class="b3">91.5%</td><td class="b2">89.2%</td><td class="b1">76.3%</td></tr>
+                <tr><th scope="row">DataDome</th><td class="b5">98.9%</td><td class="b5">98.2%</td><td class="b4">97.6%</td><td class="b4">97.9%</td><td class="b3">93.7%</td><td class="b3">91.4%</td><td class="b2">81.2%</td></tr>
+                <tr><th scope="row">HUMAN</th><td class="b5">98.1%</td><td class="b4">97.4%</td><td class="b4">96.5%</td><td class="b4">96.9%</td><td class="b3">90.8%</td><td class="b2">88.1%</td><td class="b1">78.4%</td></tr>
+                <tr><th scope="row">Kasada</th><td class="b5">99.2%</td><td class="b5">98.7%</td><td class="b5">98.1%</td><td class="b5">98.4%</td><td class="b4">95.2%</td><td class="b3">93.6%</td><td class="b2">83.5%</td></tr>
+                <tr><th scope="row">Imperva</th><td class="b4">96.7%</td><td class="b4">95.8%</td><td class="b3">94.2%</td><td class="b3">94.9%</td><td class="b2">86.4%</td><td class="b2">82.9%</td><td class="b1">68.9%</td></tr>
+                <tr><th scope="row">F5 (Shape)</th><td class="b5">98.6%</td><td class="b4">97.9%</td><td class="b4">97.0%</td><td class="b4">97.3%</td><td class="b3">92.1%</td><td class="b3">90.3%</td><td class="b1">74.8%</td></tr>
+                <tr><th scope="row">Arkose Labs</th><td class="b4">95.9%</td><td class="b4">95.1%</td><td class="b3">93.8%</td><td class="b3">94.6%</td><td class="b2">87.9%</td><td class="b2">85.5%</td><td class="b1">79.1%</td></tr>
               </tbody>
+              <tfoot>
+                <tr class="n"><th scope="row">Sessions per vendor</th><td>2,000</td><td>2,000</td><td>2,000</td><td>2,000</td><td>2,000</td><td>2,000</td><td>500</td></tr>
+              </tfoot>
             </table>
           </div>
           <div class="bench-method">
             <p class="bench-sample"><span class="sample-tag">Sample figures for the private preview</span></p>
-            <p class="fine"><b>Method.</b> Each run opens a fresh session on a test origin protected by the Node SDK in observe mode, with the default policy. A session counts as caught when BotRampart scores it as automated before its third protected request. Human sessions come from people browsing the same origin. Runs against other bot-management products, each with a right of reply, are coming next.</p>
+            <p class="fine"><b>Method.</b> Each tool opens fresh sessions against the same test origin, protected in turn by each product in its default configuration: 2,000 sessions per tool and product, 500 for AI browser agents. A session counts as caught when the product scores it as automated or challenges it before its third protected request. BotRampart runs as the Node SDK in observe mode with the default policy. Human sessions from people browsing the same origin give the false-positive rate. Every vendor gets a right of reply.</p>
           </div>
         </div>
       </section>

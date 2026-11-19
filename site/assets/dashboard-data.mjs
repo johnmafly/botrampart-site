@@ -534,23 +534,46 @@ export function viewAgent(D, extra = 0) {
   </div>`;
 }
 
-// Sample figures for the private preview, the same as the home page's benchmark. Every value
-// is listed in MOCK_FIGURES.md at the repository root.
-export const BENCH_ROWS = [
-  { tool: "Headless Chrome", sessions: "2,000", caught: "99.9%", median: "0.4 s", by: "Browser signals" },
-  { tool: "Playwright", sessions: "2,000", caught: "99.7%", median: "0.6 s", by: "Browser signals" },
-  { tool: "Puppeteer", sessions: "2,000", caught: "99.8%", median: "0.5 s", by: "Browser signals" },
-  { tool: "AI browser agents", sessions: "500", caught: "97.4%", median: "3.1 s", by: "UI behaviour" },
+// Sample figures for the private preview, the same as the home page's benchmark grid: bot and
+// automation tools across the top, bot-management vendors down the side, each cell the share of
+// sessions caught. Every value is listed in MOCK_FIGURES.md at the repository root.
+export const BENCH_TOOLS = [
+  { tool: "Headless Chrome", sessions: "2,000" },
+  { tool: "Selenium", sessions: "2,000" },
+  { tool: "Playwright", sessions: "2,000" },
+  { tool: "Puppeteer", sessions: "2,000" },
+  { tool: "Puppeteer Stealth", sessions: "2,000" },
+  { tool: "undetected-chromedriver", sessions: "2,000" },
+  { tool: "AI browser agents", sessions: "500" },
 ];
-export const BENCH_CONTROL = { tool: "People (control)", sessions: "10,000", flagged: "0.3%" };
+export const BENCH_VENDORS = [
+  { vendor: "BotRampart", caught: ["99.9", "99.8", "99.7", "99.8", "98.9", "98.6", "97.4"] },
+  { vendor: "Cloudflare", caught: ["97.8", "96.9", "95.4", "96.1", "88.3", "84.7", "71.6"] },
+  { vendor: "Akamai", caught: ["98.4", "97.6", "96.8", "97.2", "91.5", "89.2", "76.3"] },
+  { vendor: "DataDome", caught: ["98.9", "98.2", "97.6", "97.9", "93.7", "91.4", "81.2"] },
+  { vendor: "HUMAN", caught: ["98.1", "97.4", "96.5", "96.9", "90.8", "88.1", "78.4"] },
+  { vendor: "Kasada", caught: ["99.2", "98.7", "98.1", "98.4", "95.2", "93.6", "83.5"] },
+  { vendor: "Imperva", caught: ["96.7", "95.8", "94.2", "94.9", "86.4", "82.9", "68.9"] },
+  { vendor: "F5 (Shape)", caught: ["98.6", "97.9", "97.0", "97.3", "92.1", "90.3", "74.8"] },
+  { vendor: "Arkose Labs", caught: ["95.9", "95.1", "93.8", "94.6", "87.9", "85.5", "79.1"] },
+];
+// Heat band for a catch rate, so the grid reads at a glance without inline styles.
+export function benchBand(v) {
+  const n = Number(v);
+  return n >= 98 ? "b5" : n >= 95 ? "b4" : n >= 90 ? "b3" : n >= 80 ? "b2" : "b1";
+}
+// The grid's table, shared by the console view and (pasted) the home page.
+export function benchTable(caption) {
+  const head = `<tr><th scope="col">Vendor</th>${BENCH_TOOLS.map((t) => `<th scope="col">${esc(t.tool)}</th>`).join("")}</tr>`;
+  const body = BENCH_VENDORS.map((v, i) => `<tr${i === 0 ? ' class="us"' : ""}><th scope="row">${esc(v.vendor)}</th>${v.caught.map((c) => `<td class="num ${benchBand(c)}">${c}%</td>`).join("")}</tr>`).join("");
+  const foot = `<tr class="n"><th scope="row">Sessions per vendor</th>${BENCH_TOOLS.map((t) => `<td class="num">${t.sessions}</td>`).join("")}</tr>`;
+  return `<table class="bench-grid"><caption class="visually-hidden">${esc(caption)}</caption><thead>${head}</thead><tbody>${body}</tbody><tfoot>${foot}</tfoot></table>`;
+}
 export function viewBenchmark() {
-  const head = `<tr><th scope="col">Automation tool</th><th scope="col">Sessions</th><th scope="col">Caught</th><th scope="col">Median time to catch</th><th scope="col">Caught by</th></tr>`;
-  const body = BENCH_ROWS.map((r) => `<tr><th scope="row">${esc(r.tool)}</th><td class="num">${r.sessions}</td><td class="num hit">${r.caught}</td><td class="num">${r.median}</td><td>${esc(r.by)}</td></tr>`).join("")
-    + `<tr class="ctl"><th scope="row">${esc(BENCH_CONTROL.tool)}</th><td class="num">${BENCH_CONTROL.sessions}</td><td class="num fp">${BENCH_CONTROL.flagged} flagged</td><td class="num">–</td><td>False-positive rate</td></tr>`;
   return `
   <div class="dcard bench">
-    <div class="bench-h"><p class="pill sample-pill">Sample figures for the private preview</p><p>BotRampart against four kinds of automation tool, with people browsing the same origin as the control. The false-positive rate sits beside the catch rate.</p></div>
-    ${regionTable("Detection benchmark", `<table class="bench-grid"><caption class="visually-hidden">Detection benchmark: BotRampart by automation tool, with a human control. Sample figures for the private preview.</caption><thead>${head}</thead><tbody>${body}</tbody></table>`, " wide")}
+    <div class="bench-h"><p class="pill sample-pill">Sample figures for the private preview</p><p>Popular bot and automation tools across the top, bot-management vendors down the side. Each cell is the share of that tool's sessions the vendor caught. BotRampart's false-positive rate on people browsing the same origin: 0.3% of 10,000 sessions.</p></div>
+    ${regionTable("Detection benchmark", benchTable("Detection benchmark: share of sessions caught, by vendor and automation tool. Sample figures for the private preview."), " wide")}
   </div>`;
 }
 
