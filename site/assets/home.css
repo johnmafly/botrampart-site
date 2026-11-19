@@ -474,6 +474,9 @@
 .news-more { flex: none; color: var(--bone-2); white-space: nowrap; }
 .news-pill:hover .news-more { color: var(--bone); }
 .motion-btn { flex: none; display: inline-flex; align-items: center; gap: .4rem; min-height: 2rem; padding: .25rem .7rem; border: 1px solid var(--line-2); border-radius: 999px; background: transparent; color: var(--bone-2); font: 400 .74rem/1 var(--f-mono); cursor: pointer; }
+/* display: inline-flex above would override the hidden attribute: keep the buttons out of
+   view under reduced motion and without JavaScript, when nothing moves. */
+.motion-btn[hidden] { display: none; }
 .motion-btn:hover, .motion-btn:focus-visible { color: var(--bone); border-color: var(--bone-2); }
 .motion-btn svg { width: .85rem; height: .85rem; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; }
 .motion-btn .mb-play { fill: currentColor; stroke: none; display: none; }
