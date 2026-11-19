@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- @head | Express: install BotRampart with one AI prompt | Pick your framework, where your app runs, your CDN and your cloud. Express writes one prompt your AI coding agent follows to install BotRampart and provision Core and the decision log with Terraform, Pulumi or your cloud CLI, in observe mode. -->
+    <link rel="stylesheet" href="/assets/build.css">
+  </head>
+  <body>
+    <!-- @header -->
+    <main id="main">
+      <div class="page-head express-head">
+        <div class="wrap">
+          <p class="label">Express · install with one AI prompt</p>
+          <h1>Pick your stack. <span class="tt">Your agent does the install.</span></h1>
+          <p class="lede">Choose your framework, where your app runs, your CDN and your cloud. Express writes one prompt for Claude Code, Cursor, Codex or any coding agent. <b>It installs the SDK, provisions Core and the decision log in your account, wires the edge and checks it all, in observe mode.</b></p>
+          <div class="btn-row">
+            <a class="btn btn-primary" href="#picker">Build my prompt <span class="arrow" aria-hidden="true">↓</span></a>
+            <a class="btn btn-ghost" href="/docs/express/">How Express works</a>
+          </div>
+        </div>
+      </div>
+
+      <section class="wrap ex-points" aria-labelledby="ex-points-h">
+        <h2 id="ex-points-h" class="visually-hidden">What Express does</h2>
+        <ul class="ex-cards">
+          <li><span class="ex-k">Install</span><h3>Nine frameworks, one prompt.</h3><p>Express, Fastify, Next.js, Django, FastAPI, Rails, Laravel, Spring Boot and Go, each with its own mount point and layout file.</p></li>
+          <li><span class="ex-k">Provision</span><h3>Infrastructure as code.</h3><p>Core, the bucket and scoped credentials on Cloudflare, AWS, Google Cloud, Azure or your Kubernetes, written as Terraform, Pulumi or one CLI script.</p></li>
+          <li><span class="ex-k">Edge</span><h3>The CDN you already use.</h3><p>Cloudflare Worker, CloudFront Lambda@Edge or the nginx module, sharing one session budget with the app.</p></li>
+          <li><span class="ex-k">Verify</span><h3>Checked before you enforce.</h3><p>Your agent proves headers, the proof-of-work and the decision log work, then stops and reports.</p></li>
+        </ul>
+      </section>
+
+      <div class="wrap ai-grid" id="picker" data-ai>
+        <form class="ai-form" data-ai-form novalidate aria-labelledby="pick">
+          <h2 id="pick" class="ai-h">Your stack</h2>
+          <p class="ai-jump"><a href="#prompt-h">Skip to your prompt</a></p>
+          <noscript><p class="callout ai-nojs">Without JavaScript the prompt on this page is the one for the preselected stack: Express on containers, behind Cloudflare, with Core on Cloudflare Workers and R2, provisioned with Terraform.</p></noscript>
+          <!-- @ai-picker:full -->
+        </form>
+
+        <section class="ai-out" aria-labelledby="prompt-h">
+          <div class="ai-out-head">
+            <h2 id="prompt-h" class="ai-h">Your install prompt</h2>
+            <button type="button" class="btn btn-primary ai-copy" data-ai-copy hidden>Copy prompt</button>
+          </div>
+          <p class="fine ai-summary" data-ai-summary>Express on Containers or VMs, behind Cloudflare. Core on Cloudflare Workers, the log in R2, provisioned with Terraform.</p>
+          <p class="ai-status" data-ai-status role="status" aria-live="polite"></p>
+          <pre class="ai-prompt" tabindex="0" role="region" aria-label="Code: your install prompt"><code data-ai-prompt><!-- @ai-prompt --></code></pre>
+          <h3 class="ai-h3">Where to paste it</h3>
+          <ul class="ai-where">
+            <li><b>Claude Code:</b> start it in your app's repository and paste the prompt as your first message.</li>
+            <li><b>Cursor:</b> open the repository and paste it into the agent chat.</li>
+            <li><b>Codex:</b> start it in your app's repository and paste the prompt.</li>
+            <li><b>Any other agent:</b> give it access to the repository and your cloud CLI, and paste the prompt.</li>
+          </ul>
+          <p class="fine">The prompt is built in this page from your choices; nothing is stored or sent. Prefer to do it by hand? Follow the <a href="/docs/getting-started/">quickstart</a>.</p>
+        </section>
+      </div>
+
+      <section class="sec sec-tight" aria-labelledby="ex-steps-h">
+        <div class="wrap">
+          <div class="sec-head">
+            <p class="label">What your agent does</p>
+            <h2 id="ex-steps-h">Six steps. <span class="tt">You approve the two that matter.</span></h2>
+          </div>
+          <ol class="ex-steps">
+            <li><span class="ex-n">01</span><h3>Site keys</h3><p>Generates <code>br_keys</code> locally and stores it in your secret store by name.</p></li>
+            <li><span class="ex-n">02</span><h3>Provision</h3><p>Writes Core, the bucket and a scoped <code>lake_writer</code> credential as code, shows you the plan and waits for your yes.</p></li>
+            <li><span class="ex-n">03</span><h3>Install</h3><p>Adds the backend SDK for your framework ahead of every route and the browser script to your layout.</p></li>
+            <li><span class="ex-n">04</span><h3>Edge</h3><p>Deploys the adapter for your CDN on the same keys and Core, so budgets are shared.</p></li>
+            <li><span class="ex-n">05</span><h3>Verify</h3><p>Checks <code>BR-Decision</code> headers, <code>/_br/status</code>, the decision log and one decision lookup.</p></li>
+            <li><span class="ex-n">06</span><h3>Stop before enforce</h3><p>Reports what changed and waits. Enforcing stays your call, after a policy replay.</p></li>
+          </ol>
+        </div>
+      </section>
+    </main>
+    <!-- @footer -->
+    <script type="module" src="/assets/ai-install.js"></script>
+  </body>
+</html>

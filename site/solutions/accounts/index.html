@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- @head | BotRampart for logins: credential stuffing, account takeover and SMS pumping | Stop credential stuffing, account takeover and OTP and SMS pumping at any login, in fintech, banking or your own app. BotRampart prices each attempt, steps up risky account changes and caps spend per account. -->
+    <link rel="stylesheet" href="/assets/home.css">
+  </head>
+  <body class="home-v3">
+    <!-- @header -->
+    <main id="main">
+      <div class="page-head">
+        <div class="wrap">
+          <p class="label">Solutions · Accounts and logins</p>
+          <h1>Logins belong to people. <span class="muted">Stolen lists stop at the human check.</span></h1>
+          <p class="lede">Fintech, banking and any product with a login field face lists of leaked passwords replayed through proxies, takeovers that change the email first, and scripts that send one-time codes to premium numbers. <b>BotRampart prices every attempt and every code, steps up a signed-in session before it changes what matters, and caps spend per account across all its sessions.</b></p>
+          <div class="btn-row">
+            <a class="btn btn-primary" href="/express/">Install with your AI agent <span class="arrow" aria-hidden="true">→</span></a>
+            <a class="btn btn-ghost" href="#replay">Replay a stuffing run</a>
+          </div>
+        </div>
+      </div>
+
+      <section class="sec sec-tight" id="replay" aria-labelledby="replay-h">
+        <div class="wrap">
+          <div class="sec-head">
+            <p class="label">The attack, replayed</p>
+            <h2 id="replay-h"><span class="dim">02:07, a leaked list arrives.</span> Seven seconds at the login.</h2>
+            <p>Automated logins from a proxy pool, a takeover attempt on a live account and an OTP pumping script, in the same seconds as one customer signing in. Each line is one decision BotRampart made before your password check ran.</p>
+          </div>
+          <figure class="feed" aria-labelledby="replay-cap">
+            <div class="feed-in">
+              <div class="feed-bar">
+                <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                <span>decision log<span class="feed-v"> · bank · policy v44</span></span>
+                <span class="feed-tag">Sample data</span>
+              </div>
+              <div class="feed-head" aria-hidden="true"><span>time</span><span>session</span><span>route · signal</span><span>tier</span><span>decision</span></div>
+              <ol class="feed-rows">
+                <li><span class="t">02:07:11</span><span class="s">BR-8STF</span><span class="w">POST /login · proof-of-work in 3 ms · automation flag</span><span class="r">1</span><span class="d ask">human check</span></li>
+                <li><span class="t">02:07:11</span><span class="s">BR-3CRD</span><span class="w">POST /login · 5th network this hour · mint pressure</span><span class="r">1</span><span class="d ask">human check</span></li>
+                <li><span class="t">02:07:12</span><span class="s">BR-1PAX</span><span class="w">POST /login · directive: credential_stuffing, 0.88</span><span class="r">1</span><span class="d ask">human check</span></li>
+                <li><span class="t">02:07:13</span><span class="s">BR-7NOJ</span><span class="w">POST /login · HTTP client, no JavaScript, not a browser</span><span class="r">–</span><span class="d no">block</span></li>
+                <li><span class="t">02:07:14</span><span class="s">BR-6SMS</span><span class="w">POST /api/otp/send · out of budget · 7th code this hour</span><span class="r">2</span><span class="d slow">throttle 429</span></li>
+                <li><span class="t">02:07:15</span><span class="s">BR-4ATO</span><span class="w">POST /api/account/email · signed in · new network · risk 4</span><span class="r">2</span><span class="d ask">step-up</span></li>
+                <li><span class="t">02:07:16</span><span class="s">BR-2OWN</span><span class="w">POST /login · 17 inputs · proof-of-work in 460 ms</span><span class="r">1</span><span class="d ok">allow</span></li>
+                <li><span class="t">02:07:18</span><span class="s">BR-1PAX</span><span class="w">POST /login · 31st attempt · grants spent today</span><span class="r">2</span><span class="d slow">throttle 429</span></li>
+              </ol>
+            </div>
+            <figcaption id="replay-cap" class="feed-cap">Sample sessions, made up to show the format. BR-2OWN is a customer: one attempt, no challenge.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="sec" id="stop" aria-labelledby="stop-h">
+        <div class="wrap">
+          <div class="sec-head">
+            <p class="label">Where it stops</p>
+            <h2 id="stop-h">Tier 2 stops the list. <span class="dim">Tier 3 stops the takeover.</span></h2>
+            <p>A login attempt costs 100 units, so a proof-of-work buys three tries and a human check thirty, then fifteen. With the daily ceiling one session makes at most about 350 attempts a day, so a list of a million passwords needs some 2,800 sessions, and every fresh session is rationed per network. A session that does get in meets a step-up before it changes the email, the password or a payee.</p>
+          </div>
+          <div class="ladder" role="list" aria-label="Challenge tiers for a login">
+            <div class="rung" role="listitem"><span class="t">Tier 0</span><h3>Provisional</h3><p>The sign-in page on 30 units. Posting to the login needs tier 1.</p><span class="buys">30 units</span></div>
+            <div class="rung" role="listitem"><span class="t">Tier 1</span><h3>Invisible proof-of-work</h3><p>Runs while the customer types. Ends every login script with no browser engine.</p><span class="buys">300 units</span></div>
+            <div class="rung" role="listitem"><span class="t">Tier 2 <span class="tag mvp">Stops stuffing and pumping</span></span><h3>Accessible human check</h3><p>Thirty attempts or six codes per pass, halving on each repeat.</p><span class="buys">3,000 units</span></div>
+            <div class="rung" role="listitem"><span class="t">Tier 3 <span class="tag mvp">Stops takeover</span></span><h3>Step-up</h3><p>An email link, a sign-in or a passkey before an account change on a risky session.</p><span class="buys">6,000 units</span></div>
+          </div>
+          <div class="tablewrap" tabindex="0" role="region" aria-label="Table: What it costs the bot">
+            <table>
+              <caption class="visually-hidden">What each step costs a credential stuffing or SMS pumping script under the login policy below</caption>
+              <thead><tr><th scope="col">Step</th><th scope="col">What the script has to do</th><th scope="col">What it buys</th><th scope="col">Logins at 100</th><th scope="col">Codes at 500</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">New session</th><td>Start again from a new address</td><td>30 units, general pages only</td><td class="num">0</td><td class="num">0</td></tr>
+                <tr><th scope="row">Proof-of-work</th><td>Run a browser engine; harder under mint pressure</td><td>300 units</td><td class="num">3</td><td class="num">0</td></tr>
+                <tr><th scope="row">Human check</th><td>Pass the tick, or pay a solver per pass</td><td>3,000, then 1,500, then 750 in 24 hours</td><td class="num">30, 15, 7</td><td class="num">6, 3, 1</td></tr>
+                <tr><th scope="row">Throttle</th><td>Wait for refill at 20 units a minute</td><td>Refill only</td><td class="num">1 every 5 min</td><td class="num">1 every 25 min</td></tr>
+                <tr><th scope="row">Start over</th><td>Mint a new session: 10 per IP, 30 per /24 in 10 minutes</td><td>Back to 30 units, login locked</td><td class="num">0</td><td class="num">0</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="int-links"><a href="/meter/">How budgets and grants work</a></p>
+        </div>
+      </section>
+
+      <section class="sec" id="policy" aria-labelledby="policy-h">
+        <div class="wrap">
+          <div class="sec-head">
+            <p class="label">The policy</p>
+            <h2 id="policy-h">Price the attempt. <span class="dim">Step up the change.</span></h2>
+          </div>
+          <div class="policy">
+            <div class="policy-copy">
+              <h3>A login policy file</h3>
+              <p>The login, the password reset, the code sender and the account settings each carry a price. Mint buckets are tight because stuffing lists arrive through proxy pools. The five-minute loop's answers act live: when the decision model reads the login cohort as credential stuffing, every attempt in it is asked for the human check.</p>
+              <ul class="ticks3">
+                <li>Attach the login ID with <code>br.identify</code> after sign-in; BotRampart keeps only a keyed hash of it.</li>
+                <li>Stage a new rule with <code>mode: log</code> for a week before it enforces.</li>
+                <li>Every field here is in the <a href="/docs/policy/">policy reference</a>.</li>
+              </ul>
+            </div>
+            <div class="policy-code">
+              <p class="code-cap"><span>botrampart.policy.yaml · login</span></p>
+              <pre><code><span class="k">path_classes:</span>
+  - { name: general, match: [<span class="s">"/*"</span>], cost: 1, min_tier: 0 }
+  - { name: login, match: [<span class="s">"POST /login"</span>, <span class="s">"POST /api/password/reset"</span>], cost: 100, min_tier: 1 }
+  - { name: otp, match: [<span class="s">"POST /api/otp/send"</span>], cost: 500, min_tier: 2 }
+  - { name: account_change, match: [<span class="s">"POST /api/account/*"</span>], cost: 20, min_tier: 1 }
+<span class="k">budget:</span> { refill_per_min: 20, burst: 300, identified_multiplier: 3, account_ceiling_per_hour: 2000 }
+<span class="k">mint:</span> { ip: 10, prefix: 30, asn: baseline_x3, ja4: baseline_x3 }
+<span class="k">risk_score:</span>
+  - { when: <span class="s">"signals.automation_flag"</span>, add: 4 }
+  - { when: <span class="s">"signals.pow_ms_implausible"</span>, add: 2 }
+  - { when: <span class="s">"session.network_changes_1h &gt;= 5"</span>, add: 2 }
+  - { when: <span class="s">"net.mint_pressure"</span>, add: 2 }
+  - { when: <span class="s">"net.asn_class == 'hosting'"</span>, add: 1 }
+<span class="k">rules:</span>
+  - { id: not-a-browser, when: <span class="s">"!ua.is_browser"</span>, then: block }
+  - id: takeover-guard
+    when: <span class="s">"session.identified &amp;&amp; request.path_class == 'account_change' &amp;&amp; risk.score &gt;= 3"</span>
+    then: <span class="s">"challenge(step_up)"</span>
+  - id: stuffing-cohort
+    when: <span class="s">"ai.intent == 'credential_stuffing' &amp;&amp; ai.confidence &gt;= 0.7 &amp;&amp; request.path_class == 'login'"</span>
+    then: <span class="s">"challenge(human)"</span>
+  - id: risk-5
+    when: <span class="s">"risk.score &gt;= 5 &amp;&amp; request.path_class == 'login'"</span>
+    then: <span class="s">"challenge(human)"</span>
+  - id: over-budget
+    when: <span class="s">"session.credits &lt; request.cost"</span>
+    then: <span class="s">"challenge(next_tier) || throttle"</span>
+  - { id: default, when: <span class="s">"true"</span>, then: allow }</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec agent-sec" id="console" aria-labelledby="console-h">
+        <div class="wrap">
+          <div class="sec-head">
+            <p class="label frost">What you see in the console</p>
+            <h2 id="console-h"><span class="dim">A customer calls about a changed email.</span> The answer is one reference away.</h2>
+            <p>The console reads the decision log in your bucket: login attempts by cohort, codes sent per hour, the timeline of every session tied to one hashed login ID, and each refusal with the reference the customer sees.</p>
+          </div>
+          <div class="agent">
+            <div class="chat" aria-label="Sample conversation in Slack">
+              <div class="chat-msg">
+                <div class="avatar" aria-hidden="true">FR</div>
+                <div class="chat-body">
+                  <div class="chat-name">Fraud desk <span>09:12</span></div>
+                  <p>@BotRampart a customer says someone tried to change their email overnight. They quote BR-4ATO.</p>
+                </div>
+              </div>
+              <div class="chat-msg">
+                <div class="avatar bot" aria-hidden="true">BR</div>
+                <div class="chat-body">
+                  <div class="chat-name">BotRampart <span>09:12</span></div>
+                  <p>Rule <code>takeover-guard</code>, policy v44. BR-4ATO signed in at 02:06 from a hosting network, its fifth network in the hour: risk 4. At 02:07 it posted to <code>/api/account/email</code> and was asked for a step-up, which it did not complete. The email was not changed. The customer's own session, from their usual mobile network, made no request after 18:40.</p>
+                  <p class="chat-cite">query session_timeline · 9 rows · window 02:00–02:10 · policy v44</p>
+                  <div class="chat-actions"><span>Show timeline</span><span>Email to fraud desk</span></div>
+                </div>
+              </div>
+              <p class="illus">Sample conversation. Session BR-4ATO is made up to show the format.</p>
+            </div>
+            <ul class="agent-facts">
+              <li><b>Logins by cohort.</b> Attempts and the failed-login band per network class, against the same hour last week.</li>
+              <li><b>Codes sent.</b> OTP spend per hour, with the sessions throttled for sending too many.</li>
+              <li><b>Account timeline.</b> Every session tied to one hashed login ID, with its networks, tiers and decisions.</li>
+              <li><b>Decision search.</b> Paste the reference a customer quotes and see the rule, the policy version and the budget.</li>
+            </ul>
+          </div>
+          <p class="int-links"><a href="/dashboard/">Open the console preview</a></p>
+        </div>
+      </section>
+
+      <section class="sec" id="features" aria-labelledby="features-h">
+        <div class="wrap">
+          <div class="sec-head">
+            <p class="label">Built for logins</p>
+            <h2 id="features-h">Three parts doing the work. <span class="dim">All in the file above.</span></h2>
+          </div>
+          <div class="field-map">
+            <div><span class="where">Account ceiling</span><h3>Accounts have limits.</h3><p>Cap spend at 2,000 units an hour across every session of one login, so a takeover running ten sessions gets no more than the owner does.</p></div>
+            <div><span class="where">Step-up on risk</span><h3>Changes need proof.</h3><p>Ask a signed-in session with a risk score of 3 or more for an email link or a passkey before it changes the email, the password or a payee.</p></div>
+            <div><span class="where">Priced codes</span><h3>Every SMS costs.</h3><p>Price each code at 500 units behind the human check, so a pumping script gets six codes for a pass, then three.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec" id="integrate" aria-labelledby="integrate-h">
+        <div class="wrap">
+          <div class="sec-head">
+            <p class="label">Integration</p>
+            <h2 id="integrate-h">In front of the password check, <span class="dim">whatever runs it.</span></h2>
+            <p>Each path verifies the same <code>__br_s</code> cookie and answers with the same challenges, before your login handler or identity provider sees the request.</p>
+          </div>
+          <ul class="ints">
+            <li class="tile int live"><span class="st-tag now">Available</span><h3>Node SDK</h3><p>Express, Fastify and Next.js. Decides in the process that serves the login, then <code>br.identify</code> ties the session to the account.</p></li>
+            <li class="tile int live"><span class="st-tag now">Available</span><h3>Spring, Django, Rails, Laravel, Go</h3><p>SDKs for Java, Python, Ruby, PHP and Go, for the core banking or account service, with the same policy file.</p></li>
+            <li class="tile int live"><span class="st-tag now">Available</span><h3>nginx module and mobile SDKs</h3><p>The nginx module guards a login you cannot change; the mobile SDKs give your banking app the same sessions and tiers.</p></li>
+          </ul>
+          <div class="int-cta">
+            <a class="tile ai-card" href="/express/">
+              <span class="sig-k">Express install</span>
+              <span class="ai-t">One prompt for your coding agent.</span>
+              <span class="ai-s">Pick your framework, where Core runs and your decision model. The prompt wires BotRampart in observe mode in front of the login and checks the install. <span class="arrow" aria-hidden="true">→</span></span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec" id="faq" aria-labelledby="faq-h">
+        <div class="wrap">
+          <div class="sec-head">
+            <p class="label">Questions from fraud and identity teams</p>
+            <h2 id="faq-h">Before the next leaked list.</h2>
+          </div>
+          <div class="cards">
+            <div class="card"><h3>Does this replace our MFA?</h3><p>No. BotRampart decides before your password check runs and prices the attempt; MFA proves the person after it. Step-up adds an email link, a sign-in or a passkey for risky account changes, beside the factors you already use.</p></div>
+            <div class="card"><h3>Stuffing runs through residential proxies. Does rationing by IP help?</h3><p>The address is a bucket, never the identity. New sessions are counted per IP, per /24 or /48 prefix, per ASN and per TLS fingerprint family, and the five-minute loop watches the login cohort as a whole, so rotating addresses does not reset the price.</p></div>
+            <div class="card"><h3>How does it stop SMS pumping?</h3><p>Sending a code is its own path class at 500 units, behind the human check. A pass buys six codes, the next three, and refill sends one every 25 minutes, so a script cannot turn your SMS provider into its revenue.</p></div>
+            <div class="card"><h3>What does BotRampart keep about our customers' logins?</h3><p>A keyed hash of the login ID, HMAC-SHA256 under a key only you hold, and never the password. No device fingerprint, no keystroke content, and every record stays in your own bucket.</p></div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <!-- @footer -->
+  </body>
+</html>

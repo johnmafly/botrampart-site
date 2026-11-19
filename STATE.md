@@ -2,7 +2,7 @@
 
 Kept current by the Chief (the BotRampart Reason). Greenhouse reads this file every round.
 
-As of: 2026-11-18. Status: seed (package v2 redesign, rubric v2). Round: none submitted. Rounds used: 0 of 6.
+As of: 2026-11-19. Status: seed (package v2 redesign, rubric v2). Round: none submitted. Rounds used: 0 of 6.
 
 ## Owner feedback
 
@@ -17,6 +17,14 @@ Response: package v2 (this redesign). See "Package v2" below.
 > "I don't like to see 'by design', 'planned', 'the proposal' around the site, it keeps reminding me it's not a real product, I need to make it look like a real product regardless what."
 
 Response: every page, the spec and the served JS rewritten in present tense as a shipping product; status hedges, the roadmap and phase tables cut. Honesty limits kept (VC Joe): no invented customers, metrics, availability, purchase or trial calls to action; `/try/` still says its traffic is simulated and that no account was created. `test/copy.test.mjs` fails the build output on any banned status phrase.
+
+2026-11-19 (relayed by VC Joe; verbatim): "remove IntelliFend from the website"; "I still couldn't find the express integration feature that I told to you before"; "I prefer the Mastra's color theme for BotRampart". Standing rule from the owner, through VC Joe: vision-first, every feature is shown as working.
+
+Response: package v3 (PR after #23). IntelliFend removed everywhere (a test fails on any mention). Express is a product: menu and footer ("Express: Install with one AI prompt"), a home section with the live picker, /express/ (/build/ai/ redirects there), /docs/express/ with its .md twin and an llms.txt entry. Site and console rethemed to Mastra's palette and type (Geist and CommitMono, self-hosted, OFL). Mastra playbook applied: Product and Solutions menus that match the footer, two doors on every page ("See the console" and "Quickstart"; "Get a demo" is not used because product-voice bans "demo"), two-tone headlines, product cards, four solutions pages. Every "coming next" label and the overview's "Coming next" section are gone.
+
+## Shown as working, not built (vision-first)
+
+The owner's rule presents these as working features. None exists as code yet. Reconcile each before the site is shown outside: tier 3 step-up methods and third-party widgets; the Vector log pack; the nginx module, Cloudflare Worker and CloudFront Lambda@Edge adapters; Python, Ruby, PHP, Java and Go backend SDKs; iOS and Android SDKs; console policy editing; agent SQL, policy suggestions and email digests; rules acting live on model answers; White-label, Enterprise (SSO) and Cloud editions and billing; Web Bot Auth handling; Express's provisioning prompts for every stack. Kept true on purpose: no registry install command names an unpublished package (registry test), sign-up and sign-in still say nothing is sent or stored, and every benchmark figure stays beside "Sample figures for the private preview" and in MOCK_FIGURES.md.
 
 ## Spend
 

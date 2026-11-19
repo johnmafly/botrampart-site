@@ -14,11 +14,11 @@ BotRampart is open-source bot defense for a web where bots drive real browsers. 
 - [01 Overview and concepts](/docs/overview/): Sessions, tiers, budgets, the daily ceiling, mint buckets, the five-minute loop and what BotRampart does not do.
 - [02 Design and architecture](/docs/architecture/): Components, diagrams of the request path and the five-minute loop, sync, Core's ports, data layout and the decision-model contract.
 - [03 Features](/docs/features/): Every capability, grouped by what it does for you, and what each edition includes.
-- [04 Install and quickstart](/docs/getting-started/): Run the reference code from source, then wire BotRampart into a Node app in observe mode.
+- [04 Install and quickstart](/docs/getting-started/): Run the reference code from source, then wire BotRampart into an app in observe mode.
 - [05 Configuration](/docs/configuration/): Backend and browser SDK options, Core's environment, credentials, keys, cookies and failure modes.
-- [06 Integrations](/docs/integrations/): Frameworks, hosting targets, object storage, edge logs, decision-model providers and the agent's channels.
+- [06 Integrations](/docs/integrations/): Six backend languages, edge adapters, mobile apps, hosting targets, object storage, edge logs, decision-model providers and the agent's channels.
 - [07 API reference](/docs/api/): Every SDK route and Core endpoint, generated at build time from the OpenAPI spec.
-- [08 SDK reference](/docs/sdk/): The backend SDK for Node and the browser SDK: functions, options, the request object and headers.
+- [08 SDK reference](/docs/sdk/): The backend SDKs, edge adapters, mobile SDKs and the browser SDK: routes, headers, challenges and signals.
 - [09 Policy and cohort reference](/docs/policy/): The policy file, CEL fields, actions, versions, simulation, cohorts, states and directives.
 - [10 Self-hosting and operations](/docs/self-hosting/): Where Core runs, sizing and cost, the lake, rollout, rotation, monitoring and failure behaviour.
 - [11 Security model](/docs/security/): Trust boundaries, tokens, challenges, data kept and never collected, the model and agent guardrails, threats.
@@ -42,6 +42,6 @@ BotRampart is open-source bot defense for a web where bots drive real browsers. 
 ## Elsewhere on this site {#elsewhere}
 
 - [The meter](/meter/) tells the mechanism as a story, with every outside figure sourced.
-- [The field](/field/) compares BotRampart with Cloudflare, DataDome, Netacea, IntelliFend and Anubis, and says where each is the better choice.
+- [The field](/field/) compares BotRampart with Cloudflare, DataDome, Netacea and Anubis, and says where each is the better choice.
 - [Own it](/own/) lists the editions and their prices.
 - The Build chapters ([start in observe mode](/build/), [wire it in](/build/wire/), [inside BotRampart](/build/inside/)) walk through an integration step by step.

@@ -19,7 +19,7 @@
           <div class="sec-head">
             <p class="label frost">Editions</p>
             <h2 id="editions">Four ways to own it.</h2>
-            <p>Community is the edition available today. White-label, Enterprise (with single sign-on) and Cloud are coming next: their prices are set and listed here, and they open for sign-up when they launch.</p>
+            <p>Self-host Community for free. Add White-label to drop the mark, Enterprise for single sign-on and support, or Cloud to have Core run for you.</p>
           </div>
           <div class="editions">
             <div class="ed free">
@@ -27,7 +27,7 @@
               <h3>Community</h3>
               <p class="price">Free<small>forever, all of it</small></p>
               <ul>
-                <li>Every part there is today: SDKs, Core, challenge tiers 0 to 2, budgets, the decision loop in shadow mode, the agent, the read-only console</li>
+                <li>Every part: SDKs, Core, challenge tiers 0 to 3, budgets, the decision loop, the agent, the console</li>
                 <li>Runs on Cloudflare, one container or Kubernetes</li>
                 <li>Your bucket, your model key</li>
                 <li>“Protected by BotRampart” on challenge pages</li>
@@ -38,7 +38,6 @@
               <span class="kind">Self-hosted</span>
               <h3>White-label</h3>
               <p class="price">$49<small>a month per organisation</small></p>
-              <p class="status"><span class="tag later">Coming next</span></p>
               <ul>
                 <li>The official signed build, mark removed</li>
                 <li>Your own theme on challenge pages</li>
@@ -50,7 +49,6 @@
               <span class="kind">Self-hosted</span>
               <h3>Enterprise</h3>
               <p class="price">$799+<small>a month</small></p>
-              <p class="status"><span class="tag later">Coming next</span></p>
               <ul>
                 <li>White-label, plus single sign-on, roles and audit export</li>
                 <li>Multi-site, high-availability Core</li>
@@ -62,7 +60,6 @@
               <span class="kind">Hosted</span>
               <h3>Cloud</h3>
               <p class="price">$0<small>to start, then by protected session</small></p>
-              <p class="status"><span class="tag later">Coming next</span></p>
               <ul>
                 <li>Core and the agent run for you, on Cloudflare</li>
                 <li>Decision log in our bucket or yours</li>
@@ -80,7 +77,7 @@
           <div class="sec-head">
             <p class="label">Cloud</p>
             <h2 id="cloud">You pay for sessions that pass the proof-of-work. Never for blocked traffic.</h2>
-            <p><span class="tag later">Coming next</span> Cloud and its billing are coming next. This is how its prices will work.</p>
+            <p>Cloud bills monthly: a plan fee covers an allowance of protected sessions, and sessions above it are billed per 1,000.</p>
             <p>A protected session is one that passed the invisible proof-of-work this month, counted once however many requests it makes. Traffic that never passes is never billed, so a flood of blocked requests can't inflate your invoice. A headless browser that solves the proof-of-work does count as a session; its budget, not your bill, is what holds it back.</p>
           </div>
           <div class="calc" data-calc>
@@ -115,7 +112,7 @@
             <div>
               <h3>Why not charge per bot stopped?</h3>
               <p class="muted">Because BotRampart doesn't decide who is a bot, and a vendor that detects, judges and bills its own unit has every reason to count high. Per-event pricing also turns an attack into a bill: AWS WAF bills Targeted Bot Control at $10 per million requests and charges for a challenge whether or not the visitor attempts it.{{c:aws-bot-control}}</p>
-              <p class="muted">For scale: reCAPTCHA charges $1 per 1,000 assessments above 100,000 a month,{{c:recaptcha-bill}} hCaptcha Pro is $99 to $139 a month,{{c:hcaptcha-pro}} IntelliFend lists $749 a month for 20 million requests{{c:if-price}} and DataDome's entry plan $3,830 a month.{{c:dd-entry-price}} They bill different units, so these place BotRampart's prices in the market rather than compare like with like.</p>
+              <p class="muted">For scale: reCAPTCHA charges $1 per 1,000 assessments above 100,000 a month,{{c:recaptcha-bill}} hCaptcha Pro is $99 to $139 a month{{c:hcaptcha-pro}} and DataDome's entry plan lists at $3,830 a month.{{c:dd-entry-price}} They bill different units, so these place BotRampart's prices in the market rather than compare like with like.</p>
             </div>
           </div>
         </div>

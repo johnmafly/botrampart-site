@@ -1,4 +1,4 @@
-// Sign up and sign in previews. Accounts are coming next, so a submit only shows a notice:
+// Sign up and sign in, private preview: a submit opens onto the sample-data console notice:
 // nothing is sent (the form has no destination and its fields have no name, so even a browser
 // that ignored this script and the CSP's form-action 'none' would submit nothing), and nothing
 // is stored. The password is never read: it is cleared on submit.

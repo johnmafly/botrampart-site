@@ -94,14 +94,14 @@ test("every claim in the ledger is cited on the site, and every citation is in t
 
 test("the comparison names at least three vendors, is dated and says where they win", () => {
   const html = pages.find((p) => p.name === "field/index.html").html;
-  for (const v of ["Cloudflare", "DataDome", "Netacea", "IntelliFend", "Anubis"]) assert.match(html, new RegExp(`<h2 id="[a-z]+">${v}</h2>|<h3 id="[a-z]+">${v}</h3>`), v);
+  for (const v of ["Cloudflare", "DataDome", "Netacea", "Anubis"]) assert.match(html, new RegExp(`<h2 id="[a-z]+">${v}</h2>|<h3 id="[a-z]+">${v}</h3>`), v);
   assert.match(html, /as of \d{1,2} [A-Z][a-z]+ \d{4}/);
   assert.ok((html.match(/is the better choice/g) || []).length >= 4, "says where vendors are the better choice");
 });
 
 test("home page leads with the threat and keeps every section, its static log and its honest labels", () => {
   const home = pages.find((p) => p.name === "index.html").html;
-  const ids = ["threat", "detect", "autopilot", "agent", "console", "integrations", "benchmark", "economics", "pricing", "source", "start"];
+  const ids = ["threat", "products", "detect", "autopilot", "agent", "console", "express", "integrations", "benchmark", "solutions", "economics", "pricing", "source"];
   let at = -1;
   for (const id of ids) {
     const i = home.indexOf(`id="${id}"`);
@@ -113,7 +113,10 @@ test("home page leads with the threat and keeps every section, its static log an
   const bench = home.split('id="benchmark"')[1].split("<section")[0];
   assert.doesNotMatch(bench, /not measured|to be measured|pending|no results/i, "the benchmark reads finished");
   assert.match(bench, /Sample figures for the private preview/, "the sample-figures note sits in the benchmark section");
-  assert.match(home.split('id="source"')[1].split("<section")[0], /Source not public yet/);
+  // Open source is shown by its licences; the home page invents no repository URL or star count.
+  const source = home.split('id="source"')[1].split("<section")[0];
+  assert.match(source, /Apache-2\.0/);
+  assert.doesNotMatch(source, /github\.com\/botrampart|★|\bstars?\b/i);
   for (const href of ["/meter/", "/field/", "/own/", "/build/", "/try/"]) assert.ok(home.includes(`href="${href}`), href);
 });
 
@@ -258,7 +261,7 @@ test("code blocks and wide tables are keyboard-scrollable, labelled regions", ()
   }
 });
 
-test("no purchase calls to action and no unsupported SDKs presented as available", () => {
+test("no purchase calls to action, and no invented import names in the wiring samples", () => {
   // Prices are shown, but nothing on the site offers to sell, bill or start a trial.
   for (const { name, html } of pages) {
     for (const [, text] of html.matchAll(/<(?:a|button)\b[^>]*>([\s\S]*?)<\/(?:a|button)>/g)) {
@@ -293,7 +296,7 @@ test("fonts are self-hosted, subset woff2 with font-display swap and their licen
     const size = statSync(join(dist, url)).size;
     assert.ok(size < 60_000, `${url} is subset (${size} bytes)`);
   }
-  for (const l of ["OFL-BricolageGrotesque.txt", "OFL-MartianMono.txt"]) assert.ok(existsSync(join(dist, "assets", "fonts", l)), l);
+  for (const l of ["OFL-Geist.txt", "OFL-CommitMono.txt"]) assert.ok(existsSync(join(dist, "assets", "fonts", l)), l);
 });
 
 test("motion is opt-in: outside prefers-reduced-motion: no-preference, nothing animates transform or opacity", () => {

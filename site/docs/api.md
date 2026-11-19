@@ -1,7 +1,7 @@
 ---
 title: API reference
 nav: API reference
-order: 7
+order: 8
 description: Every BotRampart HTTP operation and schema, generated at build time from spec/openapi.yaml: the SDK routes under /_br on your origin and the Core API for sync, challenges, keys, ingest, policy and decisions.
 lede: Every SDK route and Core endpoint with its parameters, bodies, responses and examples. This page is generated from the OpenAPI spec each time the site builds, and a test fails when the two disagree.
 ---

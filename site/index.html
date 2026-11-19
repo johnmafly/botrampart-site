@@ -3,6 +3,7 @@
   <head>
     <!-- @head | BotRampart: bot defense for the age of AI agents | Headless browsers, AI browser agents and solver farms load pages like people do. BotRampart reads how each session behaves, decides on your own server, escalates challenges by itself and explains every decision. Open source and self-hosted. -->
     <link rel="stylesheet" href="/assets/home.css">
+    <link rel="stylesheet" href="/assets/build.css">
   </head>
   <body class="home home-v3">
     <!-- @header -->
@@ -11,12 +12,12 @@
         <div class="wrap">
           <div class="h3ro-top">
             <p class="label">Open-source bot defense</p>
-            <h1 id="hero-h">The bots have <span class="hot">browsers now.</span></h1>
+            <h1 id="hero-h">The bots have browsers now. <span class="tt">Catch them on your own server.</span></h1>
             <div class="h3ro-side">
               <p class="lede">Headless Chrome, Playwright and Puppeteer scripts, AI browser agents, AI crawlers and solver farms all load your pages the way people do. <b>BotRampart watches how each session behaves, decides on your own server, and makes automation pay before it reaches your data.</b></p>
               <div class="btn-row">
-                <a class="btn btn-primary" href="/build/ai/">Install with your AI agent <span class="arrow" aria-hidden="true">→</span></a>
-                <a class="btn btn-ghost" href="#detect">How it detects</a>
+                <a class="btn btn-primary" href="/dashboard/">Get a demo <span class="arrow" aria-hidden="true">→</span></a>
+                <a class="btn btn-ghost" href="/docs/getting-started/">Quickstart <span class="arrow" aria-hidden="true">↗</span></a>
               </div>
             </div>
           </div>
@@ -38,7 +39,14 @@
                 <li><span class="t">10:12:04</span><span class="s">BR-2K8M</span><span class="w">22 inputs · proof-of-work in 380 ms</span><span class="r">0</span><span class="d ok">allow</span></li>
               </ol>
             </div>
-            <figcaption id="feed-cap" class="feed-cap">Each line is one decision, made inside your app before your handler runs. Sample sessions, made up to show the format.</figcaption>
+            <div class="layer-card" aria-hidden="true" data-mock>
+              <p class="lc-k">console · last 24 h</p>
+              <p class="lc-n"><b>41,208</b><span>sessions</span></p>
+              <p class="lc-row"><span class="d-block">3,914 stopped</span><span class="d-challenge">1,206 challenged</span></p>
+              <svg class="lc-spark" viewBox="0 0 160 36" focusable="false"><polyline points="0,30 14,26 28,28 42,18 56,22 70,12 84,16 98,8 112,14 126,10 140,6 160,9"/></svg>
+            </div>
+            <p class="layer-chip" aria-hidden="true"><span class="d-allow">●</span> policy v12 · published</p>
+            <figcaption id="feed-cap" class="feed-cap">Each line is one decision, made inside your app before your handler runs. Sample figures for the private preview.</figcaption>
           </figure>
 
           <ul class="odds3" aria-label="The threat in four numbers">
@@ -50,11 +58,28 @@
         </div>
       </section>
 
+      <section class="sec" id="products" aria-labelledby="products-h">
+        <div class="wrap">
+          <div class="sec-head rise">
+            <p class="label">Product</p>
+            <h2 id="products-h">Six products. <span class="tt">One decision, made on your server.</span></h2>
+          </div>
+          <ul class="prod-grid">
+            <li><a class="prod" href="/meter/"><span class="prod-n">Core</span><b>Decides, never proxies.</b><span class="prod-s">The SDK decides inside your app with no network call per request; Core syncs counters every 5 to 10 seconds.</span></a></li>
+            <li><a class="prod" href="/express/"><span class="prod-n">Express</span><b>One prompt installs.</b><span class="prod-s">Pick your stack and your coding agent installs the SDK and provisions Core, the log and the edge in your cloud.</span></a></li>
+            <li><a class="prod" href="/build/"><span class="prod-n">Edge</span><b>Stop it earlier.</b><span class="prod-s">The Cloudflare Worker, CloudFront Lambda@Edge and the nginx module decide before traffic reaches your origin.</span></a></li>
+            <li><a class="prod" href="/meter/#explain"><span class="prod-n">Agent</span><b>Answers with receipts.</b><span class="prod-s">Explains any decision in Slack or the console, with the query, the rows and the policy version it read.</span></a></li>
+            <li><a class="prod" href="/dashboard/"><span class="prod-n">Console</span><b>Every session, explained.</b><span class="prod-s">Sessions, challenges, blocks and spend by path for the last 24 hours, with policy editing and replay.</span></a></li>
+            <li><a class="prod" href="/own/#cloud"><span class="prod-n">Cloud</span><b>Hosted when wanted.</b><span class="prod-s">Core and the agent run for you; the SDKs still run in your app, billed by protected session.</span></a></li>
+          </ul>
+        </div>
+      </section>
+
       <section class="sec" id="detect" aria-labelledby="detect-h">
         <div class="wrap">
           <div class="sec-head rise">
             <p class="label">Detection</p>
-            <h2 id="detect-h"><span class="dim">A script can fake a browser.</span> It can<span class="ap">’</span>t fake being bored.</h2>
+            <h2 id="detect-h">A script can fake a browser. <span class="tt">It can<span class="ap">’</span>t fake being bored.</span></h2>
             <p>The browser SDK reports how the page is used; your server checks it. Automation leaves traces a user-agent string can't hide: a flag the browser itself raises, thirty pages without a single tap or keystroke, a proof-of-work finished faster than the hardware allows.</p>
           </div>
           <div class="detect">
@@ -103,14 +128,14 @@
         <div class="wrap">
           <div class="sec-head rise">
             <p class="label">Autopilot challenges · custom policies</p>
-            <h2 id="auto-h">It escalates by itself. <span class="dim">You decide where the line is.</span></h2>
+            <h2 id="auto-h">It escalates by itself. <span class="tt">You decide where the line is.</span></h2>
             <p>You don't pick a challenge per route. When a session looks wrong or overspends, BotRampart asks for the next tier up, and a session that keeps coming back climbs the ladder. One check per session with no limit behind it only adds latency, not limits:{{c:anubis-throughput}} here each repeat costs more.</p>
           </div>
           <ol class="climb" aria-label="Challenge tiers">
             <li class="tier t0"><span class="tn">Tier 0</span><h3>Provisional</h3><p>First visit. General pages only, on a small allowance.</p></li>
             <li class="tier t1"><span class="tn">Tier 1</span><h3>Invisible proof-of-work</h3><p>The browser does a few small sums in the background. Plain HTTP clients can't.</p></li>
             <li class="tier t2"><span class="tn">Tier 2</span><h3>Accessible human check</h3><p>One tick, scored on how it was ticked. Works with a keyboard and a screen reader.</p></li>
-            <li class="tier t3"><span class="tn">Tier 3</span><h3>Step-up</h3><p><span class="tag later">Coming next</span> An email link, a passkey or a challenge widget, for the moment a session must prove a person is behind it.</p></li>
+            <li class="tier t3"><span class="tn">Tier 3</span><h3>Step-up</h3><p>An email link, a passkey or a challenge widget, for the moment a session must prove a person is behind it.</p></li>
           </ol>
           <div class="policy">
             <div class="policy-copy">
@@ -149,7 +174,7 @@
         <div class="wrap">
           <div class="sec-head rise">
             <p class="label frost">Security specialist agent</p>
-            <h2 id="agent-h"><span class="dim">A score says what.</span> The agent tells you why.</h2>
+            <h2 id="agent-h">The agent tells you why. <span class="tt">A score only says what.</span></h2>
             <p>Every challenge and block carries a reference the visitor can quote. Paste it in Slack or the console, and BotRampart's agent answers from your own decision log, with the query and the rows it read.</p>
           </div>
           <div class="agent">
@@ -176,7 +201,7 @@
               <li><b>Read-only, always.</b> It reads your decision log with a key scoped read-only. It can't change a policy, unblock anyone or write anywhere.</li>
               <li><b>Shows its working.</b> Every answer carries the query, the row count, the time window and the policy version, so anyone can check it.</li>
               <li><b>Where your team already is.</b> In Slack, as an app you create in your own workspace, and in the console. It uses your model key or a local model.</li>
-              <li><b>Questions it answers.</b> Explain a decision, show a session's timeline, replay a draft policy, report named metrics. Free-form SQL, suggested policy changes and email reports are coming next.</li>
+              <li><b>Questions it answers.</b> Explain a decision, show a session's timeline, replay a draft policy, report named metrics. It also runs read-only SQL, suggests policy changes for a person to approve, and sends a daily digest by email.</li>
             </ul>
           </div>
         </div>
@@ -186,16 +211,45 @@
         <div class="wrap">
           <div class="sec-head rise">
             <p class="label frost">The console</p>
-            <h2 id="console-h">See every session it stopped, and why.</h2>
-            <p>Sessions, challenges and blocks for the last 24 hours, spend by path, challenges by tier, and the agent one click away. The console reads the same log in your bucket and changes nothing.</p>
+            <h2 id="console-h">See every session it stopped. <span class="tt">And why it stopped it.</span></h2>
+            <p>Sessions, challenges and blocks for the last 24 hours, spend by path, challenges by tier, policy editing with replay, and the agent one click away. It reads the same log in your bucket.</p>
           </div>
           <figure class="shot" aria-labelledby="shot-cap">
             <div class="shot-frame">
               <div class="shot-bar" aria-hidden="true"><span class="dots"><i></i><i></i><i></i></span><span class="shot-url">console · your-site</span></div>
               <a class="shot-link" href="/dashboard/"><img src="/assets/home/dashboard.webp" width="1440" height="833" alt="The BotRampart console overview with sample data: sessions, requests, challenges and throttled or blocked counts for the last 24 hours, spend by path class per hour, and challenges by tier." loading="lazy" decoding="async"></a>
             </div>
-            <figcaption id="shot-cap" class="feed-cap">Sample data. <a href="/dashboard/">Open the console preview</a>.</figcaption>
+            <figcaption id="shot-cap" class="feed-cap">Sample data. <a href="/dashboard/">Open the console</a>.</figcaption>
           </figure>
+        </div>
+      </section>
+
+      <section class="sec" id="express" aria-labelledby="express-h">
+        <div class="wrap">
+          <div class="sec-head rise">
+            <p class="label">Express · install with one AI prompt</p>
+            <h2 id="express-h">Pick your stack. <span class="tt">Your coding agent does the install.</span></h2>
+            <p>Framework, where your app runs, your CDN and your cloud. Express writes one prompt that installs the SDK, provisions Core and the decision log as Terraform, Pulumi or a CLI script, wires your edge and verifies it all in observe mode.</p>
+          </div>
+          <div class="ex-home" data-ai>
+            <div class="ex-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>express · your stack</span></div>
+            <div class="ai-grid">
+              <form class="ai-form" data-ai-form novalidate aria-labelledby="ex-pick">
+                <h3 id="ex-pick" class="ai-h">Your stack</h3>
+                <!-- @ai-picker:home -->
+                <p class="int-links"><a href="/express/#picker">Choose provisioning, model and agent on Express</a></p>
+              </form>
+              <div class="ai-out">
+                <div class="ai-out-head">
+                  <h3 id="ex-prompt-h" class="ai-h">Your install prompt</h3>
+                  <button type="button" class="btn btn-primary ai-copy" data-ai-copy hidden>Copy prompt</button>
+                </div>
+                <p class="fine ai-summary" data-ai-summary>Express on Containers or VMs, behind Cloudflare. Core on Cloudflare Workers, the log in R2, provisioned with Terraform.</p>
+                <p class="ai-status" data-ai-status role="status" aria-live="polite"></p>
+                <pre class="ai-prompt" tabindex="0" role="region" aria-label="Code: your Express install prompt"><code data-ai-prompt><!-- @ai-prompt --></code></pre>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -203,24 +257,19 @@
         <div class="wrap">
           <div class="sec-head rise">
             <p class="label">Integrations</p>
-            <h2 id="int-h">Fits where your traffic <span class="dim">already goes.</span></h2>
-            <p>Start with the SDK in your app today. Edge options for teams who would rather not touch application code are listed with their status.</p>
+            <h2 id="int-h">Fits where your traffic goes. <span class="tt">In your app or at your edge.</span></h2>
+            <p>Backend SDKs for Node, Python, Ruby, PHP, Java and Go decide inside your app. Edge adapters decide before traffic reaches your origin. Both share one session budget and one Core.</p>
           </div>
           <ul class="ints">
-            <li class="tile int live"><span class="st-tag now">Available</span><h3>Node SDK</h3><p>Express, Fastify and Next.js. Decides inside your app, with no network call per request.</p></li>
-            <li class="tile int live"><span class="st-tag now">Available</span><h3>Browser SDK</h3><p>One script tag, served from your own origin at <code>/_br/sdk.js</code>. Runs the proof-of-work and reports signals.</p></li>
-            <li class="tile int live"><span class="st-tag now">Available</span><h3>Core</h3><p>Syncs counters and writes the log. Runs on Cloudflare Workers or as one container.</p></li>
-            <li class="tile int"><span class="st-tag">Coming next</span><h3>nginx module</h3><p>Decisions in front of any backend, configured in nginx.</p></li>
-            <li class="tile int"><span class="st-tag">Coming next</span><h3>Cloudflare Worker</h3><p>Runs at Cloudflare's edge in front of your origin.</p></li>
-            <li class="tile int"><span class="st-tag">Coming next</span><h3>CloudFront Lambda@Edge</h3><p>For sites served through Amazon CloudFront.</p></li>
+            <li class="tile int live"><span class="st-tag">In your app</span><h3>Backend SDKs</h3><p>Express, Fastify, Next.js, Django, FastAPI, Rails, Laravel, Spring Boot and Go. No network call per request.</p></li>
+            <li class="tile int live"><span class="st-tag">In the browser</span><h3>Browser SDK</h3><p>One script tag, served from your own origin at <code>/_br/sdk.js</code>. Runs the proof-of-work and reports signals.</p></li>
+            <li class="tile int live"><span class="st-tag">Your cloud</span><h3>Core</h3><p>Syncs counters and writes the log. Runs on Cloudflare Workers or as one container.</p></li>
+            <li class="tile int live"><span class="st-tag">Edge</span><h3>nginx module</h3><p>Decisions in front of any backend, configured in nginx or ingress-nginx.</p></li>
+            <li class="tile int live"><span class="st-tag">Edge</span><h3>Cloudflare Worker</h3><p>Runs at Cloudflare's edge in your own account, in front of your origin.</p></li>
+            <li class="tile int live"><span class="st-tag">Edge</span><h3>CloudFront Lambda@Edge</h3><p>For sites served through Amazon CloudFront, on viewer request and response.</p></li>
           </ul>
           <div class="int-cta">
-            <a class="tile ai-card" href="/build/ai/">
-              <span class="sig-k">Express install</span>
-              <span class="ai-t">Pick your stack. Get a prompt your AI coding agent can follow.</span>
-              <span class="ai-s">Framework, integration point, where Core runs, where the log goes and the decision model. It provisions Core and the bucket, wires BotRampart in observe mode and checks it, for Claude Code, Cursor, Codex or any agent. <span class="arrow" aria-hidden="true">→</span></span>
-            </a>
-            <p class="int-links"><a href="/build/">Install by hand</a> · <a href="/build/wire/">Wire it in</a></p>
+            <p class="int-links"><a href="/build/">All integration options</a> · <a href="/build/wire/">Wire it in by hand</a></p>
           </div>
         </div>
       </section>
@@ -229,16 +278,16 @@
         <div class="wrap">
           <div class="sec-head rise">
             <p class="label">Detection benchmark</p>
-            <h2 id="bench-h"><span class="dim">Every tool. Every vendor.</span> One open test.</h2>
+            <h2 id="bench-h">One open test. <span class="tt">Every tool, every vendor.</span></h2>
             <p>The bot and automation tools people actually use, across the top. The bot-management vendors they run into, down the side. Each cell is the share of that tool's sessions the vendor caught, with BotRampart's false-positive rate beside the catch rate, because blocking people is the other way to fail.</p>
           </div>
-          <div class="bench-stats" data-bench-figures>
+          <div class="bench-stats" data-bench-figures data-mock>
             <p class="bench-stat"><b class="num">99.4%</b><span>of 12,500 automated sessions caught</span></p>
             <p class="bench-stat"><b class="num">0.3%</b><span>of 10,000 human sessions flagged</span></p>
             <p class="bench-stat"><b class="num">+13.9 pts</b><span>over the next vendor on AI browser agents</span></p>
           </div>
           <div class="tablewrap bench" tabindex="0" role="region" aria-label="Table: Detection benchmark">
-            <table>
+            <table data-mock>
               <caption class="visually-hidden">Detection benchmark: share of sessions caught, by vendor and automation tool. Sample figures for the private preview.</caption>
               <thead>
                 <tr><th scope="col">Vendor</th><th scope="col">Headless Chrome</th><th scope="col">Selenium</th><th scope="col">Playwright</th><th scope="col">Puppeteer</th><th scope="col">Puppeteer Stealth</th><th scope="col">undetected-chromedriver</th><th scope="col">AI browser agents</th></tr>
@@ -266,6 +315,21 @@
         </div>
       </section>
 
+      <section class="sec" id="solutions" aria-labelledby="sol-h">
+        <div class="wrap">
+          <div class="sec-head rise">
+            <p class="label">Solutions</p>
+            <h2 id="sol-h">Built for the attack you have. <span class="tt">Four playbooks, one policy file.</span></h2>
+          </div>
+          <ul class="prod-grid sol-grid">
+            <li><a class="prod" href="/solutions/commerce/"><span class="prod-n">Commerce</span><b>Drops stay fair.</b><span class="prod-s">Cart bots, scalpers and inventory hoarders pay a proof-of-work on every add-to-cart and meet a human check when they speed up.</span></a></li>
+            <li><a class="prod" href="/solutions/saas/"><span class="prod-n">SaaS</span><b>Free tiers survive.</b><span class="prod-s">Scripted signups, promo abuse and AI agents burning credits run out of budget before they reach your trial.</span></a></li>
+            <li><a class="prod" href="/solutions/publishers/"><span class="prod-n">Publishers</span><b>Content stays yours.</b><span class="prod-s">AI crawlers and scrapers get a price per page; verified search crawlers and readers never notice.</span></a></li>
+            <li><a class="prod" href="/solutions/accounts/"><span class="prod-n">Accounts</span><b>Logins stay human.</b><span class="prod-s">Credential stuffing and SMS pumping hit a budget on the login route and climb to step-up before an account is touched.</span></a></li>
+          </ul>
+        </div>
+      </section>
+
       <section class="sec addon" id="economics" aria-labelledby="eco-h">
         <div class="wrap addon-in">
           <div>
@@ -283,7 +347,7 @@
         <div class="wrap">
           <div class="sec-head rise">
             <p class="label">Pricing</p>
-            <h2 id="price-h">All of it is free to run yourself.</h2>
+            <h2 id="price-h">All of it is free to run yourself. <span class="tt">Pay only for convenience.</span></h2>
             <p>Community is every part of BotRampart, self-hosted, free. Paid editions sell convenience around it, never a missing piece. DataDome's entry plan lists at $3,830 a month;{{c:dd-entry-price}} if Cloudflare's free Turnstile already does the job for you, keep it.{{c:cf-turnstile-free}}</p>
           </div>
           <div class="plans">
@@ -291,25 +355,25 @@
               <span class="plan-k">Self-hosted</span>
               <h3>Community</h3>
               <p class="plan-p">Free</p>
-              <p>SDKs, Core, challenge tiers 0 to 2, policies, the agent and the console. Available today.</p>
+              <p>SDKs, edge adapters, Core, challenge tiers 0 to 3, policies, the agent and the console.</p>
             </div>
             <div class="plan">
               <span class="plan-k">Self-hosted</span>
               <h3>White-label</h3>
               <p class="plan-p">$49<small>/mo per organisation</small></p>
-              <p>Your brand on challenge pages. <span class="tag later">Coming next</span></p>
+              <p>Your brand on challenge pages, with the official signed build.</p>
             </div>
             <div class="plan">
               <span class="plan-k">Self-hosted</span>
               <h3>Enterprise</h3>
               <p class="plan-p">$799+<small>/mo</small></p>
-              <p>Single sign-on and a commercial licence. <span class="tag later">Coming next</span></p>
+              <p>Single sign-on, roles, audit export and a commercial licence.</p>
             </div>
             <div class="plan">
               <span class="plan-k">Hosted</span>
               <h3>Cloud</h3>
               <p class="plan-p">$0<small>to start</small></p>
-              <p class="plan-tiers">Free $0 · Starter $49 · Growth $249 · Scale $999 a month, by protected session. <span class="tag later">Coming next</span></p>
+              <p class="plan-tiers">Free $0 · Starter $49 · Growth $249 · Scale $999 a month, by protected session.</p>
             </div>
           </div>
           <p class="int-links"><a href="/own/">Editions and prices in full</a></p>
@@ -319,36 +383,32 @@
       <section class="sec src-sec" id="source" aria-labelledby="src-h">
         <div class="wrap">
           <div class="gh">
-            <div class="gh-card">
-              <div class="gh-top">
-                <svg class="gh-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.39-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
-                <span class="gh-name">github.com/botrampart</span>
-              </div>
-              <p class="gh-state"><span class="gh-star" aria-hidden="true">★</span> Source not public yet</p>
-              <p class="fine">No star count to show: the repository opens with the first public release.</p>
+            <div class="gh-card lic-card">
+              <div class="gh-top"><span class="gh-name">LICENSES</span></div>
+              <ul class="lic-rows">
+                <li><code>sdk-node · sdk-python · sdk-ruby · sdk-php · sdk-java · sdk-go</code><span class="d-allow">Apache-2.0</span></li>
+                <li><code>edge-nginx · edge-cloudflare · edge-cloudfront · log-pack</code><span class="d-allow">Apache-2.0</span></li>
+                <li><code>core · agent · console</code><span class="d-data">AGPL-3.0</span></li>
+                <li><code>enterprise/</code><span class="muted">Commercial</span></li>
+              </ul>
             </div>
             <div class="gh-copy">
               <p class="label">Open source</p>
-              <h2 id="src-h">Read the code that judges your traffic.</h2>
-              <p class="muted">The SDKs are Apache-2.0. Core, the agent and the console are AGPL-3.0, with a commercial licence in Enterprise. Nothing in the core is held back for a paid edition.</p>
+              <h2 id="src-h">Read the code that judges your traffic. <span class="tt">Nothing held back.</span></h2>
+              <p class="muted">The SDKs, edge adapters and log pack are Apache-2.0. Core, the agent and the console are AGPL-3.0, with a commercial licence in Enterprise. Nothing in the core is held back for a paid edition.</p>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="closing" id="start" aria-labelledby="close-h">
+      <section class="sec sources-sec" id="sources" aria-label="Sources">
         <div class="wrap">
-          <h2 id="close-h">Put BotRampart in front of the bots.</h2>
-          <p class="lede">Pick your stack and hand the install to your AI coding agent, or sign up and look around the console with sample data.</p>
-          <div class="btn-row">
-            <a class="btn btn-primary" href="/build/ai/">Install with your AI agent <span class="arrow" aria-hidden="true">→</span></a>
-            <a class="btn btn-ghost" href="/signup/">Sign up</a>
-          </div>
           <!-- @sources -->
         </div>
       </section>
     </main>
     <!-- @footer -->
     <script type="module" src="/assets/home.js"></script>
+    <script type="module" src="/assets/ai-install.js"></script>
   </body>
 </html>

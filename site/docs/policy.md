@@ -1,14 +1,14 @@
 ---
 title: Policy and cohort reference
 nav: Policy and cohorts
-order: 9
+order: 10
 description: The BotRampart policy file field by field (path classes, budget, mint, risk score, rules), the CEL fields and actions rules use, publishing, simulation and rollback, and the cohorts, states and directives of the five-minute loop.
 lede: One versioned YAML file per site decides what every request costs and what happens when a session cannot pay. This page defines every key in it, every field a rule can read, and the cohorts the five-minute loop watches.
 ---
 
 ## The policy file {#file}
 
-One file per site, `botrampart.policy.yaml`, kept in Git. The console shows it read-only. Core type-checks it, compiles every condition and publishes it as an immutable version; SDKs pick up the new version at their next sync. The schema is [`Policy`](/docs/api/#schema-Policy). This is the example policy from the spec, version 12:
+One file per site, `botrampart.policy.yaml`, kept in Git and editable in the console. Core type-checks it, compiles every condition and publishes it as an immutable version; SDKs pick up the new version at their next sync. The schema is [`Policy`](/docs/api/#schema-Policy). This is the example policy from the spec, version 12:
 
 ```yaml op=putPolicy cap="botrampart.policy.yaml (version 12)"
 version: 12
@@ -56,13 +56,13 @@ Settle a response's true cost with [`BR-Cost`](/docs/sdk/#br-cost).
 | `provisional` | 30 | Tier 0 allowance, general paths only. |
 | `grants.pow` | 300 | Credit a passed proof-of-work buys. |
 | `grants.human` | 3000 | Credit a passed human check buys. |
-| `grants.step_up` | 6000 | Credit a passed step-up buys. Step-up methods are [coming next](/docs/overview/#next). |
+| `grants.step_up` | 6000 | Credit a passed step-up buys. |
 | `grant_decay` | 0.5 | Each repeat pass of a tier within 24 hours buys this fraction of the previous one. |
 | `identified_multiplier` | 3 | Budget multiplier for sessions with an attached login ID. |
 | `account_ceiling_per_hour` | 20000 | Spend summed across all sessions of one login ID. |
 | `max_concurrent` | 6 | In-flight requests per session. |
 
-With these defaults one session can spend at most 35,363 units a day with tiers 0 to 2, and 47,175 once a step-up method is available ([why](/docs/overview/#ceiling)).
+With these defaults one session can spend at most 35,363 units a day with tiers 0 to 2, and 47,175 with a step-up method enabled ([why](/docs/overview/#ceiling)).
 
 ## Mint {#mint}
 
@@ -79,7 +79,7 @@ When a key is over its limit, Core publishes its combined mint pressure at the n
 
 ## Risk score {#risk-score}
 
-`risk_score` is a visible scorecard from 0 to 10: a list of lines, each with a CEL `when` and either a fixed `add` or `add_field`, which adds the value of a field. Rules read the total as `risk.score`. Adding an `ai.*` field, such as `ai.risk_level`, is [coming next](/docs/overview/#next) while the model runs in shadow mode.
+`risk_score` is a visible scorecard from 0 to 10: a list of lines, each with a CEL `when` and either a fixed `add` or `add_field`, which adds the value of a field. Rules read the total as `risk.score`. A line can add an `ai.*` field, such as `ai.risk_level`, with `add_field`, so the model's answer moves the score within the 0 to 10 range.
 
 ## Rules {#rules}
 
@@ -110,7 +110,7 @@ Rules are evaluated in order and the first match wins.
 | --- | --- |
 | `allow` | Serve the request and charge it. `allow(budget: agent)` charges the named budget instead. |
 | `log` | Record the decision and allow. |
-| `challenge(pow \| human \| step_up \| next_tier)` | Answer with a challenge (`403`, `BR-Challenge: v1`). `next_tier` asks for the next tier whose grant is still worth having. `step_up` is [coming next](/docs/overview/#next). |
+| `challenge(pow \| human \| step_up \| next_tier)` | Answer with a challenge (`403`, `BR-Challenge: v1`). `next_tier` asks for the next tier whose grant is still worth having. `step_up` asks for a tier 3 method: email link, sign-in, passkey, an image puzzle or a third-party widget, always with a non-visual option. |
 | `pow(multiplier)` | Ask for a proof-of-work made harder by the multiplier. |
 | `throttle` | `429` with `Retry-After` until the budget refills. |
 | `block` | Refuse the request. |
@@ -122,10 +122,12 @@ A fallback after `||` applies when the first action cannot be served: `challenge
 ## Publishing, simulation and rollback {#publishing}
 
 - **Simulate first.** [`simulatePolicy`](/docs/api/#op-simulatePolicy) replays a policy, or an existing version, against the last 24 hours and reports the share of sessions it would challenge, block and throttle against the current version, matches per rule, and the signed-in sessions it would newly affect.
+- **Edit in the console.** The console's policy editor type-checks as you type, runs the simulation, and publishes through the same call as the CLI.
 - **Publish.** [`putPolicy`](/docs/api/#op-putPolicy) takes the policy and the `base_version` it was based on; it fails with `409` when that is no longer current and `422` when the policy does not type-check. It records who published and who approved it.
 - **Read.** [`getPolicy`](/docs/api/#op-getPolicy) returns the current version or any earlier one, with its compiled form.
 - **Roll back** by publishing the previous version again.
 - **Stage a rule** with `mode: log` for a week before it enforces.
+- **Take a suggestion.** The agent suggests changes as a diff with a reason and a simulation; it publishes only when a named person approves it.
 
 ## Cohorts {#cohorts}
 
@@ -137,7 +139,7 @@ A cohort is a group of sessions the five-minute loop watches as one, keyed by:
 | `session_age` | A band, such as `under_10m` |
 | `path_class` | One of your path classes |
 
-Every five minutes Core builds a state for the whole site and for cohorts that drift from their own baseline for that hour of the week. On BotRampart Cloud, which is [coming next](/docs/overview/#next), the number of cohorts the model watches will depend on the plan: Free asks only about the site as a whole, Starter watches 5 cohorts, Growth 20 and Scale 50 ([plans](/own/#cloud)).
+Every five minutes Core builds a state for the whole site and for cohorts that drift from their own baseline for that hour of the week. On BotRampart Cloud the number of cohorts the model watches depends on the plan: Free asks only about the site as a whole, Starter watches 5 cohorts, Growth 20 and Scale 50 ([plans](/own/#cloud)).
 
 ## States {#states}
 
@@ -157,14 +159,14 @@ No free-text field a visitor wrote ever appears in a state.
 
 ## Directives {#directives}
 
-A directive ([`Directive`](/docs/api/#schema-Directive)) publishes `ai.*` fields for a cohort or one session, from a model answer or a deterministic tripwire, with an expiry of at most 60 minutes. Directives set fields, never actions. The model runs in shadow mode: its fields are logged, and rules that act on them are [coming next](/docs/overview/#next). Run an `ai.*` rule with `mode: log`, as the example does.
+A directive ([`Directive`](/docs/api/#schema-Directive)) publishes `ai.*` fields for a cohort or one session, from a model answer or a deterministic tripwire, with an expiry of at most 60 minutes. Directives set fields, never actions: your rules act on them. Stage an `ai.*` rule with `mode: log`, as the example does, then switch it to `enforce` once its thresholds match your traffic.
 
 | Field | Values |
 | --- | --- |
 | `ai.attack` | 0.01 to 0.99: probability of automated abuse |
 | `ai.risk_level` | 0 to 4 |
 | `ai.intent` | `content_scraping`, `credential_stuffing`, `checkout_or_inventory_abuse`, `fake_signups`, `resource_exhaustion`, `organic_spike`, `normal` |
-| `ai.action` | `none`, `raise_pow`, `human_check`, `step_up` (step-up methods are coming next), `lower_budget` |
+| `ai.action` | `none`, `raise_pow`, `human_check`, `step_up`, `lower_budget` |
 | `ai.confidence` | 0 to 1 |
 
 A directive matches on `asn_class`, `session_age`, `path_class` or a session's hash `sid`. Escalation needs two windows that agree; stepping down follows three calm windows.

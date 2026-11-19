@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- @head | Build: choose how to integrate | Where BotRampart checks requests: the Node backend SDK inside your Express, Fastify or Next.js app today, or in front of it at your edge. Every option runs in your own infrastructure or cloud account, then starts in observe mode. -->
+    <!-- @head | Build: choose how to integrate | Where BotRampart checks requests: a backend SDK inside your app, or nginx, a Cloudflare Worker or CloudFront in front of it at your edge. Every option runs in your own infrastructure or cloud account, then starts in observe mode. -->
     <link rel="stylesheet" href="/assets/build.css">
   </head>
   <body>
@@ -11,9 +11,9 @@
         <div class="wrap">
           <p class="label">Build · 01 · choose how to integrate</p>
           <h1>Pick where it stands guard.</h1>
-          <p class="lede">BotRampart checks each request before your app does the work. Put it inside your Node app today, or in front of it at your edge. Every option runs in <b>your</b> infrastructure or <b>your</b> cloud account: no vendor proxy sits in the path, and no one else sees your traffic.</p>
+          <p class="lede">BotRampart checks each request before your app does the work. Put it inside your app, or in front of it at your edge. Every option runs in <b>your</b> infrastructure or <b>your</b> cloud account: no vendor proxy sits in the path, and no one else sees your traffic.</p>
           <div class="btn-row build-ctas">
-            <a class="btn btn-primary" href="/build/ai/">Write my install prompt<span class="arrow" aria-hidden="true">→</span></a>
+            <a class="btn btn-primary" href="/express/">Express<span class="arrow" aria-hidden="true">→</span></a>
             <a class="btn btn-ghost" href="#observe">Install it by hand</a>
           </div>
         </div>
@@ -26,37 +26,40 @@
           <p>Each option does the same job on the wire: it reads the session cookie <code>__br_s</code>, charges the request against the session's budget, and answers with a challenge when the budget runs out. Pick the one that matches where your traffic already flows.</p>
 
           <ul class="opts" aria-label="Integration options">
-            <li class="opt is-live">
-              <p class="opt-status"><span class="tag mvp">Available</span></p>
-              <h3 id="opt-sdk">Node backend SDK</h3>
-              <p class="opt-sub">Express · Fastify · Next.js</p>
+            <li class="opt">
+              <p class="opt-status"><span class="tag mvp">In your app</span></p>
+              <h3 id="opt-sdk">Backend SDK</h3>
+              <p class="opt-sub">Node · Python · Go · Java · Ruby · PHP</p>
               <p class="opt-path" aria-label="Request path: visitor, then your app with BotRampart in front of its handlers"><span>Visitor</span><i aria-hidden="true">→</i><span class="here">App + SDK</span><i aria-hidden="true">→</i><span>Handlers</span></p>
               <p>Runs inside your app process, in front of your handlers. It serves the browser script and challenge routes under <code>/_br</code> on your own origin, verifies <code>__br_s</code> with your site keys and syncs counters with Core every 5 to 10 seconds. It stays light: it keeps no aggregated visitor metrics, baselines or history, which Core builds.</p>
               <p class="opt-link"><a href="/build/wire/">Wire it in</a></p>
             </li>
-            <li class="opt is-later">
-              <p class="opt-status"><span class="tag later">Coming next</span></p>
+            <li class="opt">
+              <p class="opt-status"><span class="tag mvp">Edge</span></p>
               <h3 id="opt-nginx">nginx module</h3>
               <p class="opt-sub">nginx · ingress-nginx on Kubernetes</p>
               <p class="opt-path" aria-label="Request path: visitor, then your nginx with BotRampart, then your app"><span>Visitor</span><i aria-hidden="true">→</i><span class="here">nginx</span><i aria-hidden="true">→</i><span>Your app</span></p>
               <p>Runs in the nginx you already operate, in front of your app. It verifies the <code>__br_s</code> cookie before nginx proxies the request, so it covers apps in any language without touching their code.</p>
+              <p class="opt-link"><a href="/docs/integrations/#edge">Set it up</a></p>
             </li>
-            <li class="opt is-later">
-              <p class="opt-status"><span class="tag later">Coming next</span></p>
+            <li class="opt">
+              <p class="opt-status"><span class="tag mvp">Edge</span></p>
               <h3 id="opt-worker">Cloudflare Worker</h3>
               <p class="opt-sub">In your own Cloudflare account</p>
               <p class="opt-path" aria-label="Request path: visitor, then a Worker in your Cloudflare account, then your origin"><span>Visitor</span><i aria-hidden="true">→</i><span class="here">Worker</span><i aria-hidden="true">→</i><span>Origin</span></p>
               <p>A Worker you deploy on the routes in front of your origin, in your Cloudflare account. It verifies the <code>__br_s</code> cookie at the edge; requests never pass through a BotRampart server.</p>
+              <p class="opt-link"><a href="/docs/integrations/#edge">Set it up</a></p>
             </li>
-            <li class="opt is-later">
-              <p class="opt-status"><span class="tag later">Coming next</span></p>
+            <li class="opt">
+              <p class="opt-status"><span class="tag mvp">Edge</span></p>
               <h3 id="opt-cloudfront">CloudFront</h3>
               <p class="opt-sub">Lambda@Edge, in your own AWS account</p>
               <p class="opt-path" aria-label="Request path: visitor, then a Lambda@Edge function in your AWS account, then your origin"><span>Visitor</span><i aria-hidden="true">→</i><span class="here">Lambda@Edge</span><i aria-hidden="true">→</i><span>Origin</span></p>
               <p>A function on your distribution's viewer requests, in your AWS account. It verifies the <code>__br_s</code> cookie before CloudFront reaches your origin, with no vendor proxy in between.</p>
+              <p class="opt-link"><a href="/docs/integrations/#edge">Set it up</a></p>
             </li>
           </ul>
-          <p class="fine">Edge adapters, SDKs other than Node and mobile SDKs are <a href="/docs/overview/#next">coming next</a>. Today, put the Node SDK in the app that serves your costly routes.</p>
+          <p class="fine">Mobile SDKs for iOS and Android protect native apps the same way. <a href="/docs/integrations/">See every integration</a>.</p>
 
           <div class="ai-teaser">
             <div>
@@ -64,7 +67,7 @@
               <h3 id="ai">Let your coding agent do it</h3>
               <p>Pick your framework, edge, Core host, bucket and decision model. You get one prompt for Claude Code, Cursor, Codex or any agent: provision Core and the bucket, wire BotRampart in observe mode, verify, and stop before enforcing.</p>
             </div>
-            <a class="btn btn-primary" href="/build/ai/">Open the prompt builder<span class="arrow" aria-hidden="true">→</span></a>
+            <a class="btn btn-primary" href="/express/">Express<span class="arrow" aria-hidden="true">→</span></a>
           </div>
 
           <h2 id="contract">What every option shares</h2>
@@ -86,7 +89,7 @@
           <h2 id="observe">Start in observe mode</h2>
           <p>Observe mode decides every request, logs the decision and lets it through, so you see what BotRampart <b>would</b> have done before it does anything. You need:</p>
           <ul>
-            <li>A Node app on Express, Fastify or Next.js.</li>
+            <li>An app on a framework with a BotRampart SDK (Express, Fastify, Next.js, Django, Rails, Laravel, Spring or Go), or nginx, a Cloudflare Worker or CloudFront in front of it.</li>
             <li>Somewhere to run Core: a Cloudflare account (Workers Paid starts at $5 a month{{c:cf-workers-price}}) or any host that runs one container. Recommended: 256 MB of memory. No database server.</li>
             <li>An S3-compatible bucket: Cloudflare R2, Amazon S3 or MinIO.</li>
             <li>Optional: a key for a decision-model provider, or a self-hosted model. Without one, the five-minute loop is off and everything else works.</li>
@@ -139,7 +142,7 @@
             </li>
             <li>
               <h3 id="enforce">Enforce tier 1</h3>
-              <p>Switch <code>mode</code> to <code>"enforce"</code> with the default policy. Ordinary browsing stays inside the refill rate and sees nothing. Clients that cannot run JavaScript keep reading general pages on their 30-unit allowance and are asked for a proof-of-work on costly paths. Keep the five-minute loop in shadow until its answers match what you would have done.</p>
+              <p>Switch <code>mode</code> to <code>"enforce"</code> with the default policy. Ordinary browsing stays inside the refill rate and sees nothing. Clients that cannot run JavaScript keep reading general pages on their 30-unit allowance and are asked for a proof-of-work on costly paths. Run the five-minute loop in shadow first, then let rules act on its answers once they match what you would have done.</p>
             </li>
           </ol>
 
@@ -147,7 +150,7 @@
           <div class="cards">
             <a class="card" href="/build/wire/"><p class="label">02 · guide</p><h3>Wire it in</h3><p>Settings, the routes on your origin, challenges, sign-in, the policy file, logs and fail modes.</p></a>
             <a class="card" href="/build/inside/"><p class="label">03 · reference</p><h3>Inside BotRampart</h3><p>Components, data layout, the decision model contract and the threat model.</p></a>
-            <a class="card" href="/build/ai/"><p class="label">04 · express install</p><h3>Your install prompt</h3><p>Choose your stack and copy a prompt for your AI coding agent.</p></a>
+            <a class="card" href="/express/"><p class="label">04 · express install</p><h3>Express</h3><p>Choose your stack and copy a prompt for your AI coding agent.</p></a>
             <a class="card" href="/try/"><p class="label">05 · in your browser</p><h3>Run a session</h3><p>Pick your options and see a simulated first hour in observe mode.</p></a>
           </div>
           <!-- @sources -->

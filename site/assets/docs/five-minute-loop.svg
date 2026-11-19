@@ -50,7 +50,7 @@
     <text x="477" y="236" text-anchor="middle">next sync: policy, directives, revocations, mint pressure</text>
   </g>
   <g fill="#bdb5a6" font-size="13">
-    <text x="26" y="276">Your rules decide what an ai.* field does. The default policy only logs them (shadow mode).</text>
+    <text x="26" y="276">Your rules decide what an ai.* field does: stage a rule in log mode, then let it enforce.</text>
     <text x="26" y="300">Escalate when two windows agree; step down after three calm windows. Answers are cached for an hour on a hash of the bands.</text>
   </g>
 </svg>

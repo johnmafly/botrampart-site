@@ -1,8 +1,8 @@
 ---
 title: SDK reference
 nav: SDK reference
-order: 8
-description: What BotRampart's SDKs expose, as spec/openapi.yaml defines it: the routes the backend SDK mounts under /_br, the headers it sets and reads, br.identify, and the browser SDK served at /_br/sdk.js with br.status(), autoRetry, challenges and signals.
+order: 9
+description: What BotRampart's SDKs expose (backend SDKs for Node, Python, Go, Java, Ruby and PHP, the edge adapters, the mobile SDKs and the browser SDK), as spec/openapi.yaml defines it: the routes the backend SDK mounts under /_br, the headers it sets and reads, br.identify, and the browser SDK served at /_br/sdk.js with br.status(), autoRetry, challenges and signals.
 lede: The SDK surface the API spec defines, each part linked to its HTTP exchange in the API reference. Everything the SDKs do on the wire is in the spec, so you can also integrate over HTTP directly.
 ---
 
@@ -10,10 +10,17 @@ lede: The SDK surface the API spec defines, each part linked to its HTTP exchang
 
 | SDK | Runs | Licence |
 | --- | --- | --- |
-| Backend SDK | Inside your app process; mounts the [SDK routes](#routes) under `/_br` on your own origin | Apache-2.0 |
+| Backend SDK for Node | Express, Fastify and Next.js, inside your app process; mounts the [SDK routes](#routes) under `/_br` on your own origin | Apache-2.0 |
+| Backend SDK for Python | Django middleware, inside your app process | Apache-2.0 |
+| Backend SDK for Go | `net/http` middleware, inside your app process | Apache-2.0 |
+| Backend SDK for Java | A Spring filter, inside your app process | Apache-2.0 |
+| Backend SDK for Ruby | Rack middleware for Rails, inside your app process | Apache-2.0 |
+| Backend SDK for PHP | Laravel middleware, inside your app process | Apache-2.0 |
+| Edge adapters | The nginx module (with ingress-nginx), a Cloudflare Worker and CloudFront Lambda@Edge, in front of your app; each mounts the same routes | Apache-2.0 |
+| Mobile SDKs | iOS and Android apps; see [Mobile SDKs](#mobile) | Apache-2.0 |
 | Browser SDK, `@botrampart/browser` | The visitor's browser, served by the backend SDK from your own origin at `/_br/sdk.js` | Apache-2.0 |
 
-The SDKs and the routes they mount are open source under Apache-2.0. The browser SDK is a versioned, immutable file served from your origin, with a published integrity hash and a signed release; no third-party domain serves the code your visitors run.
+The SDKs and the routes they mount are open source under Apache-2.0. Every backend SDK and edge adapter speaks the same routes and headers, so this page applies to each of them. The browser SDK is a versioned, immutable file served from your origin, with a published integrity hash and a signed release; no third-party domain serves the code your visitors run.
 
 Every SDK evaluates the policy's compiled [condition trees](/docs/api/#schema-ConditionTree) with the same small interpreter and is checked by one conformance suite.
 
@@ -46,7 +53,7 @@ Any route the backend SDK protects can answer with a challenge ([`ChallengeRequi
 | Header | Set by | Meaning |
 | --- | --- | --- |
 | [`BR-Sid`](/docs/api/#header-br-sid) | The SDK, on every response that passes through it | The first 12 hex characters of SHA-256 of the session ID, never the ID itself. |
-| [`BR-Decision`](/docs/api/#header-br-decision) | The SDK, on every response that passes through it | The decision for this request: `allow`, `log`, `challenge:pow`, `challenge:human`, `challenge:step_up`, `throttle`, `block` or `degrade`. `challenge:step_up` is reserved for step-up methods, which are [coming next](/docs/overview/#next). |
+| [`BR-Decision`](/docs/api/#header-br-decision) | The SDK, on every response that passes through it | The decision for this request: `allow`, `log`, `challenge:pow`, `challenge:human`, `challenge:step_up`, `throttle`, `block` or `degrade`. `challenge:step_up` marks a tier 3 method. |
 | [`BR-Cost`](#br-cost) | Your app, on its own response | The request's actual cost in units. |
 
 Your edge logs `BR-Sid` and `BR-Decision` and strips them before the response leaves; the [nginx example](/docs/configuration/#headers) does both.
@@ -97,7 +104,7 @@ Content-Type: application/json
                   "url": "/_br/challenge?c=eyJ0IjoiaHVtYW4ifQ.c2ln", "retry": true } }
 ```
 
-Fetch `url`: for tier 1 it returns a signed puzzle, for tier 2 a widget URL. The solution or the widget's attestation goes to `/_br/redeem`:
+Fetch `url`: for tier 1 it returns a signed puzzle, for tiers 2 and 3 a widget URL. The solution or the widget's attestation goes to `/_br/redeem`:
 
 ```http op=redeemChallenge cap="Redeem a solved puzzle"
 POST /_br/redeem
@@ -130,3 +137,12 @@ POST /_br/signals
 ```
 
 The server checks signals; the policy reads them as `signals.*` fields, such as `signals.automation_flag`.
+
+## Mobile SDKs {#mobile}
+
+The iOS and Android SDKs protect your native app's calls to your API with the same budgets and rules as the browser. Each one:
+
+- **Carries the session token.** It stores the signed token in the platform's secure storage and sends it in a request header, since an app has no cookie jar shared with your site.
+- **Solves the proof-of-work natively.** The same signed puzzle from [`getChallenge`](/docs/api/#op-getChallenge), solved off the main thread and redeemed at [`/_br/redeem`](/docs/api/#op-redeemChallenge).
+- **Presents challenges in the app.** A human check or step-up method opens in a native sheet, and the original call retries once, like `autoRetry` in the browser.
+- **Reports the same signals.** The `standard`, `minimal` and `off` modes collect the same counts and never collect device identifiers.

@@ -11,6 +11,7 @@
 // numbered link to its source, and fails on an unknown id. <!-- @sources --> lists the page's
 // sources with the verbatim quote and the date each was checked.
 import { readClaims } from "./claims.mjs";
+import { OPTIONS as AI_OPTIONS, DEFAULTS as AI_DEFAULTS, buildPrompt } from "../site/assets/ai-install.js";
 import { buildDocsHtml, buildDocsText } from "./docs.mjs";
 import { appendFileSync, cpSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
@@ -119,6 +120,35 @@ function emailOff(html) {
     gt + text.replace(EMAIL, (addr) => `<!--email_off-->${addr}<!--/email_off-->`));
 }
 
+
+// Express (one-prompt install): <!-- @ai-picker:full --> or <!-- @ai-picker:home --> becomes the stack
+// picker built from ai-install.js's OPTIONS, and <!-- @ai-prompt --> the prompt for the preselected
+// choices, so the page reads complete without JavaScript and never drifts from the module.
+const AI_LEGEND = { framework: "Framework", runtime: "Where your app runs", edge: "CDN or edge", infra: "Cloud for Core and the log", iac: "Provision with", model: "Decision model", agent: "Your coding agent" };
+const AI_SUB = {
+  framework: (o) => o.lang,
+  runtime: () => "",
+  edge: (o) => ({ none: "SDK in the app", cloudflare: "Worker in your account", cloudfront: "Lambda@Edge", nginx: "nginx module" })[o.value],
+  infra: (o) => `${o.core} · ${o.bucket}`,
+  iac: (o) => ({ terraform: "plan, then apply", pulumi: "preview, then up", cli: "one reviewed script" })[o.value],
+  model: (o) => ({ off: "Turn on any time", gemini: "Hosted", local: "Nothing leaves your network" })[o.value],
+  agent: () => "",
+};
+const AI_HOME = ["framework", "runtime", "edge", "infra"];
+function aiPicker(html) {
+  html = html.replace(/<!-- @ai-picker:(full|home) -->/g, (_, variant) => {
+    const keys = variant === "home" ? AI_HOME : Object.keys(AI_OPTIONS);
+    return keys.map((k, i) => {
+      const choices = AI_OPTIONS[k].map((o) => {
+        const sub = AI_SUB[k](o);
+        return `<label class="choice"><input type="radio" name="${k}" value="${o.value}"${AI_DEFAULTS[k] === o.value ? " checked" : ""}><span>${esc(o.label)}${sub ? `<small>${esc(sub)}</small>` : ""}</span></label>`;
+      }).join("");
+      return `<fieldset class="field"><legend><span class="ai-n">${i + 1}</span> ${AI_LEGEND[k]}</legend><div class="choices">${choices}</div></fieldset>`;
+    }).join("\n");
+  });
+  return html.replace(/<!-- @ai-prompt -->/g, () => esc(buildPrompt()).replace(/>/g, "&gt;"));
+}
+
 function render(file) {
   const route = routeOf(file);
   let html = readFileSync(file, "utf8");
@@ -127,6 +157,7 @@ function render(file) {
   for (const name of ["header", "footer", "docs-nav"]) {
     html = html.replace(`<!-- @${name} -->`, markCurrent(partial(name), route));
   }
+  html = aiPicker(html);
   html = toc(html, route);
   html = cite(html, route);
   html = scrollRegions(html, route);

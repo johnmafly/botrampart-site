@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- @head | BotRampart solutions: commerce, SaaS, publishers and accounts | How BotRampart stops the bots each kind of business meets: cart and scalper bots, sign-up and credit abuse, AI crawlers and scrapers, credential stuffing and account takeover. -->
+    <link rel="stylesheet" href="/assets/home.css">
+  </head>
+  <body class="home-v3">
+    <!-- @header -->
+    <main id="main">
+      <div class="page-head">
+        <div class="wrap">
+          <p class="label">Solutions</p>
+          <h1>Bots want something. <span class="muted">Make it cost them.</span></h1>
+          <p class="lede">Stock, free credit, content or an account: what a bot is after decides where it hits your site. <b>BotRampart puts a price on those routes, escalates a session that overspends through the same four tiers, and explains every decision, in your own infrastructure.</b></p>
+        </div>
+      </div>
+
+      <section class="sec sec-tight" id="buyers" aria-labelledby="buyers-h">
+        <div class="wrap">
+          <div class="sec-head">
+            <p class="label">By business</p>
+            <h2 id="buyers-h">Four businesses. <span class="dim">One ladder, priced for each.</span></h2>
+            <p>Each page replays the attack in the decision log, shows the tier that stops it and what it costs the bot, and gives you the policy file to start from.</p>
+          </div>
+          <div class="cards">
+            <a class="card" href="/solutions/commerce/"><p class="label">Commerce</p><h3>Keep stock for real buyers.</h3><p>Retail, ticketing and drops: inventory hoarding, scalper bots racing the cart, gift-card cracking.</p></a>
+            <a class="card" href="/solutions/saas/"><p class="label">SaaS</p><h3>Keep free tiers for users.</h3><p>SaaS and AI products: farmed sign-ups, free-tier and promo abuse, AI agents burning credits, scripted API calls.</p></a>
+            <a class="card" href="/solutions/publishers/"><p class="label">Publishers</p><h3>Make scrapers pay per page.</h3><p>Media, documentation and marketplaces: AI crawlers, content scrapers and price scrapers.</p></a>
+            <a class="card" href="/solutions/accounts/"><p class="label">Accounts</p><h3>Stop stolen passwords at login.</h3><p>Fintech, banking and any login: credential stuffing, account takeover, OTP and SMS pumping.</p></a>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec" id="map" aria-labelledby="map-h">
+        <div class="wrap">
+          <div class="sec-head">
+            <p class="label">Attack by attack</p>
+            <h2 id="map-h">Where each attack hits, <span class="dim">and what ends it.</span></h2>
+            <p>Every row is a path class in your policy file with a price, and a tier the bot has to reach to keep going.</p>
+          </div>
+          <div class="tablewrap" tabindex="0" role="region" aria-label="Table: Attack by attack">
+            <table>
+              <thead><tr><th scope="col">Attack</th><th scope="col">Route it hits</th><th scope="col">What ends it</th><th scope="col">Page</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Cart and scalper bots</th><td><code>POST /api/cart*</code> at 50 units</td><td>Tier 2 human check, grants that halve, new sessions rationed per network</td><td><a href="/solutions/commerce/">Commerce</a></td></tr>
+                <tr><th scope="row">Gift-card cracking</th><td><code>POST /api/giftcard/balance</code> at 100 units</td><td>Tier 3 step-up on risk</td><td><a href="/solutions/commerce/#stop">Commerce</a></td></tr>
+                <tr><th scope="row">Farmed sign-ups and promo abuse</th><td><code>POST /api/signup</code>, <code>/api/promo/redeem</code></td><td>Tier 2 to redeem; step-up when the five-minute loop reads fake sign-ups</td><td><a href="/solutions/saas/">SaaS</a></td></tr>
+                <tr><th scope="row">AI agents burning credits</th><td><code>POST /api/generate*</code>, settled with <code>BR-Cost</code></td><td>The hourly ceiling per account, across every session</td><td><a href="/solutions/saas/#stop">SaaS</a></td></tr>
+                <tr><th scope="row">AI crawlers</th><td>Articles and docs</td><td>Tier 1: no browser engine, no proof-of-work</td><td><a href="/solutions/publishers/">Publishers</a></td></tr>
+                <tr><th scope="row">Distributed scrapes</th><td>Listings, search, prices</td><td>The five-minute loop, against each cohort's own baseline</td><td><a href="/solutions/publishers/#stop">Publishers</a></td></tr>
+                <tr><th scope="row">Credential stuffing</th><td><code>POST /login</code> at 100 units</td><td>Tier 2 human check, mint buckets per prefix, ASN and TLS family</td><td><a href="/solutions/accounts/">Accounts</a></td></tr>
+                <tr><th scope="row">Account takeover and SMS pumping</th><td><code>/api/account/*</code>, <code>/api/otp/send</code></td><td>Tier 3 step-up on account changes; codes priced at 500 units</td><td><a href="/solutions/accounts/#stop">Accounts</a></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="int-links"><a href="/meter/">How budgets and the ladder work</a> · <a href="/docs/policy/">Policy reference</a> · <a href="/express/">Install with your AI agent</a></p>
+        </div>
+      </section>
+    </main>
+    <!-- @footer -->
+  </body>
+</html>
