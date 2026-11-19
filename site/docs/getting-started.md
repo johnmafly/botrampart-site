@@ -1,23 +1,66 @@
 ---
 title: Install and quickstart
-nav: Install and quickstart
-order: 4
+nav: Quickstart
+group: Get started
+order: 1
 description: Run BotRampart's reference code from source in a few minutes, then wire the backend and browser SDKs into a Node app in observe mode, simulate a policy and enforce.
 lede: Two paths. Run the reference budget engine and its benchmark from source in a few minutes, then wire BotRampart into a Node app in observe mode, where it decides and logs every request and enforces nothing.
 ---
+
+This page takes you from nothing to BotRampart deciding every request in your app, in observe mode, where it decides and logs every request and enforces nothing until you switch it on. Paste the prompt below into your coding agent to have it do the whole install, or follow the steps by hand.
+
+<!-- @express-card -->
+
+## When to use {#when-to-use}
+
+- You want to see the budget engine and its benchmark run on your own machine before anything else.
+- You are adding BotRampart to a Node app on Express, Fastify or Next.js by hand.
+- You want the exact order of steps: Core, the backend SDK, the browser script, a check, a simulation, then enforce.
+- You prefer to read each step your coding agent takes when it installs from the [Express](/docs/express/) prompt.
+
+## Quickstart {#quickstart}
+
+1. [Run the reference code](#from-source): clone the repository and run its tests and benchmark.
+2. [Configure Core](#core) with a lake URL and the `br_keys` and `lake_writer` secrets.
+3. [Mount the backend SDK](#sdk) with `mode: "observe"`.
+4. [Add the browser script](#script) to your layout.
+5. [Check the session](#check) at `/_br/status`, then [simulate](#observe) and [enforce](#enforce).
+
+> [!TIP]
+> Stay in observe mode for at least a day of real traffic. The decision log then shows which sessions the default policy challenges and why, before any visitor sees a challenge.
+
 
 ## Run the reference code from source {#from-source}
 
 The repository holds the reference implementation of the budget algorithm, the cookie-verification benchmark and the tests that check every number this guide quotes. You need Git and Node.js 24 or newer; there are no dependencies to install.
 
-```shell cap="Clone, test and benchmark"
+```shell title="Clone the repository"
 git clone https://github.com/johnmafly/botrampart-site.git
 cd botrampart-site
+```
+
+Then run the tests and the benchmark with the package manager you use. Nothing is installed: the scripts run on Node alone.
+
+<!-- tabs: npm | pnpm | Yarn | Bun -->
+```shell title="Test and benchmark"
 npm test          # builds the site and runs every test, including the budget algorithm's
 npm run bench     # verifies 300,000 signed cookies across 10,000 sessions and charges each request
 ```
+```shell title="Test and benchmark"
+pnpm test         # builds the site and runs every test, including the budget algorithm's
+pnpm bench        # verifies 300,000 signed cookies across 10,000 sessions and charges each request
+```
+```shell title="Test and benchmark"
+yarn test         # builds the site and runs every test, including the budget algorithm's
+yarn bench        # verifies 300,000 signed cookies across 10,000 sessions and charges each request
+```
+```shell title="Test and benchmark"
+bun run test      # builds the site and runs every test, including the budget algorithm's
+bun run bench     # verifies 300,000 signed cookies across 10,000 sessions and charges each request
+```
+<!-- /tabs -->
 
-`npm run bench` prints its result as JSON, with the median, 90th, 99th and 99.9th percentile per request in microseconds and whether a forged cookie was rejected. The run recorded in the repository measured 1.79 µs at the median and 2.58 µs at the 99th percentile on an Apple M4 Pro.{{c:exp-verify}}
+The benchmark prints its result as JSON, with the median, 90th, 99th and 99.9th percentile per request in microseconds and whether a forged cookie was rejected. The run recorded in the repository measured 1.79 µs at the median and 2.58 µs at the 99th percentile on an Apple M4 Pro.{{c:exp-verify}}
 
 Then drive the budget engine yourself. Save this as `try-budget.mjs` in the repository root and run `node try-budget.mjs`:
 
@@ -76,9 +119,34 @@ It serves the [SDK routes](/docs/sdk/#routes) under `/_br` and sets `BR-Sid` and
 
 One script tag, served from your own origin by the backend SDK, so no third-party domain can change the code your visitors run. That is the lesson of the 2024 Polyfill.io incident, when a CDN script under new ownership served malware to more than 100,000 sites.{{c:polyfill}}
 
-```html op=getSdkScript cap="Your page template"
-<script src="/_br/sdk.js" data-site="site_123" async></script>
+Put it in the layout every page shares, inside `<head>`:
+
+<!-- tabs: Express | Next.js | Fastify -->
+```html op=getSdkScript title="views/layout.html"
+<head>
+  <meta charset="utf-8">
+  <script src="/_br/sdk.js" data-site="site_123" async></script>
+</head>
 ```
+```tsx op=getSdkScript title="app/layout.tsx"
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <head>
+        <script src="/_br/sdk.js" data-site="site_123" async></script>
+      </head>
+      <body>{children}</body>
+    </html>
+  );
+}
+```
+```html op=getSdkScript title="templates/index.html"
+<head>
+  <meta charset="utf-8">
+  <script src="/_br/sdk.js" data-site="site_123" async></script>
+</head>
+```
+<!-- /tabs -->
 
 ## 4. Check the session {#check}
 
@@ -93,7 +161,8 @@ await fetch("/_br/status").then((r) => r.json());
 
 Within the first hour the decision log in your bucket shows spend by path class, the sessions that would have been challenged and why, and path costs suggested from how long each path takes to answer. Replay a changed policy against that traffic before you enforce anything:
 
-```shell op=simulatePolicy cap="Replay a policy against the last 24 hours"
+<!-- tabs: curl | JavaScript -->
+```shell op=simulatePolicy title="Replay a policy against the last 24 hours"
 curl -X POST "http://localhost:8787/v1/policy/simulate" \
   -H "Authorization: Bearer $BR_CONSOLE_TOKEN" -H "Content-Type: application/json" \
   -d @draft-policy.json
@@ -101,15 +170,43 @@ curl -X POST "http://localhost:8787/v1/policy/simulate" \
 { "challenged_share_current": 0.004, "challenged_share_draft": 0.012, "signed_in_affected": 0,
   "summary": "Would have challenged 1.2% of sessions against 0.4% today, none of them signed in." }
 ```
+```js op=simulatePolicy title="simulate.mjs"
+import { readFile } from "node:fs/promises";
+
+const draft = await readFile("draft-policy.json", "utf8");   // { "against_version": 12, "policy": { ... } }
+const res = await fetch("http://localhost:8787/v1/policy/simulate", {
+  method: "POST",
+  headers: { Authorization: `Bearer ${process.env.BR_CONSOLE_TOKEN}`, "Content-Type": "application/json" },
+  body: draft,
+});
+const result = await res.json();
+console.log(result.challenged_share_current, result.challenged_share_draft, result.signed_in_affected);
+console.log(result.summary);
+```
+<!-- /tabs -->
+
+> [!WARNING]
+> Check `signed_in_affected` before every publish. A draft that challenges signed-in sessions puts a challenge in front of your own customers.
 
 ## 6. Enforce tier 1 {#enforce}
 
 Switch `mode` to `"enforce"` with the default policy. Ordinary browsing stays inside the refill rate and sees nothing. Clients that cannot run JavaScript keep reading general pages on their 30-unit allowance and are asked for a proof-of-work on costly paths. Keep `ai.*` rules in `log` mode until their decisions match what you would have done, then let them enforce.
 
-## Next {#next}
+## Where to go next {#next}
+
+| Goal | Page |
+| --- | --- |
+| Install on your exact stack with one prompt | [Express](/docs/express/) |
+| Set every backend and browser SDK option | [Configuration](/docs/configuration/#backend) |
+| Change path costs, budgets and rules | [Policy reference](/docs/policy/#path-classes) |
+| Handle challenges, headers and signals yourself | [SDK reference](/docs/sdk/#challenges) |
+| Run Core and the lake in production | [Self-hosting](/docs/self-hosting/#rollout) |
+| Protect an edge, a mobile app or another language | [Choose an integration](/docs/choose/) |
+
+The references this quickstart leans on:
 
 <!-- cards -->
-- [05 Configuration](/docs/configuration/): Every option, setting, credential and failure mode.
-- [08 SDK reference](/docs/sdk/): The SDK routes, response headers, sign-in, challenges and signals.
-- [09 Policy reference](/docs/policy/): Path classes, budgets, rules and cohorts.
-- [10 Self-hosting](/docs/self-hosting/): Running Core and the lake in production.
+- [Configuration](/docs/configuration/): Every option, setting, credential and failure mode.
+- [SDK reference](/docs/sdk/): The SDK routes, response headers, sign-in, challenges and signals.
+- [Policy reference](/docs/policy/): Path classes, budgets, rules and cohorts.
+- [Self-hosting](/docs/self-hosting/): Running Core and the lake in production.

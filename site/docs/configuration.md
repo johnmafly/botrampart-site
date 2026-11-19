@@ -1,10 +1,35 @@
 ---
 title: Configuration
 nav: Configuration
-order: 5
+group: Integrate
+order: 10
 description: Every BotRampart setting in one place: backend SDK options, browser SDK options, Core's settings and secrets, credentials and roles, site keys and rotation, the cookie, response headers and failure modes.
 lede: Every setting, where it lives and what it does. The policy file has its own reference; this page covers everything around it.
 ---
+
+Settings live in four places: the backend SDK, the browser script, Core and your secret store. The policy file has its own reference; this page covers everything around it.
+
+## When to use {#when-to-use}
+
+- You are mounting the backend SDK and need its options.
+- You are setting Core's environment and secrets.
+- You are rotating site keys or issuing credentials for the console, the agent or the log pack.
+- You need to know what happens when Core is unreachable.
+
+## Quickstart {#quickstart}
+
+1. Set `site`, `secretsFile`, `core` and `mode: "observe"` on the [backend SDK](#backend).
+2. Add the [script tag](#browser) with `data-site`.
+3. Give [Core](#core) its lake URL, its decision provider and the `br_keys` and `lake_writer` secrets.
+4. Log and strip the [response headers](#headers) at your edge.
+
+```shell title="Core's environment"
+BR_LAKE_URL=s3://acme-botrampart/br/v1/
+BR_DECISION_PROVIDER=off
+```
+
+> [!WARNING]
+> `br_keys` signs every session token and puzzle. Keep it in your secret store, never in Git, and rotate it with the `br` CLI after any exposure.
 
 ## Where settings live {#where}
 
@@ -113,3 +138,13 @@ proxy_hide_header BR-Decision;
 | Clock skew | 60 seconds of tolerance. |
 | Key rotation | Two keys accepted at once. |
 | Instances out of step | In-memory budgets reconcile at each sync; overspend is bounded by one sync interval. |
+
+## Where to go next {#where-next}
+
+| Goal | Page |
+| --- | --- |
+| Write the policy file | [Policy reference](/docs/policy/) |
+| See every route and header the SDK sets | [SDK reference](/docs/sdk/#routes) |
+| Run Core in production | [Self-hosting](/docs/self-hosting/) |
+| Know what each credential can reach | [Trust boundaries](/docs/security/#boundaries) |
+| Read the credential schemes | [consoleToken](/docs/api/#security-consoletoken) |

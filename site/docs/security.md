@@ -1,10 +1,30 @@
 ---
 title: Security model
 nav: Security model
+group: Operate
 order: 12
 description: BotRampart's security model: trust boundaries, the signed session token, proof-of-work and attestations, credentials and roles, the data kept and never collected, guardrails on the decision model and the agent, script delivery, and the threats that remain.
 lede: What BotRampart trusts, what it signs, what it keeps, and which threats remain after every control is in place.
 ---
+
+This page is for security and privacy reviewers: what crosses each boundary, how the session token is signed, what is kept and what is never collected, and what an attacker can still do.
+
+## When to use {#when-to-use}
+
+- You are running a security or privacy review of BotRampart.
+- You need the retention and never-collected lists for a privacy notice or a vendor questionnaire.
+- You want to know how the decision model and the agent are kept from acting on their own.
+- You are deciding how to store and rotate site keys.
+
+## Quickstart {#quickstart}
+
+1. Read [Trust boundaries](#boundaries).
+2. Check the token format and binding in [The session token](#token).
+3. Compare [Data kept, and never collected](#data) with your privacy notice.
+4. Walk the [threats table](#threats) and what remains after each control.
+
+> [!WARNING]
+> A stolen site secret lets someone mint session tokens until you rotate it. Keep `br_keys` in your secret store and rotate after any exposure.
 
 ## Trust boundaries {#boundaries}
 
@@ -76,3 +96,13 @@ The browser SDK is served from your own origin by the backend SDK, with an integ
 ## This website {#site}
 
 This site follows the same rules it describes: it sets no cookies, loads nothing from anyone else, and serves a Content-Security-Policy of `default-src 'self'` with no inline scripts or styles. Its source and every test are in the [repository](https://github.com/johnmafly/botrampart-site).
+
+## Where to go next {#where-next}
+
+| Goal | Page |
+| --- | --- |
+| Rotate site keys | [Configuration](/docs/configuration/#keys) |
+| Read the full token payload | [SessionTokenPayload](/docs/api/#schema-SessionTokenPayload) |
+| Set signal modes for EU sites | [Browser SDK options](/docs/configuration/#browser) |
+| Read the decision-model contract | [Design and architecture](/docs/architecture/#decision-model) |
+| Handle failures | [Self-hosting](/docs/self-hosting/#failure) |

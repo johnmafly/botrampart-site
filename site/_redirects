@@ -12,3 +12,15 @@
 # Express got its own product page (2026-11-19); the old picker URL keeps working.
 /build/ai                   /express/       301
 /build/ai/                  /express/       301
+# The Build chapters moved into the docs (2026-11-19). Anchors are unchanged, and a browser keeps
+# the #fragment across a redirect. test/redirects.test.mjs checks every old address.
+/build                      /docs/choose/   301
+/build/                     /docs/choose/   301
+/build/index.html           /docs/choose/   301
+/build/wire                 /docs/wire/     301
+/build/wire/                /docs/wire/     301
+/build/wire/index.html      /docs/wire/     301
+/build/inside               /docs/inside/   301
+/build/inside/              /docs/inside/   301
+/build/inside/index.html    /docs/inside/   301
+/build/ai/index.html        /express/       301

@@ -1,10 +1,30 @@
 ---
 title: Integrations
 nav: Integrations
-order: 6
+group: Integrate
+order: 9
 description: How BotRampart fits with your stack: backend SDKs for six languages, edge adapters for nginx, Cloudflare and CloudFront, mobile apps, the SDK routes; Core on Cloudflare Workers, a container, Kubernetes or OpenOrange; R2, S3, MinIO, GCS and Azure Blob; Redis and Valkey; decision-model providers; the Vector log pack; Slack, email and the console.
 lede: BotRampart sits inside your app and next to the infrastructure you already run. This page lists every system it connects to and how.
 ---
+
+BotRampart connects to your app, your edge, your bucket and your model provider, and to nothing you do not choose. Each section names one system and how BotRampart talks to it.
+
+## When to use {#when-to-use}
+
+- You need to know whether BotRampart supports your language, framework, edge or cloud.
+- You are choosing where Core runs and which bucket holds the lake.
+- You run several app instances and want budgets exact across them.
+- You handle traffic that carries no cookie: mobile apps, partner APIs, webhooks, crawlers.
+
+## Quickstart {#quickstart}
+
+1. Find your stack in [Integration points](#integration-points).
+2. Pick a [Core target](#hosting) and an [object store](#storage).
+3. On serverless or many instances, set a [shared store](#store).
+4. Log and strip `BR-Sid` and `BR-Decision` at your [edge](#edge).
+
+> [!TIP]
+> Every integration point verifies the same `__br_s` cookie and speaks the same SDK routes, so moving from a backend SDK to an edge adapter keeps your policy unchanged.
 
 ## Integration points {#integration-points}
 
@@ -104,3 +124,13 @@ The state the model sees follows Google's published guidance: numbers are compar
 - Run CI and staging in `observe` mode, and assert on the `BR-Decision` header of your app's responses in your own tests, before the edge strips it.
 - Replay a changed policy against production traffic with [`simulatePolicy`](/docs/api/#op-simulatePolicy) before every publish.
 - Look up any decision a tester saw by its reference with [`getDecision`](/docs/api/#op-getDecision).
+
+## Where to go next {#where-next}
+
+| Goal | Page |
+| --- | --- |
+| Install on your stack with one prompt | [Express](/docs/express/) |
+| Compare a backend SDK, an edge adapter and a mobile SDK | [Choose an integration](/docs/choose/) |
+| Wire routes, headers and signals | [Wire it in](/docs/wire/) |
+| Set every option | [Configuration](/docs/configuration/) |
+| Pick the decision-model provider | [Core settings](/docs/configuration/#core) |

@@ -1,10 +1,30 @@
 ---
 title: Design and architecture
 nav: Architecture
-order: 2
+group: Concepts
+order: 4
 description: BotRampart's components, where each runs, what crosses each boundary, the request path, sync, the five-minute loop, Core's ports, data layout and the decision-model contract, with diagrams.
 lede: Each component, where it runs and what crosses each boundary. The per-request work happens inside your app; everything that needs the whole site's view happens in Core, off the request path.
 ---
+
+This page is the map of BotRampart: every component, where it runs, and the data that crosses each boundary. Read it before you plan a deployment or a security review.
+
+## When to use {#when-to-use}
+
+- You are planning where Core, the lake and the agent run in your infrastructure.
+- You need to know what leaves your app, and in what form.
+- You are reviewing the session token, sync or the decision-model contract.
+- You want the measured cost of the hot path.
+
+## Quickstart {#quickstart}
+
+1. Read [Components](#components) and the system diagram.
+2. Follow one request through [the request path](#request-path).
+3. Read [Sync](#sync), the only regular conversation between your app and Core.
+4. Check [Data layout](#lake) for what lands in your bucket.
+
+> [!TIP]
+> Core is never in the request path. When Core is down, your app keeps verifying tokens and charging budgets on the last synced policy.
 
 ## Components {#components}
 
@@ -177,3 +197,13 @@ The SDKs, the edge adapters, the CLI and the log pack are Apache-2.0. Core, the 
 ## Measured {#measured}
 
 We measured the hot path on 18 November 2026: verifying the signed cookie and charging the budget in Node took about **1.79 µs** per request at the median and **2.58 µs** at the 99th percentile, over 300,000 requests across 10,000 sessions on an Apple M4 Pro Mac mini; a forged cookie was rejected.{{c:exp-verify}} The [benchmark and its output](https://github.com/johnmafly/botrampart-site/tree/main/experiments) are in the repository, and [Install and quickstart](/docs/getting-started/#from-source) shows how to run it. It measures the reference code, not a framework.
+
+## Where to go next {#where-next}
+
+| Goal | Page |
+| --- | --- |
+| Walk through the same parts step by step | [Inside BotRampart](/docs/inside/) |
+| Run Core and the lake | [Self-hosting](/docs/self-hosting/) |
+| Read every field of the session token | [SessionTokenPayload](/docs/api/#schema-SessionTokenPayload) |
+| Review each trust boundary | [Security model](/docs/security/#boundaries) |
+| Pick an integration point | [Choose an integration](/docs/choose/) |

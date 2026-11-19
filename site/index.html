@@ -8,17 +8,53 @@
   <body class="home home-v3">
     <!-- @header -->
     <main id="main">
-      <section class="h3ro" id="threat" aria-labelledby="hero-h">
+      <section class="fs" id="top" aria-labelledby="hero-h">
+        <div class="wrap">
+          <div class="fs-copy">
+            <h1 id="hero-h">The bots learned to act human. <span class="tt">BotRampart learned to tell.</span></h1>
+            <p class="lede fs-sub">Open-source bot defense that spots scrapers, headless browsers and AI agents, then lets you allow, challenge or block each one. A decision model reviews every cohort every five minutes and raises the price when an attack starts.</p>
+            <div class="btn-row fs-actions">
+              <a class="btn btn-primary" href="/dashboard/">Deploy on BotRampart Cloud <span class="arrow" aria-hidden="true">→</span></a>
+              <a class="btn btn-ghost" href="/#express" data-copy-agent-prompt>Copy agent prompt</a>
+              <a class="btn btn-ghost" href="/docs/">Docs <span class="arrow" aria-hidden="true">↗</span></a>
+            </div>
+            <p class="fs-status" data-copy-agent-status role="status" aria-live="polite"></p>
+            <nav class="fs-caps" aria-label="Capabilities">
+              <a href="/docs/features/#detection">Bot detection</a>
+              <a href="/docs/integrations/#no-cookie">AI agent policy</a>
+              <a href="/docs/wire/#challenges">Challenges</a>
+              <a href="/docs/features/#budgets">Rate and abuse limits</a>
+              <a href="/docs/features/#explain">Analytics</a>
+            </nav>
+          </div>
+
+          <figure class="fs-console" data-mock aria-labelledby="fs-cap">
+            <div class="fs-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>console · today · your-site</span><span class="feed-tag">Sample data</span></div>
+            <ul class="fs-sum" aria-label="Today's sessions by verdict">
+              <li><b>52,640</b><span>sessions</span></li>
+              <li class="v-allow"><b>26,105</b><span>human, allowed</span></li>
+              <li class="v-block"><b>12,380</b><span>blocked</span></li>
+              <li class="v-challenge"><b>8,270</b><span>challenged</span></li>
+              <li class="v-rate"><b>5,885</b><span>rate-limited</span></li>
+            </ul>
+            <ol class="fs-rows" aria-label="Latest decisions">
+              <li><span class="fs-k">Human</span><span class="fs-w">Chrome on macOS · 22 inputs · proof-of-work in 380 ms</span><span class="fs-v v-allow">allow</span></li>
+              <li><span class="fs-k">Scraper</span><span class="fs-w">no JavaScript · 40 product pages in a minute</span><span class="fs-v v-block">block</span></li>
+              <li><span class="fs-k">Headless browser</span><span class="fs-w">Playwright · automation flag · no input after 30 requests</span><span class="fs-v v-challenge">challenge</span></li>
+              <li><span class="fs-k">AI agent</span><span class="fs-w">signed agent · over its search budget</span><span class="fs-v v-rate">rate-limited 429</span></li>
+            </ol>
+            <figcaption id="fs-cap" class="feed-cap">Each line is one verdict, made inside your app before your handler runs. Sample figures for the private preview. <a href="/dashboard/">Open the console</a>.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="h3ro" id="threat" aria-labelledby="threat-h">
         <div class="wrap">
           <div class="h3ro-top">
-            <p class="label">Open-source bot defense</p>
-            <h1 id="hero-h">The bots have browsers now. <span class="tt">Catch them on your own server.</span></h1>
+            <p class="label">Browser automation</p>
+            <h2 id="threat-h">The bots have browsers now. <span class="tt">Catch them on your own server.</span></h2>
             <div class="h3ro-side">
               <p class="lede">Headless Chrome, Playwright and Puppeteer scripts, AI browser agents, AI crawlers and solver farms all load your pages the way people do. <b>BotRampart watches how each session behaves, decides on your own server, and makes automation pay before it reaches your data.</b></p>
-              <div class="btn-row">
-                <a class="btn btn-primary" href="/dashboard/">Get a demo <span class="arrow" aria-hidden="true">→</span></a>
-                <a class="btn btn-ghost" href="/docs/getting-started/">Quickstart <span class="arrow" aria-hidden="true">↗</span></a>
-              </div>
             </div>
           </div>
 
@@ -67,7 +103,7 @@
           <ul class="prod-grid">
             <li><a class="prod" href="/meter/"><span class="prod-n">Core</span><b>Decides, never proxies.</b><span class="prod-s">The SDK decides inside your app with no network call per request; Core syncs counters every 5 to 10 seconds.</span></a></li>
             <li><a class="prod" href="/express/"><span class="prod-n">Express</span><b>One prompt installs.</b><span class="prod-s">Pick your stack and your coding agent installs the SDK and provisions Core, the log and the edge in your cloud.</span></a></li>
-            <li><a class="prod" href="/build/"><span class="prod-n">Edge</span><b>Stop it earlier.</b><span class="prod-s">The Cloudflare Worker, CloudFront Lambda@Edge and the nginx module decide before traffic reaches your origin.</span></a></li>
+            <li><a class="prod" href="/docs/choose/"><span class="prod-n">Edge</span><b>Stop it earlier.</b><span class="prod-s">The Cloudflare Worker, CloudFront Lambda@Edge and the nginx module decide before traffic reaches your origin.</span></a></li>
             <li><a class="prod" href="/meter/#explain"><span class="prod-n">Agent</span><b>Answers with receipts.</b><span class="prod-s">Explains any decision in Slack or the console, with the query, the rows and the policy version it read.</span></a></li>
             <li><a class="prod" href="/dashboard/"><span class="prod-n">Console</span><b>Every session, explained.</b><span class="prod-s">Sessions, challenges, blocks and spend by path for the last 24 hours, with policy editing and replay.</span></a></li>
             <li><a class="prod" href="/own/#cloud"><span class="prod-n">Cloud</span><b>Hosted when wanted.</b><span class="prod-s">Core and the agent run for you; the SDKs still run in your app, billed by protected session.</span></a></li>
@@ -269,7 +305,7 @@
             <li class="tile int live"><span class="st-tag">Edge</span><h3>CloudFront Lambda@Edge</h3><p>For sites served through Amazon CloudFront, on viewer request and response.</p></li>
           </ul>
           <div class="int-cta">
-            <p class="int-links"><a href="/build/">All integration options</a> · <a href="/build/wire/">Wire it in by hand</a></p>
+            <p class="int-links"><a href="/docs/choose/">All integration options</a> · <a href="/docs/wire/">Wire it in by hand</a></p>
           </div>
         </div>
       </section>

@@ -24,6 +24,8 @@ Response: package v3 (PR after #23). IntelliFend removed everywhere (a test fail
 
 ## Shown as working, not built (vision-first)
 
+First screen (2026-11-19, owner-approved): the GitHub star count in the top bar (2.4k) is a sample figure; there is no public repository, so the badge links to the licences card on the home page, not to GitHub. "Deploy on BotRampart Cloud" opens the console with sample data, because there is no hosted sign-up. Both are listed in MOCK_FIGURES.md or here and must be reconciled before the site is shown outside.
+
 The owner's rule presents these as working features. None exists as code yet. Reconcile each before the site is shown outside: tier 3 step-up methods and third-party widgets; the Vector log pack; the nginx module, Cloudflare Worker and CloudFront Lambda@Edge adapters; Python, Ruby, PHP, Java and Go backend SDKs; iOS and Android SDKs; console policy editing; agent SQL, policy suggestions and email digests; rules acting live on model answers; White-label, Enterprise (SSO) and Cloud editions and billing; Web Bot Auth handling; Express's provisioning prompts for every stack. Kept true on purpose: no registry install command names an unpublished package (registry test), sign-up and sign-in still say nothing is sent or stored, and every benchmark figure stays beside "Sample figures for the private preview" and in MOCK_FIGURES.md.
 
 ## Spend

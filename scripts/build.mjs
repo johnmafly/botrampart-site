@@ -4,7 +4,10 @@
 // Pages in site/ are full HTML documents that may contain three markers, replaced here so every
 // page shares one head, header and footer:
 //   <!-- @head | Page title | Meta description -->
-//   <!-- @header -->   <!-- @footer -->   <!-- @docs-nav -->
+//   <!-- @header -->   <!-- @footer -->
+// A page whose <html> has class="docs" (the docs, scripts/docs.mjs) also gets docs.css, theme.js
+// (the stored light or dark choice, before first paint) and docs.js, and the header's search and
+// theme buttons in place of <!-- @docs-tools -->; other pages drop that marker.
 // The partials live in site/_partials/ and are not copied to dist/.
 //
 // Factual claims are cited as {{c:claim-id}}: the build looks the id up in claims.yaml, writes a
@@ -107,7 +110,7 @@ function toc(html, route) {
   if (!html.includes("<!-- @toc -->")) return html;
   const items = [...html.matchAll(/<h2 id="([^"]+)"[^>]*>(.*?)<\/h2>/g)].map(([, id, text]) => `<li><a href="#${id}">${text.replace(/<[^>]+>/g, "")}</a></li>`);
   if (!items.length) throw new Error(`${route}: @toc but no h2 with an id`);
-  return html.replace("<!-- @toc -->", `<nav class="docnav" aria-label="On this page"><p class="docnav-title">On this page</p><ol>${items.join("")}</ol><p class="docnav-spec">Build it: <a href="/build/">start in observe mode</a></p></nav>`);
+  return html.replace("<!-- @toc -->", `<nav class="docnav" aria-label="On this page"><p class="docnav-title">On this page</p><ol>${items.join("")}</ol><p class="docnav-spec">Build it: <a href="/docs/choose/">start in observe mode</a></p></nav>`);
 }
 
 // Cloudflare's email obfuscation rewrites any address in page text (the spec's
@@ -149,14 +152,24 @@ function aiPicker(html) {
   return html.replace(/<!-- @ai-prompt -->/g, () => esc(buildPrompt()).replace(/>/g, "&gt;"));
 }
 
+// Search (⌘K) and the theme toggle, in the header of docs pages. Both need JavaScript, so they
+// start hidden and docs.js shows them.
+const DOCS_TOOLS = `<div class="docs-tools">` +
+  `<button type="button" class="search-btn" data-search-open hidden aria-label="Search docs ⌘K" aria-keyshortcuts="Meta+K Control+K /"><svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span class="sb-text">Search docs</span><kbd>⌘K</kbd></button>` +
+  `<button type="button" class="theme-btn" data-theme-toggle hidden aria-label="Switch theme"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>` +
+  `</div>`;
+
 function render(file) {
   const route = routeOf(file);
   let html = readFileSync(file, "utf8");
   html = html.replace(/<!-- @head \| ([^|]+) \| ([^>]+?) -->/, (_, title, desc) =>
     partial("head").replace("{{title}}", esc(title.trim())).replace("{{description}}", esc(desc.trim())));
-  for (const name of ["header", "footer", "docs-nav"]) {
+  for (const name of ["header", "footer"]) {
     html = html.replace(`<!-- @${name} -->`, markCurrent(partial(name), route));
   }
+  const isDocs = /<html lang="en" class="docs">/.test(html);
+  html = html.replace("<!-- @docs-tools -->", isDocs ? DOCS_TOOLS : "");
+  if (isDocs) html = html.replace(/(<link rel="stylesheet" href="\/assets\/site\.css">)/, `$1\n    <link rel="stylesheet" href="/assets/docs.css">\n    <script src="/assets/theme.js"></script>\n    <script type="module" src="/assets/docs.js"></script>`);
   html = aiPicker(html);
   html = toc(html, route);
   html = cite(html, route);
