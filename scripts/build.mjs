@@ -159,6 +159,21 @@ const DOCS_TOOLS = `<div class="docs-tools">` +
   `<button type="button" class="theme-btn" data-theme-toggle hidden aria-label="Switch theme"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>` +
   `</div>`;
 
+// The home page's phone menu: below 560px the six menu pills fold into one "Menu" button (a
+// <details>, so it opens without JavaScript). It lists the same links as the main menu, built from
+// the header partial so the two never drift apart, plus Sign in and the quickstart.
+function phoneMenu(header) {
+  const nav = header.match(/<nav class="nav" aria-label="Main">([\s\S]*?)<\/nav>/)?.[1];
+  if (!nav) throw new Error("header: main menu not found for the phone menu");
+  const body = nav
+    .replace(/<details class="menu" data-menu>\s*<summary>([^<]+)<\/summary>\s*<div class="menu-panel">/g, `<div class="pm-group"><p class="pm-h">$1</p><div class="pm-list">`)
+    .replace(/<\/div>\s*<\/details>/g, "</div></div>")
+    .replace(/ data-section/g, "")
+    .replace(/\n\s*/g, "");
+  return `<details class="m-menu" data-phone-menu><summary><svg class="pm-i" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M3 5.5h14M3 10h14M3 14.5h14"/></svg><span class="pm-t">Menu</span></summary>` +
+    `<nav class="pm-panel" aria-label="Menu">${body}<div class="pm-more"><a href="/signin/">Sign in</a><a href="/docs/getting-started/">Quickstart</a></div></nav></details>`;
+}
+
 function render(file) {
   const route = routeOf(file);
   let html = readFileSync(file, "utf8");
@@ -169,6 +184,7 @@ function render(file) {
   }
   const isDocs = /<html lang="en" class="docs">/.test(html);
   html = html.replace("<!-- @docs-tools -->", isDocs ? DOCS_TOOLS : "");
+  html = html.replace(/(\n\s*)<!-- @phone-menu -->/, (_, lead) => route === "/" ? lead + markCurrent(phoneMenu(partial("header")), route) : "");
   if (isDocs) html = html.replace(/(<link rel="stylesheet" href="\/assets\/site\.css">)/, `$1\n    <link rel="stylesheet" href="/assets/docs.css">\n    <script src="/assets/theme.js"></script>\n    <script type="module" src="/assets/docs.js"></script>`);
   html = aiPicker(html);
   html = toc(html, route);
