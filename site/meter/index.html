@@ -6,11 +6,28 @@
   <body>
     <!-- @header -->
     <main id="main">
-      <div class="page-head">
-        <div class="wrap">
-          <p class="label">The meter · how it works</p>
-          <h1>Every session gets a budget. Every path gets a price.</h1>
-          <p class="lede">That's the whole mechanism. This page walks through it: what a session is, what things cost, how credit comes back, why a pass buys less each time, and what the meter can't see.</p>
+      <div class="page-head ph">
+        <div class="wrap ph-grid">
+          <div class="ph-copy">
+            <p class="label">The meter · how it works</p>
+            <h1>Every session gets a budget. Every path gets a price.</h1>
+            <p class="lede">That's the whole mechanism: what a session is, what things cost, how credit comes back and what the meter can't see.</p>
+            <div class="btn-row">
+              <a class="btn btn-primary" href="/try/">Run a session <span class="arrow" aria-hidden="true">→</span></a>
+              <a class="btn btn-ghost" href="/docs/policy/">Policy reference</a>
+            </div>
+          </div>
+          <aside class="ph-facts" aria-label="Default path prices">
+            <p class="ph-k">Default path prices</p>
+            <dl>
+              <div><dt>static</dt><dd><code>/assets/*</code><span class="ph-n">0</span></dd></div>
+              <div><dt>general</dt><dd><code>/*</code><span class="ph-n">1</span></dd></div>
+              <div><dt>search</dt><dd><code>/api/search*</code><span class="ph-n">5</span></dd></div>
+              <div><dt>login</dt><dd><code>POST /login</code><span class="ph-n">10</span></dd></div>
+              <div><dt>checkout</dt><dd><code>/api/checkout*</code><span class="ph-n">20</span></dd></div>
+            </dl>
+            <p class="ph-note">Units per request. A session regains 20 a minute, up to 300.</p>
+          </aside>
         </div>
       </div>
       <div class="wrap doc-grid">

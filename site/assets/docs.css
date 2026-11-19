@@ -251,8 +251,8 @@ html.docs { scroll-padding-top: 4.5rem; }
 /* Header on docs pages: wider row (the docs frame is 1440px), and room on a phone. */
 html.docs .top-row { max-width: 1440px; }
 @media (max-width: 860px) {
-  html.docs .nav { background: var(--header-bg); }
-  .docs-shell { padding-top: 6.2rem; }
+  html.docs .top-row { height: auto; }
+  .docs-shell { padding-top: 1.2rem; }
 }
 @media (max-width: 560px) {
   html.docs .brand span { display: none; }

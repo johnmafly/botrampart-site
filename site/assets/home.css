@@ -187,7 +187,7 @@
 .bench td.hit { color: var(--ember-2); font-weight: 600; font-size: 1rem; }
 .bench tr.ctl th, .bench tr.ctl td { border-bottom: 0; }
 .bench td.fp { color: var(--frost); font-weight: 600; }
-/* Benchmark grid: vendors down the side, tools across the top. BotRampart's row leads in ember;
+/* Benchmark grid: vendors down the side, tools across the top. BotRampart's row leads (below);
    each cell carries a heat band (b5 highest) so the grid reads at a glance. */
 .bench thead th { white-space: normal; vertical-align: bottom; min-width: 6.2rem; }
 .bench thead th:first-child, .bench tbody th, .bench tfoot th { position: sticky; left: 0; z-index: 1; background: var(--ink-1); }
@@ -197,8 +197,6 @@
 .bench td.b3 { color: var(--bone-2); }
 .bench td.b2 { color: var(--amber); background: rgb(253 172 83 / .05); }
 .bench td.b1 { color: var(--amber); background: rgb(253 172 83 / .10); }
-.bench tr.us th, .bench tr.us td { color: var(--ember-2); font-weight: 650; background: color-mix(in srgb, var(--ember) 9%, var(--ink-1)); border-bottom-color: rgb(250 123 106 / .35); }
-.bench tr.us th { box-shadow: inset 3px 0 0 var(--ember); }
 .bench tfoot th, .bench tfoot td { border-bottom: 0; padding-top: .8rem; padding-bottom: .9rem; font: 400 .74rem/1.3 var(--f-mono); color: var(--bone-3); }
 .bench tfoot th { text-align: left; white-space: normal; }
 .bench table { table-layout: fixed; min-width: 56rem; }
@@ -382,7 +380,7 @@
 .tile.ai-card { border-color: var(--line-2); background: var(--ink-1); }
 .tile.ai-card:hover { border-color: var(--bone-2); }
 .ai-t { font-weight: 520; font-stretch: normal; letter-spacing: -.015em; font-size: clamp(1.3rem, 1.05rem + 1vw, 1.9rem); line-height: 1.2; }
-/* Benchmark: catch rates in a neutral heat ramp; BotRampart's row leads in white. */
+/* Benchmark: catch rates in a neutral heat ramp; BotRampart's row stands apart (below). */
 .bench-stat b { font-weight: 500; font-stretch: normal; font-family: var(--f-mono); letter-spacing: -.03em; }
 .bench-stat:first-child b { color: var(--bone); }
 .bench td.b5 { color: var(--bone); background: rgb(255 255 255 / .07); }
@@ -390,8 +388,10 @@
 .bench td.b3 { color: var(--bone-2); background: none; }
 .bench td.b2 { color: var(--bone-2); background: none; }
 .bench td.b1 { color: var(--bone-3); background: none; }
-.bench tr.us th, .bench tr.us td { color: var(--bone); font-weight: 560; background: var(--ink-3); border-bottom-color: var(--line-2); }
-.bench tr.us th { box-shadow: inset 2px 0 0 var(--bone); }
+/* BotRampart's own row stands apart in the data accent: a purple tint, a purple rule above and
+   below, a 4px bar on the left and bold white text, so it still reads in greyscale. */
+.bench tr.us th, .bench tr.us td { color: var(--bone); font-weight: 700; background: color-mix(in srgb, var(--data) 16%, var(--ink-1)); border-top: 1px solid color-mix(in srgb, var(--data) 60%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--data) 60%, transparent); }
+.bench tr.us th { box-shadow: inset 4px 0 0 var(--data); font-weight: 750; }
 .bench tbody th { font-weight: 520; }
 .plan.free { background: var(--ink-1); border-color: var(--line-2); }
 .plan.free .plan-p { color: var(--bone); }
@@ -418,9 +418,9 @@
 .fs h1 .tt { color: var(--bone-2); }
 .fs-sub { font-size: clamp(1.02rem, .95rem + .35vw, 1.3rem); max-width: 44em; margin: 0 0 1.5rem; }
 .fs-actions { gap: .6rem; }
-.fs-actions .btn[data-state="copied"] { border-color: var(--allow); color: var(--allow); }
-.fs-status { min-height: 1.2rem; margin: .5rem 0 0; font: 400 .8rem/1.4 var(--f-mono); color: var(--allow); }
-.fs-caps { display: flex; flex-wrap: wrap; gap: .25rem 1.4rem; margin-top: .4rem; font: 450 .9rem/1.6 var(--f-text); }
+/* Copy agent prompt jumps here and rings the Express section's own Copy prompt button. */
+.ai-copy.is-cued { outline: 2px solid var(--allow); outline-offset: 4px; }
+.fs-caps { display: flex; flex-wrap: wrap; gap: .25rem 1.4rem; margin-top: 1.2rem; font: 450 .9rem/1.6 var(--f-text); }
 .fs-caps a { color: var(--bone-2); text-decoration: none; border-bottom: 1px solid var(--line-2); }
 .fs-caps a:hover { color: var(--bone); border-bottom-color: var(--bone-2); }
 .fs-console { margin: clamp(1.6rem, 1rem + 2vw, 2.6rem) 0 0; border: 1px solid var(--line-2); border-radius: 18px; background: var(--ink-1); overflow: hidden; }
