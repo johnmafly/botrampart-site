@@ -11,7 +11,11 @@
       <section class="fs" id="top" aria-labelledby="hero-h">
         <div class="wrap">
           <div class="fs-copy">
-            <h1 id="hero-h">The bots learned to act human. <span class="tt">BotRampart learned to tell.</span></h1>
+            <div class="fs-news">
+              <a class="news-pill" href="/docs/changelog/#d2026-11-19"><span class="news-new">New</span><span class="news-t">Edge adapters protect an app with no code change</span><span class="news-more"><span class="news-more-t">Changelog</span> <span aria-hidden="true">→</span></span></a>
+              <button type="button" class="motion-btn" data-motion-toggle hidden><svg class="mb-pause" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5 3.5v9M11 3.5v9"/></svg><svg class="mb-play" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5 3.2v9.6L12.6 8Z"/></svg><span class="mb-t">Pause motion</span></button>
+            </div>
+            <h1 id="hero-h" class="roll-h" data-roll><span class="visually-hidden">Stop AI bots, account takeovers and scrapers in your cloud, your application and your CDN.</span><span class="roll-vis" aria-hidden="true"><span class="roll-line">Stop <span class="slot slot-what"><span class="kw is-on">AI bots</span><span class="kw">Account takeovers</span><span class="kw">Scrapers</span></span></span> <span class="roll-line">in your <span class="slot slot-where"><span class="kw is-on"><svg class="kw-i" viewBox="0 0 24 24" focusable="false"><path d="M7 18.5h10.2a4.3 4.3 0 0 0 .6-8.56A6 6 0 0 0 6.3 9.1 4.7 4.7 0 0 0 7 18.5Z"/></svg>Cloud</span><span class="kw"><svg class="kw-i" viewBox="0 0 24 24" focusable="false"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M3.5 9h17M7 6.8h.01M9.5 6.8h.01"/></svg>Application</span><span class="kw"><svg class="kw-i" viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.4 2.3 3.6 5.1 3.6 8.5s-1.2 6.2-3.6 8.5c-2.4-2.3-3.6-5.1-3.6-8.5S9.6 5.8 12 3.5Z"/></svg>CDN</span></span></span></span></h1>
             <p class="lede fs-sub">Open-source bot defense that spots scrapers, headless browsers and AI agents, then lets you allow, challenge or block each one. A decision model reviews every cohort every five minutes and raises the price when an attack starts.</p>
             <div class="btn-row fs-actions">
               <a class="btn btn-primary" href="/dashboard/">Deploy on BotRampart Cloud <span class="arrow" aria-hidden="true">→</span></a>
@@ -43,6 +47,35 @@
               <li><span class="fs-k">AI agent</span><span class="fs-w">signed agent · over its search budget</span><span class="fs-v v-rate">rate-limited 429</span></li>
             </ol>
             <figcaption id="fs-cap" class="feed-cap">Each line is one verdict, made inside your app before your handler runs. Sample figures for the private preview. <a href="/dashboard/">Open the console</a>.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="sec gate-sec" id="gate" aria-labelledby="gate-h">
+        <div class="wrap">
+          <div class="sec-head">
+            <p class="label">The gate</p>
+            <h2 id="gate-h">The bots learned to act human. <span class="tt">BotRampart learned to tell.</span></h2>
+            <p>Every request meets the same check on your own server. A person passes without noticing it; automation climbs the challenge ladder until it costs more than it earns.</p>
+          </div>
+          <figure class="gate" data-gate data-mock aria-labelledby="gate-cap">
+            <div class="gate-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="gate-path">your-site · POST /checkout</span><span class="feed-tag">Sample data</span><button type="button" class="motion-btn gate-btn" data-motion-toggle hidden><svg class="mb-pause" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5 3.5v9M11 3.5v9"/></svg><svg class="mb-play" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5 3.2v9.6L12.6 8Z"/></svg><span class="mb-t">Pause motion</span></button></div>
+            <div class="gate-stage" aria-hidden="true">
+              <div class="gate-cols"><span>Visitor</span><span class="gc-gate">BotRampart · your server</span><span class="gc-vd">Verdict</span></div>
+              <ol class="gl-lanes">
+                <li class="gl-lane l-human pass"><span class="tok"><svg class="tok-i" viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c.8-3.8 3.6-5.8 7-5.8s6.2 2 7 5.8"/></svg><span class="tok-n">Person</span><span class="tok-s">Safari on iPhone · real touch input</span></span><span class="wall"></span><span class="vd v-allow"><b>allow</b><span class="vd-s">proof-of-work passed unseen</span></span></li>
+                <li class="gl-lane l-head"><span class="tok"><svg class="tok-i" viewBox="0 0 24 24" focusable="false"><rect x="3.5" y="5" width="17" height="13" rx="2"/><path d="m8 10 2.5 2L8 14m5 0h3"/></svg><span class="tok-n">Playwright</span><span class="tok-s">headless · automation flag · no input</span></span><span class="wall"></span><span class="vd v-challenge"><b>challenge</b><span class="vd-s">human check</span></span></li>
+                <li class="gl-lane l-scrape"><span class="tok"><svg class="tok-i" viewBox="0 0 24 24" focusable="false"><path d="M4 6h16M4 12h10M4 18h7"/><path d="m16 15 4 4m-1.5-6.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"/></svg><span class="tok-n">Scraper</span><span class="tok-s">no JavaScript · no cookie</span></span><span class="wall"></span><span class="vd v-block"><b>block</b><span class="vd-s">not a browser</span></span></li>
+                <li class="gl-lane l-agent"><span class="tok"><svg class="tok-i" viewBox="0 0 24 24" focusable="false"><rect x="5" y="8" width="14" height="11" rx="3"/><path d="M12 4.5V8M9.5 13h.01M14.5 13h.01"/></svg><span class="tok-n">AI agent</span><span class="tok-s">signed agent · over its search budget</span></span><span class="wall"></span><span class="vd v-rate"><b>throttle</b><span class="vd-s">429 Retry-After</span></span></li>
+              </ol>
+            </div>
+            <ol class="visually-hidden">
+              <li>A person on Safari for iPhone, with real touch input, passes the gate: the proof-of-work runs unseen and the request is allowed.</li>
+              <li>A Playwright headless browser with an automation flag and no input is stopped at the gate and challenged with a human check.</li>
+              <li>A scraper with no JavaScript and no cookie is blocked: it is not a browser.</li>
+              <li>A signed AI agent over its search budget is throttled with 429 and Retry-After.</li>
+            </ol>
+            <figcaption id="gate-cap" class="feed-cap">Four visitors reach the same gate: the person passes, Playwright gets a human check, the scraper is blocked and the AI agent waits on a 429. Each verdict is made inside your app before your handler runs. Sample figures for the private preview. <a href="/docs/overview/#session">See the challenge ladder</a>.</figcaption>
           </figure>
         </div>
       </section>

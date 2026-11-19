@@ -464,3 +464,133 @@
 @media (max-width: 860px) { .fs { padding-top: 3.2rem; } }
 /* The open-source section sits on a light panel: its grey follow-on needs the light-mode grey (axe). */
 .src-sec .tt { color: #494949; }
+
+/* ---------- First screen (2026-11-19, #28): "New" pill, rolling-keyword headline, motion control ---------- */
+.fs-news { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin: 0 0 1.1rem; }
+.news-pill { display: inline-flex; align-items: center; gap: .55rem; min-width: 0; padding: .3rem .8rem .3rem .3rem; border: 1px dashed var(--line-2); border-radius: 999px; background: var(--ink-1); color: var(--body); text-decoration: none; font: 450 .86rem/1.35 var(--f-text); transition: border-color .15s; }
+.news-pill:hover, .news-pill:focus-visible { border-color: var(--bone-2); }
+.news-new { flex: none; padding: .22rem .55rem; border-radius: 999px; background: rgb(208 107 238 / .16); color: #e2a6f5; font: 500 .74rem/1.2 var(--f-mono); }
+.news-t { color: var(--bone); }
+.news-more { flex: none; color: var(--bone-2); white-space: nowrap; }
+.news-pill:hover .news-more { color: var(--bone); }
+.motion-btn { flex: none; display: inline-flex; align-items: center; gap: .4rem; min-height: 2rem; padding: .25rem .7rem; border: 1px solid var(--line-2); border-radius: 999px; background: transparent; color: var(--bone-2); font: 400 .74rem/1 var(--f-mono); cursor: pointer; }
+.motion-btn:hover, .motion-btn:focus-visible { color: var(--bone); border-color: var(--bone-2); }
+.motion-btn svg { width: .85rem; height: .85rem; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; }
+.motion-btn .mb-play { fill: currentColor; stroke: none; display: none; }
+.motion-btn[data-paused] .mb-play { display: block; }
+.motion-btn[data-paused] .mb-pause { display: none; }
+
+/* The headline: static words never move. Each keyword slot is a one-cell grid holding all three
+   keywords, so it is as wide as its longest keyword whichever one shows. */
+.fs h1.roll-h { max-width: none; font-size: clamp(2.1rem, 1.1rem + 3.4vw, 3.5rem); line-height: 1.12; }
+.roll-line { display: block; }
+.slot { display: inline-grid; vertical-align: bottom; overflow: hidden; color: #e2a6f5; }
+.kw { grid-area: 1 / 1; justify-self: start; display: inline-flex; align-items: center; gap: .16em; white-space: nowrap; opacity: 0; transform: translateY(105%); }
+.kw.is-on { opacity: 1; transform: none; }
+.kw.is-out { opacity: 1; transform: translateY(-105%); }
+.kw-i { width: .78em; height: .78em; flex: none; stroke: currentColor; stroke-width: 1.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+@media (prefers-reduced-motion: no-preference) {
+  .news-pill { animation: news-in .5s cubic-bezier(.2, .8, .2, 1) .1s both; }
+  /* Slide only: a word is either fully opaque or not shown, so no frame is low-contrast. */
+  .roll-h.is-rolling .kw { transition: transform .6s cubic-bezier(.2, .8, .2, 1); }
+  .roll-h.is-rolling .slot-where .kw { transition-delay: .12s; }
+  .roll-h .kw.no-anim { transition: none !important; }
+}
+@keyframes news-in { from { transform: translateY(8px); } to { transform: none; } }
+@media (max-width: 560px) {
+  .fs-news { margin-bottom: .8rem; align-items: flex-start; }
+  .news-pill { font-size: .78rem; gap: .4rem; padding-right: .6rem; border-radius: 14px; }
+  .news-more-t { display: none; }
+  .motion-btn .mb-t { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .motion-btn { width: 2.2rem; height: 2.2rem; justify-content: center; padding: 0; }
+  .fs h1.roll-h { font-size: 1.72rem; line-height: 1.16; }
+}
+
+/* ---------- The gate (second screen, #28): a person passes, automation is challenged ----------
+   The HTML is the end state: every visitor at its verdict. With JavaScript and no reduced-motion
+   preference, each lane replays in turn on a 12.8 s loop, transform and opacity only. */
+.gate-sec { padding-top: clamp(3rem, 2rem + 3vw, 5rem); }
+.gate-sec .sec-head { margin-bottom: clamp(1.6rem, 1rem + 2vw, 2.6rem); }
+.gate-sec h2 { font-size: clamp(2rem, 1.2rem + 2.8vw, 3.4rem); line-height: 1.04; }
+.gate-sec h2 .tt { color: var(--bone-2); }
+.gate { margin: 0; border: 1px solid var(--line-2); border-radius: 18px; background: var(--ink-1); overflow: hidden; }
+.gate-bar { display: flex; align-items: center; gap: 1rem; padding: .7rem 1.1rem; border-bottom: 1px solid var(--line); font: 400 .78rem/1 var(--f-mono); color: var(--bone-3); }
+.gate-bar .feed-tag { margin-left: auto; }
+.gate-path { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gate .feed-cap { margin: 0; padding: .7rem 1.1rem; border-top: 1px solid var(--line); }
+.gate-stage { --tw: 17rem; container-type: inline-size; padding: .4rem 1.1rem 1rem; }
+.gate-cols { display: grid; grid-template-columns: 1fr auto 1fr; padding: .7rem 0 .5rem; font: 400 .72rem/1 var(--f-mono); color: var(--bone-3); text-transform: uppercase; letter-spacing: .06em; }
+.gate-cols .gc-gate { color: #e2a6f5; }
+.gate-cols .gc-vd { text-align: right; }
+.gl-lanes { list-style: none; margin: 0; padding: 0; display: grid; gap: .55rem; }
+.gl-lane { overflow: hidden; --gx: 50cqw; --x-gate: calc(var(--gx) - var(--tw) - 1.1rem); --x-end: var(--x-gate); position: relative; height: 3.6rem; border-radius: 12px; background: repeating-linear-gradient(90deg, var(--line) 0 6px, transparent 6px 14px) center / 100% 1px no-repeat, var(--ink-2); }
+.gl-lane.pass { --x-end: calc(var(--gx) + 1.1rem); }
+.tok { position: absolute; left: 0; top: .45rem; width: var(--tw); height: 2.7rem; display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: .55rem; align-content: center; padding: 0 .7rem; border: 1px solid var(--line-2); border-radius: 10px; background: var(--ink-3); transform: translateX(var(--x-end)); }
+.tok-i { grid-row: 1 / 3; align-self: center; width: 1.25rem; height: 1.25rem; stroke: var(--bone); stroke-width: 1.7; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.tok-n { font: 550 .9rem/1.2 var(--f-text); color: var(--bone); }
+.tok-s { font: 400 .7rem/1.3 var(--f-mono); color: var(--bone-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wall { position: absolute; left: calc(50% - 2px); top: -.3rem; bottom: -.3rem; width: 4px; border-radius: 2px; background: var(--vc); box-shadow: 0 0 14px var(--vc); }
+.vd { position: absolute; right: .55rem; top: 50%; translate: 0 -50%; display: inline-flex; align-items: baseline; gap: .5rem; padding: .4rem .7rem; border: 1px solid; border-radius: 999px; font: 400 .74rem/1 var(--f-mono); white-space: nowrap; }
+.vd b { font-weight: 500; }
+.vd-s { color: var(--bone-2); }
+.l-human { --vc: var(--allow); } .l-head, .l-agent { --vc: var(--challenge); } .l-scrape { --vc: var(--block); }
+.vd.v-allow { color: var(--allow); border-color: rgb(70 244 136 / .35); background: rgb(70 244 136 / .07); }
+.vd.v-challenge { color: var(--challenge); border-color: rgb(253 172 83 / .4); background: rgb(253 172 83 / .08); }
+.vd.v-block { color: var(--block); border-color: rgb(250 123 106 / .5); background: rgb(250 123 106 / .1); }
+.vd.v-rate { color: var(--challenge); border-color: rgb(253 172 83 / .4); border-style: dashed; }
+.gl-lane:not(.pass) .tok { border-color: color-mix(in srgb, var(--vc) 45%, transparent); }
+@media (prefers-reduced-motion: no-preference) {
+  .gate[data-live] .tok { animation: gate-tok 12.8s cubic-bezier(.3, .7, .3, 1) var(--d) infinite; }
+  .gate[data-live] .gl-lane.pass .tok { animation-name: gate-tok-pass; }
+  .gate[data-live] .vd { animation: gate-vd 12.8s ease var(--d) infinite; }
+  .gate[data-live] .wall { animation: gate-wall 12.8s ease var(--d) infinite; }
+  .gate[data-live] .gl-lane:nth-child(1) { --d: 0s; } .gate[data-live] .gl-lane:nth-child(2) { --d: 3.2s; }
+  .gate[data-live] .gl-lane:nth-child(3) { --d: 6.4s; } .gate[data-live] .gl-lane:nth-child(4) { --d: 9.6s; }
+  .gate[data-off] *, html[data-motion="paused"] .gate * { animation-play-state: paused !important; }
+}
+/* One lane's turn is the first quarter of the loop: leave the verdict, re-enter from the left,
+   reach the gate, get read, then pass (a person) or bounce back and hold (automation). */
+@keyframes gate-tok {
+  0%, 2.4% { transform: translateX(var(--x-end)); opacity: 1; }
+  2.5%, 3% { transform: translateX(-2rem); opacity: 0; }
+  3.1% { transform: translateX(-2rem); opacity: 1; }
+  12% { transform: translateX(var(--x-gate)); }
+  15% { transform: translateX(var(--x-gate)); }
+  16.5% { transform: translateX(calc(var(--x-gate) - 1.4rem)); }
+  18%, 100% { transform: translateX(var(--x-end)); opacity: 1; }
+}
+@keyframes gate-tok-pass {
+  0%, 2.4% { transform: translateX(var(--x-end)); opacity: 1; }
+  2.5%, 3% { transform: translateX(-2rem); opacity: 0; }
+  3.1% { transform: translateX(-2rem); opacity: 1; }
+  12% { transform: translateX(var(--x-gate)); }
+  15% { transform: translateX(var(--x-gate)); }
+  20%, 100% { transform: translateX(var(--x-end)); opacity: 1; }
+}
+@keyframes gate-vd {
+  /* Opacity flips (never in between), so the verdict is never low-contrast; scale eases. */
+  0%, 2.4% { opacity: 1; transform: none; }
+  2.5%, 15% { opacity: 0; transform: scale(.9); }
+  15.1% { opacity: 1; transform: scale(.9); }
+  17.5%, 100% { opacity: 1; transform: none; }
+}
+@keyframes gate-wall {
+  0% { background: var(--vc); box-shadow: 0 0 14px var(--vc); }
+  2.5%, 11% { background: var(--line-2); box-shadow: none; }
+  12.5%, 14.5% { background: var(--data); box-shadow: 0 0 22px var(--data); }
+  16%, 100% { background: var(--vc); box-shadow: 0 0 14px var(--vc); }
+}
+@media (max-width: 860px) {
+  .gate-stage { --tw: 8.6rem; padding-inline: .7rem; }
+  .gate-cols { grid-template-columns: 1fr 1fr; }
+  .gate-cols .gc-vd { display: none; }
+  .gate-cols .gc-gate { text-align: center; }
+  .gl-lane { height: 5.4rem; background: var(--ink-2); }
+  .tok { height: 2.5rem; top: .4rem; padding: 0 .55rem; column-gap: .4rem; }
+  .tok-s { display: none; }
+  .tok-n { grid-row: 1 / 3; align-self: center; font-size: .84rem; }
+  .tok-i { width: 1.1rem; height: 1.1rem; }
+  .wall { top: .2rem; bottom: auto; height: 3.1rem; }
+  .vd { top: auto; bottom: .45rem; translate: none; padding: .32rem .6rem; font-size: .7rem; }
+  .gl-lane .vd { right: .5rem; }
+}
