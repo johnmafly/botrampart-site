@@ -3,25 +3,11 @@ title: Integrations
 nav: Integrations
 group: Integrate
 order: 9
-description: How BotRampart fits with your stack: backend SDKs for six languages, edge adapters for nginx, Cloudflare and CloudFront, mobile apps, the SDK routes; Core on Cloudflare Workers, a container, Kubernetes or OpenOrange; R2, S3, MinIO, GCS and Azure Blob; Redis and Valkey; decision-model providers; the Vector log pack; Slack, email and the console.
+description: How BotRampart fits your stack: backend SDKs, edge adapters, mobile apps, where Core runs, object storage, Redis, model providers, logs and Slack.
 lede: Connect BotRampart to what you already run, and to nothing you did not choose: your app, your edge, your bucket and your model provider.
 ---
 
 BotRampart connects to your app, your edge, your bucket and your model provider, and to nothing you do not choose. Each section names one system and how BotRampart talks to it.
-
-## When to use {#when-to-use}
-
-- You need to know whether BotRampart supports your language, framework, edge or cloud.
-- You are choosing where Core runs and which bucket holds the lake.
-- You run several app instances and want budgets exact across them.
-- You handle traffic that carries no cookie: mobile apps, partner APIs, webhooks, crawlers.
-
-## Get started {#quickstart}
-
-1. Find your stack in [Integration points](#integration-points).
-2. Pick a [Core target](#hosting) and an [object store](#storage).
-3. On serverless or many instances, set a [shared store](#store).
-4. Log and strip `BR-Sid` and `BR-Decision` at your [edge](#edge).
 
 > [!TIP]
 > Every integration point verifies the same `__br_s` cookie and speaks the same SDK routes, so moving from a backend SDK to an edge adapter keeps your policy unchanged.
@@ -43,7 +29,7 @@ BotRampart runs where you choose in your own infrastructure, never behind a vend
 | CloudFront (Lambda@Edge) | Your own AWS account, in front of your origin | None |
 | iOS and Android SDKs | Inside your mobile app | Add the SDK |
 
-An edge adapter verifies the cookie, charges the budget, applies your policy and serves `/_br` before the request reaches your origin, and syncs with Core like any app instance. [Express](/docs/express/) installs any of them with one AI prompt: pick your stack on [Express](/express/) and your coding agent does the wiring, from a backend SDK to an edge adapter.
+An edge adapter verifies the cookie, charges the budget, applies your policy and serves `/_br` before the request reaches your origin, and syncs with Core like any app instance. [Autoinstall](/docs/autoinstall/) writes one prompt for your coding agent from the stack you pick, edge included.
 
 ## Your app {#frameworks}
 
@@ -125,12 +111,11 @@ The state the model sees follows Google's published guidance: numbers are compar
 - Replay a changed policy against production traffic with [`simulatePolicy`](/docs/api/#op-simulatePolicy) before every publish.
 - Look up any decision a tester saw by its reference with [`getDecision`](/docs/api/#op-getDecision).
 
-## Where to go next {#where-next}
+## Next steps {#where-next}
 
-| Goal | Page |
-| --- | --- |
-| Install on your stack with one prompt | [Express](/docs/express/) |
-| Compare a backend SDK, an edge adapter and a mobile SDK | [Choose an integration](/docs/choose/) |
-| Wire routes, headers and signals | [Wire it in](/docs/wire/) |
-| Set every option | [Configuration](/docs/configuration/) |
-| Pick the decision-model provider | [Core settings](/docs/configuration/#core) |
+<!-- next -->
+- [Autoinstall](/docs/autoinstall/): Write the prompt for your stack and your coding agent
+- [Choose an integration](/docs/choose/): Compare a backend SDK, an edge adapter and a mobile SDK
+- [Wire it in](/docs/wire/): Wire routes, headers and signals
+- [Configuration](/docs/configuration/): Set every option
+- [Core settings](/docs/configuration/#core): Pick the decision-model provider
