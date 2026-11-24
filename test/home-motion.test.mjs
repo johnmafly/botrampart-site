@@ -68,7 +68,9 @@ test("the New pill links to the docs line that backs it", () => {
 });
 
 test("the gate: second screen, end state in the HTML, sample marking, screen-reader description", () => {
-  const order = ["id=\"top\"", "id=\"gate\"", "id=\"threat\""].map((s) => page.indexOf(s));
+  // The gate and the decision log were one story told twice; they are one section now (audit #9),
+  // so the gate runs from the first screen to the product section.
+  const order = ["id=\"top\"", "id=\"gate\"", "id=\"products\""].map((s) => page.indexOf(s));
   assert.ok(order[0] < order[1] && order[1] < order[2], "right after the first screen");
   const gate = page.slice(order[1], order[2]);
   assert.match(gate, /<h2 id="gate-h">The bots learned to act human\. <span class="tt">BotRampart learned to tell\.<\/span><\/h2>/, "the old headline lives on here");

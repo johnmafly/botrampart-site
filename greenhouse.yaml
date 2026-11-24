@@ -6,7 +6,7 @@ build:
 production_branch: main
 # Where each required piece of content lives (contract v2 section 3). The site's own IA:
 # the home page tells the story in four acts (Price, Pay, Prove, Own); The meter explains the
-# mechanism; The field is the comparison; Own it holds editions and prices; the docs are for
+# mechanism; The field is the comparison; Pricing (/own/) holds editions and plans; the docs are for
 # engineers (the Build chapters moved into /docs/ in 2026-11); Run a session is the mock signup.
 # Package v1 URLs and the old /build/ chapters redirect here (site/_redirects).
 content:

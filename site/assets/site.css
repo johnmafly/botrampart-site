@@ -725,6 +725,8 @@ input[type=text]:focus { border-color: var(--amber); outline: none; box-shadow: 
    is the complete, still page; these rules add movement on top of it.
    ===================================================================== */
 @media (prefers-reduced-motion: no-preference) {
+  html:not(.docs) a.card::after { transition: transform .2s var(--ease); }
+  html:not(.docs) a.card:hover::after { transform: translateX(4px); }
   html { scroll-behavior: smooth; }
   .btn, .cta-pill { transition: transform .25s var(--ease), box-shadow .25s, background-color .2s, border-color .2s; }
   .btn:hover, .cta-pill:hover { transform: translateY(-2px); }
@@ -975,7 +977,7 @@ pre .k { color: var(--challenge); }
 .signin { white-space: nowrap; }
 @media (max-width: 1320px) { .docs .search-btn .sb-text, .docs .search-btn kbd { display: none; } .docs .search-btn { min-width: 0; padding: 0 .6rem; } }
 @media (max-width: 560px) { .signin { display: none; } .cta-pill .chip { display: none; } .cta-pill { padding: 0 .85rem; } }
-@media (max-width: 370px) { .brand span { display: none; } }
+@media (max-width: 370px) { .top .brand span { display: none; } }
 @media (max-width: 420px) { .brand span { font-size: 1.05rem; } }
 
 /* ---------- "Copy agent prompt": the confirmation beside the button (audit #12) ---------- */
@@ -1005,3 +1007,38 @@ pre .k { color: var(--challenge); }
 .rq-go { margin-top: auto; font-weight: 600; color: var(--bone); }
 .access-sec { margin-top: 2rem; }
 @media (max-width: 900px) { .rq-grid { grid-template-columns: 1fr; } }
+
+/* ---------- Audit B2 (#9, #13, #17) ---------- */
+/* Sources sit after the closing call to action on marketing pages (#9). */
+.sources-after { padding-block: 0 clamp(2rem, 1.5rem + 2vw, 3.5rem); }
+.sources-after .sources-block { margin-top: 0; }
+ol.sources code { font-size: .8rem; color: var(--bone-2); }
+/* Footnote numbers keep their small type but get a 44px tap area (#17). */
+sup.ref a { position: relative; }
+sup.ref a::after { content: ""; position: absolute; left: 50%; top: 50%; width: 44px; height: 44px; transform: translate(-50%, -50%); }
+/* The Cloud plans table becomes one card per plan on phones, so no column is cut off (#13). */
+@media (max-width: 600px) {
+  .plan-table { overflow: visible; border: 0; background: none; }
+  .plan-table table, .plan-table tbody, .plan-table tr, .plan-table th, .plan-table td { display: block; }
+  .plan-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .plan-table tr { border: 1px solid var(--line); border-radius: 12px; background: var(--ink-1); margin-bottom: .75rem; padding: .3rem 0; }
+  .plan-table th[scope="row"] { background: none; border-bottom: 1px solid var(--line); font-size: .8rem; color: var(--bone); padding: .6rem 1rem; }
+  .plan-table td { display: flex; justify-content: space-between; gap: 1rem; padding: .45rem 1rem; border: 0; }
+  .plan-table td::before { content: attr(data-label); font-family: var(--f-text); color: var(--bone-3); text-align: left; }
+}
+/* Phones: every link or control that stands on its own is at least 44px tall and wide (#17). Links
+   inside running text keep the line's height; footnote numbers get the larger area above. Vertical
+   padding on an inline link widens its tap area without moving the line. */
+@media (max-width: 760px) {
+  .foot .brand { min-height: 2.75rem; }
+  .foot ul a, .foot-bar a { min-width: 2.75rem; }
+  .int-links a, a.more, .auth-alt a { padding-block: .8rem; }
+  .ai-jump a, .docnav-spec a { display: inline-flex; align-items: center; min-height: 2.75rem; }
+  .docnav li a { min-height: 2.75rem; align-items: center; }
+  .choice, .choice span { min-height: 2.75rem; }
+  .choice input { margin: 0; }
+  .calc input[type=range] { height: 2.75rem; }
+}
+/* Linked cards outside the docs show they are links (#15), as the home page's do. */
+html:not(.docs) a.card::after { content: "→"; content: "→" / ""; display: block; margin-top: .9rem; font: 500 1.05rem/1 var(--f-mono); color: var(--ember); }
+@media (max-width: 760px) { .tablewrap td > a:only-child { display: inline-flex; align-items: center; min-height: 2.75rem; min-width: 2.75rem; } }

@@ -53,8 +53,11 @@ test("type scale: no marketing h1 or h2 sets its own size; each uses the scale",
     }
   }
   assert.match(src("site/assets/picker.css"), /\.ai-h \{ font-size: var\(--h2\);/, "the Autoinstall picker's h2s use the section size");
-  assert.match(src("site/index.html"), /<h2 id="threat-h">The bots have browsers now\./, "the heading the owner flagged is still an h2");
-  assert.match(src("site/assets/home.css"), /\.h3ro h2 \{ font-size: var\(--h2\);/, "and it uses the one section size");
+  // The section the owner flagged ("The bots have browsers now", larger than the h1) merged into
+  // the gate (audit #9); the gate's heading is an h2 at the one section size.
+  assert.doesNotMatch(src("site/index.html"), /The bots have browsers now/);
+  assert.match(src("site/index.html"), /<h2 id="gate-h">/);
+  assert.match(src("site/assets/home.css"), /\.gate-sec h2 \{ font-size: var\(--h2\);/, "and it uses the one section size");
 });
 
 test("no Pause motion control: no button, no paused state; reduced motion and off-screen still stop all motion", () => {
@@ -64,7 +67,7 @@ test("no Pause motion control: no button, no paused state; reduced motion and of
   const css = src("site/assets/home.css");
   assert.doesNotMatch(js, /paused|data-motion-toggle/);
   assert.doesNotMatch(css, /motion-btn|data-motion="paused"/);
-  for (const guard of [/if \(feed && !reduce/, /if \(roll && !reduce\)/, /if \(gateEl && !reduce/, /if \(chat && !reduce/]) assert.match(js, guard);
+  for (const guard of [/if \(roll && !reduce\)/, /if \(gateEl && !reduce/, /if \(chat && !reduce/]) assert.match(js, guard);
   assert.match(js, /if \(!onScreen \|\| document\.hidden\) return;/, "the headline only rolls while on screen and the tab is visible");
 });
 
