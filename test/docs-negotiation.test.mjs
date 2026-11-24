@@ -16,8 +16,18 @@ if (!existsSync(join(dist, "docs", "index.html"))) execFileSync(process.execPath
 const pages = listPages(join(root, "site", "docs"));
 const ORIGIN = "https://botrampart.agenthatch.ai";
 
-// A stand-in for Pages: serves dist/ the way the asset server does for the paths the function asks for.
-const asset = (pathname) => {
+// The 301s Pages applies before it serves a file (dist/_redirects: "from to status").
+const redirects = new Map(readFileSync(join(dist, "_redirects"), "utf8").split("\n").map((l) => l.trim().split(/\s+/)).filter((r) => r.length >= 2 && r[0].startsWith("/") && !r[0].includes("*")).map(([from, to]) => [from, to]));
+
+// A stand-in for Pages: serves dist/ the way the asset server does for the paths the function asks
+// for. Like Pages, it answers a moved address with a 301, and a fetch that follows redirects (the
+// default) gets the file at the new address instead.
+const asset = (pathname, follow = false) => {
+  if (redirects.has(pathname)) {
+    const to = redirects.get(pathname);
+    if (follow) { const res = asset(to); Object.defineProperty(res, "redirected", { value: true }); return res; }
+    return new Response(null, { status: 301, headers: { Location: to } });
+  }
   const file = pathname.endsWith("/") ? join(dist, pathname, "index.html") : join(dist, pathname);
   if (!existsSync(file)) return new Response("not found", { status: 404, headers: { "Content-Type": "text/html; charset=utf-8" } });
   const type = file.endsWith(".md") ? "text/markdown; charset=utf-8" : file.endsWith(".html") ? "text/html; charset=utf-8" : "text/plain; charset=utf-8";
@@ -28,7 +38,7 @@ const call = async (path, { accept, method = "GET" } = {}) => {
   let passed = false, guarded = false;
   const res = await onRequest({
     request,
-    env: { ASSETS: { fetch: async (r) => asset(new URL(r.url).pathname) } },
+    env: { ASSETS: { fetch: async (r) => asset(new URL(r.url).pathname, r.redirect === "follow") } },
     next: async () => { passed = true; return asset(new URL(request.url).pathname); },
     passThroughOnException: () => { guarded = true; },
   });
@@ -84,6 +94,26 @@ test("every other request passes through to the static file", async () => {
   const missing = await call("/docs/no-such-page/", { accept: "text/markdown" });
   assert.ok(missing.passed, "an unknown page falls through to the site's own 404");
   assert.equal(missing.res.status, 404);
+});
+
+test("an address that moved keeps its 301 when the client asks for Markdown", async () => {
+  // /docs/express/ and /docs/express.md both moved (Autoinstall). The function must not follow the
+  // .md's redirect itself and answer 200 at the old address, naming a file that no longer exists.
+  assert.equal(redirects.get("/docs/express/"), "/docs/autoinstall/");
+  assert.equal(redirects.get("/docs/express.md"), "/docs/autoinstall.md");
+  for (const path of ["/docs/express/", "/docs/express"]) {
+    for (const method of ["GET", "HEAD"]) {
+      const { res, passed } = await call(path, { accept: "text/markdown", method });
+      assert.ok(passed, `${method} ${path}: passed through to the site's redirect`);
+      assert.equal(res.status, 301, `${method} ${path}`);
+      assert.equal(res.headers.get("Location"), "/docs/autoinstall/");
+      assert.equal(res.headers.get("Content-Location"), null);
+    }
+  }
+  // Followed, the new address answers with its own Markdown and names its own file.
+  const { res } = await call("/docs/autoinstall/", { accept: "text/markdown" });
+  assert.equal(res.status, 200);
+  assert.equal(res.headers.get("Content-Location"), "/docs/autoinstall.md");
 });
 
 test("the function sits only on /docs/, and the page that documents it says what it does", () => {
