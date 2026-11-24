@@ -3,21 +3,11 @@ title: FAQ
 nav: FAQ
 group: More
 order: 16
-description: Short answers to the questions engineers ask first about BotRampart: CAPTCHAs, fingerprinting, latency, Core outages, DDoS, search engines, consent, licences, pricing and how to verify the numbers.
+description: Short answers on CAPTCHAs, fingerprinting, latency, Core outages, DDoS, search engines, consent, licences, pricing and how to verify the numbers.
 lede: Get the short answer first, with a link to the page that explains it in full.
 ---
 
 These are the questions engineers ask first about BotRampart. Each answer is short and links to the page that explains it in full.
-
-## When to use {#when-to-use}
-
-- You are evaluating BotRampart and want quick answers before reading the concepts pages.
-- You are answering a teammate's question and need the page to send them.
-
-## Get started {#quickstart}
-
-1. Find the question below.
-2. Follow its link to the full explanation.
 
 ## Is this a CAPTCHA? {#captcha}
 
@@ -33,7 +23,7 @@ No. Identity is one first-party cookie with a random session ID. In no mode does
 
 ## What does it add to each request? {#latency}
 
-Verifying the signed cookie and charging the budget happen in memory, with no network call. In our benchmark of the reference code that took 1.79 µs at the median and 2.58 µs at the 99th percentile.{{c:exp-verify}} You can run the benchmark yourself: [Install and quickstart](/docs/getting-started/#from-source).
+Verifying the signed cookie and charging the budget happen in memory, with no network call. In our benchmark of the reference code that took 1.79 µs at the median and 2.58 µs at the 99th percentile.{{c:exp-verify}} You can run the benchmark yourself: [the Quickstart](/docs/getting-started/#bench).
 
 ## What happens when Core is down? {#core-down}
 
@@ -83,11 +73,11 @@ The SDKs and the CLI are Apache-2.0. Core, the agent and the console are AGPL-3.
 
 Every outside figure carries a numbered source with the quoted words it rests on, and the full ledger is [claims.yaml](https://github.com/johnmafly/botrampart-site/blob/main/claims.yaml). The budget numbers come from the [reference implementation](https://github.com/johnmafly/botrampart-site/blob/main/site/assets/economics.mjs), and a test checks them.
 
-## Where to go next {#where-next}
+## Next steps {#where-next}
 
-| Goal | Page |
-| --- | --- |
-| Learn how BotRampart decides | [Overview and concepts](/docs/overview/) |
-| Install it in observe mode | [Install and quickstart](/docs/getting-started/) |
-| Check what data is kept | [Security model](/docs/security/#data) |
-| Compare editions | [Features](/docs/features/#editions) |
+<!-- next -->
+- [Overview and concepts](/docs/overview/): Learn how BotRampart decides
+- [Quickstart](/docs/getting-started/): Run the engine from source in five minutes
+- [Choose how to integrate](/docs/choose/#observe): Put it in front of your app in observe mode
+- [Security model](/docs/security/#data): Check what data is kept
+- [Features](/docs/features/#editions): Compare editions

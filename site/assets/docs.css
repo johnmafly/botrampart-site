@@ -1,18 +1,20 @@
 /* BotRampart docs (/docs/): the reading frame, light mode and the reader tools.
    Loaded after site.css on docs pages only (scripts/build.mjs).
 
-   Frame (Mastra docs study, 2026-11-19): a thin header, then three columns: a grouped sidebar
-   (270px), the article (up to 700px) and "On this page" (220px). Docs type sizes, not marketing:
-   title 38px, section 28px, body 16px/1.65.
+   Frame (docs redesign, 2026-11-24): the header row and the three columns share the marketing
+   pages' width (--w), so the logo sits at the same x on every page. Columns: a grouped sidebar
+   (236px), the article and "On this page" (200px). Docs type sizes, not marketing: title 38px,
+   section 28px, body 16px/1.65.
 
-   Light mode: Mastra's light tokens. The system setting decides by default; the header toggle
-   keeps an explicit choice on the device, applied before first paint by theme.js
+   Theme: dark unless the reader switches. The marketing pages are dark only, so a reader with a
+   light system setting no longer flips from a black home page to white docs (audit #16). The
+   header toggle keeps an explicit choice on the device, applied before first paint by theme.js
    as html[data-theme]. The four accent meanings keep one meaning each in both modes: allow, block,
    challenge, data. Light counterparts: block #d81717 and data #9829c7 (Mastra's light code
    colours); allow is #117a22, a step darker than Mastra's #158d29 (4.13:1 on #fafafa, under AA for
    body text); challenge is #8f5300. */
 
-/* ---------- Light tokens ---------- */
+/* ---------- Light tokens: only by the reader's choice ---------- */
 html.docs[data-theme="light"] {
   --ink-0: #fafafa; --ink-1: #f4f4f4; --ink-2: #ebebeb; --ink-3: #f0f0f0;
   --line: #e2e2e2; --line-2: #cccccc;
@@ -22,23 +24,13 @@ html.docs[data-theme="light"] {
   --header-bg: rgb(250 250 250 / .86); --shadow: 0 24px 60px -24px rgb(0 0 0 / .25);
   color-scheme: light;
 }
-@media (prefers-color-scheme: light) {
-  html.docs:not([data-theme="dark"]) {
-    --ink-0: #fafafa; --ink-1: #f4f4f4; --ink-2: #ebebeb; --ink-3: #f0f0f0;
-    --line: #e2e2e2; --line-2: #cccccc;
-    --bone: #080808; --body: #141414; --bone-2: #494949; --bone-3: #6b6b6b;
-    --allow: #117a22; --block: #d81717; --challenge: #8f5300; --data: #9829c7;
-    --code-bg: #f2f2f2; --code-line: #d4d4d4; --hover: rgb(0 0 0 / .03); --selected: rgb(0 0 0 / .05);
-    --header-bg: rgb(250 250 250 / .86); --shadow: 0 24px 60px -24px rgb(0 0 0 / .25);
-    color-scheme: light;
-  }
-}
 html.docs {
   --code-bg: #121212; --code-line: #2a2a2a; --hover: rgb(255 255 255 / .05); --selected: rgb(255 255 255 / .08);
   --header-bg: rgb(2 2 2 / .82); --shadow: 0 30px 80px -20px rgb(0 0 0 / .9);
   --amber: var(--challenge); --ember: var(--block); --frost: var(--allow);
 }
-html.docs[data-theme="dark"] { color-scheme: dark; }
+html.docs { color-scheme: dark; }
+html.docs[data-theme="light"] { color-scheme: light; }
 
 /* Site chrome that hard-codes dark values. */
 html.docs .top { background: var(--header-bg); }
@@ -51,6 +43,10 @@ html.docs ::selection { background: var(--data); color: #fff; }
 
 /* ---------- Header tools: search and theme ---------- */
 .docs-tools { display: flex; align-items: center; gap: .35rem; }
+/* Search and the theme toggle need JavaScript: they start with the hidden attribute and docs.js
+   shows them. Their display rules below would otherwise override that attribute, and a reader
+   without JavaScript saw two buttons that did nothing. */
+.search-btn[hidden], .theme-btn[hidden] { display: none; }
 .search-btn {
   display: inline-flex; align-items: center; gap: .55rem; min-height: 2.25rem; padding: 0 .55rem 0 .7rem;
   border: 1px solid var(--line-2); border-radius: 10px; background: var(--ink-1); color: var(--bone-2);
@@ -61,31 +57,30 @@ html.docs ::selection { background: var(--data); color: #fff; }
 .theme-btn { display: inline-grid; place-items: center; width: 2.25rem; height: 2.25rem; border: 1px solid var(--line-2); border-radius: 10px; background: var(--ink-1); color: var(--bone-2); cursor: pointer; }
 .theme-btn:hover { color: var(--bone); }
 .theme-btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
-.theme-btn .i-sun { display: none; }
-html.docs[data-theme="dark"] .theme-btn .i-sun { display: block; }
-html.docs[data-theme="dark"] .theme-btn .i-moon { display: none; }
-@media (prefers-color-scheme: dark) {
-  html.docs:not([data-theme="light"]) .theme-btn .i-sun { display: block; }
-  html.docs:not([data-theme="light"]) .theme-btn .i-moon { display: none; }
-}
+/* The icon shows what a click gives: the sun in dark (the default), the moon in light. */
+.theme-btn .i-moon { display: none; }
+html.docs[data-theme="light"] .theme-btn .i-sun { display: none; }
+html.docs[data-theme="light"] .theme-btn .i-moon { display: block; }
 @media (max-width: 1100px) { .search-btn { min-width: 0; } .search-btn .sb-text { display: none; } }
 
 /* ---------- Three columns ---------- */
 html.docs .top-row { height: 3.5rem; }
 html.docs { scroll-padding-top: 4.5rem; }
 .docs-shell {
-  display: grid; grid-template-columns: 270px minmax(0, 700px) 220px; gap: 3rem; justify-content: center;
-  max-width: 1440px; margin: 0 auto; padding: 2rem var(--gut) 5rem;
+  display: grid; grid-template-columns: 236px minmax(0, 1fr) 200px; gap: 2.25rem;
+  max-width: var(--w); margin: 0 auto; padding: 2rem var(--gut) 5rem;
 }
 .docs-side { position: sticky; top: 4.5rem; align-self: start; max-height: calc(100vh - 5.5rem); overflow-y: auto; scrollbar-width: thin; padding-right: .25rem; }
 .docs-side .gn-compact { display: none; }
 .sg { margin-bottom: 1.25rem; }
-.sg-title { margin: 0 0 .35rem; padding: 0 .65rem; font: 500 .72rem/1.4 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--bone-3); }
+.sg-title, .st-title { margin: 0 0 .35rem; padding: 0 .65rem; font: 500 .72rem/1.4 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--bone-3); }
 .sg ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
-.sg a { display: block; padding: .38rem .65rem; border-radius: 8px; text-decoration: none; font: 450 .9rem/1.35 var(--f-text); color: var(--bone-2); }
+.sg a { display: flex; align-items: center; gap: .5rem; padding: .38rem .65rem; border-radius: 8px; text-decoration: none; font: 450 .9rem/1.35 var(--f-text); color: var(--bone-2); }
 .sg a:hover { background: var(--hover); color: var(--bone); }
 .sg a[aria-current="page"] { background: var(--selected); color: var(--bone); font-weight: 560; }
-.side-tail { display: flex; flex-wrap: wrap; gap: .4rem; padding: .5rem .65rem 0; border-top: 1px solid var(--line); font: 400 .74rem/1.6 var(--f-mono); color: var(--bone-3); }
+.sg-badge { margin-left: auto; padding: .12rem .4rem; border: 1px solid var(--line-2); border-radius: 999px; font: 500 .68rem/1.3 var(--f-mono); color: var(--bone-2); white-space: nowrap; }
+.side-tail { padding-top: .9rem; border-top: 1px solid var(--line); }
+.side-tail p:last-child { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0; padding: 0 .65rem; font: 400 .76rem/1.6 var(--f-mono); color: var(--bone-3); }
 .side-tail a { color: var(--bone-2); text-decoration: none; }
 .side-tail a:hover { color: var(--bone); text-decoration: underline; }
 
@@ -98,12 +93,12 @@ html.docs { scroll-padding-top: 4.5rem; }
 .otp a code { font-size: .78rem; background: none; border: 0; padding: 0; }
 
 @media (max-width: 1240px) {
-  .docs-shell { grid-template-columns: 250px minmax(0, 720px); gap: 2.5rem; }
+  .docs-shell { grid-template-columns: 236px minmax(0, 720px); gap: 2.25rem; }
   .docs-toc { display: none; }
 }
 @media (max-width: 900px) {
   .docs-shell { grid-template-columns: minmax(0, 1fr); gap: 1rem; padding-top: 1rem; }
-  .docs-side { position: static; max-height: none; overflow: visible; border: 1px solid var(--line); border-radius: 14px; background: var(--ink-1); padding: .2rem .9rem; }
+  .docs-side { position: static; max-height: none; overflow: visible; border: 1px solid var(--line); border-radius: 12px; background: var(--ink-1); padding: 0 .9rem; }
   .docs-side .gn-full { display: none; }
   .docs-side .gn-compact { display: block; }
   .docs-side summary { cursor: pointer; display: flex; align-items: center; gap: .6rem; min-height: 2.75rem; list-style: none; font: 500 .9rem/1.3 var(--f-text); color: var(--bone); }
@@ -111,15 +106,16 @@ html.docs { scroll-padding-top: 4.5rem; }
   .docs-side summary::after { content: "+"; margin-left: auto; font: 500 1.1rem/1 var(--f-mono); color: var(--bone-2); }
   .docs-side details[open] summary::after { content: "\2212"; }
   .docs-side details[open] summary { margin-bottom: .6rem; }
+  .docs-side details[open] { padding-bottom: .9rem; }
   .docs-side .gn-k { font: 500 .72rem/1 var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--bone-3); }
   .docs-side .gn-where { color: var(--bone-2); }
-  .docs-side .sg-title { padding: 0 .4rem; }
+  .docs-side :is(.sg-title, .st-title) { padding: 0 .4rem; }
 }
 
 /* ---------- Article: docs scale ---------- */
-.docs-shell .guide { max-width: 700px; min-width: 0; font-size: 1rem; line-height: 1.65; }
+.docs-shell .guide { max-width: 720px; min-width: 0; font-size: 1rem; line-height: 1.65; }
 .docs-shell .guide h1 { font: 650 2.375rem/1.15 var(--f-display); letter-spacing: -.028em; font-stretch: 100%; margin: .4rem 0 .6rem; max-width: none; color: var(--bone); }
-.docs-shell .guide > .lede { font-size: 1.125rem; line-height: 1.55; color: var(--bone-2); margin-bottom: 2rem; max-width: none; }
+.docs-shell .guide > .lede { font-size: 1.125rem; line-height: 1.55; color: var(--bone-2); margin-bottom: 1.5rem; max-width: none; }
 .docs-shell .guide h2 { font: 620 1.75rem/1.25 var(--f-display); letter-spacing: -.02em; font-stretch: 100%; padding-top: 0; margin: 3rem 0 .8rem; color: var(--bone); }
 .docs-shell .guide h2::before { content: none; }
 .docs-shell .guide > * + h2 { margin-top: 3rem; }
@@ -139,6 +135,9 @@ html.docs { scroll-padding-top: 4.5rem; }
 .crumbs a { color: var(--bone-2); text-decoration: none; }
 .crumbs a:hover { color: var(--bone); text-decoration: underline; }
 .crumbs [aria-current] { color: var(--bone); }
+.doc-tools { display: flex; align-items: center; gap: .9rem; flex: none; }
+.md-link { font: 500 .84rem/1.4 var(--f-text); color: var(--bone-2) !important; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+.md-link:hover { color: var(--bone) !important; }
 .copypage { position: relative; display: inline-flex; flex: none; border: 1px solid var(--line-2); border-radius: 10px; background: var(--ink-1); }
 .cp-main { display: inline-flex; align-items: center; gap: .45rem; min-height: 2.15rem; padding: 0 .75rem; border: 0; border-right: 1px solid var(--line-2); border-radius: 10px 0 0 10px; background: none; color: var(--bone); font: 500 .84rem/1 var(--f-text); cursor: pointer; }
 .cp-main::before { content: ""; width: 12px; height: 14px; border: 1.5px solid currentColor; border-radius: 3px; box-shadow: 3px -3px 0 -1.5px var(--ink-1), 3px -3px 0 0 currentColor; }
@@ -196,16 +195,43 @@ html.docs { scroll-padding-top: 4.5rem; }
 .docs-shell .guide td { border-color: var(--line); color: var(--body); }
 .docs-shell .guide tbody th { background: var(--ink-1); color: var(--bone); }
 
-/* Express "Copy prompt" card */
-.xcard { display: flex; align-items: center; gap: 1.25rem; margin: 1.5rem 0 2rem; padding: 1.1rem 1.2rem; border: 1px solid var(--line-2); border-radius: 14px; background: var(--ink-1); }
+/* "Copy prompt" cards: the quickstart-for-agents prompt and the Autoinstall prompt */
+.xcard { display: flex; align-items: center; gap: 1.25rem; margin: 1.25rem 0 2rem; padding: .95rem 1.1rem; border: 1px solid var(--line-2); border-radius: 12px; background: var(--ink-1); }
 .xcard-text { flex: 1; min-width: 0; }
-.xcard-k { margin: 0 0 .2rem !important; font: 500 .72rem/1.3 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--bone-3) !important; }
-.xcard-t { margin: 0 0 .35rem !important; font: 620 1.08rem/1.3 var(--f-display); color: var(--bone) !important; }
-.xcard-text p:last-child { margin: 0; font-size: .92rem; color: var(--bone-2); }
-.btn-copy-prompt { flex: none; min-height: 2.4rem; padding: 0 1rem; border: 0; border-radius: 10px; background: var(--bone); color: var(--ink-0); font: 560 .9rem/1 var(--f-text); cursor: pointer; }
+.xcard-k { margin: 0 0 .15rem !important; font: 500 .72rem/1.3 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--bone-3) !important; }
+.xcard-t { margin: 0 0 .25rem !important; font: 620 1.02rem/1.3 var(--f-display); color: var(--bone) !important; }
+.xcard-text p:last-child { margin: 0; font-size: .9rem; line-height: 1.5; color: var(--bone-2); }
+.btn-copy-prompt { flex: none; min-height: 2.75rem; padding: 0 1.1rem; border: 0; border-radius: 10px; background: var(--bone); color: var(--ink-0); font: 560 .9rem/1 var(--f-text); cursor: pointer; }
 .btn-copy-prompt:hover { box-shadow: 0 0 0 4px var(--selected); }
 .btn-copy-prompt[data-state="copied"]::after { content: " \2713"; }
-@media (max-width: 600px) { .xcard { flex-direction: column; align-items: stretch; } }
+@media (max-width: 600px) {
+  .xcard { flex-wrap: wrap; gap: .6rem 1rem; padding: .8rem .9rem; }
+  .xcard-text { flex: 1 1 12rem; }
+  /* On a phone the title and the button are the card; the sentence under them is in the prompt. */
+  .xcard-text p:last-child { display: none; }
+}
+
+/* Numbered steps: "## 1. Clone the repository" */
+.docs-shell .guide h2.doc-step { display: flex; align-items: baseline; gap: .7rem; }
+.step-n { flex: none; display: inline-grid; place-items: center; width: 1.9rem; height: 1.9rem; border-radius: 8px; border: 1px solid var(--line-2); background: var(--ink-1); font: 600 .95rem/1 var(--f-mono); color: var(--bone); transform: translateY(-.12rem); }
+
+/* Next steps: one link per goal */
+.nextsteps { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; margin: 1.25rem 0 0; }
+.nextsteps .ns { position: relative; display: grid; gap: .2rem; padding: .8rem 2.2rem .85rem 1rem; border: 1px solid var(--line); border-radius: 12px; background: var(--ink-1); text-decoration: none; }
+.nextsteps .ns::after { content: "\2192"; position: absolute; right: .9rem; top: .8rem; font: 400 .9rem/1.4 var(--f-mono); color: var(--bone-3); }
+.nextsteps .ns:hover { border-color: var(--bone-3); }
+.nextsteps .ns:hover::after { color: var(--bone); }
+.nextsteps b { font: 600 .95rem/1.35 var(--f-display); color: var(--bone); }
+.nextsteps span { font: 400 .86rem/1.45 var(--f-text); color: var(--bone-2); }
+.nextsteps code { font-size: .82em; }
+@media (max-width: 640px) { .nextsteps { grid-template-columns: 1fr; } }
+
+/* Docs home: the command and the prompt come straight after the lede, in the first screen. */
+.guide-home > .lede { margin-bottom: 1.1rem; }
+.guide-home > .lede + .code { margin-top: 0; margin-bottom: .75rem; }
+.guide-home > .code + .xcard { margin-top: 0; }
+.guide > .lede + p { margin-top: 0; }
+.guide > .lede + p + h2 { margin-top: 1.75rem; }
 
 /* Cards, pager, meta */
 .docs-shell .cards { gap: .75rem; }
@@ -215,11 +241,12 @@ html.docs { scroll-padding-top: 4.5rem; }
 .docs-shell .card .label { margin-bottom: .5rem; }
 .docs-shell .card .label::before { content: none; }
 .docs-shell .card p:last-child { color: var(--bone-2); font-size: .9rem; }
-.docs-shell .pager { margin-top: 2.5rem; }
+.docs-shell .pager { margin-top: 1.5rem; }
 .docs-shell .pager a { border-color: var(--line); background: var(--ink-1); border-radius: 12px; font-weight: 560; }
 .docs-shell .pager a:hover { border-color: var(--bone-3); }
-.docs-shell .doc-meta { margin: 2.5rem 0 0; padding-top: 1rem; border-top: 1px solid var(--line); }
-.docs-shell .doc-meta a { color: var(--bone-2); }
+.docs-shell .doc-meta { margin: 3rem 0 0; padding-top: 1rem; border-top: 1px solid var(--line); gap: .35rem .6rem; font: 450 .84rem/1.6 var(--f-text); }
+.docs-shell .doc-meta a { color: var(--bone-2); text-decoration: underline; text-underline-offset: 3px; }
+.docs-shell .doc-meta a:hover { color: var(--bone); }
 .docs-shell .sources-block { margin-top: 3rem; }
 .docs-shell .diagram { border-color: var(--line); background: var(--ink-1); }
 
@@ -243,19 +270,39 @@ html.docs { scroll-padding-top: 4.5rem; }
 .sd-empty { margin: 1rem .7rem; color: var(--bone-3); font-size: .9rem; }
 .sd-foot { display: flex; gap: 1rem; padding: .55rem 1rem; border-top: 1px solid var(--line); font: 400 .74rem/1.3 var(--f-mono); color: var(--bone-3); }
 
+@media (max-width: 900px) {
+  /* The bar above already says where you are ("Docs  Get started · Quickstart"). */
+  .crumbs { display: none; }
+  .doc-top { justify-content: flex-start; margin-bottom: .2rem; }
+}
 @media (max-width: 720px) {
-  .doc-top { flex-wrap: wrap; }
   .docs-shell .guide h1 { font-size: 2rem; }
+  .docs-shell .guide > .lede { font-size: 1.05rem; margin-bottom: 1.1rem; }
+  .docs-shell .guide h2 { font-size: 1.5rem; margin-top: 2.5rem; }
+  .docs-shell .guide > * + h2 { margin-top: 2.5rem; }
+  .guide > .lede + p + h2 { margin-top: 1.4rem; }
+  /* Short command blocks wrap on a phone, so the whole command shows without a sideways scroll. */
+  .docs-shell .code-wrap pre { white-space: pre-wrap; }
 }
 
-/* Header on docs pages: wider row (the docs frame is 1440px), and room on a phone. */
-html.docs .top-row { max-width: 1440px; }
+/* ---------- Header on docs pages ----------
+   Same row width as the marketing pages (site.css .top-row: --w), so the logo does not move
+   between the two (audit #16). Below 1180px the shared header folds its menu into the Menu
+   button on every page, so the search and theme buttons sit beside Sign in, the main button and
+   Menu in one row with no sideways scroll (audit #4; measured from 360 to 1920px in the pull
+   request). On a phone the two buttons are 44px targets like the rest of the header. */
 @media (max-width: 860px) {
   html.docs .top-row { height: auto; }
-  .docs-shell { padding-top: 1.2rem; }
+  .docs-shell { padding-top: 1rem; }
 }
 @media (max-width: 560px) {
   html.docs .brand span { display: none; }
   html.docs .top-row { gap: .5rem; }
   .docs-tools { gap: .25rem; }
+  .search-btn, .theme-btn { width: 2.75rem; height: 2.75rem; min-height: 2.75rem; padding: 0; justify-content: center; }
+}
+/* At 360px the brand, both buttons, the main button and Menu fill the row: the two docs buttons
+   stay 36px there, and are 44px from 381px up. */
+@media (max-width: 380px) {
+  .search-btn, .theme-btn { width: 2.25rem; height: 2.25rem; min-height: 2.25rem; }
 }
