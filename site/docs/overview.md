@@ -16,7 +16,7 @@ This page explains the ideas the rest of the docs rely on: what a session is, wh
 - You are explaining to your team why a visitor was challenged.
 - You are setting path costs and want the arithmetic behind the daily ceiling.
 
-## Quickstart {#quickstart}
+## Get started {#quickstart}
 
 1. Read [The idea](#idea) for the question BotRampart asks instead of "is this a bot?".
 2. Read [A session's life](#session) for the four tiers and what each buys.

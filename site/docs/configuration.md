@@ -4,7 +4,7 @@ nav: Configuration
 group: Integrate
 order: 10
 description: Every BotRampart setting in one place: backend SDK options, browser SDK options, Core's settings and secrets, credentials and roles, site keys and rotation, the cookie, response headers and failure modes.
-lede: Every setting, where it lives and what it does. The policy file has its own reference; this page covers everything around it.
+lede: Find any setting fast: where it lives and what it changes. The policy file has its own reference; this page covers everything around it.
 ---
 
 Settings live in four places: the backend SDK, the browser script, Core and your secret store. The policy file has its own reference; this page covers everything around it.
@@ -16,7 +16,7 @@ Settings live in four places: the backend SDK, the browser script, Core and your
 - You are rotating site keys or issuing credentials for the console, the agent or the log pack.
 - You need to know what happens when Core is unreachable.
 
-## Quickstart {#quickstart}
+## Get started {#quickstart}
 
 1. Set `site`, `secretsFile`, `core` and `mode: "observe"` on the [backend SDK](#backend).
 2. Add the [script tag](#browser) with `data-site`.

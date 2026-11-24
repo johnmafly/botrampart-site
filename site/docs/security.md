@@ -4,7 +4,7 @@ nav: Security model
 group: Operate
 order: 12
 description: BotRampart's security model: trust boundaries, the signed session token, proof-of-work and attestations, credentials and roles, the data kept and never collected, guardrails on the decision model and the agent, script delivery, and the threats that remain.
-lede: What BotRampart trusts, what it signs, what it keeps, and which threats remain after every control is in place.
+lede: Give your security review what it asks for: what BotRampart trusts, what it signs, what it keeps, and which threats remain after every control is in place.
 ---
 
 This page is for security and privacy reviewers: what crosses each boundary, how the session token is signed, what is kept and what is never collected, and what an attacker can still do.
@@ -16,7 +16,7 @@ This page is for security and privacy reviewers: what crosses each boundary, how
 - You want to know how the decision model and the agent are kept from acting on their own.
 - You are deciding how to store and rotate site keys.
 
-## Quickstart {#quickstart}
+## Get started {#quickstart}
 
 1. Read [Trust boundaries](#boundaries).
 2. Check the token format and binding in [The session token](#token).

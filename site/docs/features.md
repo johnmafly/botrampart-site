@@ -4,7 +4,7 @@ nav: Features
 group: Concepts
 order: 6
 description: Every BotRampart capability, grouped by what it does for you: detection, sessions and tiers, budgets, mint buckets, policy, the five-minute loop, explanations, the agent, console, CLI, install options, privacy controls and editions.
-lede: What BotRampart does, grouped by the job it does for you. Each feature links to the reference that defines it.
+lede: See what BotRampart does for you, grouped by the job it does. Each feature links to the reference that defines it.
 ---
 
 Each feature below says what it does and links to the reference that defines it. Use the page as a checklist when you compare BotRampart with what you run today.
@@ -15,7 +15,7 @@ Each feature below says what it does and links to the reference that defines it.
 - You need the reference page behind a feature someone mentioned.
 - You are deciding which edition you need.
 
-## Quickstart {#quickstart}
+## Get started {#quickstart}
 
 1. Skim the section for the job you need done: detection, budgets, policy, site-wide defense, operations or privacy.
 2. Follow the link at the end of a feature to its reference.

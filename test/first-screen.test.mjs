@@ -36,8 +36,10 @@ for (const route of INNER) {
 }
 
 test("site.css: the inner-page title is docs-sized, not a marketing hero", () => {
+  // Since the one type scale (2026-11-24) the title uses the --h1 token; its maximum is what is held.
   const rule = css("site.css").match(/\.page-head h1 \{([^}]*)\}/)?.[1] ?? "";
-  const max = Number(rule.match(/font-size: clamp\([^,]+,[^,]+, ([\d.]+)rem\)/)?.[1]);
+  assert.match(rule, /font-size: var\(--h1\)/);
+  const max = Number(css("site.css").match(/--h1: clamp\([^,]+,[^,]+, ([\d.]+)rem\)/)?.[1]);
   assert.ok(max > 0 && max <= 2.6, `title tops out at ${max}rem`);
 });
 

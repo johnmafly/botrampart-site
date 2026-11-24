@@ -14,7 +14,7 @@ Changes are listed newest first, with the spec versions on top.
 - You want to know what changed since you last read the docs.
 - You are checking which spec version a change shipped in.
 
-## Quickstart {#quickstart}
+## Get started {#quickstart}
 
 1. Check [Spec versions](#spec-versions) for the current version of the wire contract.
 2. Read the dated entries below, and open a linked pull request for its diff and checks.

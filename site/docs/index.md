@@ -4,10 +4,10 @@ nav: Introduction
 group: Get started
 order: 0
 description: The BotRampart docs: getting started and Express, concepts and architecture, choosing and wiring an integration, configuration, self-hosting, security, the API, SDK and policy reference, FAQ and changelog. Every page is also Markdown.
-lede: Everything about BotRampart in one place: how it works, how it is built, how to run it, and the full API, SDK and policy reference. Every page is also published as Markdown, for people and for agents.
+lede: Stop bots on your own server. Install with one prompt, then look up any route, setting or policy field. Every page is also Markdown, for your coding agent.
 ---
 
-BotRampart is open-source bot defense for a web where bots drive real browsers. Its browser script collects risk signals and how each session behaves on the page; your server reads them, picks a challenge tier and applies the policies you write. It runs inside your app, keeps its records in your own bucket, and explains every decision it makes. Request economics is an add-on on top: each path has a cost, so a session that keeps spending has to keep proving itself.
+BotRampart keeps scrapers, headless browsers and AI agents from draining your site while people pass without noticing, and it does it on your own server, in open source. Its browser script collects risk signals and how each session behaves on the page; your server reads them, picks a challenge tier and applies the policies you write. It runs inside your app, keeps its records in your own bucket, and explains every decision it makes. Request economics is an add-on on top: each path has a cost, so a session that keeps spending has to keep proving itself.
 
 ## When to use {#when-to-use}
 
@@ -16,7 +16,7 @@ BotRampart is open-source bot defense for a web where bots drive real browsers. 
 - You are pointing a coding agent at the docs and want the Markdown and llms.txt addresses.
 - You want the conventions these pages follow: stable anchors, sourced figures, the spec as the contract.
 
-## Quickstart {#quickstart}
+## Get started {#quickstart}
 
 1. Install with one prompt: open [Express](/docs/express/), pick your stack and paste the prompt into your coding agent. It installs in observe mode.
 2. Or wire it by hand: follow [Install and quickstart](/docs/getting-started/), which mounts the backend SDK in observe mode, adds the browser script and checks the session.

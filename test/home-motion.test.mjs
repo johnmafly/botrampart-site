@@ -84,13 +84,12 @@ test("the gate: second screen, end state in the HTML, sample marking, screen-rea
   assert.match(gate, /href="\/docs\/overview\/#session"/, "links the challenge ladder");
 });
 
-test("the gate's motion: CSS only under no-preference, started by view not by scroll position, pausable", () => {
+test("the gate's motion: CSS only under no-preference, started by view not by scroll position", () => {
   const css = src("site/assets/home.css");
   const i = css.indexOf(".gate[data-live] .tok { animation");
   assert.ok(i > 0);
   assert.match(css.slice(css.lastIndexOf("@media", i), i), /prefers-reduced-motion: no-preference/);
   const js = src("site/assets/home.js");
   assert.match(js, /if \(gateEl && !reduce && "IntersectionObserver" in window\)/);
-  assert.doesNotMatch(js.slice(js.indexOf("6. The gate")), /scrollY|scrollTop|addEventListener\("scroll"/);
-  assert.equal((page.match(/data-motion-toggle hidden>/g) ?? []).length, 2, "a pause control by the headline and on the gate, hidden until something moves");
+  assert.doesNotMatch(js.slice(js.indexOf("5. The gate")), /scrollY|scrollTop|addEventListener\("scroll"/);
 });

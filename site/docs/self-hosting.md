@@ -4,7 +4,7 @@ nav: Self-hosting
 group: Operate
 order: 11
 description: Running BotRampart yourself: where Core runs, sizing and what it costs, the lake and its retention, rolling out from observe to enforce, publishing policy safely, key rotation, monitoring coverage and failure behaviour.
-lede: Every part of BotRampart runs on your own infrastructure under the Community edition. This page is the operator's view: what to run, what it costs, and how to change it safely.
+lede: Run every part of BotRampart on your own infrastructure, free under the Community edition. This is the operator's view: what to run, what it costs, and how to change it safely.
 ---
 
 Self-hosting means you run Core, the lake and the agent; the SDKs already run in your app. This page covers what that takes, what it costs, and how to roll out and change policy safely.
@@ -16,7 +16,7 @@ Self-hosting means you run Core, the lake and the agent; the SDKs already run in
 - You are planning the rollout from observe to enforce.
 - You are on call and need the failure behaviour.
 
-## Quickstart {#quickstart}
+## Get started {#quickstart}
 
 1. Run Core on Cloudflare Workers or in one container with 256 MB of memory.
 2. Point `BR_LAKE_URL` at your bucket.

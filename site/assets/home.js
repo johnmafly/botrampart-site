@@ -1,6 +1,6 @@
 // Home page motion. Everything here only adds to a page that is complete without it:
 // the headline, the gate, the decision log and the chat are fully written into the HTML. With
-// reduced motion, or while a piece is off screen, nothing runs. "Pause motion" stops all of it.
+// reduced motion, or while a piece is off screen, nothing runs.
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /* ---------- 1. The decision log prints new sample lines while it is on screen. ---------- */
@@ -30,7 +30,6 @@ if (feed && !reduce && "IntersectionObserver" in window) {
     return s;
   };
   const tick = () => {
-    if (document.documentElement.dataset.motion === "paused") return;
     const [what, risk, decision, kind] = SAMPLES[i++ % SAMPLES.length];
     clock += 1000 + Math.floor(Math.random() * 1500);
     const li = document.createElement("li");
@@ -93,24 +92,7 @@ if (agentLink && express) {
 }
 if (location.hash === "#express") addEventListener("load", () => setTimeout(cue, 0), { once: true });
 
-/* ---------- 4. One "Pause motion" control for everything that loops on this page. ---------- */
-// WCAG 2.2.2: the rolling headline, the gate and the decision log loop for longer than five
-// seconds, so the reader can pause them. The buttons stay hidden when nothing moves.
-const root = document.documentElement;
-const toggles = [...document.querySelectorAll("[data-motion-toggle]")];
-const setPaused = (on) => {
-  if (on) root.dataset.motion = "paused"; else delete root.dataset.motion;
-  for (const b of toggles) {
-    b.toggleAttribute("data-paused", on);
-    b.querySelector(".mb-t").textContent = on ? "Play motion" : "Pause motion";
-  }
-};
-if (!reduce) for (const b of toggles) {
-  b.hidden = false;
-  b.addEventListener("click", () => setPaused(root.dataset.motion !== "paused"));
-}
-
-/* ---------- 5. The headline's keywords roll; "Stop" and "in your" never move. ---------- */
+/* ---------- 4. The headline's keywords roll; "Stop" and "in your" never move. ---------- */
 // The h1's accessible name is one fixed sentence (a visually hidden span naming all three pairs);
 // the rolling words are aria-hidden. Without JavaScript or with reduced motion, the first pair stays.
 const roll = document.querySelector("[data-roll]");
@@ -120,7 +102,7 @@ if (roll && !reduce) {
   let at = 0;
   let onScreen = true;
   const step = () => {
-    if (root.dataset.motion === "paused" || !onScreen || document.hidden) return;
+    if (!onScreen || document.hidden) return;
     const from = at;
     at = (at + 1) % count;
     for (const slot of slots) {
@@ -144,7 +126,7 @@ if (roll && !reduce) {
   }
 }
 
-/* ---------- 6. The gate replays its four visitors while it is on screen. ---------- */
+/* ---------- 5. The gate replays its four visitors while it is on screen. ---------- */
 // The HTML is the end state (every visitor at its verdict). data-live starts the CSS loop the
 // first time the stage is in view; data-off pauses it while it is off screen.
 const gateEl = document.querySelector("[data-gate]");
@@ -156,7 +138,7 @@ if (gateEl && !reduce && "IntersectionObserver" in window) {
   }, { threshold: 0.35 }).observe(gateEl.querySelector(".gate-stage"));
 }
 
-/* ---------- 7. The phone menu closes on a link tap or Escape. ---------- */
+/* ---------- 6. The phone menu closes on a link tap or Escape. ---------- */
 // It is a <details>, so it opens and closes without JavaScript; this only tidies up after a same-page
 // link (Benchmark) and lets Escape close it and return focus to the Menu button.
 const phoneMenu = document.querySelector("[data-phone-menu]");

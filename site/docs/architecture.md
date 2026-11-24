@@ -4,7 +4,7 @@ nav: Architecture
 group: Concepts
 order: 4
 description: BotRampart's components, where each runs, what crosses each boundary, the request path, sync, the five-minute loop, Core's ports, data layout and the decision-model contract, with diagrams.
-lede: Each component, where it runs and what crosses each boundary. The per-request work happens inside your app; everything that needs the whole site's view happens in Core, off the request path.
+lede: Start every deployment or security review from one map: each component, where it runs and what crosses each boundary. Per-request work stays inside your app; Core does the site-wide work off the request path.
 ---
 
 This page is the map of BotRampart: every component, where it runs, and the data that crosses each boundary. Read it before you plan a deployment or a security review.
@@ -16,7 +16,7 @@ This page is the map of BotRampart: every component, where it runs, and the data
 - You are reviewing the session token, sync or the decision-model contract.
 - You want the measured cost of the hot path.
 
-## Quickstart {#quickstart}
+## Get started {#quickstart}
 
 1. Read [Components](#components) and the system diagram.
 2. Follow one request through [the request path](#request-path).

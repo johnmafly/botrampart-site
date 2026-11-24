@@ -4,7 +4,7 @@ nav: SDK reference
 group: Reference
 order: 14
 description: What BotRampart's SDKs expose (backend SDKs for Node, Python, Go, Java, Ruby and PHP, the edge adapters, the mobile SDKs and the browser SDK), as spec/openapi.yaml defines it: the routes the backend SDK mounts under /_br, the headers it sets and reads, br.identify, and the browser SDK served at /_br/sdk.js with br.status(), autoRetry, challenges and signals.
-lede: The SDK surface the API spec defines, each part linked to its HTTP exchange in the API reference. Everything the SDKs do on the wire is in the spec, so you can also integrate over HTTP directly.
+lede: Wire BotRampart into your app, your edge, your mobile app and the browser with one SDK surface. Each part links to its HTTP exchange, so you can also integrate over HTTP directly.
 ---
 
 The SDKs are how BotRampart runs in your app, at your edge, in your mobile app and in the browser. This page lists what each one exposes on the wire, linked to the matching operation in the API reference.
@@ -16,7 +16,7 @@ The SDKs are how BotRampart runs in your app, at your edge, in your mobile app a
 - You set `BR-Cost` or attach a login ID with `br.identify`.
 - You are choosing the browser SDK's signal mode.
 
-## Quickstart {#quickstart}
+## Get started {#quickstart}
 
 1. Mount the backend SDK in front of your handlers, in observe mode, with the [settings](/docs/configuration/#backend) in Configuration.
 2. Add the [script tag](#script-tag) to your layout.
