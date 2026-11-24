@@ -4,7 +4,7 @@ nav: API reference
 group: Reference
 order: 13
 description: Every BotRampart HTTP operation and schema, generated at build time from spec/openapi.yaml: the SDK routes under /_br on your origin and the Core API for sync, challenges, keys, ingest, policy and decisions.
-lede: Every SDK route and Core endpoint with its parameters, bodies, responses and examples. This page is generated from the OpenAPI spec each time the site builds, and a test fails when the two disagree.
+lede: Call every SDK route and Core endpoint from any language, with bodies, responses and examples. Generated from the OpenAPI spec on every build; a test fails when the two disagree.
 ---
 
 The API reference covers both servers BotRampart speaks: the SDK routes under `/_br` on your origin and Core's API. It is generated from the spec each time the site builds.
@@ -16,7 +16,7 @@ The API reference covers both servers BotRampart speaks: the SDK routes under `/
 - You are writing a client for Core: sync, policy, simulation or decision lookups.
 - You want the stable anchor of an operation or schema to link to.
 
-## Quickstart {#quickstart}
+## Get started {#quickstart}
 
 Ask your app which tier the current session holds. The route is on your own origin and needs only the session cookie.
 

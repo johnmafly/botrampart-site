@@ -4,7 +4,7 @@ nav: Choose an integration
 group: Integrate
 order: 7
 description: Where BotRampart checks requests: a backend SDK inside your app, or nginx, a Cloudflare Worker or CloudFront in front of it at your edge. Every option runs in your own infrastructure or cloud account, then starts in observe mode.
-lede: BotRampart checks each request before your app does the work. Put it inside your app, or in front of it at your edge. Every option runs in your infrastructure or your cloud account: no vendor proxy sits in the path, and no one else sees your traffic.
+lede: Stop bad requests before your app does the work, inside your app or at your edge. Every option runs in your infrastructure or your cloud account: no vendor proxy sits in the path, and no one else sees your traffic.
 ---
 
 This page compares the four places BotRampart can check requests and walks through the first install in observe mode. Every option speaks the same HTTP contract, so you can start with one and add another later.
@@ -16,7 +16,7 @@ This page compares the four places BotRampart can check requests and walks throu
 - You need to know what every option shares on the wire: the cookie, the `/_br` routes and the response headers.
 - You are about to install BotRampart for the first time and want the observe-mode path from Core to enforcement.
 
-## Quickstart {#quickstart}
+## Get started {#quickstart}
 
 1. Pick where the check runs: the [backend SDK](#opt-sdk) if you own the app's code, or [nginx](#opt-nginx), a [Cloudflare Worker](#opt-worker) or [CloudFront](#opt-cloudfront) to cover apps in any language at your edge.
 2. Run Core on port 8787 with `BR_LAKE_URL` pointing at your bucket and `BR_DECISION_PROVIDER` set to `off` ([Configure Core](#core)).

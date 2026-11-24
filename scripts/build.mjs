@@ -171,7 +171,7 @@ function phoneMenu(header) {
     .replace(/ data-section/g, "")
     .replace(/\n\s*/g, "");
   return `<details class="m-menu" data-phone-menu><summary><svg class="pm-i" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M3 5.5h14M3 10h14M3 14.5h14"/></svg><span class="pm-t">Menu</span></summary>` +
-    `<nav class="pm-panel" aria-label="Menu">${body}<div class="pm-more"><a href="/signin/">Sign in</a><a href="/docs/getting-started/">Quickstart</a></div></nav></details>`;
+    `<nav class="pm-panel" aria-label="Menu">${body}<div class="pm-more"><a href="/signin/">Sign in</a></div></nav></details>`;
 }
 
 function render(file) {

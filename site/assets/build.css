@@ -44,7 +44,7 @@
 .label .crumb { color: inherit; text-decoration: none; border-bottom: 1px solid var(--line-2); }
 .label .crumb:hover { color: var(--bone); border-bottom-color: var(--bone-3); }
 .ai-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(2rem, 1rem + 3vw, 4rem); padding-block: 3rem 6rem; align-items: start; }
-.ai-h { font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.2rem); margin-bottom: 0; }
+.ai-h { font-size: var(--h2); margin-bottom: 0; }
 .ai-form > .ai-h { display: flex; align-items: center; min-height: 3rem; margin-bottom: .8rem; }
 .ai-form .field { margin-bottom: 2rem; }
 .ai-form legend { display: flex; align-items: center; gap: .6rem; }

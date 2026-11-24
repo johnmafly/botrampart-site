@@ -1,10 +1,10 @@
 ---
 title: Install and quickstart
-nav: Quickstart
+nav: Install and quickstart
 group: Get started
 order: 1
 description: Run BotRampart's reference code from source in a few minutes, then wire the backend and browser SDKs into a Node app in observe mode, simulate a policy and enforce.
-lede: Two paths. Run the reference budget engine and its benchmark from source in a few minutes, then wire BotRampart into a Node app in observe mode, where it decides and logs every request and enforces nothing.
+lede: See BotRampart decide real requests in minutes. Run the reference budget engine and its benchmark from source, then wire BotRampart into a Node app in observe mode, where it logs every decision and enforces nothing.
 ---
 
 This page takes you from nothing to BotRampart deciding every request in your app, in observe mode, where it decides and logs every request and enforces nothing until you switch it on. Paste the prompt below into your coding agent to have it do the whole install, or follow the steps by hand.
@@ -18,7 +18,7 @@ This page takes you from nothing to BotRampart deciding every request in your ap
 - You want the exact order of steps: Core, the backend SDK, the browser script, a check, a simulation, then enforce.
 - You prefer to read each step your coding agent takes when it installs from the [Express](/docs/express/) prompt.
 
-## Quickstart {#quickstart}
+## Get started {#quickstart}
 
 1. [Run the reference code](#from-source): clone the repository and run its tests and benchmark.
 2. [Configure Core](#core) with a lake URL and the `br_keys` and `lake_writer` secrets.

@@ -4,7 +4,7 @@ nav: Policy and cohorts
 group: Reference
 order: 15
 description: The BotRampart policy file field by field (path classes, budget, mint, risk score, rules), the CEL fields and actions rules use, publishing, simulation and rollback, and the cohorts, states and directives of the five-minute loop.
-lede: One versioned YAML file per site decides what every request costs and what happens when a session cannot pay. This page defines every key in it, every field a rule can read, and the cohorts the five-minute loop watches.
+lede: Decide what every request costs and what happens when a session cannot pay, in one versioned YAML file per site. This page defines every key, every field a rule can read, and the cohorts the five-minute loop watches.
 ---
 
 The policy file is where you decide what BotRampart does. This page defines every key, field and action in it, and how a change is simulated, published and rolled back.
@@ -16,7 +16,7 @@ The policy file is where you decide what BotRampart does. This page defines ever
 - You want to replay a policy against the last 24 hours of traffic before you publish.
 - You are writing rules on the five-minute loop's `ai.*` fields.
 
-## Quickstart {#quickstart}
+## Get started {#quickstart}
 
 1. Read the version Core enforces now, or start from the [example policy](#file), and keep it as `botrampart.policy.yaml` in Git.
 2. Change a path class's cost, or add a rule with `mode: log`.

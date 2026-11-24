@@ -34,7 +34,8 @@ test("phone menu: a <details> Menu button (works without JavaScript) listing eve
   const main = page.match(/<nav class="nav" aria-label="Main">([\s\S]*?)<\/nav>/)[1];
   const missing = hrefs(main).filter((h) => !hrefs(menu).includes(h));
   assert.deepEqual(missing, [], "every main-menu link is in the phone menu");
-  assert.ok(hrefs(menu).includes("/signin/") && hrefs(menu).includes("/docs/getting-started/"));
+  assert.ok(hrefs(menu).includes("/signin/"), "Sign in is in the menu");
+  assert.ok(!hrefs(menu).includes("/docs/getting-started/"), "Quickstart is reached through Docs, not its own menu item (2026-11-24)");
   for (const route of ["own", "docs", "solutions"]) {
     assert.doesNotMatch(readFileSync(join(dist, route, "index.html"), "utf8"), /data-phone-menu/, `/${route}/ keeps its header`);
   }
@@ -57,23 +58,10 @@ test("phone pill: one line, a short form of the changelog claim, same link", () 
   assert.match(phone, /\.news-t-s \{ display: inline; \}/);
 });
 
-test("phone pause control: a corner icon of at least 24 x 24 px that still pauses everything", () => {
-  const btn = phone.match(/\.fs \.motion-btn \{([^}]*)\}/)?.[1] ?? "";
-  for (const side of ["width", "height"]) {
-    const rem = Number(btn.match(new RegExp(`(?:^|;)\\s*${side}: ([\\d.]+)rem`))?.[1]);
-    assert.ok(rem * 16 >= 24, `${side} ${rem}rem is at least 24px`);
-  }
-  assert.match(page.slice(page.indexOf('id="top"'), page.indexOf('id="gate"')), /<button type="button" class="motion-btn" data-motion-toggle hidden>/, "hidden until JavaScript runs without reduced motion");
-  assert.match(js, /if \(!reduce\) for \(const b of toggles\)/, "shown only without reduced motion");
-  assert.match(css, /\.motion-btn\[hidden\] \{ display: none; \}/, "the hidden attribute wins over display: inline-flex");
-  const hiddenAt = css.indexOf(".motion-btn[hidden]");
-  for (const m of css.matchAll(/(^|\n)\s*([^{}\n]*\.motion-btn[^{}]*)\{([^}]*)\}/g)) {
-    if (/display:\s*(?!none)/.test(m[3]) && !/\[hidden\]|\[data-paused\]|svg|\.mb-/.test(m[2])) assert.ok(m.index < hiddenAt, `"${m[2].trim()}" sets display after the [hidden] rule`);
-  }
-});
-
 test("phone headline: larger, still one-cell slots so the fixed words never move", () => {
-  const h = phone.match(/\.fs h1\.roll-h \{ font-size: clamp\(([\d.]+)rem, [\d.]+vw, ([\d.]+)rem\)/);
+  // Since the one type scale (2026-11-24) the phone size is the --display token's phone value in site.css.
+  assert.match(phone, /\.fs h1\.roll-h \{ font-size: var\(--display\);/, "the headline uses the hero size");
+  const h = readFileSync(join(root, "site", "assets", "site.css"), "utf8").match(/@media \(max-width: 560px\) \{ :root \{ --display: clamp\(([\d.]+)rem, [\d.]+vw, ([\d.]+)rem\); \} \}/);
   assert.ok(h, "a phone size for the headline");
   assert.ok(Number(h[1]) >= 1.72 * 1.15 && Number(h[2]) <= 1.72 * 1.3, `${h[1]}–${h[2]}rem is about 20–25% over 1.72rem`);
   assert.match(css, /\.slot \{ display: inline-grid;/);

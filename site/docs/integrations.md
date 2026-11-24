@@ -4,7 +4,7 @@ nav: Integrations
 group: Integrate
 order: 9
 description: How BotRampart fits with your stack: backend SDKs for six languages, edge adapters for nginx, Cloudflare and CloudFront, mobile apps, the SDK routes; Core on Cloudflare Workers, a container, Kubernetes or OpenOrange; R2, S3, MinIO, GCS and Azure Blob; Redis and Valkey; decision-model providers; the Vector log pack; Slack, email and the console.
-lede: BotRampart sits inside your app and next to the infrastructure you already run. This page lists every system it connects to and how.
+lede: Connect BotRampart to what you already run, and to nothing you did not choose: your app, your edge, your bucket and your model provider.
 ---
 
 BotRampart connects to your app, your edge, your bucket and your model provider, and to nothing you do not choose. Each section names one system and how BotRampart talks to it.
@@ -16,7 +16,7 @@ BotRampart connects to your app, your edge, your bucket and your model provider,
 - You run several app instances and want budgets exact across them.
 - You handle traffic that carries no cookie: mobile apps, partner APIs, webhooks, crawlers.
 
-## Quickstart {#quickstart}
+## Get started {#quickstart}
 
 1. Find your stack in [Integration points](#integration-points).
 2. Pick a [Core target](#hosting) and an [object store](#storage).

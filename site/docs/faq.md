@@ -4,7 +4,7 @@ nav: FAQ
 group: More
 order: 16
 description: Short answers to the questions engineers ask first about BotRampart: CAPTCHAs, fingerprinting, latency, Core outages, DDoS, search engines, consent, licences, pricing and how to verify the numbers.
-lede: Short answers, each linked to the page that explains it in full.
+lede: Get the short answer first, with a link to the page that explains it in full.
 ---
 
 These are the questions engineers ask first about BotRampart. Each answer is short and links to the page that explains it in full.
@@ -14,7 +14,7 @@ These are the questions engineers ask first about BotRampart. Each answer is sho
 - You are evaluating BotRampart and want quick answers before reading the concepts pages.
 - You are answering a teammate's question and need the page to send them.
 
-## Quickstart {#quickstart}
+## Get started {#quickstart}
 
 1. Find the question below.
 2. Follow its link to the full explanation.

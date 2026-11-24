@@ -16,7 +16,7 @@ Express is the fastest way to install BotRampart: you pick your stack, copy one 
 - You run a CDN or edge in front of your app and want its adapter wired on the same site keys.
 - You want to know what the agent changes before you approve its plan.
 
-## Quickstart {#quickstart}
+## Get started {#quickstart}
 
 1. Open [Express](/express/) and pick your framework, where your app runs, your CDN or edge and your cloud.
 2. Copy the prompt and paste it into your coding agent at the root of your app's repository.
@@ -63,7 +63,7 @@ Serverless runtimes (Vercel, AWS Lambda, Cloud Run) get a shared Redis or Valkey
 
 ## Safety rails in every prompt {#rails}
 
-- Packages are installed only by the names and versions the [quickstart](/docs/getting-started/) gives, pinned.
+- Packages are installed only by the names and versions the [install and quickstart guide](/docs/getting-started/) gives, pinned.
 - Secrets are named, never printed, committed or pasted into the chat.
 - Nothing is created in a cloud account before you approve the plan.
 - The prompt never switches to enforce mode and never publishes a policy.

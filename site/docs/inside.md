@@ -4,7 +4,7 @@ nav: Inside BotRampart
 group: Concepts
 order: 5
 description: Inside BotRampart: each component and where it runs, the request path and session token, sync with Core, hosting and ports, the data layout in your bucket, the decision-model contract, the agent, threats and what remains, and the measured hot path.
-lede: For the people who build and run it: each component, where it runs, what crosses each boundary, how the data is laid out, which threats remain, and what we measured.
+lede: Know exactly what runs where and what stays in your bucket: one request and one sync followed through every component, the data layout, the threats that remain and what we measured.
 ---
 
 This page follows one request and one sync through every component, then describes the data each one leaves in your bucket. The wire contract is the [OpenAPI spec](/spec/openapi.yaml); where this page and the spec differ, the spec wins.
@@ -17,7 +17,7 @@ This page follows one request and one sync through every component, then describ
 - You query the lake directly, or audit the decision model and the agent.
 - You are assessing which threats BotRampart controls and what remains.
 
-## Quickstart {#quickstart}
+## Get started {#quickstart}
 
 Trace one decision through the system:
 

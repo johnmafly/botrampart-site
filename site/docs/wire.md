@@ -4,7 +4,7 @@ nav: Wire it in
 group: Integrate
 order: 8
 description: Wire the backend SDK into your app by its HTTP contract: settings, the /_br routes on your origin, sync with Core, challenges, response headers, sign-in, signals, the policy file, logs, edge cases and testing.
-lede: The backend SDK runs in front of your handlers in Express, Fastify, Next.js, Django, Rails, Laravel, Spring or Go. What it does is the same in every one, and all of it is HTTP: the routes it serves, the headers it sets, the challenges it answers with.
+lede: Put bot defense in front of your handlers in Express, Fastify, Next.js, Django, Rails, Laravel, Spring or Go. Every one speaks the same HTTP contract: the routes it serves, the headers it sets and the challenges it answers with.
 ---
 
 This guide shows the contract every SDK and edge adapter implements, which is also what you test against. Every exchange is in the [OpenAPI spec](/spec/openapi.yaml), and each sample names its operation.
@@ -17,7 +17,7 @@ This guide shows the contract every SDK and edge adapter implements, which is al
 - You are writing or publishing the policy file, or setting up logging at your edge.
 - You are testing an integration in CI or staging before you enforce.
 
-## Quickstart {#quickstart}
+## Get started {#quickstart}
 
 1. Mount the backend SDK at the root of your app, ahead of your routes, with `site`, `secretsFile`, `core` and `mode: "observe"` ([Settings](#settings)).
 2. Add the browser script tag to your page template (below).
