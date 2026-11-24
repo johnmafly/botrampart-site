@@ -140,6 +140,21 @@ test("phones (390 and 360): footer bar links are 44px tall and do not touch", { 
   }
 });
 
+// Docs pages hide the logo's wordmark on phones (docs.css), so the footer logo there is the 30px
+// mark alone: its link still has to be a 44x44 target.
+test("phones (390 and 360): every footer link is at least 44x44, on marketing and docs pages", { skip }, async () => {
+  for (const [width, height] of [[390, 844], [360, 800]]) {
+    const page = await browser.newPage({ viewport: { width, height }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
+    for (const path of [...EVERY, "/docs/api/", "/docs/agents/"]) {
+      await page.goto(base + path);
+      const links = await page.evaluate(() => [...document.querySelectorAll("footer a")].filter((a) => a.getClientRects().length).map((a) => { const r = a.getBoundingClientRect(); return { label: (a.textContent.trim() || a.getAttribute("aria-label") || "").slice(0, 30), width: r.width, height: r.height }; }));
+      assert.ok(links.length >= 10, `${width}px ${path}: ${links.length} footer links`);
+      for (const l of links) assert.ok(l.width >= 44 && l.height >= 44, `${width}px ${path}: footer "${l.label}" is ${Math.round(l.width)}x${Math.round(l.height)}px`);
+    }
+    await page.close();
+  }
+});
+
 test("/access/: the first action is visible without scrolling at 1440 and on phones", { skip }, async () => {
   for (const [width, height] of [[1440, 900], [390, 844], [360, 800]]) {
     const page = await browser.newPage({ viewport: { width, height } });

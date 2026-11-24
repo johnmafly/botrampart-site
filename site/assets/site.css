@@ -1030,7 +1030,7 @@ sup.ref a::after { content: ""; position: absolute; left: 50%; top: 50%; width: 
    inside running text keep the line's height; footnote numbers get the larger area above. Vertical
    padding on an inline link widens its tap area without moving the line. */
 @media (max-width: 760px) {
-  .foot .brand { min-height: 2.75rem; }
+  .foot .brand { min-height: 2.75rem; min-width: 2.75rem; } /* docs pages show the 30px mark alone */
   .foot ul a, .foot-bar a { min-width: 2.75rem; }
   .int-links a, a.more, .auth-alt a { padding-block: .8rem; }
   .ai-jump a, .docnav-spec a { display: inline-flex; align-items: center; min-height: 2.75rem; }
