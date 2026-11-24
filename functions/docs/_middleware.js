@@ -4,7 +4,9 @@
 // answers with /docs/getting-started.md, as text/markdown, and names it in Content-Location.
 // Every other request passes straight through to the static file, so a browser sees no change;
 // HTML answers gain "Vary: Accept" so a cache never serves one form for the other. If anything
-// here throws, Pages serves the static file as if this function were not there.
+// here throws, Pages serves the static file as if this function were not there. An address that
+// moved (/docs/express/) keeps its 301 for every client: the function never follows a redirect
+// itself, so the answer always comes from the address the client asked for.
 const PAGE = /^\/docs\/(?:([a-z0-9-]+)\/?)?$/;
 
 // q-value a client gives a media type in its Accept header; 0 when it does not list it.
@@ -38,8 +40,8 @@ export async function onRequest(context) {
   const md = request.method === "GET" || request.method === "HEAD" ? markdownPath(url.pathname) : null;
   if (!md) return next();
   if (wantsMarkdown(request.headers.get("Accept"))) {
-    const res = await env.ASSETS.fetch(new Request(new URL(md, url), { method: request.method }));
-    if (res.ok) {
+    const res = await env.ASSETS.fetch(new Request(new URL(md, url), { method: request.method, redirect: "manual" }));
+    if (res.status === 200 && !res.redirected) {
       const headers = new Headers(res.headers);
       headers.set("Content-Type", "text/markdown; charset=utf-8");
       headers.set("Content-Location", md);
