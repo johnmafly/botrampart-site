@@ -1,5 +1,5 @@
-// Inner pages open with a compact header, the home page's "Copy agent prompt" only jumps to
-// Express, and the benchmark's BotRampart row stands apart without relying on colour.
+// Inner pages open with a compact header, "Copy agent prompt" copies the prompt and says so (audit
+// #12), and the benchmark's BotRampart row stands apart without relying on colour.
 // The above-the-fold measurement itself needs a browser: it is in the PR body, from Playwright.
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -17,7 +17,7 @@ const css = (name) => readFileSync(join(root, "site", "assets", name), "utf8");
 
 // Marketing inner pages: everything that is not the home page, the docs or an app screen
 // (console, sign-in, sign-up, the /try/ session).
-const INNER = ["own", "solutions", "meter", "field", "express", "solutions/commerce", "solutions/saas", "solutions/publishers", "solutions/accounts"];
+const INNER = ["own", "solutions", "meter", "field", "autoinstall", "access", "solutions/commerce", "solutions/saas", "solutions/publishers", "solutions/accounts"];
 
 for (const route of INNER) {
   test(`/${route}/: a compact header with title, one sub-line and a main button`, () => {
@@ -43,20 +43,23 @@ test("site.css: the inner-page title is docs-sized, not a marketing hero", () =>
   assert.ok(max > 0 && max <= 2.6, `title tops out at ${max}rem`);
 });
 
-test("home: Copy agent prompt is a plain link to /#express that copies nothing and says nothing", () => {
+test("Copy agent prompt copies the prompt with a visible confirmation, and is a link to it without JavaScript", () => {
   const page = html("");
-  const link = page.match(/<a [^>]*data-copy-agent-prompt[^>]*>([\s\S]*?)<\/a>/);
-  assert.ok(link, "the link is there");
-  assert.match(link[0], /href="\/#express"/);
-  assert.match(link[1].replace(/<[^>]+>/g, "").trim(), /^Copy agent prompt\s*↓$/, "label kept word for word, with a jump cue");
-  assert.doesNotMatch(page, /data-copy-agent-status/, "no status line for a copy that never happens");
-  const js = readFileSync(join(root, "site", "assets", "home.js"), "utf8");
-  const block = js.slice(js.indexOf('"Copy agent prompt"'));
-  assert.ok(block.length > 0);
-  assert.doesNotMatch(block, /clipboard|Copied the install prompt|blocked copying/, "no clipboard write or toast");
-  assert.match(block, /\[data-ai-copy\]/, "lands on the Express section's own Copy prompt button");
-  assert.match(block, /\.focus\(/, "and focuses it");
-  assert.match(page, /id="express"/);
+  for (const [where, region] of [["hero", page.match(/<div class="fs-acts" data-copy-wrap>[\s\S]*?<\/p>\s*<\/div>/)?.[0]], ["closing band", page.match(/<div class="cta-acts" data-copy-wrap>[\s\S]*?<\/p>\s*<\/div>/)?.[0]]]) {
+    assert.ok(region, `${where}: the button and its status line`);
+    const link = region.match(/<a [^>]*data-copy-agent-prompt[^>]*>([\s\S]*?)<\/a>/);
+    assert.ok(link, `${where}: the link`);
+    assert.match(link[0], /href="\/#autoinstall"/, `${where}: without JavaScript it goes to the prompt`);
+    assert.equal(link[1].replace(/<[^>]+>/g, "").trim(), "Copy agent prompt", `${where}: the label says what it does, with no jump arrow`);
+    assert.match(region, /<p class="copy-status" data-copy-status role="status" aria-live="polite"><\/p>/, `${where}: a status line`);
+  }
+  const js = readFileSync(join(root, "site", "assets", "site.js"), "utf8");
+  const block = js.slice(js.indexOf("[data-copy-agent-prompt]"));
+  assert.match(block, /navigator\.clipboard\.writeText\(text\)/, "it writes to the clipboard");
+  assert.match(block, /Prompt copied\. Paste it into your coding agent\./, "and confirms it beside the button");
+  assert.match(block, /import\("\/assets\/ai-install\.js"\)\)\.buildPrompt\(\)/, "on pages without a picker it copies the default prompt");
+  assert.match(block, /location\.href = link\.href/, "when copying fails, the link goes to the prompt");
+  assert.match(page, /<section class="sec" id="autoinstall"/);
   assert.match(page, /data-ai-copy/);
 });
 

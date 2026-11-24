@@ -9,9 +9,13 @@
 /docs/integration/          /docs/integrations/  301
 /pricing                    /own/           301
 /pricing/                   /own/           301
-# Express got its own product page (2026-11-19); the old picker URL keeps working.
-/build/ai                   /express/       301
-/build/ai/                  /express/       301
+# Express got its own product page (2026-11-19) and was renamed Autoinstall (2026-11-24, audit #8:
+# "Express" collided with Express.js); the old addresses keep working.
+/build/ai                   /autoinstall/   301
+/build/ai/                  /autoinstall/   301
+/express                    /autoinstall/   301
+/express/                   /autoinstall/   301
+/express/index.html         /autoinstall/   301
 # The Build chapters moved into the docs (2026-11-19). Anchors are unchanged, and a browser keeps
 # the #fragment across a redirect. test/redirects.test.mjs checks every old address.
 /build                      /docs/choose/   301
@@ -23,4 +27,4 @@
 /build/inside               /docs/inside/   301
 /build/inside/              /docs/inside/   301
 /build/inside/index.html    /docs/inside/   301
-/build/ai/index.html        /express/       301
+/build/ai/index.html        /autoinstall/   301

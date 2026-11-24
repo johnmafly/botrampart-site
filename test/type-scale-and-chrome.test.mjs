@@ -52,7 +52,7 @@ test("type scale: no marketing h1 or h2 sets its own size; each uses the scale",
       if (size) assert.match(size, /^var\(--(display|h1|h2|h3)\)$/, `${file}: "${sel}" sets font-size ${size}`);
     }
   }
-  assert.match(src("site/assets/build.css"), /\.ai-h \{ font-size: var\(--h2\);/, "the Express picker's h2s use the section size");
+  assert.match(src("site/assets/picker.css"), /\.ai-h \{ font-size: var\(--h2\);/, "the Autoinstall picker's h2s use the section size");
   assert.match(src("site/index.html"), /<h2 id="threat-h">The bots have browsers now\./, "the heading the owner flagged is still an h2");
   assert.match(src("site/assets/home.css"), /\.h3ro h2 \{ font-size: var\(--h2\);/, "and it uses the one section size");
 });
@@ -75,21 +75,30 @@ test("no Quickstart button or menu item on any page; Quickstart stays one click 
     assert.doesNotMatch(chrome, /<a [^>]*href="\/docs\/getting-started\/"[^>]*>\s*Quickstart/, `${file}: Quickstart in the header, menus or closing band`);
     assert.doesNotMatch(page, /<a class="(?:btn|signin|cta)[^"]*" href="[^"]*"[^>]*>\s*Quickstart\b/, `${file}: a Quickstart button`);
   }
-  // The playbook's same-ctas gate: every page keeps one second call to action with one target. With
-  // Quickstart gone it is "Copy agent prompt", to the Express prompt on the home page.
+  // The playbook's same-ctas gate: every page keeps "Get a demo" and one second call to action, each
+  // with one target. Since 2026-11-24 (audit #1) "Get a demo" goes to the honest /access/ page, the
+  // closing band's main button is "Open the console", and "Copy agent prompt" copies the prompt.
   for (const file of pages()) {
-    const band = readFileSync(file, "utf8").match(/<section class="cta-band"[\s\S]*?<\/section>/)?.[0];
+    const page = readFileSync(file, "utf8");
+    const band = page.match(/<section class="cta-band"[\s\S]*?<\/section>/)?.[0];
     assert.ok(band, `${file}: the closing band`);
-    assert.match(band, /<a class="btn btn-primary" href="\/dashboard\/">Get a demo/);
-    assert.match(band, /<a class="btn btn-ghost" href="\/#express">Copy agent prompt/);
+    assert.match(band, /<a class="btn btn-primary" href="\/dashboard\/">Open the console/);
+    assert.match(band, /<a class="btn btn-ghost" href="\/#autoinstall" data-copy-agent-prompt>Copy agent prompt<\/a>/);
+    const header = page.slice(0, page.indexOf("</header>"));
+    assert.match(header, /<a class="cta-pill" href="\/access\/"><span>Get a demo<\/span>/, `${file}: Get a demo in the header`);
   }
-  // As the gate reads it: the first link or button labelled exactly "Quickstart" or "Copy agent prompt".
+  // As the gate reads it: the first link or button labelled exactly "Get a demo", and the first
+  // labelled exactly "Quickstart" or "Copy agent prompt".
   const label = (h) => h.replace(/<svg[\s\S]*?<\/svg>/g, "").replace(/<[^>]+>/g, " ").toLowerCase().replace(/\s+/g, " ").replace(/^[^a-z0-9]+|[^a-z0-9]+$/g, "");
   for (const file of pages()) {
-    const first = [...readFileSync(file, "utf8").matchAll(/<(a|button)\b([^>]*)>([\s\S]*?)<\/\1>/g)].find((m) => ["quickstart", "copy agent prompt"].includes(label(m[3])));
+    const controls = [...readFileSync(file, "utf8").matchAll(/<(a|button)\b([^>]*)>([\s\S]*?)<\/\1>/g)];
+    const demo = controls.filter((m) => label(m[3]) === "get a demo");
+    assert.ok(demo.length, `${file}: a Get a demo link`);
+    for (const m of demo) assert.match(m[2], /href="\/access\/"/, `${file}: every Get a demo goes to /access/`);
+    const first = controls.find((m) => ["quickstart", "copy agent prompt"].includes(label(m[3])));
     assert.ok(first, `${file}: a second call to action`);
     assert.equal(label(first[3]), "copy agent prompt", `${file}: the second call to action`);
-    assert.match(first[2], /href="\/#express"/, `${file}: it goes to the Express prompt`);
+    assert.match(first[2], /href="\/#autoinstall"/, `${file}: it goes to the Autoinstall prompt`);
   }
   const docs = html("docs");
   assert.match(docs, /<a [^>]*href="\/docs\/getting-started\/"[^>]*>Install and quickstart</, "the docs sidebar links to the quickstart");

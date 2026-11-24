@@ -55,7 +55,7 @@ test("code samples that call the product carry data-op", () => {
 test("the integration chapters (formerly /build/) sit together in the docs sidebar, and the header reaches every content page", () => {
   const start = pages.find((p) => p.name === "docs/choose/index.html").html;
   for (const href of ["/docs/choose/", "/docs/wire/", "/docs/inside/", "/spec/openapi.yaml", "/meter/"]) {
-    assert.ok(start.includes(`href="${href}"`), `the choose page links ${href}`);
+    assert.ok(start.includes(`href="${href}"`) || start.includes(`href="${href}#`), `the choose page links ${href}`);
   }
   const home = pages.find((p) => p.name === "index.html").html;
   for (const href of ["/meter/", "/field/", "/own/", "/docs/choose/", "/try/"]) assert.ok(home.includes(`href="${href}"`), `home links ${href}`);
@@ -101,7 +101,7 @@ test("the comparison names at least three vendors, is dated and says where they 
 
 test("home page leads with the threat and keeps every section, its static log and its honest labels", () => {
   const home = pages.find((p) => p.name === "index.html").html;
-  const ids = ["threat", "products", "detect", "autopilot", "agent", "console", "express", "integrations", "benchmark", "solutions", "economics", "pricing", "source"];
+  const ids = ["threat", "products", "detect", "autopilot", "agent", "console", "autoinstall", "integrations", "benchmark", "solutions", "economics", "pricing", "source"];
   let at = -1;
   for (const id of ids) {
     const i = home.indexOf(`id="${id}"`);
@@ -113,11 +113,13 @@ test("home page leads with the threat and keeps every section, its static log an
   const bench = home.split('id="benchmark"')[1].split("<section")[0];
   assert.doesNotMatch(bench, /not measured|to be measured|pending|no results/i, "the benchmark reads finished");
   assert.match(bench, /Sample figures for the private preview/, "the sample-figures note sits in the benchmark section");
-  // Open source is shown by its licences; the source section invents no repository URL or star count
-  // (the owner-approved sample star count sits in the top bar, marked data-mock: MOCK_FIGURES.md).
+  // Open source is shown by its licences and a link to the repository that exists (audit #11); the
+  // section invents no repository URL or star count, and no sample star count is left anywhere.
   const source = home.split('id="source"')[1].split("<section")[0];
   assert.match(source, /Apache-2\.0/);
+  assert.match(source, /<a class="btn btn-ghost" href="https:\/\/github\.com\/johnmafly\/botrampart-site">Read the code on GitHub/);
   assert.doesNotMatch(source, /github\.com\/botrampart|★|\bstars?\b/i);
+  for (const { name, html } of pages) assert.doesNotMatch(html, /class="stars"|GitHub stars/, `${name}: a star count`);
   for (const href of ["/meter/", "/field/", "/own/", "/docs/choose/", "/try/"]) assert.ok(home.includes(`href="${href}`), href);
 });
 
@@ -307,7 +309,7 @@ test("CSP-safe markup: no inline scripts, no style attributes or blocks, a CSP m
 
 test("fonts are self-hosted, subset woff2 with font-display swap and their licences", () => {
   const css = siteCss();
-  const faces = [...css.matchAll(/@font-face \{([^}]*)\}/g)].map((m) => m[1]).filter((f) => /url\(/.test(f));
+  const faces = [...css.matchAll(/@font-face ?\{([^}]*)\}/g)].map((m) => m[1]).filter((f) => /url\(/.test(f));
   assert.equal(faces.length, 3);
   for (const f of faces) {
     assert.match(f, /font-display: swap/);
@@ -322,11 +324,12 @@ test("fonts are self-hosted, subset woff2 with font-display swap and their licen
 test("motion is opt-in: outside prefers-reduced-motion: no-preference, nothing animates transform or opacity", () => {
   const css = siteCss();
   // Remove the no-preference block (balanced braces), then check what remains.
-  const start = css.indexOf("@media (prefers-reduced-motion: no-preference) {");
+  // The published CSS is minified (audit #20): "@media (...){" without the space.
+  const start = css.search(/@media \(prefers-reduced-motion: no-preference\) ?\{/);
   assert.ok(start > 0, "has a motion block");
   let i = css.indexOf("{", start) + 1;
   for (let depth = 1; depth; i++) depth += css[i] === "{" ? 1 : css[i] === "}" ? -1 : 0;
-  const still = css.slice(0, start) + css.slice(i).replace(/@keyframes [a-z-]+ \{([^{}]*\{[^{}]*\})*[^{}]*\}/g, "");
+  const still = css.slice(0, start) + css.slice(i).replace(/@keyframes [a-z-]+ ?\{([^{}]*\{[^{}]*\})*[^{}]*\}/g, "");
   for (const [decl] of still.matchAll(/(?:^|[;{\s])animation(?:-name)?:\s*[^;}]+/g)) assert.match(decl, /:\s*none/, `animation outside the motion block: ${decl.trim()}`);
   for (const [decl] of still.matchAll(/transition:\s*[^;}]+/g)) assert.doesNotMatch(decl, /\b(transform|opacity|all)\b/, `transform/opacity transition outside the motion block: ${decl}`);
   assert.doesNotMatch(still, /animation-timeline/, "scroll-linked animation outside the motion block");
@@ -336,10 +339,12 @@ test("motion is opt-in: outside prefers-reduced-motion: no-preference, nothing a
 
 test("assets are fingerprinted: no page, stylesheet or module loads an unversioned /assets/ URL", async () => {
   const { createHash } = await import("node:crypto");
-  const REF = /\/assets\/[\w/.-]+?\.(?:css|js|mjs|woff2|svg)\b/g;
-  const HASHED = /^\/assets\/(?:[\w-]+\/)*[\w-]+\.([0-9a-f]{10})\.(?:css|js|mjs|woff2|svg)$/;
+  // Root-relative asset URLs only: a repository path such as ./site/assets/economics.mjs in a code
+  // sample, or a GitHub link to it, names the source file and keeps its name (try-budget.test.mjs).
+  const REF = /(?<![\w.\/-])\/assets\/[\w/.-]+?\.(?:css|js|mjs|woff2|svg|webp)\b/g;
+  const HASHED = /^\/assets\/(?:[\w-]+\/)*[\w-]+\.([0-9a-f]{10})\.(?:css|js|mjs|woff2|svg|webp)$/;
   const headers = readFileSync(join(dist, "_headers"), "utf8");
-  const sources = pages.map(({ name, html }) => [name, html]).concat(
+  const sources = pages.map(({ name, html }) => [name, html.replace(/<pre\b[\s\S]*?<\/pre>/g, "")]).concat(
     ["css", "js", "mjs", "svg"].flatMap((ext) => walk(join(dist, "assets"), `.${ext}`)).map((f) => [relative(dist, f), readFileSync(f, "utf8")]));
   let refs = 0;
   for (const [name, text] of sources) {
@@ -349,12 +354,13 @@ test("assets are fingerprinted: no page, stylesheet or module loads an unversion
       assert.ok(existsSync(join(dist, url)), `${name}: ${url} does not exist`);
     }
     // Relative imports would dodge the rewrite; modules import by absolute /assets/ path only.
-    assert.doesNotMatch(text, /\bfrom\s+["']\.{1,2}\//, `${name}: relative module import`);
+    // (Template literals are text, not imports: ai-install.js carries the quickstart's snippet.)
+    assert.doesNotMatch(text.replace(/`[^`]*`/g, "``"), /\bfrom\s+["']\.{1,2}\//, `${name}: relative module import`);
   }
   assert.ok(refs >= 10, `pages and assets reference fingerprinted files (found ${refs})`);
   // Every published CSS/JS/module/font/SVG carries the hash of its own bytes, so the name changes
   // whenever the content does, and gets a year-long immutable cache rule.
-  for (const f of ["css", "js", "mjs", "woff2", "svg"].flatMap((ext) => walk(join(dist, "assets"), `.${ext}`))) {
+  for (const f of ["css", "js", "mjs", "woff2", "svg", "webp"].flatMap((ext) => walk(join(dist, "assets"), `.${ext}`))) {
     const url = "/" + relative(dist, f).split(sep).join("/");
     const m = url.match(HASHED);
     assert.ok(m, `${url} is published under an unversioned name`);

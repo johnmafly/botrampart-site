@@ -127,7 +127,7 @@ function codeBlock(lang, attrs, body, ops, fail) {
 export function expressCard() {
   return `<aside class="xcard" aria-labelledby="xcard-t"><div class="xcard-text"><p class="xcard-k">Quickstart for agents</p>` +
     `<p class="xcard-t" id="xcard-t">Install BotRampart with one prompt</p>` +
-    `<p>Paste this into Claude Code, Cursor, Codex or any coding agent. It installs the SDK, provisions Core and the decision log, wires your edge and verifies the install, in observe mode. <a href="/docs/express/">Pick your exact stack in Express</a>.</p></div>` +
+    `<p>Paste this into Claude Code, Cursor, Codex or any coding agent. It runs BotRampart's reference code, prices your routes and writes the install plan for your stack, and changes nothing else. <a href="/docs/express/">Pick your exact stack in Express</a>.</p></div>` +
     `<div class="xcard-act"><button type="button" class="btn-copy-prompt" data-copy-template="xcard-prompt">Copy prompt</button></div>` +
     `<template id="xcard-prompt">${esc(buildPrompt())}</template></aside>`;
 }
@@ -666,7 +666,7 @@ export function toMarkdown(md) {
     }).trim();
   });
   md = md.replace(/^<!-- @express-card -->$/m, () =>
-    `**Quickstart for agents.** Paste this prompt into Claude Code, Cursor, Codex or any coding agent. It installs the SDK, provisions Core and the decision log, wires your edge and verifies the install, in observe mode. Pick your exact stack in [Express](/docs/express/).\n\n~~~~text title="Express prompt"\n${buildPrompt()}\n~~~~`);
+    `**Quickstart for agents.** Paste this prompt into Claude Code, Cursor, Codex or any coding agent. It runs BotRampart's reference code, prices your routes and writes the install plan for your stack, and changes nothing else. Pick your exact stack in [Express](/docs/express/).\n\n~~~~text title="Express prompt"\n${buildPrompt()}\n~~~~`);
   return md;
 }
 
@@ -701,7 +701,7 @@ export function searchIndex(pages) {
 // with asset URLs rewritten to their fingerprinted names, and their content-type rules.
 export function buildDocsText({ out, docs, claims, assets, sha }) {
   const { pages, spec } = docs;
-  const fix = (text) => text.replace(/\/assets\/[\w/.-]+?\.(?:css|js|mjs|woff2|svg)\b/g, (r) => {
+  const fix = (text) => text.replace(/(?<![\w.\/-])\/assets\/[\w/.-]+?\.(?:css|js|mjs|woff2|svg|webp)\b/g, (r) => {
     if (!assets.has(r)) throw new Error(`docs Markdown references missing asset ${r}`);
     return assets.get(r);
   });

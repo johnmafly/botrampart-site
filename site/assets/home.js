@@ -58,39 +58,21 @@ if (chat && !reduce && "IntersectionObserver" in window) {
   }
 }
 
-/* ---------- 3. "Copy agent prompt" in the first screen: a jump to Express. ---------- */
-// It is a plain link to /#express and copies nothing. With JavaScript it scrolls there, then puts
-// focus on the Express section's own Copy prompt button (and rings it briefly, scrolling it into
-// view where the picker pushes it down), so copying the prompt for the reader's picks is one click away.
-const express = document.getElementById("express");
+/* ---------- 3. Arriving at the Autoinstall section from a link elsewhere. ---------- */
+// "Copy agent prompt" copies on every page (site.js). Where it cannot, it is a plain link to
+// /#autoinstall: on arrival, focus lands on the section's own Copy prompt button, scrolled into view
+// where the picker pushes it down, so copying is one click away.
+const autoinstall = document.getElementById("autoinstall");
 const cue = () => {
-  const btn = express?.querySelector("[data-ai-copy]:not([hidden])");
+  const btn = autoinstall?.querySelector("[data-ai-copy]:not([hidden])");
   if (!btn) return;
   btn.focus({ preventScroll: true });
-  // On a phone the button sits below the picker: bring it into view so it is one tap away.
   const r = btn.getBoundingClientRect();
   if (r.top < 0 || r.bottom > innerHeight) btn.scrollIntoView({ block: "center", behavior: reduce ? "auto" : "smooth" });
   btn.classList.add("is-cued");
   setTimeout(() => btn.classList.remove("is-cued"), 4000);
 };
-const agentLink = document.querySelector("[data-copy-agent-prompt]");
-if (agentLink && express) {
-  agentLink.addEventListener("click", (e) => {
-    e.preventDefault();
-    history.pushState(null, "", "#express");
-    if (reduce || !("onscrollend" in window)) {
-      express.scrollIntoView({ block: "start" });
-      cue();
-      return;
-    }
-    let done = false;
-    const land = () => { if (done) return; done = true; cue(); };
-    addEventListener("scrollend", land, { once: true });
-    setTimeout(land, 1500);
-    express.scrollIntoView({ behavior: "smooth", block: "start" });
-  });
-}
-if (location.hash === "#express") addEventListener("load", () => setTimeout(cue, 0), { once: true });
+if (location.hash === "#autoinstall") addEventListener("load", () => setTimeout(cue, 0), { once: true });
 
 /* ---------- 4. The headline's keywords roll; "Stop" and "in your" never move. ---------- */
 // The h1's accessible name is one fixed sentence (a visually hidden span naming all three pairs);
@@ -136,15 +118,4 @@ if (gateEl && !reduce && "IntersectionObserver" in window) {
     if (on) { gateEl.dataset.live = ""; delete gateEl.dataset.off; }
     else if ("live" in gateEl.dataset) gateEl.dataset.off = "";
   }, { threshold: 0.35 }).observe(gateEl.querySelector(".gate-stage"));
-}
-
-/* ---------- 6. The phone menu closes on a link tap or Escape. ---------- */
-// It is a <details>, so it opens and closes without JavaScript; this only tidies up after a same-page
-// link (Benchmark) and lets Escape close it and return focus to the Menu button.
-const phoneMenu = document.querySelector("[data-phone-menu]");
-if (phoneMenu) {
-  phoneMenu.addEventListener("click", (e) => { if (e.target.closest("a")) phoneMenu.open = false; });
-  phoneMenu.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && phoneMenu.open) { phoneMenu.open = false; phoneMenu.querySelector("summary").focus(); }
-  });
 }

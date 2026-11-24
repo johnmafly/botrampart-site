@@ -1,0 +1,70 @@
+/* Autoinstall's stack picker, on /autoinstall/ and in the home page's Autoinstall section.
+   Uses the design tokens from site.css. Motion only inside prefers-reduced-motion: no-preference. */
+.label .crumb { color: inherit; text-decoration: none; border-bottom: 1px solid var(--line-2); }
+.label .crumb:hover { color: var(--bone); border-bottom-color: var(--bone-3); }
+.ai-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(2rem, 1rem + 3vw, 4rem); padding-block: 3rem 6rem; align-items: start; }
+.ai-h { font-size: var(--h2); margin-bottom: 0; }
+.ai-form > .ai-h { display: flex; align-items: center; min-height: 3rem; margin-bottom: .8rem; }
+.ai-form .field { margin-bottom: 2rem; }
+.ai-form legend { display: flex; align-items: center; gap: .6rem; }
+.ai-n { display: inline-grid; place-items: center; width: 1.6rem; height: 1.6rem; border-radius: 6px; background: var(--ink-3); color: var(--bone); font: 700 .78rem/1 var(--f-mono); }
+.ai-form .choices { grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); }
+.ai-form .choice small.ok { color: var(--frost); }
+.ai-form .choice.is-later span { border-style: dashed; color: var(--bone-2); }
+.ai-form .choice.is-later small { color: var(--amber); }
+.ai-form .choice.is-later small.sub { color: var(--bone-3); }
+.ai-jump { display: none; margin: -.4rem 0 1.6rem; font: 500 .8rem/1.4 var(--f-mono); }
+.ai-jump a { color: var(--frost); }
+.ai-form .hint a { color: var(--bone-2); }
+.ai-nojs { margin: 0 0 2rem; }
+
+.ai-out { position: sticky; top: 5.5rem; min-width: 0; }
+.ai-out-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: .8rem; min-height: 3rem; }
+.ai-out-head .ai-h { margin: 0; }
+.ai-copy[hidden] { display: none; }
+.ai-copy.is-done { --bg: var(--allow); --fg: var(--ink-0); }
+.ai-summary { margin: 0 0 .3rem; }
+.ai-status { min-height: 1.4em; margin: 0 0 .6rem; font: 500 .8rem/1.4 var(--f-mono); color: var(--frost); }
+.ai-prompt { max-height: min(62vh, 44rem); overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font-size: .76rem; line-height: 1.6; color: var(--bone-2);
+  border-color: var(--line-2); box-shadow: none; }
+.ai-h3 { font-size: 1.2rem; margin-top: 2rem; }
+.ai-where { list-style: none; padding: 0; margin: 0 0 1.5rem; font-size: .93rem; color: var(--bone-2); }
+.ai-where li { padding: .55rem 0; border-top: 1px dashed var(--line-2); }
+.ai-where b { color: var(--bone); }
+@media (max-width: 960px) {
+  .ai-grid { grid-template-columns: 1fr; }
+  .ai-out { position: static; }
+  .ai-jump { display: block; }
+  .ai-prompt { max-height: 70vh; }
+}
+.ai-form .choice small { color: var(--bone-2); }
+.ai-form .choices { grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); }
+/* Home: the picker as the section's screen */
+.ex-home { border: 1px solid var(--line-2); border-radius: 24px; background: var(--ink-1); overflow: hidden; }
+.ex-home .ex-bar { display: flex; align-items: center; gap: 1rem; padding: .85rem 1.2rem; border-bottom: 1px solid var(--line); font: 400 .78rem/1 var(--f-mono); color: var(--bone-2); }
+.ex-home .ai-grid { padding: 1.5rem; gap: 1.5rem; }
+.ex-home .ai-form .field { margin-bottom: 1.2rem; }
+.ex-home .ai-form legend { font-size: .95rem; }
+.ex-home .ai-form .choices { grid-template-columns: repeat(auto-fill, minmax(8.2rem, 1fr)); gap: .4rem; }
+.ex-home .ai-form .choice span { padding: .6rem .75rem; font-size: .92rem; }
+.ex-home .ai-out { position: static; }
+.ex-home .ai-prompt { max-height: 26rem; }
+.ex-home .ai-h { font-size: 1.15rem; }
+@media (prefers-reduced-motion: no-preference) {
+  .ai-copy.is-done { transition: background-color .2s; }
+}
+/* Home on a phone (audit #12): the prompt and its Copy button come first, so Copy is on the screen
+   the section opens on; each step's choices sit in one row that scrolls sideways, so the four steps
+   take four rows instead of 23 tiles; and the prompt preview is a short, readable box. */
+@media (max-width: 560px) {
+  .ex-home .ai-grid { display: flex; flex-direction: column; padding: 1rem; gap: 1rem; }
+  .ex-home .ai-out { order: -1; }
+  .ex-home .ai-out-head { min-height: 0; margin-bottom: .4rem; }
+  .ex-home .ai-copy { min-height: 2.75rem; }
+  .ex-home .ai-prompt { max-height: 11rem; font-size: .8rem; }
+  .ex-home .ai-form .field { margin-bottom: .9rem; min-width: 0; }
+  .ex-home .ai-form .choices { display: flex; overflow-x: auto; scroll-snap-type: x proximity; padding-bottom: .3rem; margin-inline: -1rem; padding-inline: 1rem; }
+  .ex-home .ai-form .choice { flex: none; scroll-snap-align: start; }
+  .ex-home .ai-form .choice span { min-height: 2.75rem; white-space: nowrap; }
+  .ex-home .ai-form .choice small { display: none; }
+}

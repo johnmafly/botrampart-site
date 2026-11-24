@@ -1,8 +1,51 @@
 # botrampart-site
 
-BotRampart's Greenhouse package: the introduction site, docs, pricing, mock signup and build spec
-for BotRampart, an open-source, self-hosted bot defense. The product is not built yet; this site is
-a preview and is not indexed.
+BotRampart is open-source, self-hosted bot defense: every session holds a budget, every path has a
+price, and a session that runs out meets the next challenge. This repository holds its reference
+budget engine, the verification benchmark, the site, the docs and the build spec.
+
+## What runs today
+
+Node 24 or later, nothing to install:
+
+```bash
+git clone https://github.com/johnmafly/botrampart-site && cd botrampart-site
+npm test        # builds the site and runs every test, including the budget engine's
+npm run bench   # verifies 300,000 signed session cookies across 10,000 sessions and charges each request
+```
+
+Then drive the budget engine yourself: save this as `try-budget.mjs` in the repository root and run
+`node try-budget.mjs`.
+
+```js
+import { newSession, charge, pass, dailyCeiling } from "./site/assets/economics.mjs";
+
+const t = Date.now();
+const session = newSession(t);                 // tier 0, 30 units
+console.log(charge(session, "search", t));     // search needs tier 1
+console.log(pass(session, "pow", t));          // proof-of-work grant
+console.log(charge(session, "search", t));     // now it pays
+console.log(dailyCeiling());                   // most one session spends in a day
+```
+
+```text
+{ action: 'challenge', challenge: 'pow', cost: 5, credits: 30 }
+300
+{ action: 'allow', cost: 5, credits: 325 }
+35363
+```
+
+`test/try-budget.test.mjs` runs this snippet as the quickstart publishes it and checks the output.
+
+## Status
+
+The product is not built yet: the backend and browser SDKs, Core, the edge adapters and the agent
+exist as the docs and `spec/openapi.yaml` describe them, not as code, and no BotRampart package is
+on npm or any other registry. What runs is the reference engine above, the benchmark and this
+site. The site is public, not indexed, and its console runs on sample data.
+
+Owned by the BotRampart Chief. Judged by [Greenhouse](https://github.com/johnmafly/greenhouse)
+against its package contract (`docs/package-contract.md` there).
 
 Owned by the BotRampart Chief. Judged by [Greenhouse](https://github.com/johnmafly/greenhouse)
 against its package contract (`docs/package-contract.md` there).
