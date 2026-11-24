@@ -990,7 +990,8 @@ pre .k { color: var(--challenge); }
 @media (max-width: 560px) {
   /* 44px targets on a phone (audit #17). */
   .foot ul a, .foot-bar a { display: inline-flex; align-items: center; min-height: 2.75rem; }
-  .foot ul { gap: 0; }
+  /* Only the footer columns: the footer bar's links keep their 1.5rem gap. */
+  .foot-grid ul { gap: 0; }
 }
 
 /* ---------- /access/: requests as GitHub issues (audit #1) ---------- */
