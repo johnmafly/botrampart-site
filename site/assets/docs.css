@@ -308,8 +308,29 @@ html.docs { scroll-padding-top: 4.5rem; }
   .docs-tools { gap: .25rem; }
   .search-btn, .theme-btn { width: 2.75rem; height: 2.75rem; min-height: 2.75rem; padding: 0; justify-content: center; }
 }
-/* At 360px the brand, both buttons, the main button and Menu fill the row: the two docs buttons
-   stay 36px there, and are 44px from 381px up. */
+/* At 360px the brand, both buttons, the main button and Menu fill the row, and two 44px boxes do
+   not fit beside them. Each button keeps its 36px box there and is a 44px target around it: the
+   box is drawn 4px inside the button, and the row's spare gaps go to the two targets. */
 @media (max-width: 380px) {
-  .search-btn, .theme-btn { width: 2.25rem; height: 2.25rem; min-height: 2.25rem; }
+  html.docs .top-row { gap: 0; }
+  .docs-tools { gap: 0; margin-right: -.25rem; }
+  .search-btn, .theme-btn { position: relative; isolation: isolate; border-color: transparent; background: none; }
+  .search-btn::before, .theme-btn::before { content: ""; position: absolute; inset: calc(.25rem - 1px); z-index: -1; border: 1px solid var(--line-2); border-radius: 10px; background: var(--ink-1); }
+  .search-btn:hover { border-color: transparent; }
+  .search-btn:hover::before { border-color: var(--bone-3); }
+}
+
+/* ---------- 44px targets on a phone (audit #17, as site.css does for the header and footer) ----------
+   At 560px and under, every docs control outside running text is at least 44px in both
+   directions: the page tools, the docs menu's links, the code blocks' buttons and links, tabs,
+   the page-end links and the search dialog's close button. */
+@media (max-width: 560px) {
+  .md-link, .side-tail a, .docs-shell .doc-meta a { display: inline-flex; align-items: center; min-height: 2.75rem; }
+  .cp-main { min-height: 2.75rem; }
+  .cp-more summary { width: 2.75rem; min-height: 2.75rem; }
+  .docs-side .sg a { min-height: 2.75rem; }
+  .side-tail p:last-child { gap: 0 .75rem; align-items: center; }
+  .code-copy, .tab-list [role="tab"], .sd-close { min-width: 2.75rem; min-height: 2.75rem; justify-content: center; }
+  .code-op { display: inline-block; padding-block: .875rem; }
+  .docs-shell .doc-meta { gap: 0 .6rem; align-items: center; }
 }

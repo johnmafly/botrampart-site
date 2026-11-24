@@ -385,3 +385,9 @@ button.ref[aria-pressed="true"] { color: var(--bone); }
 .auth-shot:hover { border-color: var(--line-2); }
 select:focus-visible, input[type=search]:focus-visible { outline-color: var(--bone); }
 .sample { color: var(--bone-2); border-color: var(--line-2); background: var(--ink-2); }
+
+/* Phones: the console's tabs and site switch are 44px tap targets (audit #17). */
+@media (max-width: 760px) {
+  .side-nav a { min-height: 2.75rem; }
+  .site-switch select { min-height: 2.75rem; }
+}

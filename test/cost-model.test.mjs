@@ -53,7 +53,7 @@ test("the cost model's pricing_page shows every tier's name and price", () => {
 });
 
 test("every edition's name and price matches /own/", () => {
-  const cards = [...own.matchAll(/<div class="ed[^"]*">\s*<span class="kind">([^<]+)<\/span>\s*<h3>([^<]+)<\/h3>\s*<p class="price">([^<]+)<small>/g)]
+  const cards = [...own.matchAll(/<div class="ed[^"]*"[^>]*>\s*<span class="kind">([^<]+)<\/span>\s*<h3>([^<]+)<\/h3>\s*<p class="price">([^<]+)<small>/g)]
     .map(([, kind, name, price]) => ({ kind: kind.trim().toLowerCase(), name: name.trim(), price: price.trim() }));
   assert.equal(cards.length, 4, "four edition cards");
   for (const t of TIERS.filter((t) => t.kind === "self-hosted")) {
