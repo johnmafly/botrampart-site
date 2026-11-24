@@ -347,3 +347,4 @@
 /docs/agents/#next
 /docs/agents/#cta-band-h
 /docs/changelog/#d2026-11-24
+/docs/agents/#negotiation

@@ -30,7 +30,7 @@ npm test
 This builds the site into `dist/` and runs every test, the budget algorithm's included. The summary closes the output:
 
 ```text title="Expected output: the last lines"
-ℹ pass 158
+ℹ pass 163
 ℹ fail 0
 ℹ cancelled 0
 ℹ skipped 0

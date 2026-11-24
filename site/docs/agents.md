@@ -3,7 +3,7 @@ title: Docs for AI agents
 nav: Docs for AI agents
 group: Get started
 order: 2.5
-description: Point a coding agent at BotRampart's docs: llms.txt, the whole guide in one file, Markdown for every page, Link headers and a prompt that runs the quickstart.
+description: Point a coding agent at BotRampart's docs: llms.txt, the whole guide in one file, Markdown for every page by address or Accept header, and a ready prompt.
 lede: Give your coding agent the docs in the form it reads best: one index, one full-text file, Markdown for every page, and a prompt that runs the quickstart to the end.
 ---
 
@@ -41,8 +41,15 @@ curl -sI https://botrampart.agenthatch.ai/docs/getting-started/ | grep -i '^link
 
 The same alternate sits in each page's `<head>` as `<link rel="alternate" type="text/markdown">`.
 
-> [!NOTE]
-> These docs are static files. A request for a page's own address returns HTML whatever its `Accept` header says, so ask for the `.md` address.
+## Ask for Markdown at the page's own address {#negotiation}
+
+A client that prefers Markdown can say so in its `Accept` header and keep the page's own address:
+
+```shell title="Ask for Markdown with an Accept header"
+curl -H "Accept: text/markdown" https://botrampart.agenthatch.ai/docs/getting-started/
+```
+
+The answer is the page's Markdown, sent as `text/markdown`, with `Content-Location: /docs/getting-started.md` naming the file it came from. A browser asks for `text/html` first and gets the page as before.
 
 ## Rules for agents {#rules}
 
