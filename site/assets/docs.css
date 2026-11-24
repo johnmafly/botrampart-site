@@ -204,6 +204,13 @@ html.docs { scroll-padding-top: 4.5rem; }
 .btn-copy-prompt { flex: none; min-height: 2.75rem; padding: 0 1.1rem; border: 0; border-radius: 10px; background: var(--bone); color: var(--ink-0); font: 560 .9rem/1 var(--f-text); cursor: pointer; }
 .btn-copy-prompt:hover { box-shadow: 0 0 0 4px var(--selected); }
 .btn-copy-prompt[data-state="copied"]::after { content: " \2713"; }
+/* Without JavaScript a copy button cannot copy. It goes: each card links its prompt instead, and
+   "View as Markdown" stands beside the Copy page menu, which works without JavaScript. */
+.docs-shell .xcard a.btn-copy-prompt { display: inline-flex; align-items: center; text-decoration: none; color: var(--ink-0); }
+@media (scripting: none) {
+  button.btn-copy-prompt, .cp-main { display: none; }
+  .cp-more summary { border-radius: 10px; }
+}
 @media (max-width: 600px) {
   .xcard { flex-wrap: wrap; gap: .6rem 1rem; padding: .8rem .9rem; }
   .xcard-text { flex: 1 1 12rem; }

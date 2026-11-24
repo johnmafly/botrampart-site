@@ -212,6 +212,29 @@ test("the JavaScript-only header buttons stay hidden without JavaScript", () => 
   for (const [, cls] of page.matchAll(/<[a-z]+[^>]*class="([^"]+)"[^>]*\shidden[\s>]/g)) assert.ok(["search-btn", "theme-btn"].includes(cls), `an element with hidden: ${cls}`);
 });
 
+test("without JavaScript no copy button is left that cannot copy: each prompt card links its prompt", () => {
+  const css = src("site/assets/docs.css");
+  // The buttons need docs.js; (scripting: none) takes them away. "View as Markdown" and the menu stay.
+  assert.match(css, /@media \(scripting: none\) \{\s*button\.btn-copy-prompt, \.cp-main \{ display: none; \}/);
+  const cards = { "acard": ["/docs/agents.md", "Quickstart prompt"], "xcard": ["/docs/autoinstall.md", "Autoinstall prompt"] };
+  let seen = 0;
+  for (const p of pages) {
+    const page = html(p.route);
+    assert.ok(page.includes(`<a class="md-link" href="${p.md}">View as Markdown</a>`), `${p.route}: View as Markdown is a plain link`);
+    for (const [, id] of page.matchAll(/data-copy-template="([a-z]+)-prompt">Copy prompt<\/button>/g)) {
+      const [md, title] = cards[id];
+      assert.ok(page.includes(`data-copy-template="${id}-prompt">Copy prompt</button><noscript><a class="btn-copy-prompt" href="${md}">Read the prompt</a></noscript>`), `${p.route}: the ${id} card's link for readers without JavaScript`);
+      assert.ok(text(md).includes(`~~~~text title="${title}"`), `${md} prints the ${title}`);
+      seen++;
+    }
+  }
+  assert.equal(seen, 5, "three quickstart cards and two Autoinstall cards");
+  // Every other <button> in the docs HTML starts hidden until docs.js makes it work.
+  for (const p of pages) for (const [tag] of html(p.route).matchAll(/<button[^>]*>/g)) {
+    assert.match(tag, /class="(?:cp-main|btn-copy-prompt)"| hidden/, `${p.route}: ${tag}`);
+  }
+});
+
 test("Express is Autoinstall everywhere in the docs, and the old addresses redirect", () => {
   assert.ok(!existsSync(join(root, "site", "docs", "express.md")) && !existsSync(join(dist, "docs", "express")), "/docs/express/ is not built (it would shadow its redirect)");
   const redirects = text("/_redirects");
