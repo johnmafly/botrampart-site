@@ -176,16 +176,19 @@ export function agentPrompt() {
 // "Copy prompt" cards, copied by docs.js. Each prompt sits in a <template>, so it is inert until
 // copied and is not counted as page text. The button is never labelled "Copy agent prompt": that
 // exact label is the site's second call to action and goes to one place on every page.
-const promptCard = (id, kicker, title, text, prompt) =>
+// Without JavaScript the button cannot copy, so docs.css takes it away and the <noscript> link
+// opens the Markdown page that prints the same prompt.
+const promptCard = (id, kicker, title, text, prompt, md) =>
   `<aside class="xcard" aria-labelledby="${id}-t"><div class="xcard-text"><p class="xcard-k">${kicker}</p>` +
   `<p class="xcard-t" id="${id}-t">${title}</p><p>${text}</p></div>` +
-  `<div class="xcard-act"><button type="button" class="btn-copy-prompt" data-copy-template="${id}-prompt">Copy prompt</button></div>` +
+  `<div class="xcard-act"><button type="button" class="btn-copy-prompt" data-copy-template="${id}-prompt">Copy prompt</button>` +
+  `<noscript><a class="btn-copy-prompt" href="${md}">Read the prompt</a></noscript></div>` +
   `<template id="${id}-prompt">${esc(prompt)}</template></aside>`;
 const AGENT_CARD_TEXT = "Paste it into Claude Code, Cursor, Codex or any coding agent with a terminal. It clones the repository, runs the tests, the benchmark and a four-line script, and reports each result. It installs nothing.";
-export const agentCard = () => promptCard("acard", "Quickstart for agents", "Have your coding agent run it", AGENT_CARD_TEXT, agentPrompt());
+export const agentCard = () => promptCard("acard", "Quickstart for agents", "Have your coding agent run it", AGENT_CARD_TEXT, agentPrompt(), "/docs/agents.md");
 const AUTOINSTALL_CARD_TEXT = "Paste it into your coding agent at the root of your app's repository. It runs BotRampart's reference code, prices your routes and writes the install plan for your stack, and changes nothing else. This is the prompt for the default stack.";
 export const autoinstallCard = () => promptCard("xcard", "Autoinstall", "Copy the Autoinstall prompt",
-  `${AUTOINSTALL_CARD_TEXT} <a href="${PICKER}">Pick your own stack in Autoinstall</a>.`, buildPrompt());
+  `${AUTOINSTALL_CARD_TEXT} <a href="${PICKER}">Pick your own stack in Autoinstall</a>.`, buildPrompt(), "/docs/autoinstall.md");
 
 // Parts of the Autoinstall page that are generated from the prompt and its options, so the page
 // cannot describe a prompt the picker no longer writes.

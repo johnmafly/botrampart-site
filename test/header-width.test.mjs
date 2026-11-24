@@ -122,6 +122,24 @@ test("phones (390 and 360): one header row with the Menu button, and 44px header
   }
 });
 
+test("phones (390 and 360): footer bar links are 44px tall and do not touch", { skip }, async () => {
+  for (const [width, height] of [[390, 844], [360, 800]]) {
+    const page = await browser.newPage({ viewport: { width, height }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
+    for (const path of ["/", "/access/", "/docs/"]) {
+      await page.goto(base + path);
+      const links = await page.evaluate(() => [...document.querySelectorAll(".foot-bar a")].map((a) => { const r = a.getBoundingClientRect(); return { label: a.textContent.trim(), left: r.left, right: r.right, top: Math.round(r.top), height: r.height }; }));
+      assert.ok(links.length >= 4, `${width}px ${path}: ${links.length} footer bar links`);
+      for (const l of links) assert.ok(l.height >= 44, `${width}px ${path}: "${l.label}" is ${Math.round(l.height)}px tall`);
+      for (let i = 1; i < links.length; i++) {
+        if (links[i].top !== links[i - 1].top) continue;
+        const space = links[i].left - links[i - 1].right;
+        assert.ok(space >= 16, `${width}px ${path}: "${links[i - 1].label}" and "${links[i].label}" are ${Math.round(space)}px apart`);
+      }
+    }
+    await page.close();
+  }
+});
+
 test("/access/: the first action is visible without scrolling at 1440 and on phones", { skip }, async () => {
   for (const [width, height] of [[1440, 900], [390, 844], [360, 800]]) {
     const page = await browser.newPage({ viewport: { width, height } });
