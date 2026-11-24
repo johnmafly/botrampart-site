@@ -99,17 +99,20 @@ test("the comparison names at least three vendors, is dated and says where they 
   assert.ok((html.match(/is the better choice/g) || []).length >= 4, "says where vendors are the better choice");
 });
 
-test("home page leads with the threat and keeps every section, its static log and its honest labels", () => {
+test("home page leads with the gate and keeps every section and its honest labels", () => {
   const home = pages.find((p) => p.name === "index.html").html;
-  const ids = ["threat", "products", "detect", "autopilot", "agent", "console", "autoinstall", "integrations", "benchmark", "solutions", "economics", "pricing", "source"];
+  const ids = ["gate", "products", "detect", "autopilot", "agent", "console", "autoinstall", "integrations", "benchmark", "solutions", "economics", "pricing", "source"];
   let at = -1;
   for (const id of ids) {
     const i = home.indexOf(`id="${id}"`);
     assert.ok(i > at, `#${id} is present and in order`);
     at = i;
   }
-  const feed = home.match(/<ol[^>]*data-feed[^>]*>[\s\S]*?<\/ol>/)?.[0] || "";
-  assert.ok((feed.match(/<li\b/g) || []).length >= 4, "the decision log is written into the HTML");
+  // One telling of the four visitors after the first screen (audit #9): the gate carries the
+  // threat figures, and no second decision log repeats them.
+  const gate = home.split('id="gate"')[1].split('id="products"')[0];
+  assert.match(gate, /<ul class="odds3"/, "the threat in four numbers sits in the gate section");
+  assert.doesNotMatch(home, /data-feed|id="threat"|class="layer-card"/, "no second decision log on the home page");
   const bench = home.split('id="benchmark"')[1].split("<section")[0];
   assert.doesNotMatch(bench, /not measured|to be measured|pending|no results/i, "the benchmark reads finished");
   assert.match(bench, /Sample figures for the private preview/, "the sample-figures note sits in the benchmark section");

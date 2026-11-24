@@ -16,7 +16,7 @@
               
             </div>
             <h1 id="hero-h" class="roll-h" data-roll><span class="visually-hidden">Stop AI bots, account takeovers and scrapers in your cloud, your application and your CDN.</span><span class="roll-vis" aria-hidden="true"><span class="roll-line">Stop <span class="slot slot-what"><span class="kw is-on">AI bots</span><span class="kw">Account takeovers</span><span class="kw">Scrapers</span></span></span> <span class="roll-line">in your <span class="slot slot-where"><span class="kw is-on"><svg class="kw-i" viewBox="0 0 24 24" focusable="false"><path d="M7 18.5h10.2a4.3 4.3 0 0 0 .6-8.56A6 6 0 0 0 6.3 9.1 4.7 4.7 0 0 0 7 18.5Z"/></svg>Cloud</span><span class="kw"><svg class="kw-i" viewBox="0 0 24 24" focusable="false"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M3.5 9h17M7 6.8h.01M9.5 6.8h.01"/></svg>Application</span><span class="kw"><svg class="kw-i" viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.4 2.3 3.6 5.1 3.6 8.5s-1.2 6.2-3.6 8.5c-2.4-2.3-3.6-5.1-3.6-8.5S9.6 5.8 12 3.5Z"/></svg>CDN</span></span></span></span></h1>
-            <p class="lede fs-sub">Open-source bot defense that spots scrapers, headless browsers and AI agents<span class="fs-sub-more">, then lets you allow, challenge or block each one. A decision model reviews every cohort every five minutes and raises the price when an attack starts</span>.</p>
+            <p class="lede fs-sub">Open-source bot defense that spots scrapers, headless browsers and AI agents<span class="fs-sub-more">, then decides on your own server whether to allow, challenge, throttle or block each one. Every five minutes a decision model reviews each group of sessions and tightens their budgets when an attack starts</span>.</p>
             <div class="fs-acts" data-copy-wrap>
               <div class="btn-row fs-actions">
                 <a class="btn btn-primary" href="/dashboard/">Open the console <span class="arrow" aria-hidden="true">→</span></a>
@@ -35,21 +35,21 @@
           </div>
 
           <figure class="fs-console" data-mock aria-labelledby="fs-cap">
-            <div class="fs-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>console · today · your-site</span><span class="feed-tag">Sample data</span></div>
-            <ul class="fs-sum" aria-label="Today's sessions by verdict">
-              <li><b>52,640</b><span>sessions</span></li>
-              <li class="v-allow"><b>26,105</b><span>human, allowed</span></li>
-              <li class="v-block"><b>12,380</b><span>blocked</span></li>
-              <li class="v-challenge"><b>8,270</b><span>challenged</span></li>
-              <li class="v-rate"><b>5,885</b><span>rate-limited</span></li>
+            <div class="fs-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>console · last 24 h · shop.example.com</span><span class="feed-tag">Sample data</span></div>
+            <ul class="fs-sum" aria-label="Sessions in the last 24 hours by verdict" data-sample-figures>
+              <li><b>55,342</b><span>sessions</span></li>
+              <li class="v-allow"><b>42,143</b><span>allowed</span></li>
+              <li class="v-challenge"><b>11,742</b><span>challenged</span></li>
+              <li class="v-rate"><b>766</b><span>throttled</span></li>
+              <li class="v-block"><b>691</b><span>blocked</span></li>
             </ul>
             <ol class="fs-rows" aria-label="Latest decisions">
               <li><span class="fs-k">Human</span><span class="fs-w">Chrome on macOS · 22 inputs · proof-of-work in 380 ms</span><span class="fs-v v-allow">allow</span></li>
               <li><span class="fs-k">Scraper</span><span class="fs-w">no JavaScript · 40 product pages in a minute</span><span class="fs-v v-block">block</span></li>
               <li><span class="fs-k">Headless browser</span><span class="fs-w">Playwright · automation flag · no input after 30 requests</span><span class="fs-v v-challenge">challenge</span></li>
-              <li><span class="fs-k">AI agent</span><span class="fs-w">signed agent · over its search budget</span><span class="fs-v v-rate">rate-limited 429</span></li>
+              <li><span class="fs-k">AI agent</span><span class="fs-w">signed agent · over its search budget</span><span class="fs-v v-rate">throttle 429</span></li>
             </ol>
-            <figcaption id="fs-cap" class="feed-cap">Each line is one verdict, made inside your app before your handler runs. Sample figures for the private preview. <a href="/dashboard/">Open the console</a>.</figcaption>
+            <figcaption id="fs-cap" class="feed-cap">Each line is one verdict, made inside your app before your handler runs. Sample figures for the private preview, the same as in the console. <a href="/dashboard/">Open the console</a>.</figcaption>
           </figure>
         </div>
       </section>
@@ -59,7 +59,7 @@
           <div class="sec-head">
             <p class="label">The gate</p>
             <h2 id="gate-h">The bots learned to act human. <span class="tt">BotRampart learned to tell.</span></h2>
-            <p>Every request meets the same check on your own server. A person passes without noticing it; automation climbs the challenge ladder until it costs more than it earns.</p>
+            <p>Headless Chrome, Playwright and Puppeteer scripts, AI browser agents, AI crawlers and solver farms all load your pages the way people do. Every request meets the same check on your own server: a person passes without noticing it, and automation climbs the challenge ladder until it costs more than it earns.</p>
           </div>
           <figure class="gate" data-gate data-mock aria-labelledby="gate-cap">
             <div class="gate-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="gate-path">your-site · POST /checkout</span><span class="feed-tag">Sample data</span></div>
@@ -79,45 +79,6 @@
               <li>A signed AI agent over its search budget is throttled with 429 and Retry-After.</li>
             </ol>
             <figcaption id="gate-cap" class="feed-cap">Four visitors reach the same gate: the person passes, Playwright gets a human check, the scraper is blocked and the AI agent waits on a 429. Each verdict is made inside your app before your handler runs. Sample figures for the private preview. <a href="/docs/overview/#session">See the challenge ladder</a>.</figcaption>
-          </figure>
-        </div>
-      </section>
-
-      <section class="h3ro" id="threat" aria-labelledby="threat-h">
-        <div class="wrap">
-          <div class="h3ro-top">
-            <p class="label">Browser automation</p>
-            <h2 id="threat-h">The bots have browsers now. <span class="tt">Catch them on your own server.</span></h2>
-            <div class="h3ro-side">
-              <p class="lede">Headless Chrome, Playwright and Puppeteer scripts, AI browser agents, AI crawlers and solver farms all load your pages the way people do. <b>BotRampart watches how each session behaves, decides on your own server, and makes automation pay before it reaches your data.</b></p>
-            </div>
-          </div>
-
-          <figure class="feed" aria-labelledby="feed-cap">
-            <div class="feed-in">
-              <div class="feed-bar">
-                <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
-                <span>decision log<span class="feed-v"> · policy v12</span></span>
-                <span class="feed-tag">Sample data</span>
-              </div>
-              <div class="feed-head" aria-hidden="true"><span>time</span><span>session</span><span>what the server saw</span><span>risk</span><span>decision</span></div>
-              <ol class="feed-rows" data-feed>
-                <li><span class="t">10:12:08</span><span class="s">BR-6TLW</span><span class="w">verified search engine crawler</span><span class="r">–</span><span class="d ok">allow</span></li>
-                <li><span class="t">10:12:07</span><span class="s">BR-1ZPA</span><span class="w">proof-of-work in 2 ms · third human pass today</span><span class="r">3</span><span class="d slow">throttle 429</span></li>
-                <li><span class="t">10:12:06</span><span class="s">BR-7F3K</span><span class="w">out of budget on search</span><span class="r">2</span><span class="d ask">next tier: human check</span></li>
-                <li><span class="t">10:12:05</span><span class="s">BR-4HJD</span><span class="w">not a browser: no JavaScript, no proof-of-work</span><span class="r">–</span><span class="d no">block</span></li>
-                <li><span class="t">10:12:05</span><span class="s">BR-9Q2X</span><span class="w">automation flag · no input after 30 requests</span><span class="r">6</span><span class="d ask">human check</span></li>
-                <li><span class="t">10:12:04</span><span class="s">BR-2K8M</span><span class="w">22 inputs · proof-of-work in 380 ms</span><span class="r">0</span><span class="d ok">allow</span></li>
-              </ol>
-            </div>
-            <div class="layer-card" aria-hidden="true" data-mock>
-              <p class="lc-k">console · last 24 h</p>
-              <p class="lc-n"><b>41,208</b><span>sessions</span></p>
-              <p class="lc-row"><span class="d-block">3,914 stopped</span><span class="d-challenge">1,206 challenged</span></p>
-              <svg class="lc-spark" viewBox="0 0 160 36" focusable="false"><polyline points="0,30 14,26 28,28 42,18 56,22 70,12 84,16 98,8 112,14 126,10 140,6 160,9"/></svg>
-            </div>
-            <p class="layer-chip" aria-hidden="true"><span class="d-allow">●</span> policy v12 · published</p>
-            <figcaption id="feed-cap" class="feed-cap">Each line is one decision, made inside your app before your handler runs. Sample figures for the private preview.</figcaption>
           </figure>
 
           <ul class="odds3" aria-label="The threat in four numbers">
@@ -200,7 +161,7 @@
           <div class="sec-head rise">
             <p class="label">Autopilot challenges · custom policies</p>
             <h2 id="auto-h">It escalates by itself. <span class="tt">You decide where the line is.</span></h2>
-            <p>You don't pick a challenge per route. When a session looks wrong or overspends, BotRampart asks for the next tier up, and a session that keeps coming back climbs the ladder. One check per session with no limit behind it only adds latency, not limits:{{c:anubis-throughput}} here each repeat costs more.</p>
+            <p>You don't pick a challenge per route. When a session looks wrong or overspends, BotRampart asks for the next tier up, and a session that keeps coming back climbs the ladder. One check per session with no limit behind it adds latency, not limits.{{c:anubis-throughput}} Here each repeat costs more.</p>
           </div>
           <ol class="climb" aria-label="Challenge tiers">
             <li class="tier t0"><span class="tn">Tier 0</span><h3>Provisional</h3><p>First visit. General pages only, on a small allowance.</p></li>
@@ -288,7 +249,7 @@
           <figure class="shot" aria-labelledby="shot-cap">
             <div class="shot-frame">
               <div class="shot-bar" aria-hidden="true"><span class="dots"><i></i><i></i><i></i></span><span class="shot-url">console · your-site</span></div>
-              <a class="shot-link" href="/dashboard/"><img src="/assets/home/dashboard.webp" width="1440" height="833" alt="The BotRampart console overview with sample data: sessions, requests, challenges and throttled or blocked counts for the last 24 hours, spend by path class per hour, and challenges by tier." loading="lazy" decoding="async"></a>
+              <a class="shot-link" href="/dashboard/"><picture><source media="(max-width: 600px)" srcset="/assets/home/dashboard-phone.webp" width="780" height="1120"><img src="/assets/home/dashboard.webp" width="1440" height="833" alt="The BotRampart console overview with sample data: sessions, requests, challenges and throttled or blocked counts for the last 24 hours, spend by path class per hour, and challenges by tier." loading="lazy" decoding="async"></picture></a>
             </div>
             <figcaption id="shot-cap" class="feed-cap">Sample data. <a href="/dashboard/">Open the console</a>.</figcaption>
           </figure>
@@ -332,12 +293,12 @@
             <p>Backend SDKs for Node, Python, Ruby, PHP, Java and Go decide inside your app. Edge adapters decide before traffic reaches your origin. Both share one session budget and one Core.</p>
           </div>
           <ul class="ints">
-            <li class="tile int live"><span class="st-tag">In your app</span><h3>Backend SDKs</h3><p>Express, Fastify, Next.js, Django, FastAPI, Rails, Laravel, Spring Boot and Go. No network call per request.</p></li>
-            <li class="tile int live"><span class="st-tag">In the browser</span><h3>Browser SDK</h3><p>One script tag, served from your own origin at <code>/_br/sdk.js</code>. Runs the proof-of-work and reports signals.</p></li>
-            <li class="tile int live"><span class="st-tag">Your cloud</span><h3>Core</h3><p>Syncs counters and writes the log. Runs on Cloudflare Workers or as one container.</p></li>
-            <li class="tile int live"><span class="st-tag">Edge</span><h3>nginx module</h3><p>Decisions in front of any backend, configured in nginx or ingress-nginx.</p></li>
-            <li class="tile int live"><span class="st-tag">Edge</span><h3>Cloudflare Worker</h3><p>Runs at Cloudflare's edge in your own account, in front of your origin.</p></li>
-            <li class="tile int live"><span class="st-tag">Edge</span><h3>CloudFront Lambda@Edge</h3><p>For sites served through Amazon CloudFront, on viewer request and response.</p></li>
+            <li class="tile int live"><a class="int-link" href="/docs/sdk/#backend"><span class="st-tag">In your app</span><h3>Backend SDKs</h3><p>Express, Fastify, Next.js, Django, FastAPI, Rails, Laravel, Spring Boot and Go. No network call per request.</p></a></li>
+            <li class="tile int live"><a class="int-link" href="/docs/sdk/#browser"><span class="st-tag">In the browser</span><h3>Browser SDK</h3><p>One script tag, served from your own origin at <code>/_br/sdk.js</code>. Runs the proof-of-work and reports signals.</p></a></li>
+            <li class="tile int live"><a class="int-link" href="/docs/inside/#core"><span class="st-tag">Your cloud</span><h3>Core</h3><p>Syncs counters and writes the log. Runs on Cloudflare Workers or as one container.</p></a></li>
+            <li class="tile int live"><a class="int-link" href="/docs/choose/#opt-nginx"><span class="st-tag">Edge</span><h3>nginx module</h3><p>Decisions in front of any backend, configured in nginx or ingress-nginx.</p></a></li>
+            <li class="tile int live"><a class="int-link" href="/docs/choose/#opt-worker"><span class="st-tag">Edge</span><h3>Cloudflare Worker</h3><p>Runs at Cloudflare's edge in your own account, in front of your origin.</p></a></li>
+            <li class="tile int live"><a class="int-link" href="/docs/choose/#opt-cloudfront"><span class="st-tag">Edge</span><h3>CloudFront Lambda@Edge</h3><p>For sites served through Amazon CloudFront, on viewer request and response.</p></a></li>
           </ul>
           <div class="int-cta">
             <p class="int-links"><a href="/docs/choose/">All integration options</a> · <a href="/docs/wire/">Wire it in by hand</a></p>
@@ -404,11 +365,11 @@
       <section class="sec addon" id="economics" aria-labelledby="eco-h">
         <div class="wrap addon-in">
           <div>
-            <p class="label frost">Add-on · request budgets</p>
-            <h2 id="eco-h">Make heavy use cost more.</h2>
+            <p class="label frost">How it enforces · request budgets</p>
+            <h2 id="eco-h">Detection decides. <span class="tt">Budgets make it stick.</span></h2>
           </div>
           <div>
-            <p>Give expensive paths a price, such as a search costing more than a product page. People reading at their own pace never notice. A script hammering search runs out and meets the next challenge tier.</p>
+            <p>Every session gets a budget and every path a price, so a search costs more than a product page. People reading at their own pace never notice. A session that detection marks as automated, or a script hammering search, runs out and meets the next challenge tier.</p>
             <p class="int-links"><a href="/meter/">How budgets work</a> · <a href="/try/">Run a session in your browser</a></p>
           </div>
         </div>
@@ -422,32 +383,32 @@
             <p>Community is every part of BotRampart, self-hosted, free. Paid editions sell convenience around it, never a missing piece. DataDome's entry plan lists at $3,830 a month;{{c:dd-entry-price}} if Cloudflare's free Turnstile already does the job for you, keep it.{{c:cf-turnstile-free}}</p>
           </div>
           <div class="plans">
-            <div class="plan free">
+            <a class="plan free" href="/own/#community">
               <span class="plan-k">Self-hosted</span>
               <h3>Community</h3>
               <p class="plan-p">Free</p>
               <p>SDKs, edge adapters, Core, challenge tiers 0 to 3, policies, the agent and the console.</p>
-            </div>
-            <div class="plan">
+            </a>
+            <a class="plan" href="/own/#white-label">
               <span class="plan-k">Self-hosted</span>
               <h3>White-label</h3>
               <p class="plan-p">$49<small>/mo per organisation</small></p>
               <p>Your brand on challenge pages, with the official signed build.</p>
-            </div>
-            <div class="plan">
+            </a>
+            <a class="plan" href="/own/#enterprise">
               <span class="plan-k">Self-hosted</span>
               <h3>Enterprise</h3>
               <p class="plan-p">$799+<small>/mo</small></p>
               <p>Single sign-on, roles, audit export and a commercial licence.</p>
-            </div>
-            <div class="plan">
+            </a>
+            <a class="plan" href="/own/#cloud">
               <span class="plan-k">Hosted</span>
               <h3>Cloud</h3>
               <p class="plan-p">$0<small>to start</small></p>
               <p class="plan-tiers">Free $0 · Starter $49 · Growth $249 · Scale $999 a month, by protected session.</p>
-            </div>
+            </a>
           </div>
-          <p class="int-links"><a href="/own/">Editions and prices in full</a></p>
+          <p class="int-links"><a href="/own/">Pricing in full</a></p>
         </div>
       </section>
 
@@ -473,11 +434,6 @@
         </div>
       </section>
 
-      <section class="sec sources-sec" id="sources" aria-label="Sources">
-        <div class="wrap">
-          <!-- @sources -->
-        </div>
-      </section>
     </main>
     <!-- @footer -->
     <script type="module" src="/assets/home.js"></script>

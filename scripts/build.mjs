@@ -56,11 +56,19 @@ function cite(html, route) {
       `<p class="fine">Every figure from someone else on this page, with the words it rests on. Checked on the date shown; the full ledger is <a href="https://github.com/johnmafly/botrampart-site/blob/main/claims.yaml">claims.yaml</a>.</p><ol class="sources">` +
       order.map((id, i) => {
         const c = claims.get(id);
-        return `<li id="src-${i + 1}"><a href="${esc(c.source_url)}" rel="noopener">${esc(c.source_title || new URL(c.source_url).hostname)}</a>. <q>${esc(c.quote)}</q> <span class="muted">Checked ${esc(c.checked)}.</span></li>`;
+        // A quote that is code or data (a JSON line from experiments/) is shown as code: wrapped
+        // in <q> it read with doubled quote marks (audit #21).
+        const quote = /^["{[]/.test(c.quote.trim()) ? `<code>${esc(c.quote)}</code>` : `<q>${esc(c.quote)}</q>`;
+        return `<li id="src-${i + 1}"><a href="${esc(c.source_url)}" rel="noopener">${esc(c.source_title || new URL(c.source_url).hostname)}</a>. ${quote} <span class="muted">Checked ${esc(c.checked)}.</span></li>`;
       }).join("") + `</ol></section>`
     : "";
-  if (order.length && !html.includes("<!-- @sources -->")) throw new Error(`${route}: cites claims but has no sources marker`);
-  return html.replace("<!-- @sources -->", list);
+  // Outside the docs the list sits after the closing call to action, in the footer's
+  // <!-- @sources-slot -->, so a reader meets the closing band before two screens of citations
+  // (audit #9). A page that places <!-- @sources --> itself (the docs) keeps it there.
+  const own = html.includes("<!-- @sources -->");
+  if (order.length && !own && !html.includes("<!-- @sources-slot -->")) throw new Error(`${route}: cites claims but has no sources marker`);
+  const slot = list && !own ? `<section class="sources-after" aria-labelledby="sources-h"><div class="wrap">${list.replace(/^<section class="sources-block" aria-labelledby="sources-h">|<\/section>$/g, "")}</div></section>` : "";
+  return html.replace("<!-- @sources -->", list).replace("<!-- @sources-slot -->", slot);
 }
 
 const partial = (name) => readFileSync(join(partials, `${name}.html`), "utf8").trimEnd();
