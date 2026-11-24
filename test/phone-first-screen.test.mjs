@@ -1,4 +1,5 @@
-// The home page's first screen on a phone (#29): one menu button instead of six pills, a one-line
+// The home page's first screen on a phone (#29): one menu button instead of six pills (on every page
+// since audit #5), a one-line
 // pill, a larger headline, a one-sentence sub-line, one main button, no capability links, and the
 // console higher. Every phone rule sits under the 560px breakpoint, so desktop is unchanged.
 // The layout itself (positions at 390 x 844 and 360 x 800, axe with the menu open and closed) is
@@ -25,29 +26,48 @@ assert.ok(head > 0, "the #29 phone block");
 const block = css.slice(css.indexOf("*/", head) + 2);
 const phone = block.slice(block.indexOf("@media (max-width: 560px) {"));
 
-test("phone menu: a <details> Menu button (works without JavaScript) listing every main-menu link", () => {
-  const menu = page.match(/<details class="m-menu" data-phone-menu>([\s\S]*?)<\/details>/)?.[1];
-  assert.ok(menu, "the phone menu is in the home header");
-  assert.ok(page.indexOf("data-phone-menu") < page.indexOf("</header>"), "inside the header");
-  assert.match(menu, /<summary>[\s\S]*<span class="pm-t">Menu<\/span><\/summary>/, "a visible Menu label");
-  assert.doesNotMatch(menu, /aria-expanded/, "<details> exposes its own expanded state");
-  const main = page.match(/<nav class="nav" aria-label="Main">([\s\S]*?)<\/nav>/)[1];
-  const missing = hrefs(main).filter((h) => !hrefs(menu).includes(h));
-  assert.deepEqual(missing, [], "every main-menu link is in the phone menu");
-  assert.ok(hrefs(menu).includes("/signin/"), "Sign in is in the menu");
-  assert.ok(!hrefs(menu).includes("/docs/getting-started/"), "Quickstart is reached through Docs, not its own menu item (2026-11-24)");
-  for (const route of ["own", "docs", "solutions"]) {
-    assert.doesNotMatch(readFileSync(join(dist, route, "index.html"), "utf8"), /data-phone-menu/, `/${route}/ keeps its header`);
-  }
+// Since audit #4 and #5 (2026-11-24) the Menu button is the header of every page below 1180px:
+// marketing, solutions, pricing, sign in, the console and the docs. Measured in a browser in the PR.
+const site = readFileSync(join(root, "site", "assets", "site.css"), "utf8");
+const compact = site.slice(site.indexOf("@media (max-width: 1179.98px) {"));
+const siteJs = readFileSync(join(root, "site", "assets", "site.js"), "utf8");
+const EVERY = ["", "own", "solutions", "solutions/commerce", "meter", "field", "autoinstall", "access", "signin", "signup", "dashboard", "try", "docs", "docs/getting-started"];
+
+for (const route of EVERY) {
+  test(`/${route}${route ? "/" : ""}: the header's Menu button (works without JavaScript) lists every main-menu link`, () => {
+    const page = readFileSync(join(dist, route, "index.html"), "utf8");
+    const menu = page.match(/<details class="m-menu" data-phone-menu>([\s\S]*?)<\/details>/)?.[1];
+    assert.ok(menu, "the Menu button is in the header");
+    assert.ok(page.indexOf("data-phone-menu") < page.indexOf("</header>"), "inside the header");
+    assert.match(menu, /<summary>[\s\S]*<span class="pm-t">Menu<\/span><\/summary>/, "a visible Menu label");
+    assert.doesNotMatch(menu, /aria-expanded/, "<details> exposes its own expanded state");
+    assert.match(menu, /<nav class="pm-panel" aria-label="Menu">/);
+    const main = page.match(/<nav class="nav" aria-label="Main">([\s\S]*?)<\/nav>/)[1];
+    const missing = hrefs(main).filter((h) => !hrefs(menu).includes(h));
+    assert.deepEqual(missing, [], "every main-menu link is in the Menu");
+    assert.ok(hrefs(menu).includes("/signin/"), "Sign in is in the menu");
+    assert.ok(!hrefs(menu).includes("/docs/getting-started/"), "Quickstart is reached through Docs, not its own menu item (2026-11-24)");
+  });
+}
+
+test("compact header CSS: the Menu shows and the main menu folds below 1180px, with 44px targets and a focus style", () => {
+  assert.match(site, /^\.m-menu \{ display: none; \}$/m, "hidden on wide screens");
+  assert.match(compact, /\.top \.nav \{ display: none; \}/);
+  assert.match(compact, /\.m-menu \{ display: block; \}/);
+  assert.match(compact, /\.m-menu > summary:focus-visible \{ outline: 2px solid/);
+  assert.match(compact, /\.m-menu > summary \{[^}]*min-height: 2\.75rem/, "a 44px target");
+  assert.match(compact, /\.pm-panel a \{[^}]*min-height: 2\.75rem/, "44px links in the menu");
+  assert.match(site, /\.cta-pill \{[^}]*min-height: 2\.75rem/, "a 44px Get a demo");
+  assert.match(siteJs, /\[data-phone-menu\][\s\S]*Escape/, "Escape closes it");
+  assert.doesNotMatch(css, /\.m-menu|\.home \.nav|\.home \.stars/, "no home-only header rules left in home.css");
 });
 
-test("phone menu CSS: hidden on desktop, shown under 560px with the pills, stars and focus style", () => {
-  assert.match(block, /^[^@]*\.m-menu, \.news-t-s \{ display: none; \}/, "phone-only parts hidden by default");
-  assert.match(phone, /\.home \.nav, \.home \.stars \{ display: none; \}/);
-  assert.match(phone, /\.m-menu \{ display: block; \}/);
-  assert.match(phone, /\.m-menu > summary:focus-visible \{ outline: 2px solid/);
-  assert.match(phone, /\.m-menu > summary \{[^}]*min-height: 2\.5rem/, "a 40px target");
-  assert.match(js, /\[data-phone-menu\][\s\S]*Escape/, "Escape closes it");
+test("desktop menus: one open at a time, and Escape or a click outside closes them (audit #14)", () => {
+  const header = readFileSync(join(root, "site", "_partials", "header.html"), "utf8");
+  assert.equal((header.match(/<details class="menu" name="main-menu" data-menu>/g) ?? []).length, 2, "both menus share one name");
+  assert.match(siteJs, /if \(d\.open\) for \(const o of menus\) if \(o !== d && o\.open\) o\.open = false;/, "opening one closes the other");
+  assert.match(siteJs, /e\.key !== "Escape"[\s\S]*open\.open = false;[\s\S]*summary"\)\.focus\(\)/, "Escape closes and returns focus");
+  assert.match(siteJs, /addEventListener\("click", \(e\) => \{\s*for \(const d of menus\) if \(d\.open && !d\.contains\(e\.target\)\) d\.open = false;/, "a click outside closes them");
 });
 
 test("phone pill: one line, a short form of the changelog claim, same link", () => {
@@ -75,8 +95,8 @@ test("phone sub-line: one sentence; one main button and a quiet Copy agent promp
   assert.equal(short.split(/(?<=\.)\s/).length, 1, "one sentence");
   assert.ok(short.length <= 90, "about two lines on a phone");
   assert.match(phone, /\.fs-sub-more \{ display: none; \}/);
-  assert.match(page, /<a class="btn btn-primary" href="\/dashboard\/">Deploy on BotRampart Cloud/);
-  assert.match(page, /<a class="btn btn-ghost fs-docs" href="\/docs\/">Docs/);
+  assert.match(page, /<a class="btn btn-primary" href="\/dashboard\/">Open the console/);
+  assert.match(page, /<a class="btn btn-ghost fs-docs" href="\/docs\/">Docs <span class="arrow" aria-hidden="true">→<\/span>/, "an internal link, so no external-link arrow (audit #21)");
   assert.match(phone, /\.fs-actions \.fs-docs \{ display: none; \}/);
   assert.match(phone, /\.fs-actions \[data-copy-agent-prompt\] \{[^}]*border: 0; background: none;[^}]*text-decoration: underline/);
   assert.match(phone, /\.fs-caps \{ display: none; \}/);
@@ -85,5 +105,5 @@ test("phone sub-line: one sentence; one main button and a quiet Copy agent promp
 test("phone rules stay under the 560px breakpoint, so the desktop first screen is unchanged", () => {
   const top = block.slice(0, block.indexOf("@media (max-width: 560px) {"));
   const rules = top.replace(/\/\*[\s\S]*?\*\//g, "").match(/[^{}]+\{[^}]*\}/g) ?? [];
-  assert.deepEqual(rules.map((r) => r.trim()), [".m-menu, .news-t-s { display: none; }"], "only phone-only parts are hidden outside the query");
+  assert.deepEqual(rules.map((r) => r.trim()), [".news-t-s { display: none; }"], "only phone-only parts are hidden outside the query");
 });

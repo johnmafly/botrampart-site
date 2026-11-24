@@ -1,6 +1,7 @@
-// Express: install with one AI prompt. Builds a prompt for an AI coding agent from the stack picked
-// on /express/ and in the home page's Express section: framework, where the app runs, the CDN or
-// edge in front of it, the cloud that hosts Core and the decision log, and how to provision it.
+// Autoinstall: one prompt for your coding agent. Builds a prompt for an AI coding agent from the
+// stack picked on /autoinstall/ and in the home page's Autoinstall section: framework, where the app
+// runs, the CDN or edge in front of it, the cloud that hosts Core and the decision log, and how to
+// provision it.
 // Client-side only: no network requests, no cookies, no storage. Each page carries the default
 // prompt in its HTML (readable without JavaScript, written by the build from buildPrompt());
 // this module regenerates it on every change. buildPrompt() is pure and exported.
@@ -122,12 +123,6 @@ const INFRA = {
   },
 };
 
-const IAC = {
-  terraform: "Write it as Terraform in an `infra/botrampart/` folder: one module, variables for names and regions, outputs for Core's URL and the bucket. Run `terraform plan` and show me the plan; apply only after I say yes.",
-  pulumi: "Write it as a Pulumi program in an `infra/botrampart/` folder, in the language my repository already uses, with config for names and regions and outputs for Core's URL and the bucket. Run `pulumi preview` and show me the result; run `pulumi up` only after I say yes.",
-  cli: "Write it as one reviewed shell script, `infra/botrampart.sh`, using my cloud's own CLI, idempotent and with every name at the top. Show me the script; run it only after I say yes.",
-};
-
 const RUNTIME_NOTE = {
   container: "The app runs in my containers or VMs: Core's URL goes in the app's environment, and `br_keys` is mounted as a file the SDK reads through `secretsFile`.",
   kubernetes: "The app runs on my Kubernetes cluster: mount `br_keys` from a Secret as a file the SDK reads through `secretsFile`, and give the app Core's in-cluster URL.",
@@ -148,7 +143,28 @@ const MODEL_STEP = {
   ],
 };
 
+// What runs today, word for word as the quickstart publishes it (/docs/getting-started/#try):
+// the reference budget engine from the repository, on Node alone. test/try-budget.test.mjs checks
+// this copy against the snippet on the built page and runs both.
+export const REPO = "https://github.com/johnmafly/botrampart-site";
+export const TRY_BUDGET = `import { newSession, charge, pass, dailyCeiling } from "./site/assets/economics.mjs";
+
+const t = Date.now();
+const session = newSession(t);                 // tier 0, 30 units
+console.log(charge(session, "search", t));     // search needs tier 1
+console.log(pass(session, "pow", t));          // proof-of-work grant
+console.log(charge(session, "search", t));     // now it pays
+console.log(dailyCeiling());                   // most one session spends in a day`;
+export const TRY_BUDGET_OUTPUT = `{ action: 'challenge', challenge: 'pow', cost: 5, credits: 30 }
+300
+{ action: 'allow', cost: 5, credits: 325 }
+35363`;
+
 // Builds the prompt for a choice of { framework, runtime, edge, infra, iac, model, agent }.
+// It ends at what runs today (audit #3): the agent clones the repository, runs its tests, the
+// benchmark and the budget engine, prices the app's routes with that engine, and writes an install
+// plan for the chosen stack into the app's repository. It installs no package and creates nothing
+// in a cloud account: BotRampart's guide names no package or version to install.
 export function buildPrompt(choice = {}) {
   const c = { ...DEFAULTS, ...choice };
   const fw = find("framework", c.framework);
@@ -162,94 +178,84 @@ export function buildPrompt(choice = {}) {
   const p = (...lines) => L.push(...lines);
   const list = (items) => items.forEach((i) => L.push(`- ${i}`));
 
-  p("# Install BotRampart and provision its infrastructure, in observe mode", "");
-  p(`${AGENT_INTRO[agent.value]} Install BotRampart and provision what it runs on, in observe mode: it decides and logs every request and blocks nothing. Work one step at a time, show me each change before you make it, ask before you create or change anything in a cloud account, and stop wherever this prompt says STOP.`, "");
+  p("# Install BotRampart's reference code and plan it for my app", "");
+  p(`${AGENT_INTRO[agent.value]} Run BotRampart's reference code, price my app's routes with it, and write an install plan for my stack. Work one step at a time, show me each change before you make it, and stop where this prompt says STOP.`, "");
 
   p("## What BotRampart is", "");
   list([
-    "Open-source, self-hosted bot defense. It runs in my app and my own cloud accounts; no vendor proxy sits in the request path and no traffic goes to a BotRampart server.",
-    "The backend SDK runs in front of my handlers. It sets one first-party session cookie, `__br_s` (HttpOnly, signed with my site keys), serves its browser script and challenge routes under `/_br` on my own origin, charges each request to the session's budget, and answers with a challenge (403) or a throttle (429), marked `BR-Challenge: v1`, when the budget runs out. It sets `BR-Sid` and `BR-Decision` on every response.",
-    "Core is one small service the SDK syncs with every 5 to 10 seconds: challenges, policy, counters. It writes the decision log to my own bucket (the lake).",
-    `Reference: the docs at ${SITE}/docs/, the Express guide at ${SITE}/docs/express/ and the HTTP contract at ${SITE}/spec/openapi.yaml. Use only the routes, headers, settings, package names and secret names defined there. Do not invent API names, options or package names.`,
+    "Open-source, self-hosted bot defense. It decides on my own server: no vendor proxy sits in the request path and no traffic goes to a BotRampart server.",
+    "Every session holds a budget and every path has a price. A session that runs out meets the next challenge tier (proof-of-work, then a human check) or a 429 throttle. The reference implementation of that budget engine is `site/assets/economics.mjs` in " + REPO + ".",
+    `Reference: the docs at ${SITE}/docs/, the Autoinstall guide at ${SITE}/docs/express/ and the HTTP contract at ${SITE}/spec/openapi.yaml.`,
   ]);
   p("");
 
   p("## My stack", "");
   list([
-    `App framework: ${fw.label} (${fw.lang}), with ${fw.sdk}`,
+    `App framework: ${fw.label} (${fw.lang})`,
     `The app runs on: ${rt.label}`,
-    `CDN or edge: ${edge.value === "none" ? "none, the SDK in the app decides" : edge.label}`,
+    `CDN or edge: ${edge.value === "none" ? "none, the app decides" : edge.label}`,
     `Cloud for Core and the decision log: ${infra.label} (Core on ${infra.core}, the log in ${infra.bucket})`,
-    `Provision with: ${iac.label}`,
+    `Write the plan as: ${iac.label}`,
     `Decision model: ${model.label}`,
   ]);
   p("");
 
   p("## Ground rules", "");
   list([
-    "Install packages only by the exact names and versions BotRampart's getting-started guide gives for my framework (" + SITE + "/docs/getting-started/) and pin them. Never guess a package name or image, and never copy BotRampart's code in from elsewhere.",
-    "Secrets go in my secret store, by name. Never print a secret, never commit one, never ask me to paste one into this chat.",
-    "Create nothing in a cloud account until I have approved the plan in step 2.",
+    "Everything below runs from BotRampart's public repository with Node 24 or later. Install nothing from a package registry: the guide names no BotRampart package or version, so never guess one, and never copy BotRampart's code in from anywhere else.",
+    "Change nothing in a cloud account and nothing in my app's code. The only files you write in my repository are the two under `botrampart/` named below.",
+    "Secrets stay out of this work: none is needed. Never ask me to paste one into this chat.",
   ]);
   p("");
 
-  p("## Step 1. Generate the site keys", "");
+  p("## Step 1. Run the tests and the benchmark", "");
   list([
-    "Create the secret `br_keys`: the site keys, HMAC keys that sign session tokens and proof-of-work puzzles. Generate them locally with a cryptographically secure random generator and store them only in my secret store.",
-    "The backend SDK reads the same keys through its `secretsFile` setting; Core reads them as a secret.",
+    `Clone ${REPO} into a folder next to my repository, for example \`../botrampart-site\`, and work there for steps 1 to 3.`,
+    "Run `npm test`: it builds the site and runs every test, including the budget engine's. Report how many passed.",
+    "Run `npm run bench`: it verifies 300,000 signed session cookies across 10,000 sessions and charges each request. Report `verify_p50_us`, `verify_p99_us` and `forged_cookie_rejected` from the JSON it prints.",
   ]);
   p("");
 
-  p(`## Step 2. Provision the infrastructure on ${infra.label}`, "");
-  p(IAC[iac.value], "");
-  p("It creates:", "");
-  list([...INFRA[infra.value].bucket, ...INFRA[infra.value].core]);
+  p("## Step 2. Drive the budget engine", "");
+  p("Save this as `try-budget.mjs` in the clone's root and run `node try-budget.mjs`:", "");
+  p("```js", TRY_BUDGET, "```", "");
+  p("It prints:", "");
+  p("```text", TRY_BUDGET_OUTPUT, "```", "");
+  p("If any line differs, stop and show me both.", "");
+
+  p("## Step 3. Price my routes", "");
   list([
-    `Set \`BR_LAKE_URL\` to \`s3://<bucket>/br/v1/\`.`,
-    ...MODEL_STEP[model.value],
+    `Read my ${fw.label} app's routes and give each one a path class: \`static\` (0 units), \`general\` (1), \`search\` (5), \`login\` (10) or \`checkout\` (20), the defaults in \`DEFAULT_POLICY\` in \`site/assets/economics.mjs\`. Write the table, route by route, to \`botrampart/path-prices.md\` in my repository.`,
+    "In the clone, write `my-ceiling.mjs`: import `DEFAULT_POLICY` and `dailyCeiling` from `./site/assets/economics.mjs`, copy the policy with any price I changed, and print `dailyCeiling(policy)`. Report the ceiling, and how many requests of my most expensive route one session can make in a day.",
   ]);
   p("");
-  p("STOP after the plan or preview and wait for my approval before anything is created.", "");
 
-  p("## Step 3. Install the SDK in the app", "");
+  p("## Step 4. Write the install plan, and change nothing", "");
+  p(`Write \`botrampart/INSTALL-PLAN.md\` in my repository: where each part goes on my stack, with the docs page each line comes from. Carry none of it out.`, "");
   list([
-    `Add ${fw.sdk} for ${fw.label} to the app, with the package name and version the getting-started guide gives for ${fw.lang}.`,
-    fw.mount,
-    "Settings: `site` (my site ID), `secretsFile` (the path where `br_keys` is mounted, for example `/run/secrets/br_keys`), `core` (Core's URL from step 2), `mode: \"observe\"`. Leave `onCoreDown` at `\"static\"`. See " + SITE + "/docs/configuration/#backend.",
+    `The backend SDK: ${fw.mount} Name the file and line in my app.`,
+    `The browser script: the line \`<script src="/_br/sdk.js" data-site="<site ID>" async></script>\` in ${fw.layout}. Name the file.`,
     RUNTIME_NOTE[rt.value],
-    `Add the browser script to ${fw.layout}: \`<script src="/_br/sdk.js" data-site="<site ID>" async></script>\`. It is served from my own origin by the backend SDK.`,
-    "Do not change `mode` to `\"enforce\"`.",
+    edge.value === "none" ? "No edge adapter: the app decides on its own." : `At the edge: ${edge.adapter}.`,
+    `Core and the decision log on ${infra.label}, written with ${iac.label}: ${[...INFRA[infra.value].bucket, ...INFRA[infra.value].core].join(" ")}`,
+    MODEL_STEP[model.value][0],
+    "Observe mode first: `mode: \"observe\"`, with enforce left to me. See " + SITE + "/docs/choose/#observe.",
   ]);
   p("");
 
-  p(`## Step 4. ${edge.value === "none" ? "Access logs" : `Put BotRampart at the edge: ${edge.short}`}`, "");
-  if (edge.value === "none") {
-    list(["If anything in front of the app writes access logs (a load balancer or a proxy), log `BR-Sid` and `BR-Decision` there and strip both before the response leaves. Never log the `__br_s` cookie."]);
-  } else {
-    list([
-      `Add ${edge.adapter}, in the same ${iac.label === "Cloud CLI" ? "script" : iac.label + " code"} as step 2. It reads the same \`br_keys\` and syncs with the same Core, so a session's budget is shared between the edge and the app.`,
-      "Run it in observe mode too. Send its decision log through the log pack to Core's `ingestRollups` (`POST <core>/v1/ingest/rollups`) with the ingest key from my secret store, so traffic the edge answers on its own still reaches the five-minute loop.",
-      "Log `BR-Sid` and `BR-Decision` in the edge's access logs and strip both before the response leaves. Never log the `__br_s` cookie.",
-    ]);
-  }
-  p("");
-
-  p("## Step 5. Verify", "");
+  p("## Step 5. STOP and report", "");
   list([
-    "Request `/_br/sdk.js` on my app: it answers 200 with JavaScript.",
-    "Request any page and read the response headers at the app, before anything strips them: `BR-Sid` and `BR-Decision` are present. In observe mode nothing is refused.",
-    "Open a page in a browser, then open `/_br/status` in the same tab: it returns JSON with `tier` 0 on a first visit and `tier` 1 a moment later, once the proof-of-work has run.",
-    "Within the hour, decision log objects appear under `BR_LAKE_URL`.",
-    "Take one decision reference from the log (it looks like `BR-7F3K2Q`) and look it up with getDecision: `GET <core>/v1/decisions/<ref>` with `Authorization: Bearer $BR_CONSOLE_TOKEN` (a viewer-role console token from my secret store; do not print it). It returns the rule, policy version, cost and credits behind that decision.",
-  ]);
-  p("");
-
-  p("## Step 6. Stop before enforce", "");
-  list([
-    "Do not switch to enforce mode and do not publish a policy. Enforcing is my decision, after I have watched the decision log and replayed a policy with simulatePolicy (`POST <core>/v1/policy/simulate`).",
-    "Report: what you changed and where, what you provisioned and its outputs, which secrets I still need to set (by name), and the `BR-Decision` values you saw.",
+    "Stop here. Do not install, provision or deploy anything from the plan.",
+    "Report: the test count, the three benchmark figures, whether `try-budget.mjs` printed the four lines above, the path-price table, the daily ceiling, and the path of the plan file.",
   ]);
   return L.join("\n");
+}
+
+// One line naming the stack a prompt is for, shown above it.
+export function summarize(choice = {}) {
+  const c = { ...DEFAULTS, ...choice };
+  const fw = find("framework", c.framework), infra = find("infra", c.infra), edge = find("edge", c.edge), iac = find("iac", c.iac);
+  return `${fw.label} on ${find("runtime", c.runtime).label}${edge.value === "none" ? "" : `, behind ${edge.short}`}. Core on ${infra.core}, the log in ${infra.bucket}, written as ${iac.label}.`;
 }
 
 // ---------- Page wiring (browser only): every [data-ai-form] on the page drives its own prompt ----------
@@ -265,10 +271,7 @@ if (typeof document !== "undefined") {
     const render = () => {
       const c = choice();
       outEl.textContent = buildPrompt(c);
-      if (summary) {
-        const fw = find("framework", c.framework), infra = find("infra", c.infra), edge = find("edge", c.edge), iac = find("iac", c.iac);
-        summary.textContent = `${fw.label} on ${find("runtime", c.runtime).label}${edge.value === "none" ? "" : `, behind ${edge.short}`}. Core on ${infra.core}, the log in ${infra.bucket}, provisioned with ${iac.label}.`;
-      }
+      if (summary) summary.textContent = summarize(c);
       if (status) status.textContent = "";
     };
     form.addEventListener("change", render);

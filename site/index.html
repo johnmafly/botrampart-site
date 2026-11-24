@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- @head | BotRampart: bot defense for the age of AI agents | Headless browsers, AI browser agents and solver farms load pages like people do. BotRampart reads how each session behaves, decides on your own server, escalates challenges by itself and explains every decision. Open source and self-hosted. -->
+    <!-- @head | BotRampart: bot defense for the age of AI agents | Open-source bot defense that spots scrapers, headless browsers and AI agents, decides on your own server and explains every decision. -->
     <link rel="stylesheet" href="/assets/home.css">
-    <link rel="stylesheet" href="/assets/build.css">
+    <link rel="stylesheet" href="/assets/picker.css">
   </head>
   <body class="home home-v3">
     <!-- @header -->
@@ -17,10 +17,13 @@
             </div>
             <h1 id="hero-h" class="roll-h" data-roll><span class="visually-hidden">Stop AI bots, account takeovers and scrapers in your cloud, your application and your CDN.</span><span class="roll-vis" aria-hidden="true"><span class="roll-line">Stop <span class="slot slot-what"><span class="kw is-on">AI bots</span><span class="kw">Account takeovers</span><span class="kw">Scrapers</span></span></span> <span class="roll-line">in your <span class="slot slot-where"><span class="kw is-on"><svg class="kw-i" viewBox="0 0 24 24" focusable="false"><path d="M7 18.5h10.2a4.3 4.3 0 0 0 .6-8.56A6 6 0 0 0 6.3 9.1 4.7 4.7 0 0 0 7 18.5Z"/></svg>Cloud</span><span class="kw"><svg class="kw-i" viewBox="0 0 24 24" focusable="false"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M3.5 9h17M7 6.8h.01M9.5 6.8h.01"/></svg>Application</span><span class="kw"><svg class="kw-i" viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.4 2.3 3.6 5.1 3.6 8.5s-1.2 6.2-3.6 8.5c-2.4-2.3-3.6-5.1-3.6-8.5S9.6 5.8 12 3.5Z"/></svg>CDN</span></span></span></span></h1>
             <p class="lede fs-sub">Open-source bot defense that spots scrapers, headless browsers and AI agents<span class="fs-sub-more">, then lets you allow, challenge or block each one. A decision model reviews every cohort every five minutes and raises the price when an attack starts</span>.</p>
-            <div class="btn-row fs-actions">
-              <a class="btn btn-primary" href="/dashboard/">Deploy on BotRampart Cloud <span class="arrow" aria-hidden="true">→</span></a>
-              <a class="btn btn-ghost" href="/#express" data-copy-agent-prompt>Copy agent prompt <span class="arrow" aria-hidden="true">↓</span></a>
-              <a class="btn btn-ghost fs-docs" href="/docs/">Docs <span class="arrow" aria-hidden="true">↗</span></a>
+            <div class="fs-acts" data-copy-wrap>
+              <div class="btn-row fs-actions">
+                <a class="btn btn-primary" href="/dashboard/">Open the console <span class="arrow" aria-hidden="true">→</span></a>
+                <a class="btn btn-ghost" href="/#autoinstall" data-copy-agent-prompt>Copy agent prompt</a>
+                <a class="btn btn-ghost fs-docs" href="/docs/">Docs <span class="arrow" aria-hidden="true">→</span></a>
+              </div>
+              <p class="copy-status" data-copy-status role="status" aria-live="polite"></p>
             </div>
             <nav class="fs-caps" aria-label="Capabilities">
               <a href="/docs/features/#detection">Bot detection</a>
@@ -130,13 +133,13 @@
         <div class="wrap">
           <div class="sec-head rise">
             <p class="label">Product</p>
-            <h2 id="products-h">Six products. <span class="tt">One decision, made on your server.</span></h2>
+            <h2 id="products-h">One product, six parts. <span class="tt">One decision, made on your server.</span></h2>
           </div>
           <ul class="prod-grid">
-            <li><a class="prod" href="/meter/"><span class="prod-n">Core</span><b>Decides, never proxies.</b><span class="prod-s">The SDK decides inside your app with no network call per request; Core syncs counters every 5 to 10 seconds.</span></a></li>
-            <li><a class="prod" href="/express/"><span class="prod-n">Express</span><b>One prompt installs.</b><span class="prod-s">Pick your stack and your coding agent installs the SDK and provisions Core, the log and the edge in your cloud.</span></a></li>
-            <li><a class="prod" href="/docs/choose/"><span class="prod-n">Edge</span><b>Stop it earlier.</b><span class="prod-s">The Cloudflare Worker, CloudFront Lambda@Edge and the nginx module decide before traffic reaches your origin.</span></a></li>
-            <li><a class="prod" href="/meter/#explain"><span class="prod-n">Agent</span><b>Answers with receipts.</b><span class="prod-s">Explains any decision in Slack or the console, with the query, the rows and the policy version it read.</span></a></li>
+            <li><a class="prod" href="/meter/#core"><span class="prod-n">Core</span><b>Decides, never proxies.</b><span class="prod-s">The SDK decides inside your app with no network call per request; Core syncs counters every 5 to 10 seconds.</span></a></li>
+            <li><a class="prod" href="/autoinstall/"><span class="prod-n">Autoinstall</span><b>One prompt starts it.</b><span class="prod-s">Pick your stack: your coding agent runs the reference code, prices your routes and writes the install plan for your cloud and edge.</span></a></li>
+            <li><a class="prod" href="/docs/integrations/#edge"><span class="prod-n">Edge</span><b>Stop it earlier.</b><span class="prod-s">The Cloudflare Worker, CloudFront Lambda@Edge and the nginx module decide before traffic reaches your origin.</span></a></li>
+            <li><a class="prod" href="/#agent"><span class="prod-n">Agent</span><b>Answers with receipts.</b><span class="prod-s">Explains any decision in Slack or the console, with the query, the rows and the policy version it read.</span></a></li>
             <li><a class="prod" href="/dashboard/"><span class="prod-n">Console</span><b>Every session, explained.</b><span class="prod-s">Sessions, challenges, blocks and spend by path for the last 24 hours, with policy editing and replay.</span></a></li>
             <li><a class="prod" href="/own/#cloud"><span class="prod-n">Cloud</span><b>Hosted when wanted.</b><span class="prod-s">Core and the agent run for you; the SDKs still run in your app, billed by protected session.</span></a></li>
           </ul>
@@ -292,29 +295,29 @@
         </div>
       </section>
 
-      <section class="sec" id="express" aria-labelledby="express-h">
+      <section class="sec" id="autoinstall" aria-labelledby="autoinstall-h">
         <div class="wrap">
           <div class="sec-head rise">
-            <p class="label">Express · install with one AI prompt</p>
-            <h2 id="express-h">Pick your stack. <span class="tt">Your coding agent does the install.</span></h2>
-            <p>Framework, where your app runs, your CDN and your cloud. Express writes one prompt that installs the SDK, provisions Core and the decision log as Terraform, Pulumi or a CLI script, wires your edge and verifies it all in observe mode.</p>
+            <p class="label">Autoinstall · one prompt for your coding agent</p>
+            <h2 id="autoinstall-h">Pick your stack. <span class="tt">Your coding agent does the legwork.</span></h2>
+            <p>Framework, where your app runs, your CDN and your cloud. Autoinstall writes one prompt: your agent runs BotRampart's tests, benchmark and budget engine, prices your routes and writes the install plan for your stack.</p>
           </div>
           <div class="ex-home" data-ai>
-            <div class="ex-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>express · your stack</span></div>
+            <div class="ex-bar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>autoinstall · your stack</span></div>
             <div class="ai-grid">
               <form class="ai-form" data-ai-form novalidate aria-labelledby="ex-pick">
                 <h3 id="ex-pick" class="ai-h">Your stack</h3>
                 <!-- @ai-picker:home -->
-                <p class="int-links"><a href="/express/#picker">Choose provisioning, model and agent on Express</a></p>
+                <p class="int-links"><a href="/autoinstall/#picker">Choose the plan format, model and agent on Autoinstall</a></p>
               </form>
               <div class="ai-out">
                 <div class="ai-out-head">
-                  <h3 id="ex-prompt-h" class="ai-h">Your install prompt</h3>
+                  <h3 id="ex-prompt-h" class="ai-h">Your agent prompt</h3>
                   <button type="button" class="btn btn-primary ai-copy" data-ai-copy hidden>Copy prompt</button>
                 </div>
-                <p class="fine ai-summary" data-ai-summary>Express on Containers or VMs, behind Cloudflare. Core on Cloudflare Workers, the log in R2, provisioned with Terraform.</p>
+                <p class="fine ai-summary" data-ai-summary><!-- @ai-summary --></p>
                 <p class="ai-status" data-ai-status role="status" aria-live="polite"></p>
-                <pre class="ai-prompt" tabindex="0" role="region" aria-label="Code: your Express install prompt"><code data-ai-prompt><!-- @ai-prompt --></code></pre>
+                <pre class="ai-prompt" tabindex="0" role="region" aria-label="Code: your agent prompt"><code data-ai-prompt><!-- @ai-prompt --></code></pre>
               </div>
             </div>
           </div>
@@ -464,6 +467,7 @@
               <p class="label">Open source</p>
               <h2 id="src-h">Read the code that judges your traffic. <span class="tt">Nothing held back.</span></h2>
               <p class="muted">The SDKs, edge adapters and log pack are Apache-2.0. Core, the agent and the console are AGPL-3.0, with a commercial licence in Enterprise. Nothing in the core is held back for a paid edition.</p>
+              <p><a class="btn btn-ghost" href="https://github.com/johnmafly/botrampart-site">Read the code on GitHub <span class="arrow" aria-hidden="true">→</span></a></p>
             </div>
           </div>
         </div>

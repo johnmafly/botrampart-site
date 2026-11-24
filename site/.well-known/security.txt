@@ -1,0 +1,6 @@
+# Security contact for botrampart.agenthatch.ai (RFC 9116). Reports go to GitHub's private
+# vulnerability reporting for the BotRampart repository: only maintainers can read them.
+Contact: https://github.com/johnmafly/botrampart-site/security/advisories/new
+Expires: 2027-08-31T23:59:59Z
+Preferred-Languages: en
+Canonical: https://botrampart.agenthatch.ai/.well-known/security.txt
