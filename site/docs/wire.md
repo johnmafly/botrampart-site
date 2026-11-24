@@ -3,21 +3,13 @@ title: Wire it in
 nav: Wire it in
 group: Integrate
 order: 8
-description: Wire the backend SDK into your app by its HTTP contract: settings, the /_br routes on your origin, sync with Core, challenges, response headers, sign-in, signals, the policy file, logs, edge cases and testing.
+description: Wire the backend SDK into your app by its HTTP contract: settings, the /_br routes, sync, challenges, headers, sign-in, signals, logs and testing.
 lede: Put bot defense in front of your handlers in Express, Fastify, Next.js, Django, Rails, Laravel, Spring or Go. Every one speaks the same HTTP contract: the routes it serves, the headers it sets and the challenges it answers with.
 ---
 
 This guide shows the contract every SDK and edge adapter implements, which is also what you test against. Every exchange is in the [OpenAPI spec](/spec/openapi.yaml), and each sample names its operation.
 
-## When to use {#when-to-use}
-
-- You are mounting the backend SDK in your app and need its settings and where it goes in your framework.
-- You want to know exactly which routes, headers and challenge responses appear on your origin.
-- You are attaching signed-in users to sessions, or settling the true cost of an expensive response.
-- You are writing or publishing the policy file, or setting up logging at your edge.
-- You are testing an integration in CI or staging before you enforce.
-
-## Get started {#quickstart}
+## Wire it in four steps {#quickstart}
 
 1. Mount the backend SDK at the root of your app, ahead of your routes, with `site`, `secretsFile`, `core` and `mode: "observe"` ([Settings](#settings)).
 2. Add the browser script tag to your page template (below).
@@ -33,7 +25,7 @@ curl -sI https://www.example.com/ | grep -i '^br-'
 ```
 
 > [!TIP]
-> For a guided setup in your stack, open [Express](/docs/express/): it writes one prompt for your coding agent.
+> For a guided setup in your stack, open [Autoinstall](/docs/autoinstall/): it writes one prompt for your coding agent.
 
 ## Settings {#settings}
 
@@ -250,13 +242,12 @@ curl -H "Authorization: Bearer $BR_CONSOLE_TOKEN" \
   "rule_id": "over-budget", "policy_version": 12, "credits": 3, "cost": 5, "path_class": "search" }
 ```
 
-## Where to go next {#where-next}
+## Next steps {#where-next}
 
-| Goal | Page |
-| --- | --- |
-| Compare the backend SDK with the edge adapters | [Choose how to integrate](/docs/choose/#options) |
-| Read every route, header and method the SDKs expose | [SDK reference](/docs/sdk/) |
-| See every setting with its default | [Configuration](/docs/configuration/#backend) |
-| Write path classes, budgets and rules | [Policy reference](/docs/policy/) |
-| Look up an operation and its fields | [API reference](/docs/api/) |
-| See what runs where and which threats remain | [Inside BotRampart](/docs/inside/) |
+<!-- next -->
+- [Choose how to integrate](/docs/choose/#options): Compare the backend SDK with the edge adapters
+- [SDK reference](/docs/sdk/): Read every route, header and method the SDKs expose
+- [Configuration](/docs/configuration/#backend): See every setting with its default
+- [Policy reference](/docs/policy/): Write path classes, budgets and rules
+- [API reference](/docs/api/): Look up an operation and its fields
+- [Inside BotRampart](/docs/inside/): See what runs where and which threats remain

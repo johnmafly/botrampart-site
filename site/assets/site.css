@@ -1042,3 +1042,5 @@ sup.ref a::after { content: ""; position: absolute; left: 50%; top: 50%; width: 
 /* Linked cards outside the docs show they are links (#15), as the home page's do. */
 html:not(.docs) a.card::after { content: "→"; content: "→" / ""; display: block; margin-top: .9rem; font: 500 1.05rem/1 var(--f-mono); color: var(--ember); }
 @media (max-width: 760px) { .tablewrap td > a:only-child { display: inline-flex; align-items: center; min-height: 2.75rem; min-width: 2.75rem; } }
+/* Each edition's one action sits at the foot of its card, level across the row (#6, #15). */
+.ed .ed-act { margin-top: auto; align-self: stretch; justify-content: center; white-space: nowrap; }

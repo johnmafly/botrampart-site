@@ -28,3 +28,9 @@
 /build/inside/              /docs/inside/   301
 /build/inside/index.html    /docs/inside/   301
 /build/ai/index.html        /autoinstall/   301
+# Express was renamed Autoinstall (2026-11-24): its docs page moved with it. /docs.md is the
+# address an agent tries first for the docs home's Markdown.
+/docs/express               /docs/autoinstall/     301
+/docs/express/              /docs/autoinstall/     301
+/docs/express.md            /docs/autoinstall.md   301
+/docs.md                    /docs/index.md         301

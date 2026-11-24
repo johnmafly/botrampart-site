@@ -19,14 +19,14 @@ if (!existsSync(join(dist, "index.html"))) {
 }
 const decode = (s) => s.replace(/<[^>]+>/g, "").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
 const page = readFileSync(join(dist, "docs", "getting-started", "index.html"), "utf8");
-// The code block titled try-budget.mjs, and the one titled Output right after it.
+// The code block titled try-budget.mjs, and the one titled "Expected output" that closes the step.
 const block = (title) => {
   const at = page.indexOf(`<span class="code-title">${title}</span>`);
   assert.ok(at > 0, `the quickstart has a code block titled ${title}`);
   return decode(page.slice(at).match(/<code[^>]*>([\s\S]*?)<\/code>/)[1]);
 };
 const snippet = block("try-budget.mjs");
-const documented = block("Output");
+const documented = block("Expected output");
 const run = (code, cwd) => {
   const file = join(cwd, `try-budget-${process.pid}.mjs`);
   writeFileSync(file, code);

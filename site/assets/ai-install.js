@@ -185,7 +185,7 @@ export function buildPrompt(choice = {}) {
   list([
     "Open-source, self-hosted bot defense. It decides on my own server: no vendor proxy sits in the request path and no traffic goes to a BotRampart server.",
     "Every session holds a budget and every path has a price. A session that runs out meets the next challenge tier (proof-of-work, then a human check) or a 429 throttle. The reference implementation of that budget engine is `site/assets/economics.mjs` in " + REPO + ".",
-    `Reference: the docs at ${SITE}/docs/, the Autoinstall guide at ${SITE}/docs/express/ and the HTTP contract at ${SITE}/spec/openapi.yaml.`,
+    `Reference: the docs at ${SITE}/docs/, the Autoinstall guide at ${SITE}/docs/autoinstall/ and the HTTP contract at ${SITE}/spec/openapi.yaml.`,
   ]);
   p("");
 

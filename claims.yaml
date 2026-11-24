@@ -225,7 +225,7 @@ claims:
   # Published June 25, 2024. Quote matched fetched text exactly (after whitespace collapse).
   - id: "polyfill"
     claim: "In 2024 the Polyfill.io CDN served malware to more than 100,000 sites after a change of owner."
-    where: ["/docs/choose/", "/docs/getting-started/", "/docs/inside/", "/docs/security/"]
+    where: ["/docs/choose/", "/docs/inside/", "/docs/security/"]
     source_url: "https://sansec.io/research/polyfill-supply-chain-attack"
     quote: "The new Chinese owner of the popular Polyfill JS project injects malware into more than 100 thousand sites."
     checked: "2026-11-18"
@@ -234,7 +234,7 @@ claims:
   # million'. Quote matched fetched text exactly (after whitespace collapse).
   - id: "cf-workers-price"
     claim: "Cloudflare Workers Paid is $5 a month with 10 million requests included."
-    where: ["/docs/architecture/", "/docs/choose/", "/docs/getting-started/", "/docs/inside/", "/docs/integrations/", "/docs/self-hosting/", "/own/"]
+    where: ["/docs/architecture/", "/docs/choose/", "/docs/inside/", "/docs/integrations/", "/docs/self-hosting/", "/own/"]
     source_url: "https://developers.cloudflare.com/workers/platform/pricing/"
     quote: "minimum charge of $5 USD per month for an account"
     checked: "2026-11-18"

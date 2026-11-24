@@ -1,30 +1,16 @@
 ---
 title: Choose how to integrate
-nav: Choose an integration
+nav: Choose how to integrate
 group: Integrate
 order: 7
-description: Where BotRampart checks requests: a backend SDK inside your app, or nginx, a Cloudflare Worker or CloudFront in front of it at your edge. Every option runs in your own infrastructure or cloud account, then starts in observe mode.
+description: Where BotRampart checks requests: a backend SDK in your app, or nginx, a Cloudflare Worker or CloudFront at your edge. Every option starts in observe mode.
 lede: Stop bad requests before your app does the work, inside your app or at your edge. Every option runs in your infrastructure or your cloud account: no vendor proxy sits in the path, and no one else sees your traffic.
 ---
 
 This page compares the four places BotRampart can check requests and walks through the first install in observe mode. Every option speaks the same HTTP contract, so you can start with one and add another later.
 
-## When to use {#when-to-use}
-
-- You are deciding between the backend SDK and an edge adapter (nginx, a Cloudflare Worker or CloudFront).
-- You want to protect apps in several languages without changing their code.
-- You need to know what every option shares on the wire: the cookie, the `/_br` routes and the response headers.
-- You are about to install BotRampart for the first time and want the observe-mode path from Core to enforcement.
-
-## Get started {#quickstart}
-
-1. Pick where the check runs: the [backend SDK](#opt-sdk) if you own the app's code, or [nginx](#opt-nginx), a [Cloudflare Worker](#opt-worker) or [CloudFront](#opt-cloudfront) to cover apps in any language at your edge.
-2. Run Core on port 8787 with `BR_LAKE_URL` pointing at your bucket and `BR_DECISION_PROVIDER` set to `off` ([Configure Core](#core)).
-3. Mount BotRampart with `mode: "observe"` and add the browser script tag to your page template ([steps 2 and 3](#sdk)).
-4. Check that your session reaches tier 1, watch the decision log for an hour, then switch `mode` to `"enforce"` ([Enforce tier 1](#enforce)).
-
 > [!TIP]
-> To hand the whole install to Claude Code, Cursor, Codex or another coding agent, copy the prompt in [Let your coding agent do it](#ai) or pick your exact stack in [Express](/docs/express/).
+> To hand the work to Claude Code, Cursor, Codex or another coding agent, copy the prompt in [Let your coding agent do it](#ai) or pick your exact stack in [Autoinstall](/docs/autoinstall/).
 
 ## Integration options {#options}
 
@@ -65,9 +51,9 @@ Mobile SDKs for iOS and Android protect native apps the same way. [See every int
 
 ### Let your coding agent do it {#ai}
 
-Pick your framework, edge, Core host, bucket and decision model in [Express](/docs/express/). You get one prompt for Claude Code, Cursor, Codex or any agent: provision Core and the bucket, wire BotRampart in observe mode, verify, and stop before enforcing. The prompt below covers the default stack.
+Pick your framework, edge, Core host, bucket and decision model in [Autoinstall](/docs/autoinstall/). You get one prompt for Claude Code, Cursor, Codex or any coding agent, written for that stack. The prompt below covers the default stack.
 
-<!-- @express-card -->
+<!-- @autoinstall-card -->
 
 ## What every option shares {#contract}
 
@@ -140,13 +126,12 @@ curl -X POST "http://localhost:8787/v1/policy/simulate" \
 
 Switch `mode` to `"enforce"` with the default policy. Ordinary browsing stays inside the refill rate and sees nothing. Clients that cannot run JavaScript keep reading general pages on their 30-unit allowance and are asked for a proof-of-work on costly paths. Run the five-minute loop in shadow first, then let rules act on its answers once they match the calls you make yourself.
 
-## Where to go next {#next}
+## Next steps {#next}
 
-| Goal | Page |
-| --- | --- |
-| Wire the backend SDK into your app: settings, routes, challenges, sign-in, logs | [Wire it in](/docs/wire/) |
-| See each component, the data layout and the threat model | [Inside BotRampart](/docs/inside/) |
-| Set up nginx, a Cloudflare Worker or CloudFront | [Integrations](/docs/integrations/#edge) |
-| Install with one prompt for your coding agent | [Express](/docs/express/) |
-| Tune every Core and SDK setting | [Configuration](/docs/configuration/#core) |
-| Write path classes, budgets and rules | [Policy reference](/docs/policy/) |
+<!-- next -->
+- [Wire it in](/docs/wire/): Wire the backend SDK into your app: settings, routes, challenges, sign-in, logs
+- [Inside BotRampart](/docs/inside/): See each component, the data layout and the threat model
+- [Integrations](/docs/integrations/#edge): Set up nginx, a Cloudflare Worker or CloudFront
+- [Autoinstall](/docs/autoinstall/): Write the prompt for your stack and your coding agent
+- [Configuration](/docs/configuration/#core): Tune every Core and SDK setting
+- [Policy reference](/docs/policy/): Write path classes, budgets and rules

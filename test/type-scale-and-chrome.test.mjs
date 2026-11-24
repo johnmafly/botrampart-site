@@ -104,7 +104,7 @@ test("no Quickstart button or menu item on any page; Quickstart stays one click 
     assert.match(first[2], /href="\/#autoinstall"/, `${file}: it goes to the Autoinstall prompt`);
   }
   const docs = html("docs");
-  assert.match(docs, /<a [^>]*href="\/docs\/getting-started\/"[^>]*>Install and quickstart</, "the docs sidebar links to the quickstart");
+  assert.match(docs, /<a [^>]*href="\/docs\/getting-started\/"[^>]*>Quickstart <span class="sg-badge">/, "the docs sidebar links to the quickstart");
   assert.match(html("docs/getting-started"), /<h1[^>]*>/, "and it builds");
 });
 

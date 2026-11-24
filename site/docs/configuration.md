@@ -3,20 +3,13 @@ title: Configuration
 nav: Configuration
 group: Integrate
 order: 10
-description: Every BotRampart setting in one place: backend SDK options, browser SDK options, Core's settings and secrets, credentials and roles, site keys and rotation, the cookie, response headers and failure modes.
+description: Every BotRampart setting: backend and browser SDK options, Core's settings and secrets, credentials, site keys, the cookie, headers and failure modes.
 lede: Find any setting fast: where it lives and what it changes. The policy file has its own reference; this page covers everything around it.
 ---
 
 Settings live in four places: the backend SDK, the browser script, Core and your secret store. The policy file has its own reference; this page covers everything around it.
 
-## When to use {#when-to-use}
-
-- You are mounting the backend SDK and need its options.
-- You are setting Core's environment and secrets.
-- You are rotating site keys or issuing credentials for the console, the agent or the log pack.
-- You need to know what happens when Core is unreachable.
-
-## Get started {#quickstart}
+## The minimum to set {#quickstart}
 
 1. Set `site`, `secretsFile`, `core` and `mode: "observe"` on the [backend SDK](#backend).
 2. Add the [script tag](#browser) with `data-site`.
@@ -139,12 +132,11 @@ proxy_hide_header BR-Decision;
 | Key rotation | Two keys accepted at once. |
 | Instances out of step | In-memory budgets reconcile at each sync; overspend is bounded by one sync interval. |
 
-## Where to go next {#where-next}
+## Next steps {#where-next}
 
-| Goal | Page |
-| --- | --- |
-| Write the policy file | [Policy reference](/docs/policy/) |
-| See every route and header the SDK sets | [SDK reference](/docs/sdk/#routes) |
-| Run Core in production | [Self-hosting](/docs/self-hosting/) |
-| Know what each credential can reach | [Trust boundaries](/docs/security/#boundaries) |
-| Read the credential schemes | [consoleToken](/docs/api/#security-consoletoken) |
+<!-- next -->
+- [Policy reference](/docs/policy/): Write the policy file
+- [SDK reference](/docs/sdk/#routes): See every route and header the SDK sets
+- [Self-hosting](/docs/self-hosting/): Run Core in production
+- [Trust boundaries](/docs/security/#boundaries): Know what each credential can reach
+- [consoleToken](/docs/api/#security-consoletoken): Read the credential schemes

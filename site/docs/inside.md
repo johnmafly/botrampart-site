@@ -3,21 +3,13 @@ title: Inside BotRampart
 nav: Inside BotRampart
 group: Concepts
 order: 5
-description: Inside BotRampart: each component and where it runs, the request path and session token, sync with Core, hosting and ports, the data layout in your bucket, the decision-model contract, the agent, threats and what remains, and the measured hot path.
+description: Inside BotRampart: each component, the request path, sync with Core, the data layout in your bucket, the decision model, the agent and the threats that remain.
 lede: Know exactly what runs where and what stays in your bucket: one request and one sync followed through every component, the data layout, the threats that remain and what we measured.
 ---
 
 This page follows one request and one sync through every component, then describes the data each one leaves in your bucket. The wire contract is the [OpenAPI spec](/spec/openapi.yaml); where this page and the spec differ, the spec wins.
 
-## When to use {#when-to-use}
-
-- You run BotRampart in production and need to know which component does what, and where it runs.
-- You are reviewing what crosses each boundary: the cookie, the sync call, the lake, the decision model.
-- You are sizing Core or choosing where to host it.
-- You query the lake directly, or audit the decision model and the agent.
-- You are assessing which threats BotRampart controls and what remains.
-
-## Get started {#quickstart}
+## Trace one decision {#quickstart}
 
 Trace one decision through the system:
 
@@ -190,13 +182,12 @@ The agent reads the lake through DuckDB with a key scoped read-only to `br/v1/`,
 
 We measured the hot path on 18 November 2026: verifying the signed cookie and charging the budget in Node took about **1.79 µs** per request at the median and **2.58 µs** at the 99th percentile, over 300,000 requests across 10,000 sessions on an Apple M4 Pro Mac mini, far inside the 1 ms budget for the backend SDK; a forged cookie was rejected.{{c:exp-verify}} The [benchmark and its output](https://github.com/johnmafly/botrampart-site/tree/main/experiments) are in the repository; it measures the reference implementation of the cookie check and the budget charge.
 
-## Where to go next {#where-next}
+## Next steps {#where-next}
 
-| Goal | Page |
-| --- | --- |
-| See the system diagrams and the five-minute loop | [Architecture](/docs/architecture/#loop) |
-| Pick where BotRampart checks requests | [Choose how to integrate](/docs/choose/) |
-| Wire the backend SDK into your app | [Wire it in](/docs/wire/) |
-| Run Core and the lake in production | [Self-hosting](/docs/self-hosting/) |
-| Review keys, privacy and the threat model in depth | [Security](/docs/security/) |
-| Look up the sync, policy and decision operations | [API reference](/docs/api/) |
+<!-- next -->
+- [Architecture](/docs/architecture/#loop): See the system diagrams and the five-minute loop
+- [Choose how to integrate](/docs/choose/): Pick where BotRampart checks requests
+- [Wire it in](/docs/wire/): Wire the backend SDK into your app
+- [Self-hosting](/docs/self-hosting/): Run Core and the lake in production
+- [Security](/docs/security/): Review keys, privacy and the threat model in depth
+- [API reference](/docs/api/): Look up the sync, policy and decision operations

@@ -586,3 +586,6 @@ a.plan::after { margin-top: auto; padding-top: 1rem; }
 /* The gate section now carries the threat figures (#9): space them from the figure. */
 .gate-sec .odds3 { margin-top: clamp(2rem, 1.2rem + 2.5vw, 3.2rem); }
 @media (max-width: 760px) { .news-pill { min-height: 2.75rem; } }
+.int-link { display: flex; flex-direction: column; }
+.int-link::after { margin-top: auto; padding-top: .9rem; }
+.prod::after { align-self: end; }

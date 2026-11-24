@@ -9,16 +9,6 @@ lede: Every change to this site, the guide and the spec, newest first. Each entr
 
 Changes are listed newest first, with the spec versions on top.
 
-## When to use {#when-to-use}
-
-- You want to know what changed since you last read the docs.
-- You are checking which spec version a change shipped in.
-
-## Get started {#quickstart}
-
-1. Check [Spec versions](#spec-versions) for the current version of the wire contract.
-2. Read the dated entries below, and open a linked pull request for its diff and checks.
-
 ## Spec versions {#spec-versions}
 
 | Version | Date | Change |
@@ -29,6 +19,15 @@ Changes are listed newest first, with the spec versions on top.
 
 The current spec is [spec/openapi.yaml](/spec/openapi.yaml); the [API reference](/docs/api/) is generated from it.
 
+## 2026-11-24 {#d2026-11-24}
+
+- **A docs home you can start from.** The first command and a prompt for your coding agent open the page, followed by cards by goal ([docs home](/docs/)).
+- **A quickstart that runs today.** Four numbered steps from a clone to a session you charge yourself, each with its expected output, and no install command ([Quickstart, 5 min](/docs/getting-started/)).
+- **One page template.** Pages open with what you get and close with next steps. The repeated "When to use" sections are gone; an old link to one opens the top of its page.
+- **Docs for AI agents.** `llms.txt` and `llms-full.txt` are served under `/docs/` as well as the root, `llms.txt` opens with how an agent should use the docs, and every page sends a `Link` header that names its Markdown ([Docs for AI agents](/docs/agents/)).
+- **Autoinstall.** Express is renamed Autoinstall, so nobody reads it as Express.js. `/docs/express/` redirects to [/docs/autoinstall/](/docs/autoinstall/) with its anchors.
+- **Dark by default.** The docs are dark unless you switch, like the rest of the site, and the header sits where it does on every other page.
+
 ## 2026-11-19 {#d2026-11-19}
 
 - **Edge adapters.** The nginx module (with ingress-nginx), a Cloudflare Worker and CloudFront Lambda@Edge protect an app with no code change ([integration points](/docs/integrations/#integration-points)).
@@ -38,7 +37,7 @@ The current spec is [spec/openapi.yaml](/spec/openapi.yaml); the [API reference]
 - **Console editing.** Edit policy and path costs in the console; every save publishes a new version with its approver ([publishing](/docs/policy/#publishing)).
 - **The agent.** Read-only SQL, suggested policy changes for a named person to approve, and email digests and answers ([the agent](/docs/architecture/#agent)).
 - **Live model rules.** Rules act on the decision model's `ai.*` fields: stage in `log` mode, then enforce ([directives](/docs/policy/#directives)).
-- **Express.** Install with one AI prompt: your coding agent wires BotRampart into the stack you pick ([Express](/express/), [guide](/docs/express/)).
+- **Autoinstall** (first published as Express). Install with one AI prompt: your coding agent wires BotRampart into the stack you pick ([Autoinstall](/autoinstall/), [guide](/docs/autoinstall/)).
 - **Spec `0.2.0`.** The [spec](/spec/openapi.yaml) describes all of the above.
 
 ## 2026-11-18 {#d2026-11-18}
@@ -58,11 +57,10 @@ The current spec is [spec/openapi.yaml](/spec/openapi.yaml); the [API reference]
 - **Claims ledger.** `claims.yaml` follows the Greenhouse claims schema, with fixes for scrollable regions and the signup flow's last screen ([#3](https://github.com/johnmafly/botrampart-site/pull/3), [#2](https://github.com/johnmafly/botrampart-site/pull/2)).
 - **First site.** Pages, engineering chapters, pricing, the signup flow, the OpenAPI spec and the claims ledger ([#1](https://github.com/johnmafly/botrampart-site/pull/1)).
 
-## Where to go next {#where-next}
+## Next steps {#where-next}
 
-| Goal | Page |
-| --- | --- |
-| Read the current spec | [API reference](/docs/api/) |
-| See what each feature does | [Features](/docs/features/) |
-| Install the current version | [Install and quickstart](/docs/getting-started/) |
-| Read the conventions the docs follow | [Introduction](/docs/#conventions) |
+<!-- next -->
+- [API reference](/docs/api/): Read the current spec
+- [Features](/docs/features/): See what each feature does
+- [Quickstart](/docs/getting-started/): Run the current version from source
+- [Docs home](/docs/#conventions): Read the conventions the docs follow

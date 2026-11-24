@@ -99,7 +99,7 @@ test("pricing: nav and eyebrow agree, one action per plan, self-hosting guide, h
     community: [/^\/docs\/getting-started\/$/, "Start free"],
     "white-label": [/^https:\/\/github\.com\/johnmafly\/botrampart-site\/issues\/new\?title=White-label%20request/, "Request White-label"],
     enterprise: [/^https:\/\/github\.com\/johnmafly\/botrampart-site\/issues\/new\?title=Enterprise%20request/, "Request Enterprise"],
-    "cloud-plan": [/^https:\/\/github\.com\/johnmafly\/botrampart-site\/issues\/new\?title=Cloud%20waitlist/, "Join the Cloud waitlist"],
+    "cloud-plan": [/^https:\/\/github\.com\/johnmafly\/botrampart-site\/issues\/new\?title=Cloud%20waitlist/, "Join the waitlist"],
   };
   for (const [id, [href, label]] of Object.entries(want)) {
     const card = own.match(new RegExp(`<div class="ed[^"]*" id="${id}">([\\s\\S]*?)\\n            </div>`))?.[1];
