@@ -1,6 +1,6 @@
 ---
 title: Overview and concepts
-nav: Overview
+nav: Overview and concepts
 group: Concepts
 order: 3
 description: What BotRampart is, and how it works: sessions, tiers, path costs, budgets, the daily ceiling, mint buckets, the five-minute loop and explained decisions.
@@ -8,20 +8,6 @@ lede: BotRampart asks what a session has spent, not whether it is a bot. Every s
 ---
 
 This page explains the ideas the rest of the docs rely on: what a session is, what each request costs, how a session earns more credit, and how the five-minute loop sees abuse that no single session shows.
-
-## When to use {#when-to-use}
-
-- You want to know how BotRampart decides before you install it.
-- You need the meaning of tier, unit, grant, path class or mint bucket.
-- You are explaining to your team why a visitor was challenged.
-- You are setting path costs and want the arithmetic behind the daily ceiling.
-
-## Get started {#quickstart}
-
-1. Read [The idea](#idea) for the question BotRampart asks instead of "is this a bot?".
-2. Read [A session's life](#session) for the four tiers and what each buys.
-3. Read [Request economics](#economics) for path costs and the budget algorithm.
-4. Run the [reference implementation](/docs/getting-started/#from-source) and watch the same numbers on your machine.
 
 > [!NOTE]
 > Every number on this page is the default policy. Your policy file changes path costs, refill, grants and mint limits; the arithmetic stays the same.
@@ -158,12 +144,11 @@ An agent with read-only access to the same log answers in Slack, in the console 
 | Core | The service the SDKs sync with: challenges, policy, the hot store and the five-minute loop. |
 | Lake | Your bucket, holding rollups, decisions, challenges, states, answers, directives and policy versions. |
 
-## Where to go next {#where-next}
+## Next steps {#where-next}
 
-| Goal | Page |
-| --- | --- |
-| See where each part runs | [Design and architecture](/docs/architecture/) |
-| Change path costs and budgets | [Policy reference](/docs/policy/#budget) |
-| Look up a decision by its reference | [getDecision](/docs/api/#op-getDecision) |
-| Install in observe mode | [Install and quickstart](/docs/getting-started/) |
-| Read the threats that remain | [Security model](/docs/security/#threats) |
+<!-- next -->
+- [Design and architecture](/docs/architecture/): See where each part runs
+- [Policy reference](/docs/policy/#budget): Change path costs and budgets
+- [getDecision](/docs/api/#op-getDecision): Look up a decision by its reference
+- [Quickstart](/docs/getting-started/): Run the same arithmetic on your machine
+- [Security model](/docs/security/#threats): Read the threats that remain

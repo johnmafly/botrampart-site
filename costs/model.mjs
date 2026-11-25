@@ -90,26 +90,34 @@ export const PRICES = {
 };
 
 // Our assumptions. The first four are the ones the site already states (/own/#selfhost and
-// /build/inside/#core); the rest are new here.
+// /docs/inside/#core); the rest are new here.
 export const ASSUMPTIONS = {
   sessions_per_100m_requests: { value: 5_000_000, basis: "site: /own/ (planning assumption, about 5 million sessions for 100 million requests)" },
-  sessions_per_instance: { value: 500_000, basis: "site: /build/inside/#core (10 app instances for that site)" },
-  sync_seconds: { value: 10, basis: "site: /build/inside/#core (each instance syncs every 10 seconds)" },
-  escalation_share: { value: 0.06, basis: "site: /build/inside/#core (about 0.3 million escalated challenges for 5 million sessions)" },
+  sessions_per_instance: { value: 500_000, basis: "site: /docs/inside/#core (10 app instances for that site)" },
+  sync_seconds: { value: 10, basis: "site: /docs/inside/#core (each instance syncs every 10 seconds)" },
+  escalation_share: { value: 0.06, basis: "site: /docs/inside/#core (about 0.3 million escalated challenges for 5 million sessions)" },
   model_tokens_per_call: { value: 1800, basis: "site: /own/#selfhost (1,800 tokens a model call)" },
   model_window_minutes: { value: 5, basis: "site: /meter/ (Core builds a state every five minutes)" },
   max_cohorts: { value: 50, basis: "site: /own/#selfhost (decision model per abnormal cohort, up to 50)" },
   cpu_ms_per_core_call: { value: 5, basis: "ours: a sync merges counters and returns policy; no crypto beyond one signature check" },
   rows_written_per_sync: { value: 1, basis: "ours: one counter row per instance per sync in the site shard" },
   rows_written_per_session: { value: 10, basis: "ours: a session's minute rollups, its token and replay rows in the site shard" },
-  lake_tables: { value: 6, basis: "site: /build/inside/ (lake tables written every minute)" },
+  lake_tables: { value: 6, basis: "site: /docs/inside/ (lake tables written every minute)" },
   lake_kb_per_session_month: { value: 2, basis: "ours: compressed parquet rows for one session's rollups, challenges and decisions" },
-  lake_retention_months: { value: 3, basis: "site: /build/inside/ (90 days retention)" },
+  lake_retention_months: { value: 3, basis: "site: /docs/inside/ (90 days retention)" },
   // Worst case for the model: every watched cohort misses the one-hour answer cache in every window.
   model_cache_misses_every_window: { value: true, basis: "ours: worst case; /meter/ says answers are cached up to an hour" },
   // We allocate the whole Workers Paid minimum to every Cloud plan, as if each were our only customer,
   // and ignore Cloudflare's included allowances for Cloud (they are per account, not per customer).
   allocate_platform_minimum_per_plan: { value: true, basis: "ours: conservative" },
+  // /own/ promises traffic we never bill: blocked, failed and unchallenged traffic, and sessions
+  // during a declared attack. cost_to_serve covers only the included sessions, so that traffic is
+  // a cost we carry, counted at what an overage session costs us (overage_cost_per_1000, less the
+  // card fee, since nothing is charged). It is not priced, like Free's acquisition cost.
+  unbilled_traffic_carried_by_us: {
+    value: true,
+    basis: "site: /own/ (never billed: blocked, failed and unchallenged traffic; sessions during a declared attack aren't billed); ours: each 1,000 such sessions cost us about overage_cost_per_1000 and are not in cost_to_serve",
+  },
 };
 
 const MONTH_SECONDS = 30 * 86_400;
@@ -235,7 +243,7 @@ export function costModelYaml() {
   }
   const sh = selfHostReference();
   out.push("  self_hosting:");
-  out.push(`    path: ${q("/build/")}`);
+  out.push(`    path: ${q("/docs/self-hosting/")}`);
   out.push(`    costs_page: ${q("/own/#selfhost")}`);
   out.push("    price: 0");
   out.push("    cost_to_us: 0");
@@ -253,6 +261,6 @@ export function costModelYaml() {
     }
   }
   out.push("  assumptions:");
-  for (const [k, v] of Object.entries(ASSUMPTIONS)) out.push(`    ${k}: { value: ${v.value}, basis: ${q(v.basis)} }`);
+  for (const [k, v] of Object.entries(ASSUMPTIONS)) out.push(`    ${k}: { value: ${typeof v.value === "string" ? q(v.value) : v.value}, basis: ${q(v.basis)} }`);
   return out.join("\n") + "\n";
 }

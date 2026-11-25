@@ -1,11 +1,14 @@
 # Public but not indexed until the owner publishes at graduation (Greenhouse decision 0000-1).
 # Everything is self-hosted, so the policy allows this origin only. It also keeps out scripts a
 # host may inject (such as an analytics beacon): this site runs no tracking.
+# Strict-Transport-Security: HTTPS only for a year (audit #11). The zone's own HSTS setting in
+# Cloudflare is an account setting, outside this repository (#26).
 /*
   X-Robots-Tag: noindex, nofollow
   Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'
   Referrer-Policy: strict-origin-when-cross-origin
   X-Content-Type-Options: nosniff
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
 
 # HTML keeps Cloudflare Pages' default (public, max-age=0, must-revalidate). CSS, JS, fonts and
 # SVG are published only under content-hashed names; the build appends one year-long immutable
@@ -14,3 +17,6 @@
 /.well-known/greenhouse.json
   Cache-Control: no-cache
   Access-Control-Allow-Origin: *
+
+/.well-known/security.txt
+  Content-Type: text/plain; charset=utf-8

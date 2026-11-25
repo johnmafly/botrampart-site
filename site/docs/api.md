@@ -3,20 +3,13 @@ title: API reference
 nav: API reference
 group: Reference
 order: 13
-description: Every BotRampart HTTP operation and schema, generated at build time from spec/openapi.yaml: the SDK routes under /_br on your origin and the Core API for sync, challenges, keys, ingest, policy and decisions.
+description: Every BotRampart HTTP operation and schema, generated from the OpenAPI spec: the SDK routes under /_br on your origin and the Core API.
 lede: Call every SDK route and Core endpoint from any language, with bodies, responses and examples. Generated from the OpenAPI spec on every build; a test fails when the two disagree.
 ---
 
 The API reference covers both servers BotRampart speaks: the SDK routes under `/_br` on your origin and Core's API. It is generated from the spec each time the site builds.
 
-## When to use {#when-to-use}
-
-- You are integrating over HTTP without an SDK.
-- You need a request or response field, a status code or a header.
-- You are writing a client for Core: sync, policy, simulation or decision lookups.
-- You want the stable anchor of an operation or schema to link to.
-
-## Get started {#quickstart}
+## Make your first call {#quickstart}
 
 Ask your app which tier the current session holds. The route is on your own origin and needs only the session cookie.
 
@@ -45,12 +38,11 @@ console.log(status.tier, status.expiresAt);
 
 <!-- @openapi -->
 
-## Where to go next {#where-next}
+## Next steps {#where-next}
 
-| Goal | Page |
-| --- | --- |
-| Use the SDKs instead of raw HTTP | [SDK reference](/docs/sdk/) |
-| Write the policy `putPolicy` publishes | [Policy reference](/docs/policy/) |
-| Set credentials for Core | [Configuration](/docs/configuration/#credentials) |
-| Wire routes and headers into your app | [Wire it in](/docs/wire/) |
-| See sync in context | [Design and architecture](/docs/architecture/#sync) |
+<!-- next -->
+- [SDK reference](/docs/sdk/): Use the SDKs instead of raw HTTP
+- [Policy reference](/docs/policy/): Write the policy `putPolicy` publishes
+- [Configuration](/docs/configuration/#credentials): Set credentials for Core
+- [Wire it in](/docs/wire/): Wire routes and headers into your app
+- [Design and architecture](/docs/architecture/#sync): See sync in context

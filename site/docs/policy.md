@@ -1,22 +1,15 @@
 ---
 title: Policy and cohort reference
-nav: Policy and cohorts
+nav: Policy and cohort reference
 group: Reference
 order: 15
-description: The BotRampart policy file field by field (path classes, budget, mint, risk score, rules), the CEL fields and actions rules use, publishing, simulation and rollback, and the cohorts, states and directives of the five-minute loop.
+description: The BotRampart policy file field by field: path classes, budget, mint, rules, CEL fields and actions, publishing and simulation, cohorts and directives.
 lede: Decide what every request costs and what happens when a session cannot pay, in one versioned YAML file per site. This page defines every key, every field a rule can read, and the cohorts the five-minute loop watches.
 ---
 
 The policy file is where you decide what BotRampart does. This page defines every key, field and action in it, and how a change is simulated, published and rolled back.
 
-## When to use {#when-to-use}
-
-- You are changing path costs, budgets or mint limits.
-- You are writing a rule, or staging one in `log` mode.
-- You want to replay a policy against the last 24 hours of traffic before you publish.
-- You are writing rules on the five-minute loop's `ai.*` fields.
-
-## Get started {#quickstart}
+## Change a policy safely {#quickstart}
 
 1. Read the version Core enforces now, or start from the [example policy](#file), and keep it as `botrampart.policy.yaml` in Git.
 2. Change a path class's cost, or add a rule with `mode: log`.
@@ -196,12 +189,11 @@ A directive ([`Directive`](/docs/api/#schema-Directive)) publishes `ai.*` fields
 
 A directive matches on `asn_class`, `session_age`, `path_class` or a session's hash `sid`. Escalation needs two windows that agree; stepping down follows three calm windows.
 
-## Where to go next {#where-next}
+## Next steps {#where-next}
 
-| Goal | Page |
-| --- | --- |
-| See the budget arithmetic | [Overview](/docs/overview/#economics) |
-| Read the schema of every key | [Policy schema](/docs/api/#schema-Policy) |
-| Roll out from observe to enforce | [Self-hosting](/docs/self-hosting/#rollout) |
-| See what the five-minute loop sends to the model | [Design and architecture](/docs/architecture/#decision-model) |
-| Let a known agent through on its own budget | [Integrations](/docs/integrations/#no-cookie) |
+<!-- next -->
+- [Overview](/docs/overview/#economics): See the budget arithmetic
+- [Policy schema](/docs/api/#schema-Policy): Read the schema of every key
+- [Self-hosting](/docs/self-hosting/#rollout): Roll out from observe to enforce
+- [Design and architecture](/docs/architecture/#decision-model): See what the five-minute loop sends to the model
+- [Integrations](/docs/integrations/#no-cookie): Let a known agent through on its own budget

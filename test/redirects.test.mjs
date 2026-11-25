@@ -21,10 +21,12 @@ const built = (path) => {
 
 // Every page the Build chapters published, in every form a link or a bookmark may use.
 const OLD = {
-  "/build/": "/docs/choose/", "/build/wire/": "/docs/wire/", "/build/inside/": "/docs/inside/", "/build/ai/": "/express/",
+  "/build/": "/docs/choose/", "/build/wire/": "/docs/wire/", "/build/inside/": "/docs/inside/", "/build/ai/": "/autoinstall/",
+  // Express was renamed Autoinstall (2026-11-24, audit #8).
+  "/express/": "/autoinstall/",
 };
 
-test("every old /build/ address redirects with a 301 to its new home", () => {
+test("every old /build/ and /express/ address redirects with a 301 to its new home", () => {
   for (const [page, home] of Object.entries(OLD)) {
     for (const from of [page, page.slice(0, -1), `${page}index.html`]) {
       const r = rules.get(from);

@@ -53,7 +53,7 @@ test("the cost model's pricing_page shows every tier's name and price", () => {
 });
 
 test("every edition's name and price matches /own/", () => {
-  const cards = [...own.matchAll(/<div class="ed[^"]*">\s*<span class="kind">([^<]+)<\/span>\s*<h3>([^<]+)<\/h3>\s*<p class="price">([^<]+)<small>/g)]
+  const cards = [...own.matchAll(/<div class="ed[^"]*"[^>]*>\s*<span class="kind">([^<]+)<\/span>\s*<h3>([^<]+)<\/h3>\s*<p class="price">([^<]+)<small>/g)]
     .map(([, kind, name, price]) => ({ kind: kind.trim().toLowerCase(), name: name.trim(), price: price.trim() }));
   assert.equal(cards.length, 4, "four edition cards");
   for (const t of TIERS.filter((t) => t.kind === "self-hosted")) {
@@ -109,6 +109,20 @@ test("every list price traces to claims.yaml or a quoted source, and every assum
     assert.match(s.checked, /^\d{4}-\d{2}-\d{2}$/, `${id} checked`);
   }
   for (const [key, v] of Object.entries(ASSUMPTIONS)) assert.match(v.basis, /^(site|ours): \S/, `${key} basis`);
+});
+
+// Greenhouse's pricing gate fetches self_hosting.path and fails when it does not load; a moved
+// address (a 301 in site/_redirects) does not load on the local build the gate serves.
+test("the self-hosting path is the user guide's self-hosting page, and no site: basis names a moved address", () => {
+  const yaml = read("greenhouse.yaml");
+  const guide = /^docs:\n(?:  .*\n)*?  self_hosting: (\S+)$/m.exec(yaml)?.[1];
+  const path = /^  self_hosting:\n    path: "([^"]+)"$/m.exec(yaml.slice(yaml.indexOf("\ncost_model:")))?.[1];
+  assert.ok(guide, "greenhouse.yaml docs: names a self_hosting page");
+  assert.equal(path, guide, "cost_model.self_hosting.path is the docs: self_hosting page");
+  const moved = new Set(read("site", "_redirects").split("\n").map((l) => l.trim()).filter((l) => l && !l.startsWith("#")).map((l) => l.split(/\s+/)[0]));
+  assert.ok(!moved.has(path), `${path} is a moved address`);
+  for (const [key, v] of Object.entries(ASSUMPTIONS))
+    for (const m of v.basis.matchAll(/site: (\/[^\s#)]*)/g)) assert.ok(!moved.has(m[1]), `${key} basis names ${m[1]}, a moved address`);
 });
 
 test("the workings reproduce the self-hosting estimate on /own/", () => {

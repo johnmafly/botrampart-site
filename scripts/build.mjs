@@ -14,7 +14,7 @@
 // numbered link to its source, and fails on an unknown id. <!-- @sources --> lists the page's
 // sources with the verbatim quote and the date each was checked.
 import { readClaims } from "./claims.mjs";
-import { OPTIONS as AI_OPTIONS, DEFAULTS as AI_DEFAULTS, buildPrompt } from "../site/assets/ai-install.js";
+import { OPTIONS as AI_OPTIONS, DEFAULTS as AI_DEFAULTS, buildPrompt, summarize } from "../site/assets/ai-install.js";
 import { buildDocsHtml, buildDocsText } from "./docs.mjs";
 import { appendFileSync, cpSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
@@ -56,11 +56,19 @@ function cite(html, route) {
       `<p class="fine">Every figure from someone else on this page, with the words it rests on. Checked on the date shown; the full ledger is <a href="https://github.com/johnmafly/botrampart-site/blob/main/claims.yaml">claims.yaml</a>.</p><ol class="sources">` +
       order.map((id, i) => {
         const c = claims.get(id);
-        return `<li id="src-${i + 1}"><a href="${esc(c.source_url)}" rel="noopener">${esc(c.source_title || new URL(c.source_url).hostname)}</a>. <q>${esc(c.quote)}</q> <span class="muted">Checked ${esc(c.checked)}.</span></li>`;
+        // A quote that is code or data (a JSON line from experiments/) is shown as code: wrapped
+        // in <q> it read with doubled quote marks (audit #21).
+        const quote = /^["{[]/.test(c.quote.trim()) ? `<code>${esc(c.quote)}</code>` : `<q>${esc(c.quote)}</q>`;
+        return `<li id="src-${i + 1}"><a href="${esc(c.source_url)}" rel="noopener">${esc(c.source_title || new URL(c.source_url).hostname)}</a>. ${quote} <span class="muted">Checked ${esc(c.checked)}.</span></li>`;
       }).join("") + `</ol></section>`
     : "";
-  if (order.length && !html.includes("<!-- @sources -->")) throw new Error(`${route}: cites claims but has no sources marker`);
-  return html.replace("<!-- @sources -->", list);
+  // Outside the docs the list sits after the closing call to action, in the footer's
+  // <!-- @sources-slot -->, so a reader meets the closing band before two screens of citations
+  // (audit #9). A page that places <!-- @sources --> itself (the docs) keeps it there.
+  const own = html.includes("<!-- @sources -->");
+  if (order.length && !own && !html.includes("<!-- @sources-slot -->")) throw new Error(`${route}: cites claims but has no sources marker`);
+  const slot = list && !own ? `<section class="sources-after" aria-labelledby="sources-h"><div class="wrap">${list.replace(/^<section class="sources-block" aria-labelledby="sources-h">|<\/section>$/g, "")}</div></section>` : "";
+  return html.replace("<!-- @sources -->", list).replace("<!-- @sources-slot -->", slot);
 }
 
 const partial = (name) => readFileSync(join(partials, `${name}.html`), "utf8").trimEnd();
@@ -124,16 +132,17 @@ function emailOff(html) {
 }
 
 
-// Express (one-prompt install): <!-- @ai-picker:full --> or <!-- @ai-picker:home --> becomes the stack
-// picker built from ai-install.js's OPTIONS, and <!-- @ai-prompt --> the prompt for the preselected
-// choices, so the page reads complete without JavaScript and never drifts from the module.
-const AI_LEGEND = { framework: "Framework", runtime: "Where your app runs", edge: "CDN or edge", infra: "Cloud for Core and the log", iac: "Provision with", model: "Decision model", agent: "Your coding agent" };
+// Autoinstall (one prompt for your coding agent): <!-- @ai-picker:full --> or <!-- @ai-picker:home -->
+// becomes the stack picker built from ai-install.js's OPTIONS, <!-- @ai-summary --> the line naming
+// the preselected stack and <!-- @ai-prompt --> its prompt, so the page reads complete without
+// JavaScript and never drifts from the module.
+const AI_LEGEND = { framework: "Framework", runtime: "Where your app runs", edge: "CDN or edge", infra: "Cloud for Core and the log", iac: "Write the plan as", model: "Decision model", agent: "Your coding agent" };
 const AI_SUB = {
   framework: (o) => o.lang,
   runtime: () => "",
   edge: (o) => ({ none: "SDK in the app", cloudflare: "Worker in your account", cloudfront: "Lambda@Edge", nginx: "nginx module" })[o.value],
   infra: (o) => `${o.core} · ${o.bucket}`,
-  iac: (o) => ({ terraform: "plan, then apply", pulumi: "preview, then up", cli: "one reviewed script" })[o.value],
+  iac: (o) => ({ terraform: "one module", pulumi: "one program", cli: "one reviewed script" })[o.value],
   model: (o) => ({ off: "Turn on any time", gemini: "Hosted", local: "Nothing leaves your network" })[o.value],
   agent: () => "",
 };
@@ -149,6 +158,7 @@ function aiPicker(html) {
       return `<fieldset class="field"><legend><span class="ai-n">${i + 1}</span> ${AI_LEGEND[k]}</legend><div class="choices">${choices}</div></fieldset>`;
     }).join("\n");
   });
+  html = html.replace(/<!-- @ai-summary -->/g, () => esc(summarize()));
   return html.replace(/<!-- @ai-prompt -->/g, () => esc(buildPrompt()).replace(/>/g, "&gt;"));
 }
 
@@ -159,14 +169,14 @@ const DOCS_TOOLS = `<div class="docs-tools">` +
   `<button type="button" class="theme-btn" data-theme-toggle hidden aria-label="Switch theme"><svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></svg><svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>` +
   `</div>`;
 
-// The home page's phone menu: below 560px the six menu pills fold into one "Menu" button (a
-// <details>, so it opens without JavaScript). It lists the same links as the main menu, built from
-// the header partial so the two never drift apart, plus Sign in and the quickstart.
+// The compact header's menu, on every page: below 1180px the main menu folds into one "Menu" button
+// (a <details>, so it opens without JavaScript). It lists the same links as the main menu, built
+// from the header partial so the two never drift apart, plus Sign in.
 function phoneMenu(header) {
   const nav = header.match(/<nav class="nav" aria-label="Main">([\s\S]*?)<\/nav>/)?.[1];
   if (!nav) throw new Error("header: main menu not found for the phone menu");
   const body = nav
-    .replace(/<details class="menu" data-menu>\s*<summary>([^<]+)<\/summary>\s*<div class="menu-panel">/g, `<div class="pm-group"><p class="pm-h">$1</p><div class="pm-list">`)
+    .replace(/<details class="menu"[^>]*>\s*<summary>([^<]+)<\/summary>\s*<div class="menu-panel">/g, `<div class="pm-group"><p class="pm-h">$1</p><div class="pm-list">`)
     .replace(/<\/div>\s*<\/details>/g, "</div></div>")
     .replace(/ data-section/g, "")
     .replace(/\n\s*/g, "");
@@ -174,23 +184,43 @@ function phoneMenu(header) {
     `<nav class="pm-panel" aria-label="Menu">${body}<div class="pm-more"><a href="/signin/">Sign in</a></div></nav></details>`;
 }
 
+// Shared links: every page carries its canonical URL, Open Graph and Twitter card tags and one
+// share image (/og.png, unversioned, so its absolute URL never goes stale). Descriptions outside the
+// docs stay within 160 characters, the length search results and link previews show.
+const ORIGIN = "https://botrampart.agenthatch.ai";
+const DESC_MAX = 160;
+
+// Pages that moved (site/_redirects keeps the old addresses working). Links to them anywhere in the
+// build, the user guide's HTML and Markdown included, point straight at the new page, so no internal
+// link goes through a redirect: Express became Autoinstall (2026-11-24, audit #8).
+const MOVED = { "/express/": "/autoinstall/" };
+const MOVED_RE = new RegExp(`(href="|\\]\\(|${ORIGIN.replace(/[.]/g, "\\.")})(${Object.keys(MOVED).map((k) => k.replace(/\//g, "\\/")).join("|")})`, "g");
+const moved = (text) => text.replace(MOVED_RE, (_, lead, path) => lead + MOVED[path]);
+
 function render(file) {
   const route = routeOf(file);
   let html = readFileSync(file, "utf8");
-  html = html.replace(/<!-- @head \| ([^|]+) \| ([^>]+?) -->/, (_, title, desc) =>
-    partial("head").replace("{{title}}", esc(title.trim())).replace("{{description}}", esc(desc.trim())));
+  html = html.replace(/<!-- @head \| ([^|]+) \| ([^>]+?) -->/, (_, title, desc) => {
+    desc = desc.trim();
+    if (!route.startsWith("/docs/") && desc.length > DESC_MAX) throw new Error(`${route}: description is ${desc.length} characters (at most ${DESC_MAX})`);
+    let head = partial("head").replaceAll("{{title}}", esc(title.trim())).replaceAll("{{description}}", esc(desc)).replaceAll("{{url}}", ORIGIN + route);
+    // The 404 page answers at every unknown address, so it names no canonical URL of its own.
+    if (route === "/404.html") head = head.replace(/\n\s*<link rel="canonical"[^>]*>|\n\s*<meta property="og:url"[^>]*>/g, "");
+    return head;
+  });
   for (const name of ["header", "footer"]) {
     html = html.replace(`<!-- @${name} -->`, markCurrent(partial(name), route));
   }
   const isDocs = /<html lang="en" class="docs">/.test(html);
   html = html.replace("<!-- @docs-tools -->", isDocs ? DOCS_TOOLS : "");
-  html = html.replace(/(\n\s*)<!-- @phone-menu -->/, (_, lead) => route === "/" ? lead + markCurrent(phoneMenu(partial("header")), route) : "");
+  html = html.replace(/(\n\s*)<!-- @phone-menu -->/, (_, lead) => lead + markCurrent(phoneMenu(partial("header")), route));
   if (isDocs) html = html.replace(/(<link rel="stylesheet" href="\/assets\/site\.css">)/, `$1\n    <link rel="stylesheet" href="/assets/docs.css">\n    <script src="/assets/theme.js"></script>\n    <script type="module" src="/assets/docs.js"></script>`);
   html = aiPicker(html);
   html = toc(html, route);
   html = cite(html, route);
   html = scrollRegions(html, route);
   if (/<!-- @/.test(html)) throw new Error(`${route}: unreplaced marker`);
+  html = moved(html);
   html = emailOff(html);
   writeFileSync(file, html);
 }
@@ -212,8 +242,19 @@ for (const file of walk(out)) if (file.endsWith(".html")) render(file);
 // newer HTML (it happened: v2 HTML rendered with a phone's cached v1 site.css). Files are hashed
 // after their own references are rewritten, so a font change also renames the CSS that loads it.
 // The unversioned names are not published: nothing references them.
-const ASSET_REF = /\/assets\/[\w/.-]+?\.(?:css|js|mjs|woff2|svg)\b/g;
-const FINGERPRINTED = /\.(?:css|js|mjs|woff2|svg)$/;
+// Only root-relative URLs are site assets: a repository path inside a longer path or URL (the
+// quickstart's `./site/assets/economics.mjs`, a GitHub link to site/assets/economics.mjs) names the
+// file in the repository, so the lookbehind leaves it alone, and so does every <pre> code sample.
+// Each one was renamed to economics.<hash>.mjs before, which broke the published snippet (audit #3).
+const ASSET_REF = /(?<![\w.\/-])\/assets\/[\w/.-]+?\.(?:css|js|mjs|woff2|svg|webp)\b/g;
+const FINGERPRINTED = /\.(?:css|js|mjs|woff2|svg|webp)$/;
+const BINARY_ASSET = /\.(?:woff2|webp)$/;
+const PRE_OR_REF = new RegExp(`<pre\\b[\\s\\S]*?<\\/pre>|${ASSET_REF.source}`, "g");
+
+// CSS is published minified: comments and layout whitespace go, nothing else changes. No rule in
+// site/assets/*.css has a brace, semicolon, comma or ">" inside a string, so none is touched.
+const minifyCss = (css) => css.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\s+/g, " ")
+  .replace(/\s*([{};,>])\s*/g, "$1").replace(/;}/g, "}").trim();
 const urlOf = (file) => "/" + relative(out, file).split(sep).join("/");
 
 function fingerprint() {
@@ -223,12 +264,13 @@ function fingerprint() {
     let progressed = false;
     for (const [url, file] of pending) {
       let body = readFileSync(file);
-      if (!file.endsWith(".woff2")) {
+      if (!BINARY_ASSET.test(file)) {
         const text = body.toString("utf8");
         const refs = new Set(text.match(ASSET_REF) ?? []);
         for (const r of refs) if (!renamed.has(r) && !pending.has(r)) throw new Error(`${url}: references missing asset ${r}`);
         if ([...refs].some((r) => r !== url && pending.has(r))) continue; // its dependencies first
-        body = Buffer.from(text.replace(ASSET_REF, (r) => renamed.get(r) ?? r));
+        const rewritten = text.replace(ASSET_REF, (r) => renamed.get(r) ?? r);
+        body = Buffer.from(file.endsWith(".css") ? minifyCss(rewritten) : rewritten);
       }
       const hash = createHash("sha256").update(body).digest("hex").slice(0, 10);
       const hashed = file.replace(/(\.[a-z0-9]+)$/, `.${hash}$1`);
@@ -241,7 +283,8 @@ function fingerprint() {
     if (!progressed) throw new Error(`asset reference cycle among ${[...pending.keys()].join(", ")}`);
   }
   for (const file of walk(out).filter((f) => f.endsWith(".html"))) {
-    const html = readFileSync(file, "utf8").replace(ASSET_REF, (r) => {
+    const html = readFileSync(file, "utf8").replace(PRE_OR_REF, (r) => {
+      if (r.startsWith("<pre")) return r; // code samples show repository paths as written
       if (!renamed.has(r)) throw new Error(`${routeOf(file)}: references missing asset ${r}`);
       return renamed.get(r);
     });
@@ -257,6 +300,11 @@ const assets = fingerprint();
 
 // The guide as Markdown (/docs/<page>.md), /llms.txt and /llms-full.txt, with fingerprinted asset URLs.
 buildDocsText({ out, docs, claims, assets, sha });
+for (const file of walk(out).filter((f) => /\.(?:md|txt)$/.test(f) && !f.includes(`${sep}assets${sep}`))) {
+  const text = readFileSync(file, "utf8");
+  if (MOVED_RE.test(text)) writeFileSync(file, moved(text));
+  MOVED_RE.lastIndex = 0;
+}
 
 // Copy the build spec so docs can link to it.
 mkdirSync(join(out, "spec"), { recursive: true });

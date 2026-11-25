@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- @head | Own it: BotRampart editions and prices | All of BotRampart is free to self-host. Paid editions sell convenience around it, never a missing piece. Cloud is billed by protected session. -->
+    <!-- @head | Pricing: BotRampart editions and Cloud plans | All of BotRampart is free to self-host. Paid editions sell convenience around it, never a missing piece. Cloud is billed by protected session. -->
   </head>
   <body>
     <!-- @header -->
@@ -9,12 +9,12 @@
       <div class="page-head ph">
         <div class="wrap ph-grid">
           <div class="ph-copy">
-            <p class="label">Own it · editions and prices</p>
+            <p class="label">Pricing · editions and Cloud plans</p>
             <h1>All of it is free. Money buys convenience, never a missing piece.</h1>
             <p class="lede">Run every part yourself at no cost; the paid editions sell what a company wants around it.</p>
             <div class="btn-row">
-              <a class="btn btn-primary" href="/dashboard/">Deploy on BotRampart Cloud <span class="arrow" aria-hidden="true">→</span></a>
-              <a class="btn btn-ghost" href="#selfhost">Self-host for free</a>
+              <a class="btn btn-primary" href="/dashboard/">Open the console <span class="arrow" aria-hidden="true">→</span></a>
+              <a class="btn btn-ghost" href="#editions">Compare editions</a>
             </div>
           </div>
           <aside class="ph-facts" aria-label="Four editions">
@@ -37,7 +37,7 @@
             <p>Self-host Community for free. Add White-label to drop the mark, Enterprise for single sign-on and support, or Cloud to have Core run for you.</p>
           </div>
           <div class="editions">
-            <div class="ed free">
+            <div class="ed free" id="community">
               <span class="kind">Self-hosted</span>
               <h3>Community</h3>
               <p class="price">Free<small>forever, all of it</small></p>
@@ -48,8 +48,9 @@
                 <li>“Protected by BotRampart” on challenge pages</li>
                 <li>Apache-2.0 SDKs, AGPL-3.0 Core</li>
               </ul>
+              <a class="btn btn-primary ed-act" href="/docs/getting-started/">Start free <span class="arrow" aria-hidden="true">→</span></a>
             </div>
-            <div class="ed">
+            <div class="ed" id="white-label">
               <span class="kind">Self-hosted</span>
               <h3>White-label</h3>
               <p class="price">$49<small>a month per organisation</small></p>
@@ -59,8 +60,9 @@
                 <li>Private issue tracker</li>
                 <li>A licence file that works offline</li>
               </ul>
+              <a class="btn btn-ghost ed-act" href="https://github.com/johnmafly/botrampart-site/issues/new?title=White-label%20request%3A%20%3Ccompany%3E&amp;body=%2A%2ACompany%3A%2A%2A%20%0A%2A%2AOrganisations%20and%20sites%3A%2A%2A%20%0A%2A%2AWhat%20your%20challenge%20pages%20should%20show%2A%2A%20(logo%2C%20colours)%3A%20%0A%0AThis%20issue%20is%20public%3A%20leave%20out%20anything%20you%20would%20not%20post%20in%20public.">Request White-label <span class="arrow" aria-hidden="true">→</span></a>
             </div>
-            <div class="ed">
+            <div class="ed" id="enterprise">
               <span class="kind">Self-hosted</span>
               <h3>Enterprise</h3>
               <p class="price">$799+<small>a month</small></p>
@@ -70,8 +72,9 @@
                 <li>Support with a response time</li>
                 <li>A commercial licence in place of AGPL</li>
               </ul>
+              <a class="btn btn-ghost ed-act" href="https://github.com/johnmafly/botrampart-site/issues/new?title=Enterprise%20request%3A%20%3Ccompany%3E&amp;body=%2A%2ACompany%3A%2A%2A%20%0A%2A%2ASites%20and%20traffic%2A%2A%20(sessions%20or%20requests%20a%20day)%3A%20%0A%2A%2AWhat%20you%20need%2A%2A%20(single%20sign-on%2C%20roles%2C%20audit%20export%2C%20support%2C%20commercial%20licence)%3A%20%0A%0AThis%20issue%20is%20public%3A%20leave%20out%20anything%20you%20would%20not%20post%20in%20public.">Request Enterprise <span class="arrow" aria-hidden="true">→</span></a>
             </div>
-            <div class="ed">
+            <div class="ed" id="cloud-plan">
               <span class="kind">Hosted</span>
               <h3>Cloud</h3>
               <p class="price">$0<small>to start, then by protected session</small></p>
@@ -81,9 +84,10 @@
                 <li>The SDKs still run in your app: no proxy</li>
                 <li>Blocked and failed traffic never billed</li>
               </ul>
+              <a class="btn btn-ghost ed-act" href="https://github.com/johnmafly/botrampart-site/issues/new?title=Cloud%20waitlist%3A%20%3Ccompany%3E&amp;body=%2A%2ACompany%3A%2A%2A%20%0A%2A%2ASite%20to%20protect%3A%2A%2A%20%0A%2A%2ACloud%20plan%2A%2A%20(Free%2C%20Starter%2C%20Growth%20or%20Scale)%3A%20%0A%2A%2AProtected%20sessions%20a%20month%3A%2A%2A%20%0A%0AThis%20issue%20is%20public%3A%20leave%20out%20anything%20you%20would%20not%20post%20in%20public.">Join the waitlist <span class="arrow" aria-hidden="true">→</span></a>
             </div>
           </div>
-          <p class="fine mt-2">Where these numbers come from: Anubis's maker lists its unbranded build at US$50 a month;{{c:botstopper-price}} ALTCHA's self-hosted Sentinel runs €99 to €799 a month;{{c:altcha-sentinel}} Cloudflare keeps unbranded Turnstile for Enterprise customers.{{c:cf-offlabel}}</p>
+          <p class="fine mt-2">Requests open a filled-in, public issue on GitHub; there is no sales inbox. <a href="/access/">How requests work</a>. Where these numbers come from: Anubis's maker lists its unbranded build at US$50 a month;{{c:botstopper-price}} ALTCHA's self-hosted Sentinel runs €99 to €799 a month;{{c:altcha-sentinel}} Cloudflare keeps unbranded Turnstile for Enterprise customers.{{c:cf-offlabel}}</p>
         </div>
       </section>
 
@@ -102,14 +106,14 @@
             <p class="fine" data-calc-detail>For 1,000,000 protected sessions, about $0.25 per 1,000.</p>
             <p class="fine">Rough guide: a site with 100 million requests a month might see about 5 million sessions (our assumption, not a measurement).</p>
           </div>
-          <div class="tablewrap">
+          <div class="tablewrap plan-table">
             <table>
               <thead><tr><th scope="col">Plan</th><th scope="col" class="num">Monthly fee</th><th scope="col" class="num">Protected sessions included</th><th scope="col" class="num">Then, per 1,000</th><th scope="col" class="num">Cohorts the model watches</th></tr></thead>
               <tbody>
-                <tr><th scope="row">Free</th><td class="num">$0</td><td class="num">10,000</td><td class="num">paused at the cap</td><td class="num">site only</td></tr>
-                <tr><th scope="row">Starter</th><td class="num">$49</td><td class="num">100,000</td><td class="num">$0.30</td><td class="num">5</td></tr>
-                <tr><th scope="row">Growth</th><td class="num">$249</td><td class="num">1,000,000</td><td class="num">$0.20</td><td class="num">20</td></tr>
-                <tr><th scope="row">Scale</th><td class="num">$999</td><td class="num">10,000,000</td><td class="num">$0.10</td><td class="num">50</td></tr>
+                <tr><th scope="row">Free</th><td class="num" data-label="Monthly fee">$0</td><td class="num" data-label="Protected sessions included">10,000</td><td class="num" data-label="Then, per 1,000">paused at the cap</td><td class="num" data-label="Cohorts the model watches">site only</td></tr>
+                <tr><th scope="row">Starter</th><td class="num" data-label="Monthly fee">$49</td><td class="num" data-label="Protected sessions included">100,000</td><td class="num" data-label="Then, per 1,000">$0.30</td><td class="num" data-label="Cohorts the model watches">5</td></tr>
+                <tr><th scope="row">Growth</th><td class="num" data-label="Monthly fee">$249</td><td class="num" data-label="Protected sessions included">1,000,000</td><td class="num" data-label="Then, per 1,000">$0.20</td><td class="num" data-label="Cohorts the model watches">20</td></tr>
+                <tr><th scope="row">Scale</th><td class="num" data-label="Monthly fee">$999</td><td class="num" data-label="Protected sessions included">10,000,000</td><td class="num" data-label="Then, per 1,000">$0.10</td><td class="num" data-label="Cohorts the model watches">50</td></tr>
               </tbody>
             </table>
           </div>
@@ -126,7 +130,7 @@
             </div>
             <div>
               <h3>Why not charge per bot stopped?</h3>
-              <p class="muted">Because BotRampart doesn't decide who is a bot, and a vendor that detects, judges and bills its own unit has every reason to count high. Per-event pricing also turns an attack into a bill: AWS WAF bills Targeted Bot Control at $10 per million requests and charges for a challenge whether or not the visitor attempts it.{{c:aws-bot-control}}</p>
+              <p class="muted">Because BotRampart is the one deciding who is a bot, and a vendor that detects, judges and bills its own unit has every reason to count high. Per-event pricing also turns an attack into a bill: AWS WAF bills Targeted Bot Control at $10 per million requests and charges for a challenge whether or not the visitor attempts it.{{c:aws-bot-control}}</p>
               <p class="muted">For scale: reCAPTCHA charges $1 per 1,000 assessments above 100,000 a month,{{c:recaptcha-bill}} hCaptcha Pro is $99 to $139 a month{{c:hcaptcha-pro}} and DataDome's entry plan lists at $3,830 a month.{{c:dd-entry-price}} They bill different units, so these place BotRampart's prices in the market rather than compare like with like.</p>
             </div>
           </div>
@@ -162,10 +166,9 @@
               <li><b>The mark is a trademark, not a licence trap.</b> Fork it and remove it; just don't ship the fork as BotRampart. The paid build is the convenient way.</li>
               <li><b>No telemetry required for billing.</b> Self-hosted editions are priced per organisation and site, with an offline licence file.</li>
             </ul>
-            <div class="btn-row"><a class="btn btn-primary" href="/try/">Run a session <span class="arrow" aria-hidden="true">→</span></a><a class="btn btn-ghost" href="/docs/choose/">Self-hosting guide</a></div>
+            <div class="btn-row"><a class="btn btn-primary" href="/try/">Run a session <span class="arrow" aria-hidden="true">→</span></a><a class="btn btn-ghost" href="/docs/self-hosting/">Self-hosting guide</a></div>
           </div>
         </div>
-        <div class="wrap"><!-- @sources --></div>
       </section>
     </main>
     <!-- @footer -->

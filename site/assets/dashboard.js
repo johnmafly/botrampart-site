@@ -4,6 +4,7 @@
 // chart readouts and the agent's sample questions. It stores nothing and sends nothing; the
 // selected view lives in the URL hash only.
 import { SITES, siteData, viewOverview, viewDecisions, decisionDetail, viewPolicy, viewAgent, viewSettings } from "/assets/dashboard-data.mjs";
+import { cleanDomain } from "/assets/auth.js";
 
 const app = document.querySelector("[data-app]");
 if (app) {
@@ -13,6 +14,17 @@ if (app) {
   let site = SITES[0].id;
   let selected = null;
   let extra = 0;
+
+  // From sign-up (audit #1): /dashboard/#site=shop.acme.com shows the domain the visitor entered in
+  // place of the first sample site, and the banner says plainly that its numbers are sample data.
+  // The domain lives in the #fragment only, which the browser never sends, and is not stored.
+  const fromSignup = location.hash.match(/^#site=([^&#]+)$/);
+  const custom = fromSignup ? cleanDomain(decodeURIComponent(fromSignup[1])) : "";
+  if (fromSignup) history.replaceState(null, "", location.pathname + location.search + "#overview");
+  const dataFor = (id) => {
+    const D = siteData(id);
+    return custom && id === SITES[0].id ? { ...D, site: { ...D.site, domain: custom } } : D;
+  };
 
   app.classList.add("js");
   for (const el of app.querySelectorAll("[data-js-only]")) el.hidden = false;
@@ -43,7 +55,7 @@ if (app) {
   /* ---------- Rendering for the selected site ---------- */
   const fill = (name, html) => { views[name].querySelector("[data-body]").innerHTML = html; };
   const render = () => {
-    const D = siteData(site);
+    const D = dataFor(site);
     fill("overview", viewOverview(D));
     fill("decisions", viewDecisions(D, selected));
     fill("policy", viewPolicy(D));
@@ -99,7 +111,7 @@ if (app) {
     const b = e.target.closest("button[data-ref]");
     if (!b) return;
     selected = b.dataset.ref;
-    const d = siteData(site).decisions.find((x) => x.ref === selected);
+    const d = dataFor(site).decisions.find((x) => x.ref === selected);
     for (const tr of views.decisions.querySelectorAll("tr[data-row]")) {
       const on = tr.dataset.row === selected;
       tr.classList.toggle("on", on);
@@ -115,7 +127,7 @@ if (app) {
     const b = e.target.closest("button[data-more]");
     if (!b) return;
     extra = Number(b.dataset.more) + 1;
-    fill("agent", viewAgent(siteData(site), extra));
+    fill("agent", viewAgent(dataFor(site), extra));
     for (const el of views.agent.querySelectorAll("[data-js-only]")) el.hidden = false;
     const msgs = views.agent.querySelectorAll(".msg.a");
     const last = msgs[msgs.length - 1];
@@ -125,6 +137,16 @@ if (app) {
     if (!next) views.agent.querySelector(".chips")?.focus?.();
   });
 
-  bindChart();
-  filter();
+  if (custom) {
+    const first = switcher?.querySelector(`option[value="${SITES[0].id}"]`);
+    if (first) first.textContent = custom;
+    const avatar = app.querySelector(".site-av");
+    if (avatar) avatar.textContent = custom[0].toUpperCase();
+    const banner = app.querySelector(".app-banner span:last-child");
+    if (banner) banner.textContent = `You signed up with ${custom}. Every number here is sample data generated in your browser: none of ${custom}'s traffic reaches this preview, and nothing is stored.`;
+    render();
+  } else {
+    bindChart();
+    filter();
+  }
 }

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- @head | Autoinstall: one prompt for your coding agent | Pick your stack. Autoinstall writes one prompt: your coding agent runs BotRampart's reference code, prices your routes and writes your install plan. -->
+    <link rel="stylesheet" href="/assets/picker.css">
+    <link rel="stylesheet" href="/assets/build.css">
+  </head>
+  <body>
+    <!-- @header -->
+    <main id="main">
+      <div class="page-head ph autoinstall-head">
+        <div class="wrap ph-grid">
+          <div class="ph-copy">
+            <p class="label">Autoinstall · one prompt for your coding agent</p>
+            <h1>Pick your stack. <span class="tt">Your agent does the legwork.</span></h1>
+            <p class="lede">Choose your stack, and your coding agent runs BotRampart's reference code, prices your routes and writes your install plan.</p>
+            <div class="btn-row">
+              <a class="btn btn-primary" href="#picker">Build my prompt <span class="arrow" aria-hidden="true">↓</span></a>
+              <a class="btn btn-ghost" href="/docs/autoinstall/">How Autoinstall works</a>
+            </div>
+          </div>
+          <aside class="ph-facts" aria-label="The default stack">
+            <p class="ph-k">The default stack</p>
+            <dl>
+              <div><dt>Framework</dt><dd>Express (Node.js)</dd></div>
+              <div><dt>Runs on</dt><dd>Containers or VMs</dd></div>
+              <div><dt>CDN</dt><dd>Cloudflare</dd></div>
+              <div><dt>Core</dt><dd>Cloudflare Workers, the log in R2</dd></div>
+              <div><dt>Written as</dt><dd>Terraform</dd></div>
+            </dl>
+          </aside>
+        </div>
+      </div>
+
+      <section class="wrap ex-points" aria-labelledby="ex-points-h">
+        <h2 id="ex-points-h" class="visually-hidden">What Autoinstall does</h2>
+        <ul class="ex-cards">
+          <li><span class="ex-k">Run</span><h3>The reference code, first.</h3><p>Your agent clones the repository and runs <code>npm test</code>, <code>npm run bench</code> and the budget engine on Node alone.</p></li>
+          <li><span class="ex-k">Price</span><h3>Every route gets a price.</h3><p>It reads your app's routes, gives each a path class and computes what one session can spend in a day.</p></li>
+          <li><span class="ex-k">Plan</span><h3>Your stack, mapped.</h3><p>Nine frameworks, five places to run, four edges and five clouds: where each part goes, written to one file.</p></li>
+          <li><span class="ex-k">Stop</span><h3>Nothing changes without you.</h3><p>No package installed, nothing created in a cloud account, no line of your app's code changed.</p></li>
+        </ul>
+      </section>
+
+      <div class="wrap ai-grid" id="picker" data-ai>
+        <form class="ai-form" data-ai-form novalidate aria-labelledby="pick">
+          <h2 id="pick" class="ai-h">Your stack</h2>
+          <p class="ai-jump"><a href="#prompt-h">Skip to your prompt</a></p>
+          <noscript><p class="callout ai-nojs">Without JavaScript the prompt on this page is the one for the preselected stack: Express on containers, behind Cloudflare, with Core on Cloudflare Workers and R2, written as Terraform.</p></noscript>
+          <!-- @ai-picker:full -->
+        </form>
+
+        <section class="ai-out" aria-labelledby="prompt-h">
+          <div class="ai-out-head">
+            <h2 id="prompt-h" class="ai-h">Your agent prompt</h2>
+            <button type="button" class="btn btn-primary ai-copy" data-ai-copy hidden>Copy prompt</button>
+          </div>
+          <p class="fine ai-summary" data-ai-summary><!-- @ai-summary --></p>
+          <p class="ai-status" data-ai-status role="status" aria-live="polite"></p>
+          <pre class="ai-prompt" tabindex="0" role="region" aria-label="Code: your agent prompt"><code data-ai-prompt><!-- @ai-prompt --></code></pre>
+          <h3 class="ai-h3">Where to paste it</h3>
+          <ul class="ai-where">
+            <li><b>Claude Code:</b> start it in your app's repository and paste the prompt as your first message.</li>
+            <li><b>Cursor:</b> open the repository and paste it into the agent chat.</li>
+            <li><b>Codex:</b> start it in your app's repository and paste the prompt.</li>
+            <li><b>Any other agent:</b> give it your app's repository and a terminal with Node 24 and git, and paste the prompt.</li>
+          </ul>
+          <p class="fine">The prompt is built in this page from your choices; nothing is stored or sent. Prefer to run it by hand? Follow the <a href="/docs/getting-started/">quickstart guide</a>.</p>
+        </section>
+      </div>
+
+      <section class="sec sec-tight" aria-labelledby="ex-steps-h">
+        <div class="wrap">
+          <div class="sec-head">
+            <p class="label">What your agent does</p>
+            <h2 id="ex-steps-h">Five steps. <span class="tt">Each one runs today.</span></h2>
+          </div>
+          <ol class="ex-steps">
+            <li><span class="ex-n">01</span><h3>Tests and benchmark</h3><p>Clones the repository and runs <code>npm test</code> and <code>npm run bench</code>: signed-cookie checks in about 2 µs each.</p></li>
+            <li><span class="ex-n">02</span><h3>Budget engine</h3><p>Runs the quickstart's ten-line script and checks its four lines of output.</p></li>
+            <li><span class="ex-n">03</span><h3>Route prices</h3><p>Writes <code>botrampart/path-prices.md</code> and the daily ceiling for your prices.</p></li>
+            <li><span class="ex-n">04</span><h3>Install plan</h3><p>Writes <code>botrampart/INSTALL-PLAN.md</code>: the middleware, the script tag, your edge, Core and the bucket, each with its docs page.</p></li>
+            <li><span class="ex-n">05</span><h3>Report and stop</h3><p>Reports the numbers and the two files, and changes nothing else.</p></li>
+          </ol>
+        </div>
+      </section>
+    </main>
+    <!-- @footer -->
+    <script type="module" src="/assets/ai-install.js"></script>
+  </body>
+</html>
