@@ -137,3 +137,20 @@ test("the workings reproduce the self-hosting estimate on /own/", () => {
   assert.match(selfhost, /a few dollars/);
   assert.ok(ref.decision_log < 5, `decision log $${ref.decision_log}`);
 });
+
+// /own/ must not promise that every plan's model bill is below its fee while a plan with a $0 fee
+// still has a decision-model cost: greenhouse's pricing judges read that as a contradiction.
+const MODEL_BILL_UNDER_FEE = /\bmodel (?:bill|cost)s?\b[^.;]*\b(?:below|under|less than|within)\b[^.;]*\b(?:fee|price)s?\b/i;
+const UNIVERSAL_PLAN = /\b(?:each|every|all)\s+(?!paid\b)(?:of (?:our|the) )?(?:plan|tier)s?\b/i;
+function universalModelBillClaims(pageText) {
+  return pageText.split(/(?<=[.;!?])\s+/).filter((s) => MODEL_BILL_UNDER_FEE.test(s) && UNIVERSAL_PLAN.test(s));
+}
+
+test("/own/ claims a model bill under the fee only for paid plans while a free plan has a model cost", () => {
+  assert.deepEqual(universalModelBillClaims("Each plan's limit keeps its model bill below its fee."), ["Each plan's limit keeps its model bill below its fee."], "the guard catches the old sentence");
+  assert.deepEqual(universalModelBillClaims("Each paid plan's limit keeps its model bill below its fee; Free's model bill is a cost we carry."), [], "the guard allows a claim scoped to paid plans");
+  const freeWithModelCost = TIERS.filter((t) => t.price === 0 && (costToServe(t).lines.decision_model ?? 0) > 0);
+  if (freeWithModelCost.length === 0) return;
+  assert.deepEqual(universalModelBillClaims(text(own)), [],
+    `/own/ says every plan's model bill is below its fee, but ${freeWithModelCost.map((t) => t.name).join(", ")} has a $0 fee and a model cost`);
+});
